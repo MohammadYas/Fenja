@@ -178,6 +178,121 @@ export const da = {
       "Betaling er ikke sat op endnu. Skriv til os, hvis du ser denne besked på det rigtige site.",
     kvittering: "Du får kvittering på mail fra Stripe.",
   },
+  landing: {
+    heroTitel: "Færdig Vinted-annonce på 2 minutter",
+    heroTekst:
+      "Tag et par mobilfotos af dit tøj. Fenja renser billederne, viser hvordan tøjet ser ud på, og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted.",
+    heroKnap: "Lav min annonce",
+    heroFoer: "Dit foto",
+    heroEfter: "Renset",
+    heroPladsholder:
+      "Her kommer et ægte før/efter fra appen — vi bruger ikke opstillede eksempler.",
+    saadanTitel: "Sådan virker det",
+    saadanTrin: [
+      {
+        titel: "Fotografér",
+        tekst: "2–4 fotos med telefonen: helhed, bagside, label og eventuelle fejl.",
+      },
+      {
+        titel: "Fenja arbejder",
+        tekst: "Billederne renses, en mærket visualisering laves, og annonceteksten skrives — på cirka 90 sekunder.",
+      },
+      {
+        titel: "Sæt ind på Vinted",
+        tekst: "Kopiér titel og beskrivelse, hent billederne, og læg annoncen op. Fejl og slid står ærligt i teksten.",
+      },
+    ],
+    aerligTitel: "Ærlighed er hele idéen",
+    aerligTekst:
+      "Vinted kræver, at billede 1 er dit eget foto af varen — sådan leverer Fenja det. Visualiseringer er tydeligt mærket, og oplyste fejl kommer altid med i beskrivelsen. Det beskytter din konto og dine handler.",
+    priserTitel: "Priser",
+    priserGratis: "3 annoncer gratis, når du opretter dig.",
+    priserDerefter: "Derefter:",
+    ctaTitel: "Prøv med det næste stykke tøj, du vil sælge",
+    ctaKnap: "Opret dig og få 3 gratis annoncer",
+  },
+  vilkaar: {
+    titel: "Vilkår",
+    opdateret: "Senest opdateret: 14. august 2026",
+    afsnit: [
+      {
+        overskrift: "Hvad Fenja er",
+        tekst: [
+          "Fenja hjælper dig med at lave annoncer til dit brugte tøj: rensede billeder, en tydeligt mærket visualisering og en færdig annoncetekst. Du lægger selv annoncen på Vinted — Fenja har ingen adgang til din Vinted-konto.",
+        ],
+      },
+      {
+        overskrift: "Krav til dig",
+        tekst: [
+          "Du skal være mindst 18 år for at bruge Fenja — det er også Vinteds egen aldersgrænse.",
+          "Du må kun uploade billeder af tøj, du selv ejer og har ret til at sælge, og du er ansvarlig for indholdet af de annoncer, du lægger op.",
+          "Fenja er lavet til privat salg af brugt tøj. Brug ikke Fenja til kommercielt salg på en privat Vinted-konto — det er brud på Vinteds vilkår og kan koste dig kontoen.",
+        ],
+      },
+      {
+        overskrift: "Visualiseringer",
+        tekst: [
+          "Visualiseringer er genererede billeder og er altid mærket synligt og i filens metadata, som EU-reglerne kræver. Brug altid dit eget, ægte foto som billede 1 på Vinted, og brug kun visualiseringen som supplement.",
+          "Prisforslag er forslag, ikke garantier. Du bestemmer selv din pris.",
+        ],
+      },
+      {
+        overskrift: "Kreditter og betaling",
+        tekst: [
+          "1 kredit svarer til 1 leveret annonce. Kreditter trækkes først, når leverancen er færdig. Fejler visualiseringen, leverer vi resten og sætter kreditten for visualiseringen tilbage automatisk.",
+          "Betaling sker via Stripe, som også sender din kvittering. Priserne er i danske kroner og inklusive moms. Købte kreditter udløber ikke.",
+        ],
+      },
+      {
+        overskrift: "Ansvar",
+        tekst: [
+          "Fenja leverer værktøjet — selve handlen er mellem dig og din køber. Vi kan ikke garantere, at dit tøj bliver solgt, og vi er ikke part i dine handler på Vinted.",
+          "Vinteds regler ændrer sig løbende. Fenja følger dem — det bør du også.",
+        ],
+      },
+      {
+        overskrift: "Ophør",
+        tekst: [
+          "Du kan slette din konto når som helst under Konto. Så sletter vi alle dine billeder og data inden for 24 timer.",
+        ],
+      },
+    ],
+  },
+  privatliv: {
+    titel: "Privatliv",
+    opdateret: "Senest opdateret: 14. august 2026",
+    afsnit: [
+      {
+        overskrift: "Kort version",
+        tekst: [
+          "Dine billeder bruges kun til at lave din egen annonce. Vi træner ikke modeller på dem, vi deler dem ikke, og vi sælger ingen data. Sletter du din konto, sletter vi alt inden for 24 timer.",
+        ],
+      },
+      {
+        overskrift: "Hvad vi gemmer",
+        tekst: [
+          "Din e-mail (til login og beskeder om dine annoncer), dine billeder og annoncedata, din kredithistorik og tekniske logs om genereringer (status og omkostning), så tjenesten kan fungere og fejl kan findes.",
+          "Betalingsoplysninger håndteres af Stripe — vi ser aldrig dit kortnummer.",
+        ],
+      },
+      {
+        overskrift: "Hvor det ligger",
+        tekst: [
+          "Data ligger hos vores databehandlere: Supabase (database og billeder, privat lager med signerede links), Stripe (betaling), Resend (mails) samt de billed- og tekstmodeller, der laver din leverance. Billeder sendes kun til modellerne for at lave netop din annonce.",
+        ],
+      },
+      {
+        overskrift: "Dine rettigheder",
+        tekst: [
+          "Du kan få indsigt i, rette eller slette dine data. Sletning klarer du selv under Konto — alt fjernes inden for 24 timer. Vil du klage, kan du kontakte Datatilsynet.",
+        ],
+      },
+    ],
+  },
+  footer: {
+    vilkaar: "Vilkår",
+    privatliv: "Privatliv",
+  },
   fejl: {
     generel: "Noget gik galt. Prøv igen — dine billeder og kreditter er ikke rørt.",
     ikkeLoggetInd: "Du skal være logget ind for at se denne side.",
