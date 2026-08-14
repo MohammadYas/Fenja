@@ -24,7 +24,9 @@ const config: Config = {
       flade: roller.flade,
       kant: roller.kant,
       pris: roller.pris,
-      detalje: roller.detalje,
+      // BEMÆRK: roller.detalje (rav) må IKKE mappes som farven "detalje" —
+      // navnet kolliderer med typeskala-trinnet, og text-detalje ville så
+      // farve tekst i stedet for at sætte størrelsen. Brug "rav" direkte.
     },
     fontFamily: {
       display: [skrifter.display, "system-ui", "sans-serif"],
