@@ -163,6 +163,21 @@ export const da = {
     liggetid: (dage: number) =>
       dage === 1 ? "1 dag i snit før salg" : `${dage} dage i snit før salg`,
   },
+  kreditter: {
+    titel: "Kreditter",
+    forklaring:
+      "1 kredit = 1 færdig annonce. Kreditter trækkes først, når annoncen er leveret — fejler visualiseringen, får du kreditten tilbage.",
+    saldoNu: (antal: number) => `Du har ${antal} tilbage.`,
+    pakkeNavn: (antal: number) => `Fenja · ${antal} annoncer`,
+    pakkeLinje: (antal: number, pris: number) => `${antal} annoncer · ${pris} kr.`,
+    prisPrStk: (kr: string) => `${kr} kr. pr. annonce`,
+    koeb: "Køb",
+    koebSucces: "Betalingen gik igennem. Kreditterne står på din saldo om et øjeblik.",
+    koebAfbrudt: "Betalingen blev afbrudt. Der er ikke trukket noget.",
+    betalingIkkeKlar:
+      "Betaling er ikke sat op endnu. Skriv til os, hvis du ser denne besked på det rigtige site.",
+    kvittering: "Du får kvittering på mail fra Stripe.",
+  },
   fejl: {
     generel: "Noget gik galt. Prøv igen — dine billeder og kreditter er ikke rørt.",
     ikkeLoggetInd: "Du skal være logget ind for at se denne side.",
