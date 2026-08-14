@@ -4,7 +4,10 @@ import {
   farver,
   radius,
   roller,
+  rotation,
   skrifter,
+  skygge,
+  tekstur,
   typeskala,
 } from "./lib/design/tokens";
 
@@ -39,12 +42,32 @@ const config: Config = {
       stram: radius.stram,
       bloed: radius.bloed,
     },
+    // Offset-skygger er solide og aldrig sorte (REDESIGN §5.5) — gran/hør kun.
+    boxShadow: {
+      none: "none",
+      "offset-gran": `${skygge.offset} ${farver.gran}`,
+      "offset-hoer": `${skygge.offset} ${farver.hoer}`,
+      "offset-gran-loeft": `${skygge.offsetLoeft} ${farver.gran}`,
+      "offset-hoer-loeft": `${skygge.offsetLoeft} ${farver.hoer}`,
+    },
     extend: {
+      // Næsten usynlig vævning på kalk-flader (REDESIGN §2.4) — inline-SVG,
+      // ingen billedfiler; farve og opacity deriverer fra tokens.
+      backgroundImage: {
+        tekstur: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M0 .5h8M.5 0v8' stroke='%23${farver.koks.slice(1)}' stroke-opacity='${tekstur.opacity}'/%3E%3C/svg%3E")`,
+      },
       transitionDuration: {
         DEFAULT: bevaegelse.varighed,
+        reveal: bevaegelse.reveal,
       },
       transitionTimingFunction: {
         DEFAULT: bevaegelse.kurve,
+      },
+      rotate: {
+        stempel: rotation.stempel,
+        "lap-v": rotation.lapVenstre,
+        "lap-h": rotation.lapHoejre,
+        ramme: rotation.ramme,
       },
       minHeight: {
         touch: "44px",

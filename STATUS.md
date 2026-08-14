@@ -1,9 +1,29 @@
 # STATUS
-Sidst opdateret: 2026-08-14 af cloud-session (S1–S11 + S13–S16)
+Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Nu
 - Intet i gang. Næste opgave: S12 [KRÆVER NØGLER] — ejeren kører hjemme-checklisten (HANDOFF §6) først
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9` (én commit pr. opgave):
+- 2026-08-15 S17 Visuel rebuild v2 "katalog møder plakat" (REDESIGN.md): tokens v2
+  (plakat/kaempe-typeskala m. clamp, offset-skygge i gran/hør, rotationstrin,
+  tekstur-opacity, bevægelses-varigheder 150/300 ms + 60 ms stagger), Sømmen 2.0
+  (dobbelt stiplet + hover/aktiv-markering), prislap- og stempel-motiv
+  (components/ui/prislap.tsx, stempel.tsx), scroll-reveal (rå IntersectionObserver,
+  én gang, bag `@media (scripting: enabled)` + prefers-reduced-motion), tal-tæller,
+  syende søm-progress. Alle sider fra REDESIGN §3 bygget om: plakat-hero
+  ("SÆLG DIT TØJ HURTIGERE", rav på sidste ord), farveblokke (kalk→hør→gran→hør),
+  kæmpe rav-mono-tal, priser som prislapper på gran, app-topbar m. søm + saldo-prislap,
+  bundnav m. søm-overkant, taktile rollekort, fuld-bredde plakat-knap, resultatside
+  m. mono-sektionsmarkører og prislap-pris, kopiér m. "KOPIERET"-stempel, statistik
+  som gran-blok m. tællende kæmpe-tal, guide-kort m. offset-skygge og rav-numre.
+  Kontrasttest udvidet (hør/rav på gran, ravDyb på hør). 77 tests, lint, typecheck,
+  build — alt grønt. Screenshots 320/390/430 px: ingen vandret scroll (heller ikke 320).
+  Dødstegn-tjek REDESIGN §5: (1) hero kan ikke ligge på en SaaS — typografien ER
+  grafikken; (2) intet view uden gran/rav/fysisk motiv — app-skallen bærer søm+prislap,
+  tomme/succes-tilstande er gran-blokke; (3) dosering holdt — maks 1 stempel pr. view,
+  rotation kun på prislap-klynger og hero-rammen; (4) intet bevæger sig uden
+  brugerhandling ud over scroll-reveal/tæller, alt bag reduced-motion; (5) ingen
+  neubrutalism — skygger i hør/gran (aldrig sort), radius 8 px, ingen pills.
 - 2026-08-14 Dokumenter: HANDOFF, SPEC, STATUS, BACKLOG committet
 - 2026-08-14 S1 Scaffold: Next.js 15 + TS strict + Tailwind, mappestruktur, netlify.toml, supabase config + migration 1 (skema + RLS), .env.example, CI, copy-manifest-test
 - 2026-08-14 S2 Design: DESIGN.md, tokens.ts (eneste kilde), self-hostede OFL-skrifter (Bricolage Grotesque/Instrument Sans/Spline Sans Mono), Button/Field/Card/Badge, WCAG-kontrasttest
@@ -35,3 +55,7 @@ Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9` (én commit pr. opgave):
 - 2026-08-14: B-6-refund refunderer hele annonce-kreditten (1 kredit = 1 annonce; der findes ingen separat visualiserings-kredit)
 - 2026-08-14: Uden TRIGGER_SECRET_KEY køres pipelinen inline i baggrunden (kun dev/mock); med nøgle altid Trigger.dev
 - 2026-08-14: Farvetokenet "detalje" må ikke eksponeres i Tailwind (navnekollision med typeskala-trinnet) — brug rav/pris direkte
+- 2026-08-15: ravDyb på hør er kun godkendt til STORE pristal/stempler (≥ 24 px, AA large-text 3,46:1) — brødtekst på hør er altid koks; håndhævet i tokens.test.ts
+- 2026-08-15: Scroll-reveal skjuler kun indhold bag `@media (scripting: enabled) and (prefers-reduced-motion: no-preference)` — uden JS eller med reduceret bevægelse vises alt med det samme (ingen tom side ved JS-fejl)
+- 2026-08-15: Rotationer og offset-skygger er deterministiske pr. indeks (rotate-lap-v/-h/-stempel/-ramme fra tokens) — aldrig random, aldrig sort skygge (kun gran/hør)
+- 2026-08-15: da.landing.samletVaerdi udgik; statistik-blokken bruger kæmpe mono-tal + solgtMedFenja-linjen

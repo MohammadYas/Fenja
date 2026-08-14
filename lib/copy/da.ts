@@ -159,7 +159,8 @@ export const da = {
     gemSalg: "Gem salget",
     statistikTitel: "Dine tal",
     solgteAntal: (antal: number) => (antal === 1 ? "1 solgt" : `${antal} solgte`),
-    samletVaerdi: (kr: number) => `Solgt for ${kr} kr. med Fenja`,
+    // Heltestallet i statistik-blokken: kæmpe mono-tal + denne linje under (REDESIGN §3.5)
+    solgtMedFenja: "solgt med Fenja",
     liggetid: (dage: number) =>
       dage === 1 ? "1 dag i snit før salg" : `${dage} dage i snit før salg`,
   },
@@ -179,6 +180,10 @@ export const da = {
     kvittering: "Du får kvittering på mail fra Stripe.",
   },
   landing: {
+    // Plakat-heroen (REDESIGN §3.1): ét ord pr. linje, sidste ord fremhævet i rav.
+    heroPlakatLinjer: ["Sælg", "dit tøj"],
+    heroPlakatFremhaevet: "hurtigere",
+    heroStempel: "2 min",
     heroTitel: "Færdig Vinted-annonce på 2 minutter",
     heroTekst:
       "Tag et par mobilfotos af dit tøj. Fenja renser billederne, viser hvordan tøjet ser ud på, og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted.",

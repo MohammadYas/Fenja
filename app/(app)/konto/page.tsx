@@ -30,17 +30,25 @@ export default async function Konto() {
 
   return (
     <main className="py-6">
-      <h1 className="font-display text-display">{da.konto.titel}</h1>
+      <h1 className="font-display text-kaempe font-bold uppercase">
+        {da.konto.titel}
+      </h1>
 
       <Card className="mt-6">
-        <dl className="flex flex-col gap-3">
+        <dl className="flex flex-col gap-4">
           <div>
-            <dt className="text-detalje text-tekst/70">{da.konto.emailLabel}</dt>
+            <dt className="font-mono text-detalje uppercase tracking-wide text-tekst/70">
+              {da.konto.emailLabel}
+            </dt>
             <dd className="break-words">{user!.email}</dd>
           </div>
           <div>
-            <dt className="text-detalje text-tekst/70">{da.konto.saldoLabel}</dt>
-            <dd className="font-mono text-titel">{da.nav.saldo(saldo)}</dd>
+            <dt className="font-mono text-detalje uppercase tracking-wide text-tekst/70">
+              {da.konto.saldoLabel}
+            </dt>
+            <dd className="font-mono text-hero font-bold text-pris">
+              {da.nav.saldo(saldo)}
+            </dd>
           </div>
         </dl>
       </Card>

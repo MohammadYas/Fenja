@@ -8,8 +8,8 @@ import {
   EksempelHelhed,
   EksempelLabel,
 } from "@/components/foto-eksempler";
+import { SektionsMarkoer } from "@/components/sektions-markoer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Field } from "@/components/ui/field";
 import { vinted } from "@/lib/config";
 import { da } from "@/lib/copy/da";
@@ -123,18 +123,21 @@ export default function NytItem() {
 
   return (
     <main className="py-6">
-      <h1 className="font-display text-display">{da.nytItem.titel}</h1>
-      <p className="mt-2 max-w-laesbar text-tekst/80">{da.nytItem.forklaring}</p>
+      <h1 className="font-display text-kaempe font-bold uppercase">
+        {da.nytItem.titel}
+      </h1>
+      <p className="mt-3 max-w-laesbar text-tekst/80">{da.nytItem.forklaring}</p>
 
-      <form onSubmit={indsend} className="mt-8 flex flex-col gap-8">
+      <form onSubmit={indsend} className="mt-8 flex flex-col gap-10">
         <section aria-label={da.nytItem.fotoTitel}>
-          <h2 className="text-titel font-medium">{da.nytItem.fotoTitel}</h2>
-          <div className="mt-3 flex flex-col gap-3">
+          <SektionsMarkoer nr={1} titel={da.nytItem.fotoTitel} />
+          <div className="mt-4 flex flex-col gap-4">
             {(Object.keys(EKSEMPLER) as Rolle[]).map((rolle) => {
               const info = da.nytItem.roller[rolle];
               const valgt = fotos[rolle];
               return (
-                <Card key={rolle} className="flex items-center gap-4">
+                // Taktilt rollekort (REDESIGN §3.3): koks-kant + hør-offset-skygge
+                <div key={rolle} className="kort-taktil flex items-center gap-4 p-4">
                   {valgt ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -166,14 +169,14 @@ export default function NytItem() {
                       onChange={(e) => vaelgFoto(rolle, e.target.files?.[0])}
                     />
                   </label>
-                </Card>
+                </div>
               );
             })}
           </div>
         </section>
 
         <section aria-label={da.nytItem.felterTitel} className="flex flex-col gap-5">
-          <h2 className="text-titel font-medium">{da.nytItem.felterTitel}</h2>
+          <SektionsMarkoer nr={2} titel={da.nytItem.felterTitel} />
           <Field
             label={da.nytItem.maerkeLabel}
             list="maerker"
@@ -243,7 +246,12 @@ export default function NytItem() {
           </p>
         ) : null}
 
-        <Button type="submit" travl={travl}>
+        {/* Stor fuld-bredde plakat-knap (REDESIGN §3.3) */}
+        <Button
+          type="submit"
+          travl={travl}
+          className="w-full py-4 font-display text-titel font-bold uppercase"
+        >
           {travl ? da.nytItem.uploader : da.nytItem.lavAnnonce}
         </Button>
       </form>

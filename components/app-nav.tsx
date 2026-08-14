@@ -54,12 +54,19 @@ export function AppNav() {
         {PUNKTER.map((punkt) => {
           const aktiv = sti.startsWith(punkt.href);
           return (
-            <li key={punkt.href} className="flex-1">
+            <li key={punkt.href} className="relative flex-1">
+              {/* Aktiv fane markeres med søm-overkant + gran (REDESIGN §3.2) */}
+              {aktiv ? (
+                <span
+                  aria-hidden="true"
+                  className="soem-vandret absolute inset-x-3 top-0"
+                />
+              ) : null}
               <Link
                 href={punkt.href}
                 aria-current={aktiv ? "page" : undefined}
                 className={`flex min-h-touch flex-col items-center gap-0.5 py-2 text-detalje ${
-                  aktiv ? "text-primaer" : "text-tekst/70"
+                  aktiv ? "font-medium text-primaer" : "text-tekst/70"
                 }`}
               >
                 {punkt.ikon}

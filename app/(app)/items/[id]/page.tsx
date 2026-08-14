@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { KopierKnap } from "@/components/kopier-knap";
+import { Prislap } from "@/components/ui/prislap";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
@@ -58,7 +59,9 @@ export default async function ItemSide({
   if (!item.leveret_at) {
     return (
       <main className="py-6">
-        <h1 className="font-display text-display">{da.resultat.titelArbejder}</h1>
+        <h1 className="font-display text-kaempe font-bold">
+          {da.resultat.titelArbejder}
+        </h1>
         <Progress itemId={id} />
       </main>
     );
@@ -85,11 +88,15 @@ export default async function ItemSide({
 
   return (
     <main className="py-6">
-      <h1 className="font-display text-display">{item.titel ?? item.brand}</h1>
+      <h1 className="font-display text-kaempe font-bold">
+        {item.titel ?? item.brand}
+      </h1>
 
       {/* 1 · Ægte fotos først — altid (compliance-rækkefølgen, FR-6) */}
-      <section className="mt-8" aria-label={da.resultat.aegteFotosTitel}>
-        <h2 className="text-titel font-medium">{da.resultat.aegteFotosTitel}</h2>
+      <section className="mt-10" aria-label={da.resultat.aegteFotosTitel}>
+        <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
+          01 — {da.resultat.aegteFotosTitel}
+        </h2>
         <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
           {da.resultat.aegteFotosInstruks}
         </p>
@@ -121,8 +128,10 @@ export default async function ItemSide({
 
       {/* 2 · Visualisering efter — med badge, aldrig først */}
       <section className="mt-8" aria-label={da.resultat.visualiseringTitel}>
-        <div className="flex items-center gap-2">
-          <h2 className="text-titel font-medium">{da.resultat.visualiseringTitel}</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
+            02 — {da.resultat.visualiseringTitel}
+          </h2>
           <Badge variant="visualisering">{da.resultat.visualiseringBadge}</Badge>
         </div>
         {visualiseringFejlede ? (
@@ -159,7 +168,9 @@ export default async function ItemSide({
 
       {/* 3 · Annoncetekst med kopiér-knap pr. element */}
       <section className="mt-8" aria-label={da.resultat.tekstTitel}>
-        <h2 className="text-titel font-medium">{da.resultat.tekstTitel}</h2>
+        <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
+          03 — {da.resultat.tekstTitel}
+        </h2>
         <div className="mt-3 flex flex-col gap-4">
           <Card>
             <p className="text-detalje text-tekst/70">{da.resultat.titelLabel}</p>
@@ -184,15 +195,21 @@ export default async function ItemSide({
               </div>
             </Card>
           ) : null}
-          <Card>
-            <p className="text-detalje text-tekst/70">{da.resultat.prisLabel}</p>
-            <p className="mt-1 font-mono text-titel text-pris">
-              {da.resultat.prisVisning(item.pris_fra_dkk ?? 0, item.pris_til_dkk ?? 0)}
-            </p>
-            <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+          {/* Prisforslaget som stor prislap — tøjets eget motiv (REDESIGN §3.4).
+              ravDyb på hør er kun til store tal (≥ 24 px, AA large-text). */}
+          <div>
+            <Prislap rotation="hoejre" className="max-w-full">
+              <p className="font-mono text-detalje uppercase tracking-wide text-tekst/70">
+                {da.resultat.prisLabel}
+              </p>
+              <p className="mt-1 font-mono text-hero font-bold text-ravDyb">
+                {da.resultat.prisVisning(item.pris_fra_dkk ?? 0, item.pris_til_dkk ?? 0)}
+              </p>
+            </Prislap>
+            <p className="mt-3 max-w-laesbar text-detalje text-tekst/70">
               {item.pris_begrundelse}
             </p>
-          </Card>
+          </div>
         </div>
       </section>
 
@@ -213,7 +230,9 @@ export default async function ItemSide({
 
       {/* 4 · Checkliste */}
       <section className="mt-8" aria-label={da.resultat.checklisteTitel}>
-        <h2 className="text-titel font-medium">{da.resultat.checklisteTitel}</h2>
+        <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
+          04 — {da.resultat.checklisteTitel}
+        </h2>
         <ol className="mt-3 flex max-w-laesbar list-decimal flex-col gap-2 pl-5">
           {da.resultat.checkliste.map((punkt) => (
             <li key={punkt}>{punkt}</li>

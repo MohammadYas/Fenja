@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Card } from "@/components/ui/card";
 import { da } from "@/lib/copy/da";
 import { hentGuides } from "@/lib/guides";
 
@@ -14,24 +13,32 @@ export default function Laer() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="font-display text-display">{da.laer.titel}</h1>
-      <p className="mt-2 max-w-laesbar text-tekst/80">{da.laer.forklaring}</p>
-      <ul className="mt-8 flex flex-col gap-4">
-        {guides.map((guide) => (
+      <h1 className="font-display text-kaempe font-bold uppercase">
+        {da.laer.titel}
+      </h1>
+      <p className="mt-3 max-w-laesbar text-tekst/80">{da.laer.forklaring}</p>
+      {/* Guide-kort med offset-skygge og nummererede rav-tal (REDESIGN §3.6) */}
+      <ul className="mt-10 flex flex-col gap-5">
+        {guides.map((guide, i) => (
           <li key={guide.slug}>
-            <Card>
-              <h2 className="text-titel font-medium">
-                <Link
-                  href={`/laer/${guide.slug}`}
-                  className="underline-offset-4 hover:underline"
-                >
-                  {guide.titel}
-                </Link>
-              </h2>
-              <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
-                {guide.beskrivelse}
-              </p>
-            </Card>
+            <div className="kort-taktil flex items-start gap-4 p-4">
+              <span
+                aria-hidden="true"
+                className="select-none font-mono text-hero font-bold leading-none text-rav"
+              >
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div className="min-w-0">
+                <h2 className="text-titel font-medium">
+                  <Link href={`/laer/${guide.slug}`} className="soem-link">
+                    {guide.titel}
+                  </Link>
+                </h2>
+                <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+                  {guide.beskrivelse}
+                </p>
+              </div>
+            </div>
           </li>
         ))}
       </ul>

@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { Taeller } from "@/components/taeller";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { MarkerSolgt } from "./marker-solgt";
@@ -45,44 +45,60 @@ export default async function Oversigt() {
       : null;
 
   if (items.length === 0) {
+    // Tom tilstand som gran-blok (REDESIGN §2.2)
     return (
       <main className="py-6">
-        <h1 className="font-display text-display">{da.oversigt.titel}</h1>
-        <p className="mt-4 max-w-laesbar text-tekst/80">{da.oversigt.tom}</p>
-        <Link
-          href="/nyt-item"
-          className="mt-6 inline-flex min-h-touch items-center rounded-bloed bg-primaer px-5 font-medium text-primaer-tekst"
-        >
-          {da.oversigt.foersteKnap}
-        </Link>
+        <h1 className="font-display text-kaempe font-bold uppercase">
+          {da.oversigt.titel}
+        </h1>
+        <div className="mt-6 rounded-bloed bg-gran p-6 text-kalk">
+          <p className="max-w-laesbar">{da.oversigt.tom}</p>
+          <Link
+            href="/nyt-item"
+            className="mt-6 inline-flex min-h-touch items-center rounded-bloed bg-kalk px-5 font-medium text-gran shadow-offset-hoer transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-offset-hoer-loeft"
+          >
+            {da.oversigt.foersteKnap}
+          </Link>
+        </div>
       </main>
     );
   }
 
   return (
     <main className="py-6">
-      <h1 className="font-display text-display">{da.oversigt.titel}</h1>
+      <h1 className="font-display text-kaempe font-bold uppercase">
+        {da.oversigt.titel}
+      </h1>
 
       {solgte.length > 0 ? (
-        <Card className="mt-6" aria-label={da.oversigt.statistikTitel}>
-          <p className="font-mono text-titel text-pris">
-            {da.oversigt.samletVaerdi(samletVaerdi)}
+        // Statistik som gran-blok med kæmpe mono-tal — "solgt for X kr." er
+        // heltestallet, og det tæller op (REDESIGN §3.5/§2.5)
+        <section
+          className="mt-6 rounded-bloed bg-gran p-5 text-kalk"
+          aria-label={da.oversigt.statistikTitel}
+        >
+          <p className="font-mono text-detalje font-bold uppercase tracking-wide text-hoer">
+            {da.oversigt.statistikTitel}
           </p>
-          <p className="mt-1 text-detalje text-tekst/70">
-            {da.oversigt.solgteAntal(solgte.length)}
+          <p className="mt-3 font-mono text-kaempe font-bold leading-none">
+            <Taeller til={samletVaerdi} /> kr.
+          </p>
+          <p className="mt-3 text-detalje text-hoer">
+            {da.oversigt.solgtMedFenja} · {da.oversigt.solgteAntal(solgte.length)}
             {snitLiggetid != null ? ` · ${da.oversigt.liggetid(snitLiggetid)}` : null}
           </p>
-        </Card>
+        </section>
       ) : null}
 
-      <ul className="mt-6 flex flex-col gap-3">
+      <ul className="mt-6 flex flex-col gap-4">
         {items.map((item) => (
           <li key={item.id}>
-            <Card className="flex flex-col gap-2">
+            {/* Taktilt, interaktivt kort (REDESIGN §2.4) */}
+            <div className="kort-taktil flex flex-col gap-2 p-4">
               <div className="flex items-center justify-between gap-3">
                 <Link
                   href={`/items/${item.id}`}
-                  className="min-w-0 flex-1 font-medium underline-offset-4 hover:underline"
+                  className="soem-link min-w-0 flex-1 font-medium"
                 >
                   <span className="block truncate">
                     {item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim()}
@@ -93,12 +109,12 @@ export default async function Oversigt() {
                 </Badge>
               </div>
               {item.status === "sold" && item.sold_price_dkk != null ? (
-                <p className="font-mono text-detalje text-pris">
+                <p className="font-mono text-detalje font-bold text-pris">
                   {item.sold_price_dkk} kr.
                 </p>
               ) : null}
               {item.status === "active" ? <MarkerSolgt itemId={item.id} /> : null}
-            </Card>
+            </div>
           </li>
         ))}
       </ul>

@@ -30,6 +30,6 @@
 [x] S15 Misbrugsværn + admin-omkostningsside (E-5, G-1) — Sentry (G-2) afventer ejer-beslutning
 [x] S16 Preset 2+3, delbart before/after (C-5, F-4) — polering fra egen brugstest afventer S12
 ## Redesign
-[ ] S17 KOMPLET visuel rebuild efter REDESIGN.md ("katalog møder plakat"):
+[x] S17 KOMPLET visuel rebuild efter REDESIGN.md ("katalog møder plakat"):
         tokens v2, plakat-typo, farveblokke, prislap/stempel-motiv, Sømmen 2.0,
         mikro-bevægelse. Compliance og tests fredet. DoD i REDESIGN.md §6

@@ -57,6 +57,26 @@ describe("farvetokens overholder WCAG AA", () => {
   });
 });
 
+// v2-farveblokke (REDESIGN §2.2): sektioner skifter grund — nye kombinationer
+// skal bestå samme AA-regler som resten.
+describe("v2-kombinationer på farveblokke overholder WCAG", () => {
+  it("hør på gran (sekundær tekst på gran-blokke) ≥ 4,5:1", () => {
+    expect(kontrast(farver.hoer, farver.gran)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("rav på gran (kæmpe dekorative mono-tal, aldrig brødtekst) ≥ 2,5:1", () => {
+    expect(kontrast(farver.rav, farver.gran)).toBeGreaterThanOrEqual(2.5);
+  });
+
+  it("ravDyb på hør (store pristal/stempler på prislap, ≥ 24 px) ≥ 3:1", () => {
+    expect(kontrast(farver.ravDyb, farver.hoer)).toBeGreaterThanOrEqual(3);
+  });
+
+  it("koks på hør (prislappens brødtekst) ≥ 4,5:1", () => {
+    expect(kontrast(farver.koks, farver.hoer)).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
 describe("semantiske roller peger på paletten", () => {
   it("baggrund/tekst/primær matcher manifestets tokens", () => {
     expect(roller.baggrund).toBe(farver.kalk);

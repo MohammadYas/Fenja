@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-baggrund font-brod text-basis text-tekst antialiased;
+    @apply bg-baggrund bg-tekstur font-brod text-basis text-tekst antialiased;
   }
 
   /* Synligt keyboard-fokus overalt (HANDOFF §2.2.5) */
@@ -29,9 +29,10 @@
 }
 
 @layer components {
-  /* Typografi til markdown-indhold (Lær-guides) — deriverer fra tokens */
+  /* Typografi til markdown-indhold (Lær-guides) — deriverer fra tokens.
+     v2: artikler får plakat-rubrik (REDESIGN §3.6). */
   .prose-fenja h1 {
-    @apply font-display text-display;
+    @apply font-display text-kaempe font-bold uppercase;
   }
   .prose-fenja h2 {
     @apply mt-8 text-titel font-medium;
@@ -53,23 +54,152 @@
     @apply text-primaer underline underline-offset-4;
   }
 
-  /* Sømmen — signatur-elementet (DESIGN.md §6): stiplet tekstilsøm i rav.
-     Lodret som skillelinje i before/after, horisontal som sektionsdeler. */
+  /* Sømmen 2.0 — signatur-elementet (DESIGN.md §6, REDESIGN §2.4): nu FYSISK,
+     en dobbelt stiplet tekstilsøm i rav (to parallelle linjer, 3 px imellem).
+     Lodret som skillelinje i before/after, vandret som sektionsdeler. */
   .soem {
-    background-image: repeating-linear-gradient(
-      to bottom,
-      theme("colors.rav") 0 6px,
-      transparent 6px 11px
-    );
-    width: 2px;
+    width: 7px;
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        theme("colors.rav") 0 6px,
+        transparent 6px 11px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        theme("colors.rav") 0 6px,
+        transparent 6px 11px
+      );
+    background-size:
+      2px 100%,
+      2px 100%;
+    background-position:
+      left top,
+      right top;
+    background-repeat: no-repeat;
   }
 
   .soem-vandret {
+    height: 7px;
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        theme("colors.rav") 0 6px,
+        transparent 6px 11px
+      ),
+      repeating-linear-gradient(
+        to right,
+        theme("colors.rav") 0 6px,
+        transparent 6px 11px
+      );
+    background-size:
+      100% 2px,
+      100% 2px;
+    background-position:
+      left top,
+      left bottom;
+    background-repeat: no-repeat;
+  }
+
+  /* Søm som hover/aktiv-markering på links og nav (REDESIGN §2.4/§2.5) —
+     erstatter standard-underline med en stiplet søm i rav. */
+  .soem-link {
+    text-decoration: none;
+  }
+  .soem-link:hover,
+  .soem-link:focus-visible,
+  .soem-link[aria-current] {
+    text-decoration-line: underline;
+    text-decoration-style: dashed;
+    text-decoration-color: theme("colors.rav");
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+  }
+
+  /* Den syende søm: progress-spor (koks/15) + fyld (rav-søm) der "syr sig selv"
+     hen over skærmen trin for trin (REDESIGN §2.5). Bredden sættes af komponenten. */
+  .soem-spor {
+    height: 2px;
+    background-image: repeating-linear-gradient(
+      to right,
+      theme("colors.kant") 0 6px,
+      transparent 6px 11px
+    );
+  }
+  .soem-fyld {
+    height: 2px;
     background-image: repeating-linear-gradient(
       to right,
       theme("colors.rav") 0 6px,
       transparent 6px 11px
     );
-    height: 2px;
+    transition: width theme("transitionDuration.reveal") theme("transitionTimingFunction.DEFAULT");
+  }
+
+  /* Taktile kort (REDESIGN §2.4): 1,5 px koks-kant + solid offset-skygge i
+     hør/gran — aldrig blur, aldrig sort. KUN på interaktive kort. */
+  .kort-taktil {
+    border: 1.5px solid theme("colors.koks");
+    border-radius: theme("borderRadius.bloed");
+    background-color: theme("colors.baggrund");
+    box-shadow: theme("boxShadow.offset-hoer");
+    transition:
+      transform theme("transitionDuration.DEFAULT") theme("transitionTimingFunction.DEFAULT"),
+      box-shadow theme("transitionDuration.DEFAULT") theme("transitionTimingFunction.DEFAULT");
+  }
+  .kort-taktil-gran {
+    box-shadow: theme("boxShadow.offset-gran");
+  }
+  .kort-taktil:hover,
+  .kort-taktil:focus-within {
+    transform: translate(-2px, -2px);
+    box-shadow: theme("boxShadow.offset-hoer-loeft");
+  }
+  .kort-taktil-gran:hover,
+  .kort-taktil-gran:focus-within {
+    box-shadow: theme("boxShadow.offset-gran-loeft");
+  }
+
+  /* Prislappen (REDESIGN §2.3): tøjets hangtag som gennemgående motiv —
+     hør-flade, koks-kant, afklippet hjørne og hul med cirkel-outline ("snoren").
+     Rotation sættes deterministisk af komponenten (rotate-lap-v / rotate-lap-h). */
+  .prislap {
+    position: relative;
+    background-color: theme("colors.hoer");
+    border: 1px solid theme("colors.koks");
+    border-radius: theme("borderRadius.bloed");
+    clip-path: polygon(16px 0, 100% 0, 100% 100%, 0 100%, 0 16px);
+  }
+  .prislap::before {
+    content: "";
+    position: absolute;
+    top: 9px;
+    left: 9px;
+    width: 9px;
+    height: 9px;
+    border: 1.5px solid theme("colors.koks");
+    border-radius: 9999px;
+    background-color: theme("colors.kalk");
+  }
+}
+
+@layer utilities {
+  /* Scroll-reveal (REDESIGN §2.5): kun transform/opacity, én gang, rå
+     IntersectionObserver (components/reveal.tsx). Skjules KUN når scripting er
+     aktiv OG brugeren ikke har bedt om reduceret bevægelse — ellers vises alt
+     med det samme. */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(12px);
+      transition:
+        opacity theme("transitionDuration.reveal") theme("transitionTimingFunction.DEFAULT"),
+        transform theme("transitionDuration.reveal") theme("transitionTimingFunction.DEFAULT");
+      transition-delay: var(--reveal-forsinkelse, 0ms);
+    }
+    [data-reveal="vist"] {
+      opacity: 1;
+      transform: none;
+    }
   }
 }
