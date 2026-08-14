@@ -15,9 +15,15 @@ const BESKYTTEDE_PRAEFIKSER = [
 export async function middleware(request: NextRequest) {
   let respons = NextResponse.next({ request });
 
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonNoegle = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  // Uden Supabase-env (build-preview, lokal kig på marketing-sider) gør
+  // middleware ingenting — app-siderne håndhæver selv login.
+  if (!url || !anonNoegle) return respons;
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
+    url,
+    anonNoegle,
     {
       cookies: {
         getAll() {

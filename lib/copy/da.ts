@@ -295,6 +295,19 @@ export const da = {
       "Korte guides om at sælge brugt tøj: sourcing, priser, fotos og reglerne, der beskytter din konto. Gratis — også uden konto.",
     laesGuide: "Læs guiden",
   },
+  admin: {
+    titel: "Drift",
+    dagensForbrug: "Dagens API-forbrug (globalt loft)",
+    loftNaaet: "Loftet er nået — nye pipelines afvises indtil midnat (UTC).",
+    prDag: "Forbrug pr. dag (7 dage)",
+    prBruger: "Forbrug pr. bruger (7 dage)",
+    senesteGenereringer: "Seneste genereringer",
+  },
+  delebillede: {
+    hent: "Hent før/efter-billede til deling",
+    forklaring:
+      "9:16-format klar til TikTok eller Instagram. Kun dine ægte fotos — du vælger selv, om og hvor du deler det.",
+  },
   footer: {
     vilkaar: "Vilkår",
     privatliv: "Privatliv",

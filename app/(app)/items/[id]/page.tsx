@@ -196,6 +196,21 @@ export default async function ItemSide({
         </div>
       </section>
 
+      <section className="mt-8" aria-label={da.delebillede.hent}>
+        <a
+          href={`/api/items/${id}/delebillede`}
+          download
+          className="inline-flex min-h-touch items-center rounded-bloed border border-koks px-5 font-medium"
+        >
+          {da.delebillede.hent}
+        </a>
+        <p className="mt-2 max-w-laesbar text-detalje text-tekst/70">
+          {da.delebillede.forklaring}
+        </p>
+      </section>
+
+      <div className="soem-vandret mt-8" aria-hidden="true" />
+
       {/* 4 · Checkliste */}
       <section className="mt-8" aria-label={da.resultat.checklisteTitel}>
         <h2 className="text-titel font-medium">{da.resultat.checklisteTitel}</h2>
