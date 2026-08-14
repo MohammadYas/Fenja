@@ -1,0 +1,92 @@
+import { describe, expect, it } from "vitest";
+import { kreditter, misbrugsvaern } from "@/lib/config";
+import { tilfoejSignupKreditter } from "@/lib/credits/ledger";
+import { MemoryLedgerDb } from "@/lib/credits/memory";
+import { BudgetloftFejl, koerItemPipeline } from "@/lib/pipeline/run";
+import { MockImageProvider, MockTextProvider } from "@/lib/providers/mock";
+import { FakePipelineDb, FakePipelineStorage } from "../fakes/pipeline-fakes";
+
+async function opsaetning(mock: {
+  onModelFejler?: boolean;
+  troskabsScore?: number;
+} = {}) {
+  const db = new FakePipelineDb();
+  const ledger = new MemoryLedgerDb();
+  await tilfoejSignupKreditter(ledger, "user-1");
+  return {
+    deps: {
+      db,
+      storage: new FakePipelineStorage(),
+      image: new MockImageProvider(mock),
+      text: new MockTextProvider(mock),
+      ledger,
+    },
+    db,
+    ledger,
+  };
+}
+
+describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
+  it("fuld leverance: rens + visualisering + tekst, kredit trukket", async () => {
+    const { deps, db, ledger } = await opsaetning();
+    const resultat = await koerItemPipeline(deps, "item-1");
+
+    expect(resultat.rensede).toHaveLength(2);
+    expect(resultat.visualisering).not.toBeNull();
+    expect(resultat.tekst.beskrivelse).toContain("lille hul");
+    expect(resultat.refunderet).toBe(false);
+    expect(await ledger.hentSaldo("user-1")).toBe(
+      kreditter.gratisVedSignup - kreditter.prisPrAnnonce,
+    );
+    expect(db.leverede).toContain("item-1");
+    // Omkostningslog pr. generering (G-1)
+    const kinds = db.generings.map((g) => g.kind).sort();
+    expect(kinds).toEqual(["cleanup", "onmodel", "text"]);
+    expect(db.generings.every((g) => g.status === "succeeded")).toBe(true);
+  });
+
+  it("delvis leverance (B-6): fejlet visualisering → rens+tekst leveres, kredit refunderes", async () => {
+    const { deps, db, ledger } = await opsaetning({ onModelFejler: true });
+    const resultat = await koerItemPipeline(deps, "item-1");
+
+    expect(resultat.visualisering).toBeNull();
+    expect(resultat.refunderet).toBe(true);
+    expect(resultat.tekst.titel).toContain("Ganni");
+    // Netto nul: træk + refund
+    expect(await ledger.hentSaldo("user-1")).toBe(kreditter.gratisVedSignup);
+    expect(db.generings.find((g) => g.kind === "onmodel")?.status).toBe("failed");
+  });
+
+  it("lav troskab efter retry giver samme delvise leverance (C-3)", async () => {
+    const { deps } = await opsaetning({ troskabsScore: 0.2 });
+    const resultat = await koerItemPipeline(deps, "item-1");
+    expect(resultat.visualisering).toBeNull();
+    expect(resultat.refunderet).toBe(true);
+  });
+
+  it("genkørsel trækker ikke dobbelt (E-4/NFR-10)", async () => {
+    const { deps, ledger } = await opsaetning();
+    await koerItemPipeline(deps, "item-1");
+    await koerItemPipeline(deps, "item-1"); // retry af hele jobbet
+    expect(await ledger.hentSaldo("user-1")).toBe(
+      kreditter.gratisVedSignup - kreditter.prisPrAnnonce,
+    );
+  });
+
+  it("budgetloftet stopper nye kørsler (E-5 kill-switch)", async () => {
+    const { deps, db } = await opsaetning();
+    db.dagensForbrug = misbrugsvaern.dagligtBudgetloftDkk;
+    await expect(koerItemPipeline(deps, "item-1")).rejects.toThrow(BudgetloftFejl);
+  });
+
+  it("visualiseringen i storage har badge-metadata (C-4)", async () => {
+    const { deps } = await opsaetning();
+    const resultat = await koerItemPipeline(deps, "item-1");
+    const storage = deps.storage as FakePipelineStorage;
+    const gemt = storage.gemte.get(resultat.visualisering!.sti);
+    expect(gemt).toBeDefined();
+    const sharp = (await import("sharp")).default;
+    const meta = await sharp(gemt!).metadata();
+    expect(meta.exif?.toString("utf8")).toContain("AI-genereret");
+  });
+});

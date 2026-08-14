@@ -8,17 +8,30 @@ export const BADGE_TEKST = "VISUALISERING";
 export const AI_METADATA_TEKST =
   "AI-genereret visualisering. Maerket jf. EU AI-forordningen art. 50. Lavet med Fenja.";
 
-function badgeSvg(bredde: number): { svg: Buffer; hoejde: number } {
-  // Skalerer med billedet: ~4 % af bredden i højde, mono-uppercase som i UI'et
-  const hoejde = Math.max(28, Math.round(bredde * 0.045));
-  const skrift = Math.round(hoejde * 0.5);
-  const pad = Math.round(hoejde * 0.55);
-  const tekstBredde = Math.round(BADGE_TEKST.length * skrift * 0.62);
+function badgeSvg(bredde: number): { svg: Buffer; hoejde: number; margin: number } {
+  // Skalerer med billedet: ~4 % af bredden i højde, mono-uppercase som i UI'et.
+  // Badgen må aldrig være bredere end billedet — skaleres ned på små billeder.
+  let hoejde = Math.max(28, Math.round(bredde * 0.045));
+  let skrift = Math.round(hoejde * 0.5);
+  let pad = Math.round(hoejde * 0.55);
+  let tekstBredde = Math.round(BADGE_TEKST.length * skrift * 0.62);
+  let margin = Math.round(hoejde * 0.4);
+
+  const totalBredde = () => tekstBredde + pad * 2 + margin;
+  if (totalBredde() > bredde) {
+    const faktor = bredde / totalBredde();
+    hoejde = Math.max(10, Math.floor(hoejde * faktor));
+    skrift = Math.max(6, Math.floor(skrift * faktor));
+    pad = Math.max(2, Math.floor(pad * faktor));
+    margin = Math.max(1, Math.floor(margin * faktor));
+    tekstBredde = Math.round(BADGE_TEKST.length * skrift * 0.62);
+  }
+
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${tekstBredde + pad * 2}" height="${hoejde}">
   <rect width="100%" height="100%" fill="#212523"/>
   <text x="${pad}" y="${Math.round(hoejde * 0.68)}" font-family="monospace" font-size="${skrift}" letter-spacing="2" fill="#F1F3F2">${BADGE_TEKST}</text>
 </svg>`;
-  return { svg: Buffer.from(svg), hoejde };
+  return { svg: Buffer.from(svg), hoejde, margin };
 }
 
 /**
@@ -31,14 +44,13 @@ export async function paafoerBadge(billede: Buffer): Promise<Buffer> {
   const bredde = meta.width ?? 1024;
   const hoejde = meta.height ?? 1024;
   const badge = badgeSvg(bredde);
-  const margin = Math.round(badge.hoejde * 0.4);
 
   return base
     .composite([
       {
         input: badge.svg,
-        left: margin,
-        top: hoejde - badge.hoejde - margin,
+        left: badge.margin,
+        top: Math.max(0, hoejde - badge.hoejde - badge.margin),
       },
     ])
     .withExif({
