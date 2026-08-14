@@ -1,3 +1,51 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-baggrund font-brod text-basis text-tekst antialiased;
+  }
+
+  /* Synligt keyboard-fokus overalt (HANDOFF §2.2.5) */
+  :focus-visible {
+    @apply outline-none ring-2 ring-koks ring-offset-2 ring-offset-baggrund;
+  }
+
+  ::selection {
+    @apply bg-gran text-primaer-tekst;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Sømmen — signatur-elementet (DESIGN.md §6): stiplet tekstilsøm i rav.
+     Lodret som skillelinje i before/after, horisontal som sektionsdeler. */
+  .soem {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      theme("colors.rav") 0 6px,
+      transparent 6px 11px
+    );
+    width: 2px;
+  }
+
+  .soem-vandret {
+    background-image: repeating-linear-gradient(
+      to right,
+      theme("colors.rav") 0 6px,
+      transparent 6px 11px
+    );
+    height: 2px;
+  }
+}
