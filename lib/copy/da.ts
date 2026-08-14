@@ -145,6 +145,24 @@ export const da = {
     vintedReglerLink: "Læs Vinteds katalogregler",
     ikkeFundet: "Vi kan ikke finde den annonce. Gå til oversigten og prøv derfra.",
   },
+  oversigt: {
+    titel: "Oversigt",
+    tom: "Ingen items endnu. Start med dit første — det tager cirka 2 minutter.",
+    foersteKnap: "Lav min første annonce",
+    status: {
+      draft: "Kladde",
+      active: "Aktiv",
+      sold: "Solgt",
+    },
+    markerSolgt: "Markér som solgt",
+    salgsprisLabel: "Salgspris i kr.",
+    gemSalg: "Gem salget",
+    statistikTitel: "Dine tal",
+    solgteAntal: (antal: number) => (antal === 1 ? "1 solgt" : `${antal} solgte`),
+    samletVaerdi: (kr: number) => `Solgt for ${kr} kr. med Fenja`,
+    liggetid: (dage: number) =>
+      dage === 1 ? "1 dag i snit før salg" : `${dage} dage i snit før salg`,
+  },
   fejl: {
     generel: "Noget gik galt. Prøv igen — dine billeder og kreditter er ikke rørt.",
     ikkeLoggetInd: "Du skal være logget ind for at se denne side.",
