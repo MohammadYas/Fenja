@@ -59,4 +59,14 @@ Quick smoke test of the design-system generator:
 python3 .claude/skills/ui-ux-pro-max/scripts/search.py "fintech dashboard" --design-system
 ```
 
+## Example output
+
+A generated design system for Fenja itself lives in [`examples/design-system/fenja/MASTER.md`](examples/design-system/fenja/MASTER.md) — produced with:
+
+```bash
+python3 .claude/skills/ui-ux-pro-max/scripts/search.py \
+  "design toolkit developer tool modern minimal" \
+  --design-system --persist -p "Fenja" --output-dir examples
+```
+
 Note: `test_catalog_refresh.py` and `test_relevance_evaluator.py` in `ui-ux-pro-max` are upstream maintenance tests that require refresh scripts not shipped with the installed skill; they are expected to be skipped here.
