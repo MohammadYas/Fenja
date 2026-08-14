@@ -34,10 +34,28 @@ export class SupabasePipelineDb implements PipelineDb {
       kategori: (item.category as string | null) ?? "",
       fejlBeskrivelse: item.defects_text as string | null,
       koebsprisDkk: item.purchase_price_dkk as number | null,
-      fotos: (
-        item.item_photos as { id: string; role: FotoRolle; original_url: string }[]
-      ).map((f) => ({ id: f.id, rolle: f.role, url: f.original_url })),
+      fotos: await Promise.all(
+        (
+          item.item_photos as { id: string; role: FotoRolle; original_url: string }[]
+        ).map(async (f) => ({
+          id: f.id,
+          rolle: f.role,
+          // Providere skal bruge en URL de kan hente — storage-stier signeres
+          url: await this.tilUrl(f.original_url),
+        })),
+      ),
     };
+  }
+
+  private async tilUrl(stiEllerUrl: string): Promise<string> {
+    if (stiEllerUrl.startsWith("http")) return stiEllerUrl;
+    const { data, error } = await this.klient.storage
+      .from(BUCKET)
+      .createSignedUrl(stiEllerUrl, 3600);
+    if (error || !data) {
+      throw new Error(`Signering fejlede for ${stiEllerUrl}: ${error?.message}`);
+    }
+    return data.signedUrl;
   }
 
   async startGenerering(
