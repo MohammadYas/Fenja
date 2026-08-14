@@ -1,10 +1,10 @@
 # BACKLOG — fase A
 ## Fundament
-[ ] S1  Scaffold: Next.js App Router + TS strict + Tailwind + mappestruktur fra HANDOFF §3,
+[x] S1  Scaffold: Next.js App Router + TS strict + Tailwind + mappestruktur fra HANDOFF §3,
         netlify.toml, supabase init + første migration (users, items, item_photos,
         generations, presets, credit_ledger, guides — se SPEC §7), .env.example,
         CI (lint+typecheck+test), STATUS.md + denne BACKLOG committet
-[ ] S2  Design-session: følg HANDOFF §2 → DESIGN.md med tokens + begrundelser,
+[x] S2  Design-session: følg HANDOFF §2 → DESIGN.md med tokens + begrundelser,
         implementér /lib/design/tokens.ts + basis-komponenter (knap, felt, kort,
         badge) SOM ENESTE OUTPUT — ingen sider endnu
 [ ] S3  Provider-lag: ImageProvider-interface + fal-implementering + mock med
