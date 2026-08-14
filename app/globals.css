@@ -29,6 +29,30 @@
 }
 
 @layer components {
+  /* Typografi til markdown-indhold (Lær-guides) — deriverer fra tokens */
+  .prose-fenja h1 {
+    @apply font-display text-display;
+  }
+  .prose-fenja h2 {
+    @apply mt-8 text-titel font-medium;
+  }
+  .prose-fenja p {
+    @apply mt-3 max-w-laesbar;
+  }
+  .prose-fenja ul,
+  .prose-fenja ol {
+    @apply mt-3 flex max-w-laesbar list-disc flex-col gap-1.5 pl-5;
+  }
+  .prose-fenja ol {
+    @apply list-decimal;
+  }
+  .prose-fenja strong {
+    @apply font-semibold;
+  }
+  .prose-fenja a {
+    @apply text-primaer underline underline-offset-4;
+  }
+
   /* Sømmen — signatur-elementet (DESIGN.md §6): stiplet tekstilsøm i rav.
      Lodret som skillelinje i before/after, horisontal som sektionsdeler. */
   .soem {

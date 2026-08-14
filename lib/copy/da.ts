@@ -289,6 +289,12 @@ export const da = {
       },
     ],
   },
+  laer: {
+    titel: "Lær",
+    forklaring:
+      "Korte guides om at sælge brugt tøj: sourcing, priser, fotos og reglerne, der beskytter din konto. Gratis — også uden konto.",
+    laesGuide: "Læs guiden",
+  },
   footer: {
     vilkaar: "Vilkår",
     privatliv: "Privatliv",
