@@ -1,0 +1,31 @@
+# BACKLOG — fase A
+## Fundament
+[ ] S1  Scaffold: Next.js App Router + TS strict + Tailwind + mappestruktur fra HANDOFF §3,
+        netlify.toml, supabase init + første migration (users, items, item_photos,
+        generations, presets, credit_ledger, guides — se SPEC §7), .env.example,
+        CI (lint+typecheck+test), STATUS.md + denne BACKLOG committet
+[ ] S2  Design-session: følg HANDOFF §2 → DESIGN.md med tokens + begrundelser,
+        implementér /lib/design/tokens.ts + basis-komponenter (knap, felt, kort,
+        badge) SOM ENESTE OUTPUT — ingen sider endnu
+[ ] S3  Provider-lag: ImageProvider-interface + fal-implementering + mock med
+        fixtures; VideoProvider-interface (tom impl.); unit tests mod mock
+[ ] S4  Pipeline-kerne: cleanup.ts, onmodel.ts (preset v1), fidelity.ts,
+        listing-text.ts (Claude, D-1/D-2-validering), badge.ts (sharp) —
+        alt testet mod mocks
+[ ] S5  Trigger.dev-job: item-pipeline med parallelle trin, idempotens,
+        delvis leverance (B-6), omkostningslog (G-1)
+[ ] S6  Kreditter: ledger.ts med transaktionel trækning/refund (E-3/E-4) + tests
+## App
+[ ] S7  Auth + konto: magic link, 18+-gate, konto-side, slet konto (A-1..A-5)
+[ ] S8  Nyt item-flow: guidet upload m. roller, komprimering, metadatafelter,
+        "Lav min annonce" med progress (B-1..B-4)
+[ ] S9  Resultatside i compliance-rækkefølge + kopiér-flow + checkliste (B-5)
+[ ] S10 Bibliotek + solgt-markering (B-7)
+[ ] S11 Stripe Checkout + webhooks + saldo-UI (E-1/E-2/E-6) — testmode, mock i CI
+## Launch
+[ ] S12 [KRÆVER NØGLER — efter §6] Ende-til-ende mod rigtige providers; kalibrér
+        troskabs-tærskel; Gate 2-måling (≤ 2 min)
+[ ] S13 Landing page + vilkår/privatliv efter DESIGN.md (F-1) — hero er ægte output fra S12
+[ ] S14 Lær-sektion, 5 guides (F-2) + SEO-basics (F-3)
+[ ] S15 Misbrugsværn + admin-omkostningsside (E-5, G-1) + Sentry (G-2)
+[ ] S16 Preset 2+3, delbart before/after (C-5, F-4), polering fra egen brugstest
