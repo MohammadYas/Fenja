@@ -39,7 +39,7 @@ Typical flows:
 - **Node.js** for the token and brand sync scripts (`.cjs`) in `brand` and `design-system`.
 - **`GEMINI_API_KEY`** (optional) only for AI image generation in the `design` skill: `pip install google-genai pillow`.
 
-Some optional workflow steps in `banner-design` and `design` reference companion skills that are not part of this repository (`frontend-design`, `ai-artist`, `ai-multimodal`, `chrome-devtools`, `assets-organizing`). The core workflows work without them.
+All workflows are self-contained. Banner/social-photo export to PNG uses the bundled `.claude/skills/banner-design/scripts/export-banner.py`, which drives a locally installed Chromium/Chrome (auto-detected; override with `CHROME_BIN` or `--chrome`).
 
 ## Verifying the installation
 

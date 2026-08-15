@@ -131,7 +131,7 @@ Load `references/slides-create.md` for the creation workflow.
 
 ## Banner Design (Built-in)
 
-22 art direction styles across social, ads, web, print. Uses `frontend-design`, `ai-artist`, `ai-multimodal`, `chrome-devtools` skills.
+22 art direction styles across social, ads, web, print. Uses the `banner-design` skill's workflow and bundled Chromium export script.
 
 Load `references/banner-sizes-and-styles.md` for complete sizes and styles reference.
 
@@ -139,8 +139,8 @@ Load `references/banner-sizes-and-styles.md` for complete sizes and styles refer
 
 1. **Gather requirements** via `AskUserQuestion` — purpose, platform, content, brand, style, quantity
 2. **Research** — Activate `ui-ux-pro-max`, browse Pinterest for references
-3. **Design** — Create HTML/CSS banner with `frontend-design`, generate visuals with `ai-artist`/`ai-multimodal`
-4. **Export** — Screenshot to PNG at exact dimensions via `chrome-devtools`
+3. **Design** — Create HTML/CSS banner (`ui-styling` guidance); visuals via CSS/SVG or optional Gemini generation
+4. **Export** — Screenshot to PNG at exact dimensions via `.claude/skills/banner-design/scripts/export-banner.py`
 5. **Present** — Show all options side-by-side, iterate on feedback
 
 ### Banner: Quick Size Reference
@@ -216,20 +216,20 @@ python3 .claude/skills/design/scripts/icon/generate.py --prompt "user profile" -
 
 ## Social Photos (Built-in)
 
-Multi-platform social image design: HTML/CSS → screenshot export. Uses `ui-ux-pro-max`, `brand`, `design-system`, `chrome-devtools` skills.
+Multi-platform social image design: HTML/CSS → screenshot export. Uses `ui-ux-pro-max`, `brand`, and `design-system` skills.
 
 Load `references/social-photos-design.md` for sizes, templates, best practices.
 
 ### Social Photos: Workflow
 
-1. **Orchestrate** — `project-management` skill for TODO tasks; parallel subagents for independent work
+1. **Orchestrate** — Track TODO tasks; parallel subagents for independent work
 2. **Analyze** — Parse prompt: subject, platforms, style, brand context, content elements
 3. **Ideate** — 3-5 concepts, present via `AskUserQuestion`
-4. **Design** — `/ckm:brand` → `/ckm:design-system` → randomly invoke `/ck:ui-ux-pro-max` OR `/ck:frontend-design`; HTML per idea × size
-5. **Export** — `chrome-devtools` or Playwright screenshot at exact px (2x deviceScaleFactor)
-6. **Verify** — Use Chrome MCP or `chrome-devtools` skill to visually inspect exported designs; fix layout/styling issues and re-export
+4. **Design** — `brand` → `design-system` → `ui-ux-pro-max`; HTML per idea × size
+5. **Export** — `.claude/skills/banner-design/scripts/export-banner.py` at exact px (`--scale 2` for retina)
+6. **Verify** — Visually inspect the exported PNGs; fix layout/styling issues and re-export
 7. **Report** — Summary to `plans/reports/` with design decisions
-8. **Organize** — Invoke `assets-organizing` skill to sort output files and reports
+8. **Organize** — Sort output files and reports per the output path convention
 
 ### Social Photos: Key Sizes
 
@@ -310,4 +310,4 @@ pip install google-genai pillow
 ## Integration
 
 **External sub-skills:** brand, design-system, ui-styling
-**Related Skills:** frontend-design, ui-ux-pro-max, ai-multimodal, chrome-devtools
+**Related Skills:** ui-ux-pro-max, banner-design

@@ -1,6 +1,6 @@
 ---
 name: banner-design
-description: "Design banners for social media, ads, website heroes, creative assets, and print. Multiple art direction options with AI-generated visuals. Actions: design, create, generate banner. Platforms: Facebook, Twitter/X, LinkedIn, YouTube, Instagram, Google Display, website hero, print. Styles: minimalist, gradient, bold typography, photo-based, illustrated, geometric, retro, glassmorphism, 3D, neon, duotone, editorial, collage. Uses ui-ux-pro-max, frontend-design, ai-artist, ai-multimodal skills."
+description: "Design banners for social media, ads, website heroes, creative assets, and print. Multiple art direction options with AI-generated visuals. Actions: design, create, generate banner. Platforms: Facebook, Twitter/X, LinkedIn, YouTube, Instagram, Google Display, website hero, print. Styles: minimalist, gradient, bold typography, photo-based, illustrated, geometric, retro, glassmorphism, 3D, neon, duotone, editorial, collage. Uses ui-ux-pro-max and ui-styling skills plus a bundled Chromium export script."
 argument-hint: "[platform] [style] [dimensions]"
 license: MIT
 metadata:
@@ -52,76 +52,48 @@ Collect via AskUserQuestion:
 
 For each art direction option:
 
-1. **Create HTML/CSS banner** using `frontend-design` skill
+1. **Create HTML/CSS banner** (use `ui-styling` skill for Tailwind/CSS guidance)
    - Use exact platform dimensions from size reference
    - Apply safe zone rules (critical content in central 70-80%)
    - Max 2 typefaces, single CTA, 4.5:1 contrast ratio
-   - Inject brand context via `inject-brand-context.cjs`
+   - Inject brand context via `inject-brand-context.cjs` (brand skill)
 
-2. **Generate visual elements** with `ai-artist` + `ai-multimodal` skills
+2. **Create visual elements**
 
-   **a) Search prompt inspiration** (6000+ examples in ai-artist):
-   ```bash
-   python3 .claude/skills/ai-artist/scripts/search.py "<banner style keywords>"
-   ```
+   **a) CSS/SVG-first (no dependencies):** mesh gradients, geometric SVG patterns,
+   noise textures, and layered blurs cover most art directions (gradient,
+   geometric, glassmorphism, neon, bold typography) directly in the HTML step.
 
-   **b) Generate with Standard model** (fast, good for backgrounds/patterns):
-   ```bash
-   .claude/skills/.venv/bin/python3 .claude/skills/ai-multimodal/scripts/gemini_batch_process.py \
-     --task generate --model gemini-2.5-flash-image \
-     --prompt "<banner visual prompt>" --aspect-ratio <platform-ratio> \
-     --size 2K --output assets/banners/
-   ```
-
-   **c) Generate with Pro model** (4K, complex illustrations/hero visuals):
-   ```bash
-   .claude/skills/.venv/bin/python3 .claude/skills/ai-multimodal/scripts/gemini_batch_process.py \
-     --task generate --model gemini-3-pro-image-preview \
-     --prompt "<creative banner prompt>" --aspect-ratio <platform-ratio> \
-     --size 4K --output assets/banners/
-   ```
-
-   **When to use which model:**
-   | Use Case | Model | Quality |
-   |----------|-------|---------|
-   | Backgrounds, gradients, patterns | Standard (Flash) | 2K, fast |
-   | Hero illustrations, product shots | Pro | 4K, detailed |
-   | Photorealistic scenes, complex art | Pro | 4K, best quality |
-   | Quick iterations, A/B variants | Standard (Flash) | 2K, fast |
-
-   **Aspect ratios:** `1:1`, `16:9`, `9:16`, `3:4`, `4:3`, `2:3`, `3:2`
-   Match to platform - e.g., Twitter header = `3:1` (use `3:2` closest), Instagram story = `9:16`
-
-   **Pro model prompt tips** (see `ai-artist` references/nano-banana-pro-examples.md):
+   **b) AI-generated imagery (optional, needs `GEMINI_API_KEY`):** reuse the
+   `design` skill's Gemini setup (`pip install google-genai pillow`) to generate
+   background visuals, then place them in the HTML banner. Prompt tips:
    - Be descriptive: style, lighting, mood, composition, color palette
    - Include art direction: "minimalist flat design", "cyberpunk neon", "editorial photography"
    - Specify no-text: "no text, no letters, no words" (text overlaid in HTML step)
 
-3. **Compose final banner** — overlay text, CTA, logo on generated visual in HTML/CSS
+3. **Compose final banner** — overlay text, CTA, logo on the visual in HTML/CSS
 
 ### Step 4: Export Banners to Images
 
-After designing HTML banners, export each to PNG using `chrome-devtools` skill:
+Export each HTML banner to PNG at exact dimensions with the bundled script
+(standard library only; finds a local Chromium/Chrome automatically, or set
+`CHROME_BIN`):
 
-1. **Serve HTML files** via local server (python http.server or similar)
-2. **Screenshot each banner** at exact platform dimensions:
-   ```bash
-   # Export banner to PNG at exact dimensions
-   node .claude/skills/chrome-devtools/scripts/screenshot.js \
-     --url "http://localhost:8765/banner-01-minimalist.html" \
-     --width 1500 --height 500 \
-     --output "assets/banners/{campaign}/{variant}-{size}.png"
-   ```
-3. **Auto-compress** if >5MB (Sharp compression built-in):
-   ```bash
-   # With custom max size threshold
-   node .claude/skills/chrome-devtools/scripts/screenshot.js \
-     --url "http://localhost:8765/banner-02-gradient.html" \
-     --width 1500 --height 500 --max-size 3 \
-     --output "assets/banners/{campaign}/{variant}-{size}.png"
-   ```
+```bash
+# From a local HTML file
+python3 .claude/skills/banner-design/scripts/export-banner.py \
+  --input banner-01-minimalist.html \
+  --width 1500 --height 500 \
+  --output "assets/banners/{campaign}/{variant}-{size}.png"
 
-**Output path convention** (per `assets-organizing` skill):
+# From a local dev server, at 2x for retina
+python3 .claude/skills/banner-design/scripts/export-banner.py \
+  --url "http://localhost:8765/banner-02-gradient.html" \
+  --width 1500 --height 500 --scale 2 \
+  --output "assets/banners/{campaign}/{variant}-{size}@2x.png"
+```
+
+**Output path convention:**
 ```
 assets/banners/{campaign}/
 ├── minimalist-1500x500.png
@@ -139,7 +111,7 @@ assets/banners/{campaign}/
 
 Present all exported images side-by-side. For each option show:
 - Art direction style name
-- Exported PNG preview (use `ai-multimodal` skill to display if needed)
+- Exported PNG preview
 - Key design rationale
 - File path & dimensions
 

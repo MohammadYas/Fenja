@@ -35,6 +35,6 @@ python3 .claude/skills/design/scripts/logo/search.py "tech modern" --domain styl
 python3 .claude/skills/design-system/scripts/search-slides.py "investor pitch"
 ```
 
-## Known gaps
+## Self-contained workflows
 
-Some optional workflow steps in `banner-design` and `design` reference companion skills that are not installed (`frontend-design`, `ai-artist`, `ai-multimodal`, `chrome-devtools`, `assets-organizing`, `project-management`). Skip those steps or substitute equivalent built-in tooling (e.g. Playwright with the pre-installed Chromium instead of `chrome-devtools`).
+The `banner-design` and `design` skills are self-contained: HTML→PNG export uses the bundled `.claude/skills/banner-design/scripts/export-banner.py` (standard library; shells out to a local Chromium/Chrome, auto-detected via `PLAYWRIGHT_BROWSERS_PATH`/`CHROME_BIN`). AI image generation remains optional and requires `GEMINI_API_KEY`.
