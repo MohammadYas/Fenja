@@ -4,8 +4,21 @@ import { brod, display, mono } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  ),
   title: da.site.navn,
   description: da.site.beskrivelse,
+  openGraph: {
+    type: "website",
+    siteName: da.site.navn,
+    locale: "da_DK",
+    title: da.site.navn,
+    description: da.site.beskrivelse,
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export const viewport: Viewport = {

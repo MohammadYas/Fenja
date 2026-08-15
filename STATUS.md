@@ -5,6 +5,11 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 SEO/OG (F-3): typografisk OG-plakat (1200×630, app/opengraph-image.png
+  — bygget af egne self-hostede skrifter, ærligt tekst-only, ingen fake
+  produktfotos) + alt-tekst, prislap-bomærke som favicon (app/icon.svg),
+  metadataBase fra NEXT_PUBLIC_SITE_URL, openGraph (da_DK) og twitter-kort
+  i rodlayoutet.
 - 2026-08-15 Tre nye guides (F-2 → 8 stk): "Mål og størrelser" (mål slår
   størrelsesmærker; hvad man måler pr. tøjtype), "Pak og send" (frister,
   vandtæt genbrugsemballage, vægt, bedømmelser) og "Sæsonens rytme"

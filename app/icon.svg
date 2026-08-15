@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Prislappen som bomærke: hangtag med afklippet hjørne og hul (REDESIGN §2.3) -->
+  <g transform="rotate(-8 16 16)">
+    <path d="M7 4h14l6 6v18a1.5 1.5 0 0 1-1.5 1.5h-18A1.5 1.5 0 0 1 6 28V5.5A1.5 1.5 0 0 1 7.5 4Z" fill="#24513F" transform="translate(-1.5 -1.5)"/>
+    <circle cx="14.5" cy="8" r="2.1" fill="#F1F3F2"/>
+    <path d="M10 15.5h11M10 20h8" stroke="#F1F3F2" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+</svg>
