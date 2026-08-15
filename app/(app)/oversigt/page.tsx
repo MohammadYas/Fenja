@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { Taeller } from "@/components/taeller";
-import { Badge } from "@/components/ui/badge";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
-import { MarkerSolgt } from "./marker-solgt";
+import { ItemListe } from "./item-liste";
 
 export const metadata = { title: `${da.oversigt.titel} · ${da.site.navn}` };
 
@@ -90,34 +89,15 @@ export default async function Oversigt() {
         </section>
       ) : null}
 
-      <ul className="mt-6 flex flex-col gap-4">
-        {items.map((item) => (
-          <li key={item.id}>
-            {/* Taktilt, interaktivt kort (REDESIGN §2.4) */}
-            <div className="kort-taktil flex flex-col gap-2 p-4">
-              <div className="flex items-center justify-between gap-3">
-                <Link
-                  href={`/items/${item.id}`}
-                  className="soem-link min-w-0 flex-1 font-medium"
-                >
-                  <span className="block truncate">
-                    {item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim()}
-                  </span>
-                </Link>
-                <Badge variant={item.status === "sold" ? "status" : "neutral"}>
-                  {da.oversigt.status[item.status]}
-                </Badge>
-              </div>
-              {item.status === "sold" && item.sold_price_dkk != null ? (
-                <p className="font-mono text-detalje font-bold text-pris">
-                  {item.sold_price_dkk} kr.
-                </p>
-              ) : null}
-              {item.status === "active" ? <MarkerSolgt itemId={item.id} /> : null}
-            </div>
-          </li>
-        ))}
-      </ul>
+      <ItemListe
+        items={items.map((item) => ({
+          id: item.id,
+          titel:
+            item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
+          status: item.status,
+          soldPrisDkk: item.sold_price_dkk,
+        }))}
+      />
     </main>
   );
 }
