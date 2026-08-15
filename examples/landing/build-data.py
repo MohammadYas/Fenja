@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Embed the ui-ux-pro-max palette dataset into the landing page.
+"""Embed ui-ux-pro-max datasets into the landing page.
 
-Reads data/colors.csv and rewrites the block between the PALETTES markers in
-index.html with a compact JSON array. Standard library only. Run from the repo
-root after updating the dataset:
+Reads data/colors.csv and data/typography.csv and rewrites the blocks between
+the PALETTES/FONTS markers in index.html with compact JSON arrays. Standard
+library only. Run from the repo root after updating the datasets:
 
   python3 examples/landing/build-data.py
 """
@@ -14,30 +14,48 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CSV = ROOT / ".claude/skills/ui-ux-pro-max/data/colors.csv"
+DATA = ROOT / ".claude/skills/ui-ux-pro-max/data"
 PAGE = Path(__file__).parent / "index.html"
 
-rows = []
-with CSV.open(newline="", encoding="utf-8") as fh:
+palettes = []
+with (DATA / "colors.csv").open(newline="", encoding="utf-8") as fh:
     for row in csv.DictReader(fh):
         note = re.sub(r"\s*\[[^]]*\]", "", row["Notes"]).strip()
-        rows.append({
+        palettes.append({
             "n": row["Product Type"],
             "t": note,
             "p": row["Primary"], "op": row["On Primary"],
+            "s": row["Secondary"], "os": row["On Secondary"],
             "a": row["Accent"], "oa": row["On Accent"],
             "b": row["Background"], "f": row["Foreground"],
             "c": row["Card"], "cf": row["Card Foreground"],
             "m": row["Muted"], "mf": row["Muted Foreground"],
             "br": row["Border"],
+            "d": row["Destructive"], "od": row["On Destructive"],
+            "r": row["Ring"],
         })
 
-payload = json.dumps(rows, separators=(",", ":"), ensure_ascii=False)
-block = f"/*<palettes>*/const PALETTES={payload};/*</palettes>*/"
+fonts = []
+with (DATA / "typography.csv").open(newline="", encoding="utf-8") as fh:
+    for row in csv.DictReader(fh):
+        fonts.append({
+            "n": row["Font Pairing Name"],
+            "c": row["Category"],
+            "h": row["Heading Font"],
+            "b": row["Body Font"],
+            "k": row["Mood/Style Keywords"],
+            "u": row["Best For"],
+            "g": row["Google Fonts URL"],
+        })
 
 html = PAGE.read_text(encoding="utf-8")
-new = re.sub(r"/\*<palettes>\*/.*?/\*</palettes>\*/", lambda _: block, html, count=1, flags=re.S)
-if new == html and block not in html:
-    raise SystemExit("error: palette markers not found in index.html")
-PAGE.write_text(new, encoding="utf-8")
-print(f"embedded {len(rows)} palettes ({len(payload)//1024} KB) into {PAGE.relative_to(ROOT)}")
+for tag, data in (("palettes", palettes), ("fonts", fonts)):
+    payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+    block = f"/*<{tag}>*/const {tag.upper()}={payload};/*</{tag}>*/"
+    pattern = rf"/\*<{tag}>\*/.*?/\*</{tag}>\*/"
+    if not re.search(pattern, html, flags=re.S):
+        raise SystemExit(f"error: {tag} markers not found in index.html")
+    html = re.sub(pattern, lambda _: block, html, count=1, flags=re.S)
+    print(f"embedded {len(data)} {tag} ({len(payload)//1024} KB)")
+PAGE.write_text(html, encoding="utf-8")
+print(f"wrote {PAGE.relative_to(ROOT)}")
