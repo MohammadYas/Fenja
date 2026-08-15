@@ -11,12 +11,16 @@
 // 3) Variationen (positur, beskæring) roterer deterministisk pr. item, så to
 //    annoncer fra samme sælger ligner to forskellige fotos fra samme hjem.
 //
+// PROMPT-SPROG ER ENGELSK (ejer-tuning 2026-08-16): billedmodellerne følger
+// engelske instrukser markant bedre — bevist på forside-serien (v3→v4).
+// Stilen er destilleret af de bedste kørsler: hurtigt hverdagsfoto, levet-i
+// hjem, let uperfekt — aldrig editorial. Se docs/marketing-billeder.md.
+//
 // C-2 gælder stadig ubetinget: prompten beskriver ALDRIG tøjets udseende —
 // referencebilledet styrer. C-6 gælder: aldrig genkendelige personer.
 // Alt er deterministisk (ingen Math.random/Date.now) — retries er stabile.
 
 import type { Preset } from "./presets";
-import { vaelgPersonAnker } from "./presets";
 
 export type KategoriSkabelon = {
   id: string;
@@ -33,83 +37,83 @@ export type KategoriSkabelon = {
 export const KATEGORI_SKABELONER: readonly KategoriSkabelon[] = [
   {
     id: "kjole",
-    version: 1,
+    version: 2,
     navn: "Kjole & nederdel",
     noegleord: ["kjole", "nederdel", "dress"],
     visninger: [
-      "helfigur i spejl-selfie foran hjemmets høje spejl: telefonen holdes lodret foran ansigtet og dækker det, den anden arm hænger naturligt, den ene fod let foran den anden",
-      "trekvart figur ved hjemmets vindue, hovedet beskåret ud af billedet over hagen, afslappet oprejst holdning",
-      "helfigur i naturlig hvilende positur, ansigtet bortvendt fra kameraet",
+      "full-body mirror selfie in the home's tall mirror: the phone is held vertically in front of the face, completely covering it, the other arm hangs naturally, one foot slightly in front of the other, relaxed upright posture",
+      "three-quarter view by the home's window, head cropped out of frame above the chin, relaxed upright posture",
+      "full body in a natural resting pose, face turned away from the camera",
     ],
     fokus:
-      "Bevar kjolens præcise længde, silhuet, udskæring, ærmer og stoffald; vis realistiske folder, træk og tyngde i stoffet ned langs kroppen.",
+      "Preserve the dress's exact length, silhouette, neckline, sleeves and drape; show realistic folds, tension and weight in the fabric falling along the body.",
   },
   {
     id: "bukser",
-    version: 1,
+    version: 2,
     navn: "Bukser & jeans",
     noegleord: ["bukser", "jeans", "chinos", "cargo", "shorts", "joggers"],
     visninger: [
-      "spejl-selfie hvor telefonen dækker ansigtet; benene og buksernes pasform er billedets fokus",
-      "stående med den ene hånd i lommen, beskåret fra brystet og ned",
-      "et skridt i naturlig gang, beskåret fra taljen og ned, så benformen ses",
+      "mirror selfie with the phone completely covering the face; the legs and the fit of the trousers are the focus of the image",
+      "standing with one hand in a pocket, framed from the chest down",
+      "a natural mid-step walking shot framed from the waist down so the leg shape is visible",
     ],
     fokus:
-      "Bevar buksernes pasform og benform, linning, lommer, knapper, bæltestropper og syninger; vis realistiske folder og stræk ved hofter, knæ og ankler.",
+      "Preserve the exact fit and leg shape, waistband, pockets, buttons, belt loops and stitching; show realistic creases and tension at the hips, knees and ankles.",
   },
   {
     id: "jakke",
-    version: 1,
+    version: 2,
     navn: "Jakke & overtøj",
     noegleord: ["jakke", "frakke", "overshirt", "blazer", "cardigan", "vest", "overtøj"],
     visninger: [
-      "spejl-selfie i hjemmets entré: telefonen dækker ansigtet, jakken er billedets fokus",
-      "stående lænet let mod en væg, hænder i lommerne, hovedet beskåret ud af billedet",
-      "trekvart figur der retter på manchetten eller kraven, blikket væk fra kameraet",
+      "mirror selfie in the home's hallway: the phone covers the face entirely, the jacket is the focus of the image",
+      "leaning casually against a wall with hands in pockets, head cropped out of frame",
+      "three-quarter view adjusting a cuff or the collar, gaze turned away from the camera",
     ],
     fokus:
-      "Bevar krave, lukning, knapper, lynlås, lommer, bælte og alt hardware præcist; vis naturligt fald over skuldre og bryst og realistiske folder ved albuerne.",
+      "Preserve the collar, closure, buttons, zipper, pockets, belt and all hardware exactly; show a natural fall over the shoulders and chest and realistic creases at the elbows.",
   },
   {
     id: "overdel",
-    version: 1,
+    version: 2,
     navn: "Overdel",
     noegleord: [
       "trøje", "striktrøje", "sweater", "hoodie", "t-shirt", "tshirt", "top",
       "skjorte", "bluse", "polo",
     ],
     visninger: [
-      "spejl-selfie fra hoften og op: telefonen dækker ansigtet, overdelen er billedets fokus",
-      "fra skuldrene og ned ved hjemmets vindue, hovedet uden for billedet, én hånd afslappet i lommen",
-      "siddende afslappet, beskåret over hagen, naturlig holdning",
+      "mirror selfie framed from the hips up: the phone covers the face, the top is the focus of the image",
+      "framed from the shoulders down by the home's window, head out of frame, one hand relaxed in a pocket",
+      "sitting casually, cropped above the chin, natural posture",
     ],
     fokus:
-      "Bevar halsudskæring, skulderkonstruktion, ærmelængde og kant præcist; print, grafik og tekst på tøjet gengives nøjagtigt i placering, skala og farve; eventuelle transparente lag eller rynkninger bevares fysisk troværdigt.",
+      "Preserve the neckline, shoulder construction, sleeve length and hem exactly; any print, graphic or lettering on the garment is reproduced faithfully in placement, scale and colour; any sheer layers or ruching stay physically believable.",
   },
   {
     id: "taske",
-    version: 1,
+    version: 2,
     navn: "Taske",
     noegleord: ["taske", "skuldertaske", "håndtaske", "crossbody", "rygsæk", "bag"],
     visninger: [
-      "tasken båret naturligt i hånden langs siden, beskåret så tasken er i centrum",
-      "tasken hvilende på underarmen foran hjemmets spejl, telefonen dækker ansigtet",
-      "tasken over skulderen set fra siden, hovedet uden for billedet",
+      "the bag carried naturally in the hand by the side, framed so the bag is the centre of the image",
+      "the bag resting on the forearm in front of the home's mirror, the phone covering the face",
+      "the bag worn over the shoulder seen from the side, head out of frame",
     ],
     fokus:
-      "Bevar taskens form, størrelse, materiale, hardware, lukning, hanke og logo-placering præcist; opfind ALDRIG en rem eller bæremåde, tasken ikke har, og lad ikke hænder eller tøj skjule vigtige detaljer.",
+      "Preserve the bag's shape, size, material, hardware, closure, handles and logo placement exactly; NEVER invent a strap or carrying style the bag does not have, and keep hands and clothing from hiding important details.",
   },
   {
     id: "generisk",
-    version: 1,
+    version: 2,
     navn: "Generisk",
     noegleord: [],
     visninger: [
-      "naturlig afslappet positur, ansigtet skjult af telefonen i et spejl eller beskåret ud af billedet",
-      "trekvart figur ved hjemmets vindue, hovedet uden for billedet",
+      "a natural relaxed pose with the face hidden by the phone in a mirror or cropped out of frame",
+      "three-quarter view by the home's window, head out of frame",
     ],
     fokus:
-      "Bevar beklædningens pasform, proportioner og alle synlige detaljer præcist.",
+      "Preserve the garment's fit, proportions and every visible detail exactly.",
   },
 ] as const;
 
@@ -123,6 +127,17 @@ export function vaelgSkabelon(kategori: string | null | undefined): KategoriSkab
   );
   return fundet ?? KATEGORI_SKABELONER.find((s) => s.id === GENERISK_SKABELON_ID)!;
 }
+
+// ---------------------------------------------------------------------------
+// Person-ankre (C-6): neutral, divers rotation — engelsk udgave af presets-
+// modulets ankre; valget pr. item er deterministisk, så retries er stabile.
+
+const PERSON_ANKRE = [
+  "an adult with short dark hair and a neutral appearance",
+  "an adult with light hair tied up and a neutral appearance",
+  "an adult with shoulder-length black curly hair and a deep skin tone",
+  "an adult with greying hair and a neutral appearance",
+] as const;
 
 // ---------------------------------------------------------------------------
 // Hjem-ankre: ét fast hjem pr. sælger (deterministisk af user-id).
@@ -140,67 +155,67 @@ export type Hjem = {
 export const HJEM: readonly Hjem[] = [
   {
     id: "vesterbro-lejlighed",
-    version: 1,
+    version: 2,
     navn: "Vesterbro-lejlighed",
     steder: {
       "lys-minimalisme":
-        "sælgerens soveværelse — altid det samme: et højt spejl med sort ramme lænet mod væggen, egetræsgulv med brede planker, hvid paneldør, en tændt sengelampe med varmt lys og en seng med lyst hørsengetøj delvist i billedet",
+        "the seller's bedroom — always the same room: a tall black-framed mirror leaning against the wall, wide-plank oak floor, a white panel door, a lit bedside lamp with warm light, and a bed with pale linen bedding partly in frame",
       "hyggelig-stue":
-        "sælgerens stue — altid den samme: en beige hjørnesofa, et lille egetræsbord, en gulvlampe med varmt lys, en radiator under vinduet og hør-gardiner",
+        "the seller's living room — always the same room: a beige corner sofa, a small oak side table, a floor lamp with warm light, a radiator under the window and linen curtains",
       "koebenhavnsk-gade":
-        "gaden foran sælgerens opgang — altid den samme: en brostensbelagt sidegade med røde murstensfacader, en parkeret cykel og en grøn hoveddør, fladt gråvejrslys",
+        "the street outside the seller's front door — always the same spot: a cobbled side street with red-brick facades, a parked bicycle and a green front door, flat overcast daylight",
     },
   },
   {
     id: "aarhus-raekkehus",
-    version: 1,
+    version: 2,
     navn: "Aarhus-rækkehus",
     steder: {
       "lys-minimalisme":
-        "sælgerens entré — altid den samme: et smalt spejl i fuld højde på væggen, lyst asketræsgulv, knager med jakker, sko ved døren og køligt dagslys fra et ovenlysvindue",
+        "the seller's entry hall — always the same spot: a narrow full-height wall mirror, pale ash floor, coat hooks with jackets, shoes by the door and cool daylight from a skylight",
       "hyggelig-stue":
-        "sælgerens stue — altid den samme: en mørkegrøn sofa, en boghylde i fyrretræ, et uldplaid over armlænet og et stort vindue med hvide sprosser",
+        "the seller's living room — always the same room: a dark green sofa, a pine bookshelf, a wool throw over the armrest and a large window with white glazing bars",
       "koebenhavnsk-gade":
-        "fortovet foran sælgerens rækkehus — altid det samme: gule murstensrækkehuse, lave ligusterhække og en flisebelagt sti, blødt eftermiddagslys",
+        "the pavement outside the seller's terraced house — always the same spot: yellow-brick row houses, low privet hedges and a paved path, soft afternoon light",
     },
   },
   {
     id: "noerrebro-vaerelse",
-    version: 1,
+    version: 2,
     navn: "Nørrebro-værelse",
     steder: {
       "lys-minimalisme":
-        "sælgerens værelse — altid det samme: et ovalt spejl på en hvid væg, sildebensparket, et klædestativ med bøjler i hjørnet og dagslys fra ét højt vindue",
+        "the seller's room — always the same room: an oval mirror on a white wall, herringbone parquet, a clothes rack with hangers in the corner and daylight from one tall window",
       "hyggelig-stue":
-        "sælgerens fælles stue — altid den samme: en brun lædersofa med patina, en monstera i krukke, et sofabord i genbrugstræ og en rispapirlampe",
+        "the seller's shared living room — always the same room: a worn brown leather sofa with patina, a monstera in a pot, a reclaimed-wood coffee table and a rice-paper lamp",
       "koebenhavnsk-gade":
-        "gaden under sælgerens lejlighed — altid den samme: en travl brostensgade med cykelstativ, en rød murstensfacade og en kaffebar-markise i baggrunden, overskyet lys",
+        "the street below the seller's flat — always the same spot: a busy cobbled street with a bicycle rack, a red-brick facade and a café awning in the background, overcast light",
     },
   },
   {
     id: "odense-villa",
-    version: 1,
+    version: 2,
     navn: "Odense-villa",
     steder: {
       "lys-minimalisme":
-        "sælgerens gæsteværelse — altid det samme: et rektangulært spejl på en lysegrå væg, hvidmalede gulvbrædder, en kurvestol i hjørnet og blødt lys gennem tynde gardiner",
+        "the seller's guest room — always the same room: a rectangular mirror on a light grey wall, white-painted floorboards, a wicker chair in the corner and soft light through thin curtains",
       "hyggelig-stue":
-        "sælgerens stue — altid den samme: en lys hjørnesofa med strikpuder, en brændeovn i baggrunden, et egetræsgulv med et jutetæppe og varme lamper",
+        "the seller's living room — always the same room: a light corner sofa with knitted cushions, a wood-burning stove in the background, an oak floor with a jute rug and warm lamps",
       "koebenhavnsk-gade":
-        "indkørslen foran sælgerens villa — altid den samme: en rødstensvilla med hvide vinduer, grusindkørsel og en høj bøgehæk, jævnt dagslys",
+        "the driveway outside the seller's house — always the same spot: a red-brick villa with white windows, a gravel driveway and a tall beech hedge, even daylight",
     },
   },
   {
     id: "aalborg-nybyg",
-    version: 1,
+    version: 2,
     navn: "Aalborg-nybyg",
     steder: {
       "lys-minimalisme":
-        "sælgerens walk-in-hjørne — altid det samme: et bredt spejl med tynd messingramme, betongulv med gulvvarme-look, hvide garderobeskabe og indbygget spotbelysning blandet med dagslys",
+        "the seller's walk-in corner — always the same spot: a wide mirror with a thin brass frame, polished concrete floor, white wardrobe doors and built-in spotlights mixed with daylight",
       "hyggelig-stue":
-        "sælgerens stue — altid den samme: en gråblå sofa, et sort stålsofabord, store vinduespartier fra gulv til loft og en enkelt stor gulvplante",
+        "the seller's living room — always the same room: a grey-blue sofa, a black steel coffee table, floor-to-ceiling windows and a single large floor plant",
       "koebenhavnsk-gade":
-        "pladsen foran sælgerens boligblok — altid den samme: en nybygget karré i lyse mursten, en bænk, unge træer i plantehuller og klart køligt dagslys",
+        "the square outside the seller's apartment block — always the same spot: a newly built block in pale brick, a bench, young trees in planting pits and clear cool daylight",
     },
   },
 ] as const;
@@ -226,31 +241,40 @@ export function hentHjemSted(hjem: Hjem, preset: Preset): string {
 // prioriteten — troskab mod referencen først, æstetik sidst.
 
 const REFERENCE_INSTRUKS =
-  "Personen bærer PRÆCIS beklædningen fra referencebilledet — bevar print, grafik, " +
-  "farve, materiale, snit, længde og alle synlige detaljer nøjagtigt; opfind, " +
-  "fjern eller 'forbedr' intet, og bevar synligt slid og fejl hvor de er.";
+  "The person wears EXACTLY the garment from the reference image — preserve its " +
+  "print, graphics, colour, material, cut, length and every visible detail " +
+  "precisely; invent, remove or 'improve' nothing, and keep visible wear and " +
+  "flaws where they are.";
 
-// Ejerens fotostil-princip (2026-08-15): autentisk hverdagsfoto, ikke studie.
+// Ejerens fotostil-princip (2026-08-15/16): autentisk hverdagsfoto, ikke studie.
 const FOTOSTIL =
-  "Fotostil: et ægte, hurtigt taget smartphonefoto til en genbrugsannonce — let " +
-  "uperfekt beskæring og eksponering, naturligt blandet lys med realistiske " +
-  "skygger, mild sensorstøj, levet-i hjem med små hverdagsdetaljer; ALDRIG " +
-  "studieopstilling, editorial-look eller AI-glans.";
+  "Photo style: a completely authentic casual smartphone photo taken quickly for " +
+  "a secondhand clothing listing — NOT a professional photoshoot, NOT editorial, " +
+  "NOT staged. Slightly imperfect framing and exposure, natural mixed light with " +
+  "realistic shadows, mild smartphone sensor noise, small everyday details and " +
+  "slight clutter at the edges of the frame, realistic fabric texture with " +
+  "natural wrinkles. Indistinguishable from a real photo a private seller took " +
+  "at home with their phone.";
 
 const NEGATIV_LISTE =
-  "Undgå: tekst, logoer eller vandmærker ud over tøjets egne; ansigtsforskønnelse; " +
-  "ændring af tøjets pasform; ekstra accessories; deforme eller ekstra fingre; " +
-  "duplikerede lemmer; forvrænget anatomi; plastikagtig hud; CGI-udseende; " +
-  "kunstige baggrunde.";
+  "Avoid: any text, logos or watermarks beyond the garment's own; face " +
+  "retouching; changing the garment's fit; extra accessories; deformed or extra " +
+  "fingers; duplicated limbs; warped anatomy; plastic-looking skin; CGI " +
+  "appearance; artificial-looking backgrounds; studio lighting.";
 
 /** Deterministisk visning pr. item, så retries er stabile */
 export function vaelgVisning(skabelon: KategoriSkabelon, itemId: string): string {
   return skabelon.visninger[stabilHash(itemId) % skabelon.visninger.length]!;
 }
 
+/** Deterministisk person-anker pr. item (C-6, engelsk udgave) */
+export function vaelgPersonAnkerEngelsk(itemId: string): string {
+  return PERSON_ANKRE[stabilHash(itemId) % PERSON_ANKRE.length]!;
+}
+
 /**
- * Den fulde on-model-prompt: reference-instruks → person + visning → sted
- * (sælgerens faste hjem når userId kendes) → kategori-fokus → fotostil →
+ * Den fulde on-model-prompt (engelsk): reference-instruks → person + visning →
+ * sted (sælgerens faste hjem når userId kendes) → kategori-fokus → fotostil →
  * negativ-liste. Uden userId/kategori: preset-setting + generisk skabelon.
  */
 export function bygOnModelPromptMedSkabelon(args: {
@@ -266,9 +290,9 @@ export function bygOnModelPromptMedSkabelon(args: {
 
   return [
     REFERENCE_INSTRUKS,
-    `Personen er ${vaelgPersonAnker(args.itemId)} — en anonym person, ikke en genkendelig eller virkelig person; ansigtet er altid skjult af telefonen eller beskåret ud af billedet.`,
-    `Visning: ${vaelgVisning(skabelon, args.itemId)}.`,
-    `Sted: ${sted}.`,
+    `The person is ${vaelgPersonAnkerEngelsk(args.itemId)} — an anonymous person, never a recognizable or real person; the face is always hidden by the phone or cropped out of frame.`,
+    `Framing: ${vaelgVisning(skabelon, args.itemId)}.`,
+    `Location: ${sted}.`,
     skabelon.fokus,
     FOTOSTIL,
     NEGATIV_LISTE,

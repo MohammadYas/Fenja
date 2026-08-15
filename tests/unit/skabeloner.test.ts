@@ -63,7 +63,7 @@ describe("hjem-ankre: samme sælger, samme bolig", () => {
   });
 
   it("ukendt preset falder tilbage til presettets egen setting", () => {
-    const fremmedPreset = { id: "nyt-preset", navn: "Nyt", version: 1, setting: "et sted" };
+    const fremmedPreset = { ...preset, id: "nyt-preset", navn: "Nyt", setting: "et sted" };
     expect(hentHjemSted(HJEM[0]!, fremmedPreset)).toBe("et sted");
   });
 
@@ -106,19 +106,23 @@ describe("promptbygning overholder C-2 og C-6", () => {
   });
 
   it("reference-instruksen står først — prompten styrer aldrig tøjets udseende", () => {
-    expect(prompt.startsWith("Personen bærer PRÆCIS beklædningen fra referencebilledet")).toBe(
-      true,
-    );
+    expect(
+      prompt.startsWith("The person wears EXACTLY the garment from the reference image"),
+    ).toBe(true);
   });
 
   it("anonymitet håndhæves altid (C-6)", () => {
-    expect(prompt).toContain("anonym person");
-    expect(prompt).toContain("ansigtet er altid skjult");
+    expect(prompt).toContain("an anonymous person");
+    expect(prompt).toContain("the face is always hidden");
   });
 
   it("negativ-listen er altid med", () => {
-    expect(prompt).toContain("Undgå:");
-    expect(prompt).toContain("ekstra fingre");
+    expect(prompt).toContain("Avoid:");
+    expect(prompt).toContain("extra fingers");
+  });
+
+  it("prompten er på engelsk — ingen danske specialtegn (ejer-tuning 2026-08-16)", () => {
+    expect(prompt).not.toMatch(/[æøåÆØÅ]/);
   });
 
   it("kategori-fokus er med", () => {
