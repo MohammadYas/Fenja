@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { da } from "@/lib/copy/da";
-import { opretBrowserKlient } from "@/lib/supabase/client";
 
 type Tilstand =
   | { trin: "form" }
@@ -33,6 +32,9 @@ export default function LogInd() {
     }
 
     setTravl(true);
+    // Supabase-klienten (~53 KB gzip) hentes først her ved submit — så bliver
+    // både log-ind-siden og marketing-sidernes prefetch af ruten lette
+    const { opretBrowserKlient } = await import("@/lib/supabase/client");
     const supabase = opretBrowserKlient();
     const { error } = await supabase.auth.signInWithOtp({
       email,

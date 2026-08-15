@@ -6,6 +6,14 @@ Sidst opdateret: 2026-08-15 af cloud session (L1, Lighthouse-gaten)
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` og `claude/naeste-task-dcfccg` efter merge
 (én commit pr. opgave):
+- 2026-08-15 Ydelse (NFR-2): Supabase-browserklienten (53 KB gzip, 93 % ubrugt
+  ved sideindlæsning) lazy-importeres nu først ved submit i log-ind og
+  nyt-item — /log-ind faldt 178 → 111 kB First Load JS, og marketing-sidernes
+  prefetch af ruten er tilsvarende lettere. Ubrugt kursiv-skrift (31 KB
+  preload pr. sidevisning) afdeklareret i fonts.ts — ingen copy/guide bruger
+  kursiv (kun **fed**); filen ligger stadig i /public/fonts med genvej i
+  kommentaren. Lighthouse mobil efter: forside 96, /priser 95 (LCP simuleret
+  3,6 → 2,9 s), /log-ind 97, guide 98 — alle stadig 100 i a11y/BP/SEO.
 - 2026-08-15 S25 B-9 Batch: resultatsidens vente-tilstand inviterer nu til at
   fotografere det næste stykke tøj ("Du behøver ikke vente her …" + søm-link
   til /nyt-item) — pipelinen kører færdig serverside, og backend har hele

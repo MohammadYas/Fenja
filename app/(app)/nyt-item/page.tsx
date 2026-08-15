@@ -14,7 +14,6 @@ import { Field } from "@/components/ui/field";
 import { vinted } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { MAERKER } from "@/lib/data/maerker";
-import { opretBrowserKlient } from "@/lib/supabase/client";
 import { komprimerFoto } from "@/lib/upload/compress";
 
 type Rolle = "full" | "back" | "label" | "defect";
@@ -66,6 +65,9 @@ export default function NytItem() {
     if (!signering.ok) throw new Error(da.nytItem.fejlUpload);
     const { sti, token } = (await signering.json()) as { sti: string; token: string };
 
+    // Hentes først ved upload (dynamisk import er cachet efter første kald),
+    // så selve formularsiden ikke bærer Supabase-bundtet
+    const { opretBrowserKlient } = await import("@/lib/supabase/client");
     const supabase = opretBrowserKlient();
     const { error } = await supabase.storage
       .from("item-photos")
