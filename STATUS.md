@@ -5,6 +5,12 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 V1–V4 Af-skabelonisering af forsiden (ejerens dom: "ligner stadig
+  AI"): konturord i plakaten + lodret marginalia (V1); hero-skitserne erstattet
+  af annonce-transformationen — sjusket seddel overlappet af den færdige
+  leverance, ærligt mærket som skitseret eksempel (V2, hero-skitse.tsx slettet);
+  Ærlighed på koks som sidens ene mørke blok (V3); stregkoder på pakkernes
+  hangtags (V4). Verificeret 320/390/1280, sw320 = 320.
 - 2026-08-15 U4 Oversigt: statusfilter-chips (Alle/Kladde/Aktiv/Solgt med antal)
   over listen — vises først ved 4+ items; listen flyttet til client-komponent,
   aria-pressed på valget, tom-tilstand med egen linje.

@@ -56,6 +56,7 @@ export default function PriserSide() {
                           (pakke.prisDkk / pakke.antal).toFixed(2).replace(".", ","),
                         )}
                       </p>
+                      <div className="stregkode mt-3" aria-hidden="true" />
                     </Prislap>
                   </Reveal>
                 </ToerresnorLap>

@@ -101,6 +101,45 @@
     background-repeat: no-repeat;
   }
 
+  /* Konturord (v3): plakat-typografiens spænding — ét ord sat som ren kontur.
+     Fallback uden -webkit-text-stroke: almindelig koks. */
+  .tekst-kontur {
+    -webkit-text-stroke: 2.5px theme("colors.koks");
+    color: transparent;
+  }
+  @supports not (-webkit-text-stroke: 1px black) {
+    .tekst-kontur {
+      color: theme("colors.koks");
+    }
+  }
+
+  /* Stregkode-detalje på hangtags (v3): faste, uregelmæssige koks-streger —
+     deterministisk mønster, ingen data. Kun pynt (aria-hidden). */
+  .stregkode {
+    height: 16px;
+    background-image: repeating-linear-gradient(
+      to right,
+      theme("colors.koks") 0 2px,
+      transparent 2px 5px,
+      theme("colors.koks") 5px 6px,
+      transparent 6px 8px,
+      theme("colors.koks") 8px 11px,
+      transparent 11px 13px,
+      theme("colors.koks") 13px 14px,
+      transparent 14px 19px
+    );
+  }
+
+  /* Skravering (v3): "utydeligt foto"-feltet i før-kortet — blyantsstreger,
+     ikke et gråt boks-placeholder. */
+  .skravering {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgb(33 37 35 / 0.18) 0 1px,
+      transparent 1px 6px
+    );
+  }
+
   /* Søm som hover/aktiv-markering på links og nav (REDESIGN §2.4/§2.5) —
      erstatter standard-underline med en stiplet søm i rav. */
   .soem-link {

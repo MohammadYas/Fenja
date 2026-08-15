@@ -55,6 +55,21 @@ tegnet), (d) footeren er en tynd linkrække, (e) rå browser-radios på log-ind.
 [x] U2  Guide-navigation: forrige/næste nederst på hver guide + Article-JSON-LD
 [x] U3  A11y-finish: skip-link til indholdet i marketing- og app-layoutet
 [x] U4  Oversigt: statusfilter (Alle/Kladde/Aktiv/Solgt) med antal pr. chip
+## Af-skabelonisering v3 — ejerens dom 2026-08-15: "ligner stadig AI"
+Diagnose: detaljerne var på plads, men FORMSPROGET var skabelon — ens
+sektionsrytme (label→rubrik→brød), flade farvebånd, clip-art-skitser i heroen,
+samme radius/skygge overalt. v3 angriber formen, ikke detaljerne.
+[x] V1  Hero-typografi med spænding: midterlinjen som ren kontur
+        (.tekst-kontur, med @supports-fallback), lodret katalog-marginalia
+        i sidekanten på lg
+[x] V2  Hero-figuren: skitserne erstattet af annonce-transformationen — sjusket
+        hør-seddel (mono, lowercase, skraveret "foto") overlappet af den
+        færdige leverance (titel, punkter, prisforslag-tag, søm-kant);
+        ærligt mærket "skitseret eksempel"
+[x] V3  Ærligheds-blokken på koks — sidens ene mørke udsagn, så farvebåndene
+        ikke gentager samme rytme (kalk→koks→gran→hør)
+[x] V4  Stregkode-detalje på kreditpakkernes hangtags (forside + /priser) —
+        deterministisk mønster, aria-hidden
 ## Redesign
 [x] S17 KOMPLET visuel rebuild efter REDESIGN.md ("katalog møder plakat"):
         tokens v2, plakat-typo, farveblokke, prislap/stempel-motiv, Sømmen 2.0,

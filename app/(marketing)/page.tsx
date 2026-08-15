@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { SektionsMarkoer } from "@/components/sektions-markoer";
 import { Prislap } from "@/components/ui/prislap";
-import { SkitseFoer, SkitseEfter } from "@/components/hero-skitse";
 import { Toerresnor, ToerresnorLap } from "@/components/toerresnor";
 import { Stempel } from "@/components/ui/stempel";
 import { kreditter } from "@/lib/config";
@@ -24,13 +23,21 @@ const ctaKlasser =
 export default function Forside() {
   return (
     <main>
-      {/* Plakat-hero: overskriften ER hero-grafikken (REDESIGN §2.1) */}
-      <section className="overflow-x-clip">
+      {/* Plakat-hero (v3): overskriften ER hero-grafikken (REDESIGN §2.1) —
+          midterlinjen som ren kontur, sidste ord i rav; katalog-marginalia
+          lodret i kanten på lg */}
+      <section className="relative overflow-x-clip">
+        <p
+          aria-hidden="true"
+          className="absolute right-3 top-12 hidden select-none font-mono text-detalje uppercase tracking-widest text-tekst/40 [writing-mode:vertical-rl] lg:block"
+        >
+          {da.landing.marginal}
+        </p>
         <div className="mx-auto max-w-5xl px-4 pb-16 pt-10 md:pt-16 lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-12">
           <div>
             <h1 className="font-display text-plakat font-bold uppercase">
-              {da.landing.heroPlakatLinjer.map((ord) => (
-                <span key={ord} className="block">
+              {da.landing.heroPlakatLinjer.map((ord, i) => (
+                <span key={ord} className={`block ${i === 1 ? "tekst-kontur" : ""}`}>
                   {ord}
                 </span>
               ))}
@@ -44,27 +51,55 @@ export default function Forside() {
             </Link>
           </div>
 
-          {/* Signatur-beviset: before/after med Sømmen — på desktop ved siden
-              af plakaten, så højresiden aldrig står død (REDESIGN §3.1) */}
+          {/* Beviset (v3): annoncen som transformation — den sjuskede seddel
+              overlappet af den færdige leverance. Ingen fotos at fake, intet
+              tomt felt (AI-tegn nr. 1) */}
           <Reveal>
             <figure className="relative mt-12 md:mt-16 lg:mt-0">
-              <div className="rotate-ramme">
-                <div className="flex overflow-hidden rounded-bloed border-2 border-koks bg-baggrund shadow-offset-hoer">
-                  <div className="relative flex aspect-[4/5] flex-1 items-center justify-center bg-hoer p-3">
-                    <SkitseFoer />
-                    <span className="absolute bottom-3 left-3 rounded-stram bg-baggrund px-2 py-0.5 font-mono text-detalje uppercase tracking-wide">
-                      {da.landing.heroFoer}
-                    </span>
-                  </div>
+              <div className="relative pt-4">
+                {/* Før: krøllet seddel på hør */}
+                <div className="rotate-lap-v relative z-0 max-w-[15rem] rounded-stram border-2 border-koks bg-hoer p-4">
+                  <span className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/60">
+                    {da.landing.foerKort.label}
+                  </span>
+                  <p className="mt-2 font-mono text-detalje lowercase leading-snug text-tekst/80">
+                    {da.landing.foerKort.tekst}
+                  </p>
+                  <p className="mt-1 font-mono text-detalje lowercase text-tekst/80">
+                    {da.landing.foerKort.pris}
+                  </p>
+                  {/* "Utydeligt foto" — det er dét, efter-kortet lægger sig over */}
+                  <div
+                    className="skravering mt-2 h-16 rounded-stram border border-koks/40"
+                    aria-hidden="true"
+                  />
+                </div>
+                {/* Efter: leverancen, lagt hen over — søm i venstre kant */}
+                <div className="rotate-lap-h relative z-10 -mt-10 ml-10 flex max-w-xs rounded-bloed border-2 border-koks bg-kalk shadow-offset-gran sm:ml-20">
                   <div className="soem shrink-0" aria-hidden="true" />
-                  <div className="relative flex aspect-[4/5] flex-1 items-center justify-center bg-kalk p-3">
-                    <SkitseEfter />
-                    <span className="absolute bottom-3 right-3 rounded-stram bg-flade px-2 py-0.5 font-mono text-detalje uppercase tracking-wide">
-                      {da.landing.heroEfter}
+                  <div className="p-5">
+                    <span className="font-mono text-detalje font-bold uppercase tracking-wide text-gran">
+                      {da.landing.efterKort.label}
                     </span>
+                    <p className="mt-2 font-display text-titel font-bold">
+                      {da.landing.efterKort.titel}
+                    </p>
+                    <ul className="mt-2 flex flex-col gap-1 text-detalje text-tekst/80">
+                      {da.landing.efterKort.punkter.map((punkt) => (
+                        <li key={punkt} className="flex gap-2">
+                          <span aria-hidden="true" className="text-rav">
+                            —
+                          </span>
+                          {punkt}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-3 inline-block rounded-stram bg-gran px-2 py-1 font-mono text-detalje font-bold text-kalk">
+                      {da.landing.efterKort.pris}
+                    </p>
                   </div>
                 </div>
-                <div className="absolute -top-4 right-6">
+                <div className="absolute -top-1 right-2">
                   <Stempel className="bg-baggrund">{da.landing.heroStempel}</Stempel>
                 </div>
               </div>
@@ -107,17 +142,17 @@ export default function Forside() {
         </div>
       </section>
 
-      {/* Ærligheds-blok: hør-grund, på desktop indrykket bag en lodret søm
-          så blokken ikke bare er endnu en venstrestillet spalte (S21) */}
-      <section className="bg-flade">
-        <div className="mx-auto max-w-5xl px-4 py-14 lg:grid lg:grid-cols-[auto_1fr] lg:gap-12">
+      {/* Ærligheds-blok (v3): koks — sidens ene mørke, tunge udsagn, så
+          farvebåndene ikke gentager samme rytme; indrykket bag lodret søm (S21) */}
+      <section className="bg-koks text-kalk">
+        <div className="mx-auto max-w-5xl px-4 py-16 lg:grid lg:grid-cols-[auto_1fr] lg:gap-12">
           <div className="soem hidden lg:block" aria-hidden="true" />
           <Reveal>
-            <SektionsMarkoer nr={2} />
+            <SektionsMarkoer nr={2} paaMoerk />
             <h2 className="mt-4 font-display text-display font-semibold lg:text-hero">
               {da.landing.aerligTitel}
             </h2>
-            <p className="mt-3 max-w-laesbar text-tekst/80 lg:text-lead">
+            <p className="mt-3 max-w-laesbar text-kalk/80 lg:text-lead">
               {da.landing.aerligTekst}
             </p>
           </Reveal>
@@ -148,6 +183,7 @@ export default function Forside() {
                           (pakke.prisDkk / pakke.antal).toFixed(2).replace(".", ","),
                         )}
                       </p>
+                      <div className="stregkode mt-3" aria-hidden="true" />
                     </Prislap>
                   </Reveal>
                 </ToerresnorLap>

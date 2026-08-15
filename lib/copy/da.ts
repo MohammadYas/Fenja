@@ -278,8 +278,26 @@ export const da = {
     heroKnap: "Lav min annonce",
     heroFoer: "Dit foto",
     heroEfter: "Renset",
+    // Før/efter-kortene (v3): annoncen som transformation — den sjuskede seddel
+    // mod den færdige leverance. Skitseret eksempel, tydeligt mærket som sådan.
+    foerKort: {
+      label: "Før",
+      tekst: "blå strik sælges, str m tror jeg, brugt men fin",
+      pris: "100 kr. eller byd",
+    },
+    efterKort: {
+      label: "Efter — med Fenja",
+      titel: "Mørkeblå uldstrik · str. M",
+      punkter: [
+        "Rensede fotos, klar til Vinted",
+        "Visualisering — altid mærket",
+        "Fejl oplyst ærligt i teksten",
+      ],
+      pris: "Prisforslag: 120–160 kr.",
+    },
+    marginal: "Katalog 2026 · annoncer uden pynt",
     heroPladsholder:
-      "Her kommer et ægte før/efter fra appen — vi bruger ikke opstillede eksempler.",
+      "Skitseret eksempel — når appen er i drift, viser vi et ægte før/efter herfra.",
     saadanTitel: "Sådan virker det",
     saadanTrin: [
       {
