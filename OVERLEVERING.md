@@ -2,13 +2,22 @@
 
 > Læs denne fil FØRST i enhver ny session. Derefter: HANDOFF.md (loven),
 > STATUS.md (log), SPEC.md/DESIGN.md/REDESIGN.md ved behov.
-> Alt ligger på branch `claude/ga-i-fang-og-beug-uxux-ha52r9` (pushet). Ingen PR oprettet endnu.
+> Tidligere arbejds-branches er merget til `main`; nyeste arbejde ligger på
+> `claude/naeste-task-dcfccg` (pushet). Ingen PR uden at ejeren beder om det.
 
 ---
 
 ## 1. Hvor projektet står LIGE NU
 
-**Hele fase A er bygget og grøn — inkl. S17 (visuel rebuild v2). Én opgave tilbage før launch-gates:**
+**Hele fase A er bygget og grøn — inkl. S17 (visuel rebuild v2), slop-rebuilds
+S19–S24, af-skabelonisering V1–V4, udvidelser U1–U4, batch-flowet S25 (B-9)
+og regenerering S18 (B-8). De keyless kvalitetsgates er målt og bestået:**
+
+- **Lighthouse-gaten (HANDOFF §8) er BESTÅET og HÅNDHÆVES I CI:** alle syv
+  marketing-sider ligger på 95–98 i performance og 100 i a11y/BP/SEO
+  (mobil-emulering). CI's `lighthouse`-job kører `@lhci/cli autorun` med
+  tærskel ≥ 90 (lighthouserc.json) — og bygger dermed også appen keyless.
+- **Slop-gennemgang af hele sitet (§8) er kørt** — se STATUS.md.
 
 **S12 (NÆSTE OPGAVE — KRÆVER NØGLER):** Ende-til-ende mod rigtige providers.
 Blokeret indtil ejeren kører hjemme-checklisten (HANDOFF §6). Når nøglerne findes:
@@ -16,19 +25,21 @@ Blokeret indtil ejeren kører hjemme-checklisten (HANDOFF §6). Når nøglerne f
 2. Kalibrér `pipeline.troskabsTaerskel` i `lib/config.ts` ud fra målingen
 3. Mål Gate 2 (komplet annonce ≤ 2 min) på rigtig mobil
 4. Skift landing-heroens ærligt mærkede pladsholder til ÆGTE before/after fra første rigtige kørsel (den sidder i `app/(marketing)/page.tsx`, hero-figuren)
-5. Derefter kvalitetsgates før launch: HANDOFF §8 (Lighthouse mobil ≥ 90, én uinstrueret bruger gennemfører flowet, slop-gennemgang af hele sitet)
+5. Derefter de sidste gates før launch: én uinstrueret bruger gennemfører
+   flowet på egen telefon (HANDOFF §8) — resten af §8 er grønt
 
 **S17 er FÆRDIG (2026-08-15):** komplet visuel rebuild efter REDESIGN.md ("katalog
 møder plakat"). Dødstegn-tjekket fra REDESIGN §5 er besvaret i STATUS.md. REDESIGN.md
 er hermed udført — DESIGN.md §1–3 (tokens/skrifter/kontrast) gælder stadig; §4–7's
 layoutbeskrivelser er erstattet af REDESIGN-retningen som bygget.
 
-Verifikation: `npm run lint && npm run typecheck && npm test` (77 tests) og
-`npm run build` — alt grønt uden nogen nøgler. CI kører det samme.
+Verifikation: `npm run lint && npm run typecheck && npm test` (85 tests) og
+`npm run build` — alt grønt uden nogen nøgler. CI kører det samme plus
+Lighthouse-gaten.
 
 ## 2. Arkitektur på 60 sekunder
 
-Next.js 15 App Router + TS strict + Tailwind v3 (config-as-code) · Supabase (auth/db/storage, 4 migrations i `/supabase/migrations`) · Trigger.dev (jobs) · fal.ai + Claude bag interfaces · Stripe · sharp.
+Next.js 15 App Router + TS strict + Tailwind v3 (config-as-code) · Supabase (auth/db/storage, 5 migrations i `/supabase/migrations`) · Trigger.dev (jobs) · fal.ai + Claude bag interfaces · Stripe · sharp.
 
 - **Providers** (`lib/providers/`): `ImageProvider` (fal: rens + on-model), `TextProvider` (Claude: annoncetekst, troskabs-vision, label-OCR), `VideoProvider` (fase B, tomt interface). `hentImageProvider()/hentTextProvider()` vælger AUTOMATISK mock uden nøgler (`MOCK_PROVIDERS=1` tvinger mock). Tests/CI kører altid mod mocks.
 - **Pipeline** (`lib/pipeline/`): `run.ts` er hjertet — budgetloft-tjek → rens (parallel) → [visualisering ∥ tekst] → badge → leverance m. kredit-træk. Delvis leverance ved fejlet visualisering = automatisk refund (B-6). Alt bag `PipelineDb`/`PipelineStorage`-interfaces; fakes i `tests/fakes/`. Uden `TRIGGER_SECRET_KEY` kører `/api/items` pipelinen inline (dev/mock).
@@ -55,13 +66,13 @@ Next.js 15 App Router + TS strict + Tailwind v3 (config-as-code) · Supabase (au
 
 ## 4. Nøgler & ejer-checkliste (blokerer kun S12)
 
-`.env.example` dokumenterer alt. Ejeren mangler (HANDOFF §6): Supabase cloud (`supabase link && supabase db push` — 4 migrations klar; lokal `db reset` kræver Docker og er IKKE verificeret endnu), Netlify + env-vars, `FAL_KEY` → kør Gate 1, `ANTHROPIC_API_KEY`, Stripe testmode (kun webhook-endpoint + nøgler), Trigger.dev (`TRIGGER_SECRET_KEY` + `TRIGGER_PROJECT_REF`), Resend, domæne (`NEXT_PUBLIC_SITE_URL`), `ADMIN_EMAIL`, `DAILY_BUDGET_CAP_DKK` (default 200).
+`.env.example` dokumenterer alt. Ejeren mangler (HANDOFF §6): Supabase cloud (`supabase link && supabase db push` — 5 migrations klar; lokal `db reset` kræver Docker og er IKKE verificeret endnu), Netlify + env-vars, `FAL_KEY` → kør Gate 1, `ANTHROPIC_API_KEY`, Stripe testmode (kun webhook-endpoint + nøgler), Trigger.dev (`TRIGGER_SECRET_KEY` + `TRIGGER_PROJECT_REF`), Resend, domæne (`NEXT_PUBLIC_SITE_URL`), `ADMIN_EMAIL`, `DAILY_BUDGET_CAP_DKK` (default 200).
 
 ## 5. Kør det selv
 
 ```
 npm install
-npm test            # 77 unit tests, mocks, ingen nøgler
+npm test            # 85 unit tests, mocks, ingen nøgler
 npm run build       # fuldt build uden nøgler
 npm run start       # marketing-sider virker keyless; app-sider kræver Supabase
 ```
@@ -73,7 +84,8 @@ preview-rute uden auth (slettes igen før commit — mønstret fra S17).
 ## 6. Rækkefølgen herfra
 
 1. Ejer kører §6-checklisten → **S12** (se §1 — trin 1–4)
-2. Kvalitetsgates før launch: HANDOFF §8
+2. Resterende §8-gates: én uinstrueret bruger gennemfører flowet
+   (Lighthouse-gaten og slop-gennemgangen er allerede grønne)
 3. Sentry (G-2) er bevidst udskudt — ejer-beslutning
 4. Derefter: fase B (videomotoren, SPEC Tillæg B)
 

@@ -26,7 +26,7 @@ asks.
 
 ```bash
 npm install
-npm run lint && npm run typecheck && npm test   # 77 unit tests
+npm run lint && npm run typecheck && npm test   # 85 unit tests
 npm run build
 ```
 

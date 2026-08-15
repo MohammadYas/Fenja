@@ -164,7 +164,7 @@ Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 - 2026-08-14 S15/S16: admin-omkostningsside (ADMIN_EMAIL-gated), delbart 9:16 before/after (F-4); rate limits og budgetloft lå i S5/S8
 - 2026-08-14 Mobilverifikation: 390 px-screenshots af landing/log-ind/lær/guide/vilkår; fandt og rettede token-navnekollision (text-detalje farvede tekst rav i stedet for at sætte størrelse)
 ## Blokeret / afventer ejer
-- HANDOFF §6 hjemme-checklisten: Supabase cloud (`link`/`db push` — 4 migrations ligger klar), Netlify + env-vars, fal.ai-nøgle → kør Gate 1 (S12), Stripe testmode (produkt/webhook — koden bruger inline price_data, så kun webhook-endpoint + nøgler behøves), Trigger.dev-projekt (sæt TRIGGER_PROJECT_REF), Resend, domæne (NEXT_PUBLIC_SITE_URL styrer sitemap)
+- HANDOFF §6 hjemme-checklisten: Supabase cloud (`link`/`db push` — 5 migrations ligger klar), Netlify + env-vars, fal.ai-nøgle → kør Gate 1 (S12), Stripe testmode (produkt/webhook — koden bruger inline price_data, så kun webhook-endpoint + nøgler behøves), Trigger.dev-projekt (sæt TRIGGER_PROJECT_REF), Resend, domæne (NEXT_PUBLIC_SITE_URL styrer sitemap)
 - `supabase db reset` skal verificeres lokalt (kræver Docker)
 - Landing-hero skal have ægte before/after fra første rigtige S12-kørsel
 - Sentry (G-2, P1) fravalgt indtil videre — kræver DSN; besluttes af ejer
