@@ -69,15 +69,19 @@ export default function PriserSide() {
               {da.priserSide.saadanTitel}
             </h2>
           </Reveal>
+          {/* dt/dd må højst have ét div-lag mellem sig og dl (a11y) — Reveal
+              bærer derfor selv layout-klasserne */}
           <dl className="mt-8 grid gap-x-10 gap-y-8 sm:grid-cols-2">
             {da.priserSide.punkter.map((punkt, i) => (
-              <Reveal key={punkt.overskrift} forsinkelseTrin={i}>
-                <div className="max-w-laesbar">
-                  <dt className="font-display text-titel font-bold">
-                    {punkt.overskrift}
-                  </dt>
-                  <dd className="mt-2 text-tekst/80">{punkt.tekst}</dd>
-                </div>
+              <Reveal
+                key={punkt.overskrift}
+                forsinkelseTrin={i}
+                className="max-w-laesbar"
+              >
+                <dt className="font-display text-titel font-bold">
+                  {punkt.overskrift}
+                </dt>
+                <dd className="mt-2 text-tekst/80">{punkt.tekst}</dd>
               </Reveal>
             ))}
           </dl>
@@ -94,13 +98,15 @@ export default function PriserSide() {
         </Reveal>
         <dl className="mt-6">
           {da.priserSide.faq.map((punkt, i) => (
-            <Reveal key={punkt.spoergsmaal} forsinkelseTrin={i}>
-              <div className="border-t border-kant py-5">
-                <dt className="max-w-2xl font-display text-titel font-bold">
-                  {punkt.spoergsmaal}
-                </dt>
-                <dd className="mt-2 max-w-laesbar text-tekst/80">{punkt.svar}</dd>
-              </div>
+            <Reveal
+              key={punkt.spoergsmaal}
+              forsinkelseTrin={i}
+              className="border-t border-kant py-5"
+            >
+              <dt className="max-w-2xl font-display text-titel font-bold">
+                {punkt.spoergsmaal}
+              </dt>
+              <dd className="mt-2 max-w-laesbar text-tekst/80">{punkt.svar}</dd>
             </Reveal>
           ))}
         </dl>

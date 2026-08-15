@@ -9,7 +9,11 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "analyse:hent": "tsx scripts/markedsanalyse/hent.ts",
+    "analyse:beregn": "tsx scripts/markedsanalyse/analyser.ts",
+    "analyse:rapport": "tsx scripts/markedsanalyse/rapport.ts",
+    "analyse:eksport": "tsx scripts/markedsanalyse/eksporter.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.117.1",
@@ -35,6 +39,7 @@
     "postcss": "^8.5.0",
     "server-only": "^0.0.1",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.23.12",
     "typescript": "^5.8.0",
     "vitest": "^3.2.0"
   }

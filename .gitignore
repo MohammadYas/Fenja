@@ -29,3 +29,12 @@ next-env.d.ts
 
 # lokale verifikations-screenshots og harness (aldrig committes)
 /.verify/
+
+# lighthouse ci-rapporter
+/.lighthouseci/
+
+# markedsanalyse-output (øjebliksbilleder, aldrig kildekode)
+/data/markedsanalyse/
+
+# gate 1-fotos og -resultater (ejerens egne billeder, aldrig committes)
+/data/gate1/

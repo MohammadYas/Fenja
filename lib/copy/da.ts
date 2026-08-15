@@ -111,6 +111,10 @@ export const da = {
   },
   resultat: {
     titelArbejder: "Din annonce er på vej",
+    // B-9 batch: pipelinen kører færdig i baggrunden — man kan fotografere videre
+    batchTekst:
+      "Du behøver ikke vente her. Annoncen bliver færdig i baggrunden, og du finder den på oversigten.",
+    batchKnap: "Fotografér det næste imens",
     trin: {
       cleanup: "Renser billeder",
       onmodel: "Laver visualisering",
@@ -161,6 +165,8 @@ export const da = {
       active: "Aktiv",
       sold: "Solgt",
     },
+    // Kladde med kørende pipeline (B-9): adskil "arbejder" fra "efterladt"
+    paaVej: "På vej",
     filterLabel: "Vis kun",
     filterAlle: "Alle",
     filterTom: "Ingen annoncer med den status endnu.",

@@ -10,19 +10,14 @@ export const display = localFont({
   display: "swap",
 });
 
+// Kursiv-filen (instrument-sans-italic-latin.woff2) ligger fortsat i
+// /public/fonts, men er IKKE deklareret: ingen copy eller guide bruger kursiv,
+// og next/font preloader alle deklarerede filer — 31 KB der konkurrerede med
+// LCP på hver side. Genindsæt src-varianten (style: "italic") hvis kursiv
+// tages i brug; indtil da vil en evt. <em> blive skrå-syntetiseret af browseren.
 export const brod = localFont({
-  src: [
-    {
-      path: "../public/fonts/instrument-sans-latin.woff2",
-      weight: "400 700",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/instrument-sans-italic-latin.woff2",
-      weight: "400 700",
-      style: "italic",
-    },
-  ],
+  src: "../public/fonts/instrument-sans-latin.woff2",
+  weight: "400 700",
   variable: "--font-brod",
   display: "swap",
 });

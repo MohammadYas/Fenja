@@ -16,6 +16,7 @@ type ItemRaekke = {
   leveret_at: string | null;
   solgt_at: string | null;
   created_at: string;
+  generations: { status: string }[];
 };
 
 // Item-bibliotek (B-7) + statistik (B-10): salgsværdi, antal, liggetid.
@@ -24,7 +25,7 @@ export default async function Oversigt() {
   const { data } = await supabase
     .from("items")
     .select(
-      "id, brand, titel, category, status, sold_price_dkk, leveret_at, solgt_at, created_at",
+      "id, brand, titel, category, status, sold_price_dkk, leveret_at, solgt_at, created_at, generations(status)",
     )
     .order("created_at", { ascending: false });
   const items = (data ?? []) as ItemRaekke[];
@@ -93,6 +94,12 @@ export default async function Oversigt() {
             item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
           status: item.status,
           soldPrisDkk: item.sold_price_dkk,
+          // B-9: en kladde med kørende pipeline er "på vej", ikke efterladt
+          paaVej:
+            item.status === "draft" &&
+            item.generations.some(
+              (g) => g.status === "queued" || g.status === "running",
+            ),
         }))}
       />
     </main>

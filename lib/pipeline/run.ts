@@ -16,6 +16,7 @@ import { paafoerBadge } from "./badge";
 import { rensFotos, type RensetFoto } from "./cleanup";
 import type { ItemTilPipeline, PipelineDb, PipelineStorage } from "./db";
 import { genererValideretAnnonceTekst } from "./listing-text";
+import { findMarkedsinterval } from "./markedspriser";
 import { genererOnModelMedTroskab } from "./onmodel";
 import { STANDARD_PRESET_ID, hentPreset } from "./presets";
 
@@ -148,6 +149,9 @@ async function tekstTrin(
       fejlBeskrivelse: item.fejlBeskrivelse,
       labelTekst,
       koebsprisDkk: item.koebsprisDkk,
+      // M2/D-4: committede markedstal som virkelighedstjek, når mærke+kategori
+      // matcher en høstet søgning (null uden match — prompten er da som før)
+      markedsinterval: findMarkedsinterval(item.maerke, item.kategori),
     });
     await deps.db.gemAnnonceTekst(item.id, tekst);
     await deps.db.afslutGenerering(genId, {

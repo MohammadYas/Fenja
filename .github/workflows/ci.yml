@@ -19,3 +19,17 @@ jobs:
       - run: npm run typecheck
       # CI kører uden rigtige nøgler — alle tests bruger mock-providers (NFR-5)
       - run: npm test
+
+  # Kvalitetsgaten fra HANDOFF §8: Lighthouse mobil ≥ 90 på alle
+  # marketing-sider — bygget og målt keyless, tærskler i lighthouserc.json
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx --yes @lhci/cli@0.15.x autorun
