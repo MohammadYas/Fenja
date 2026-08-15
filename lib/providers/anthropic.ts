@@ -62,12 +62,20 @@ Data:
 - Stand (Vinteds skala): ${input.stand}
 - Fejl/slid oplyst af sælger: ${input.fejlBeskrivelse ?? "ingen"}
 - Label-info: ${input.labelTekst ?? "ukendt"}
-- Købspris: ${input.koebsprisDkk != null ? `${input.koebsprisDkk} kr.` : "ukendt"}
+- Købspris: ${input.koebsprisDkk != null ? `${input.koebsprisDkk} kr.` : "ukendt"}${
+            input.markedsinterval
+              ? `\n- Markedstal fra aktive Vinted-annoncer for "${input.markedsinterval.soegetekst}" (${input.markedsinterval.antal} stk., høstet ${input.markedsinterval.hoestetDato}): typisk ${input.markedsinterval.p25Dkk}–${input.markedsinterval.p75Dkk} kr., median ${input.markedsinterval.medianDkk} kr.`
+              : ""
+          }
 
 Krav:
 1. Titlen skal være søgbar: mærke + type + størrelse.
 2. Er der oplyst fejl/slid, SKAL det nævnes tydeligt i beskrivelsen.
-3. Prisforslag som interval i hele kroner med kort begrundelse ("lignende ... ligger typisk X–Y kr."). Det er et forslag, aldrig en garanti.
+3. Prisforslag som interval i hele kroner med kort begrundelse ("lignende ... ligger typisk X–Y kr."). Det er et forslag, aldrig en garanti.${
+            input.markedsinterval
+              ? " Brug markedstallene som virkelighedstjek — de er udbudspriser (ikke salgspriser), så færdige handler lander ofte lidt under; vægt stand og oplyste fejl."
+              : ""
+          }
 
 Svar KUN med JSON: {"titel": string, "beskrivelse": string, "soegeord": string[], "prisFra": number, "prisTil": number, "prisBegrundelse": string}`,
         },

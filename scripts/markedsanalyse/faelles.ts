@@ -12,6 +12,10 @@ export type Soegning = {
   soegetekst: string;
   /** Overskrift i rapporten, fx "Kjoler" */
   kategori: string;
+  /** Til eksport (M2): mærket et item skal have for at matche intervallet */
+  maerke?: string;
+  /** Til eksport (M2): mindst ét ord skal indgå i items kategori-felt */
+  matchOrd?: string[];
 };
 
 export type MarkedsItem = {

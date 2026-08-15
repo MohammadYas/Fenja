@@ -1,5 +1,7 @@
 // Tekst- og vision-kald (Claude) bag interface, så tests kører mod mock (C-7-princippet).
 
+import type { Markedsinterval } from "@/lib/data/markedspriser";
+
 export type AnnonceTekstInput = {
   maerke: string;
   stoerrelse: string;
@@ -10,6 +12,8 @@ export type AnnonceTekstInput = {
   /** Aflæst fra label-foto når muligt (D-3) */
   labelTekst: string | null;
   koebsprisDkk: number | null;
+  /** M2/D-4: virkelighedstjek fra markedsanalysen (udbudspriser) — valgfrit */
+  markedsinterval?: Markedsinterval | null;
 };
 
 export type AnnonceTekst = {

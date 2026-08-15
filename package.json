@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "analyse:hent": "tsx scripts/markedsanalyse/hent.ts",
     "analyse:beregn": "tsx scripts/markedsanalyse/analyser.ts",
-    "analyse:rapport": "tsx scripts/markedsanalyse/rapport.ts"
+    "analyse:rapport": "tsx scripts/markedsanalyse/rapport.ts",
+    "analyse:eksport": "tsx scripts/markedsanalyse/eksporter.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.117.1",

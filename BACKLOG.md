@@ -43,8 +43,11 @@
         lav volumen m. hård kaldsgrænse, sælgerdata filtreres væk ved kilden,
         median/kvartiler/efterspørgsel pr. søgning og stand; 11 tests,
         data/-output gitignoreret; valideret mod rigtigt katalog (1.817 stk.)
-[ ] M2  Flet markedsstatistikken ind i prisforslaget (D-4) som interval-input
-        til TextProvider, når ejeren har kørt en frisk høst
+[x] M2  Markedsstatistik ind i prisforslaget (D-4): eksporter.ts genererer
+        committet lib/data/markedspriser.ts (min. 30 annoncer pr. interval);
+        findMarkedsinterval matcher mærke (normaliseret) + kategori-ord, og
+        prompten får en dateret markedslinje mærket som udbudspriser —
+        første eksport fra dagens høst (10 intervaller) committet
 [x] S13 Landing page + vilkår/privatliv efter DESIGN.md (F-1) — hero er ægte output fra S12
 [x] S14 Lær-sektion, 8 guides (F-2) + SEO-basics (F-3)
 [x] S15 Misbrugsværn + admin-omkostningsside (E-5, G-1) — Sentry (G-2) afventer ejer-beslutning

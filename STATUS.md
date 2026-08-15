@@ -6,6 +6,16 @@ Sidst opdateret: 2026-08-15 af cloud session (L1, Lighthouse-gaten)
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` og `claude/naeste-task-dcfccg` efter merge
 (én commit pr. opgave):
+- 2026-08-15 M2 Markedstal i prisforslaget (D-4): nyt analyse:eksport-trin
+  genererer lib/data/markedspriser.ts (committet datafil, kun intervaller
+  med ≥ 30 annoncer bag) fra markedsstatistikken; lib/pipeline/
+  markedspriser.ts matcher items mærke (normaliseret — "Levis"/"Levi's",
+  "HM"/"H&M") + kategori-ord og vælger største stikprøve; tekstTrin sender
+  intervallet med (dækker både hovedpipeline og regenerér), og Claude-
+  prompten får en dateret markedslinje, eksplicit mærket som udbudspriser
+  ("færdige handler lander ofte lidt under"). Uden match er prompten
+  uændret. Første eksport fra dagens høst committet (10 intervaller).
+  6 nye tests (96 → 102).
 - 2026-08-15 L2 scripts/gate1-fidelity-test.ts skrevet — den manglede, selv
   om HANDOFF §6 trin 4 beder ejeren køre den. Genbruger den ægte pipeline-
   logik (rensBaggrund → genererOnModelMedTroskab m. retry → troskabs-tjek),
