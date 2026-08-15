@@ -347,6 +347,96 @@ h2{
 .mk-caption{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-top:.7rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .mk-caption b{color:var(--ink);font-weight:500}
 
+
+/* scroll progress */
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--run);z-index:20;transition:width .1s linear}
+
+/* mockup tabs + views */
+.mock-tabs{margin-left:auto;display:flex;gap:.3rem}
+.mock-tab{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;
+  background:none;border:1px solid transparent;border-radius:5px;color:var(--muted);
+  padding:.22rem .6rem;cursor:pointer;transition:color .18s ease,border-color .18s ease;
+}
+.mock-tab:hover{color:var(--ink)}
+.mock-tab[aria-selected="true"]{color:var(--run);border-color:var(--run-dim)}
+.mk-view{display:none}
+.mk-view.on{display:block;animation:mkfade .3s ease-out}
+@keyframes mkfade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.mk-view.on{animation:none}}
+.mk-h1,.mk-dash-title,.mk-ph-title{font-family:var(--mk-hf,var(--sans))}
+
+/* dashboard view */
+.mk-dash{display:grid;grid-template-columns:9rem 1fr;min-height:15rem}
+@media (max-width:44rem){.mk-dash{grid-template-columns:1fr}}
+.mk-side{border-right:1px solid var(--mk-br);padding:.9rem .8rem;display:flex;flex-direction:column;gap:.45rem}
+@media (max-width:44rem){.mk-side{display:none}}
+.mk-side .it{font-size:.7rem;color:var(--mk-mf);padding:.32rem .5rem;border-radius:var(--mk-r,6px)}
+.mk-side .it.on{background:var(--mk-p);color:var(--mk-op);font-weight:600}
+.mk-main{padding:1rem 1.1rem 1.2rem}
+.mk-dash-title{font-size:1rem;font-weight:700;margin-bottom:.7rem}
+.mk-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem}
+@media (max-width:44rem){.mk-stats{grid-template-columns:1fr 1fr}}
+.mk-stat{background:var(--mk-c);color:var(--mk-cf);border:1px solid var(--mk-br);border-radius:var(--mk-r,6px);padding:.6rem .7rem;box-shadow:var(--mk-sh,none)}
+.mk-stat .l{font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mk-mf)}
+.mk-stat .v{font-family:var(--mono);font-weight:700;font-size:1.05rem;font-variant-numeric:tabular-nums;margin-top:.15rem}
+.mk-stat .v em{font-style:normal;font-size:.62rem;color:var(--mk-a);margin-left:.25rem}
+.mk-table{margin-top:.6rem;border:1px solid var(--mk-br);border-radius:var(--mk-r,6px);overflow:hidden}
+.mk-tr{display:grid;grid-template-columns:1.4fr 1fr .8fr .6fr;gap:.6rem;align-items:center;padding:.45rem .7rem;font-size:.68rem;background:var(--mk-c);color:var(--mk-cf);border-bottom:1px solid var(--mk-br)}
+.mk-tr:last-child{border-bottom:none}
+.mk-tr.hd{font-size:.6rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mk-mf)}
+.mk-pill{justify-self:start;font-size:.6rem;font-weight:600;padding:.1rem .5rem;border-radius:99px;background:color-mix(in srgb,var(--mk-a) 18%,transparent);color:var(--mk-a)}
+
+/* phone view */
+.mk-ph-wrap{display:flex;justify-content:center;padding:1.3rem 1rem}
+.mk-phone{width:15rem;border:1px solid var(--mk-br);border-radius:22px;overflow:hidden;background:var(--mk-b);box-shadow:var(--mk-sh,0 10px 30px -18px rgba(0,0,0,.4))}
+.mk-status{display:flex;justify-content:space-between;padding:.45rem .9rem .2rem;font-family:var(--mono);font-size:.56rem;color:var(--mk-mf)}
+.mk-ph-body{padding:.7rem .8rem .8rem}
+.mk-ph-title{font-size:.95rem;font-weight:700}
+.mk-ph-sub{font-size:.64rem;color:var(--mk-mf);margin-top:.15rem}
+.mk-ph-card{background:var(--mk-c);color:var(--mk-cf);border:1px solid var(--mk-br);border-radius:calc(var(--mk-r,6px) + 4px);padding:.6rem .7rem;margin-top:.55rem;box-shadow:var(--mk-sh,none)}
+.mk-ph-card .row{display:flex;justify-content:space-between;align-items:baseline;font-size:.66rem}
+.mk-ph-card .big{font-family:var(--mono);font-weight:700;font-size:1rem;font-variant-numeric:tabular-nums}
+.mk-ph-bar{height:.3rem;border-radius:99px;background:color-mix(in srgb,var(--mk-a) 22%,transparent);margin-top:.4rem;overflow:hidden}
+.mk-ph-bar i{display:block;height:100%;width:64%;background:var(--mk-a);border-radius:99px}
+.mk-ph-btn{width:100%;margin-top:.6rem;font-size:.7rem;font-weight:600;background:var(--mk-a);color:var(--mk-oa);border:none;border-radius:var(--mk-r,6px);padding:.5rem}
+.mk-tabsbar{display:flex;justify-content:space-around;border-top:1px solid var(--mk-br);padding:.5rem .4rem .6rem;margin-top:.7rem}
+.mk-tabsbar span{font-size:.56rem;color:var(--mk-mf);display:flex;flex-direction:column;align-items:center;gap:.2rem}
+.mk-tabsbar i{width:.85rem;height:.85rem;border-radius:4px;background:var(--mk-mf);opacity:.5}
+.mk-tabsbar span.on{color:var(--mk-a)}
+.mk-tabsbar span.on i{background:var(--mk-a);opacity:1}
+
+/* ux audit */
+.sev-chips{display:flex;gap:.4rem;flex-wrap:wrap;margin:.8rem 0 .2rem}
+.sev-chip{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.04em;
+  background:none;border:1px solid var(--line);border-radius:99px;color:var(--muted);
+  padding:.25rem .75rem;cursor:pointer;transition:color .18s ease,border-color .18s ease;
+}
+.sev-chip:hover{color:var(--ink)}
+.sev-chip[aria-pressed="true"]{color:var(--ink);border-color:var(--run-dim)}
+.sev-chip i{display:inline-block;width:.5rem;height:.5rem;border-radius:50%;margin-right:.35rem;vertical-align:0}
+.uxlist{margin-top:.9rem;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.uxrow{border-bottom:1px solid var(--line)}
+.uxrow:last-child{border-bottom:none}
+.uxrow summary{
+  display:grid;grid-template-columns:.35rem 1fr auto;gap:.9rem;align-items:center;
+  padding:.7rem 1rem .7rem 0;cursor:pointer;list-style:none;transition:background .15s ease;
+}
+.uxrow summary::-webkit-details-marker{display:none}
+.uxrow summary:hover{background:var(--surface-2)}
+.uxrow .stripe{align-self:stretch;background:var(--sev,#64748B)}
+.uxrow .ti{font-size:.88rem;color:var(--ink);font-weight:500}
+.uxrow .ti small{display:block;font-family:var(--mono);font-size:.64rem;font-weight:400;color:var(--muted);margin-top:.1rem}
+.uxrow .plat{font-family:var(--mono);font-size:.64rem;color:var(--muted);padding-right:.2rem}
+.uxrow .body{padding:.2rem 1rem 1rem 1.25rem;font-size:.85rem;color:var(--body)}
+.uxrow .body .dd{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.6rem}
+@media (max-width:44rem){.uxrow .body .dd{grid-template-columns:1fr}}
+.uxrow .body .do,.uxrow .body .dont{border:1px solid var(--line);border-radius:6px;padding:.6rem .75rem;font-size:.78rem;line-height:1.5}
+.uxrow .body .do b{color:var(--run);font-family:var(--mono);font-size:.66rem;letter-spacing:.08em}
+.uxrow .body .dont b{color:#F87171;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em}
+.uxrow .body .do b,.uxrow .body .dont b{display:block;margin-bottom:.25rem;text-transform:uppercase}
+
 /* ---------- specimen ---------- */
 .spec{margin-top:2.2rem;display:grid;grid-template-columns:1.15fr .85fr;gap:.6rem}
 @media (max-width:52rem){.spec{grid-template-columns:1fr}}
@@ -374,6 +464,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
 .foot .mark{font-size:.85rem}
 </style>
 
+<div class="progress" id="progress" aria-hidden="true"></div>
 <header>
   <div class="wrap bar">
     <div class="mark">fenja<b>_</b></div>
@@ -471,8 +562,15 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
       </div>
 
       <div class="mock rv" id="mock">
-        <div class="mock-chrome"><span class="dots"><i></i><i></i><i></i></span><span id="mock-title">preview</span></div>
+        <div class="mock-chrome"><span class="dots"><i></i><i></i><i></i></span><span id="mock-title">preview</span>
+          <div class="mock-tabs" role="tablist" aria-label="Mockup type">
+            <button class="mock-tab" role="tab" aria-selected="true" data-view="landing" type="button">landing</button>
+            <button class="mock-tab" role="tab" aria-selected="false" data-view="dash" type="button">dashboard</button>
+            <button class="mock-tab" role="tab" aria-selected="false" data-view="app" type="button">app</button>
+          </div>
+        </div>
         <div class="mk" id="mk">
+          <div class="mk-view on" data-view="landing">
           <div class="mk-nav">
             <span class="mk-brand"><i></i>acme co</span>
             <span class="mk-links" aria-hidden="true"><span>Product</span><span>Pricing</span><span>About</span></span>
@@ -492,9 +590,55 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
             <div class="mk-card"><i></i><b>Clear pricing</b><span>One plan, everything included, cancel anytime.</span></div>
             <div class="mk-card"><i></i><b>Real support</b><span>Answers from people who built it, within the hour.</span></div>
           </div>
+          </div>
+
+          <div class="mk-view" data-view="dash">
+            <div class="mk-dash">
+              <div class="mk-side">
+                <span class="it on">Overview</span><span class="it">Orders</span><span class="it">Customers</span><span class="it">Reports</span><span class="it">Settings</span>
+              </div>
+              <div class="mk-main">
+                <div class="mk-dash-title">Overview</div>
+                <div class="mk-stats">
+                  <div class="mk-stat"><span class="l">Revenue</span><div class="v">$48.2k<em>+12%</em></div></div>
+                  <div class="mk-stat"><span class="l">Active</span><div class="v">1,284<em>+4%</em></div></div>
+                  <div class="mk-stat"><span class="l">Churn</span><div class="v">1.9%<em>−0.3</em></div></div>
+                </div>
+                <div class="mk-table">
+                  <div class="mk-tr hd"><span>Customer</span><span>Plan</span><span>Status</span><span>MRR</span></div>
+                  <div class="mk-tr"><span>Nordlys ApS</span><span>Growth</span><span class="mk-pill">Active</span><span>$490</span></div>
+                  <div class="mk-tr"><span>Brava Studio</span><span>Starter</span><span class="mk-pill">Trial</span><span>$0</span></div>
+                  <div class="mk-tr"><span>Kastanje &amp; Co</span><span>Growth</span><span class="mk-pill">Active</span><span>$490</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mk-view" data-view="app">
+            <div class="mk-ph-wrap">
+              <div class="mk-phone">
+                <div class="mk-status"><span>9:41</span><span>●●●</span></div>
+                <div class="mk-ph-body">
+                  <div class="mk-ph-title">Good morning, Kim</div>
+                  <div class="mk-ph-sub">Here's how today looks.</div>
+                  <div class="mk-ph-card">
+                    <div class="row"><span>Today's bookings</span><span class="big">14</span></div>
+                    <div class="mk-ph-bar"><i></i></div>
+                  </div>
+                  <div class="mk-ph-card">
+                    <div class="row"><span>Next: 10:30 — Facial, room 2</span></div>
+                  </div>
+                  <button class="mk-ph-btn" type="button" tabindex="-1">New booking</button>
+                  <div class="mk-tabsbar" aria-hidden="true">
+                    <span class="on"><i></i>Home</span><span><i></i>Calendar</span><span><i></i>Clients</span><span><i></i>More</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <p class="mk-caption"><span>type: <b id="mk-type">—</b> <span style="color:var(--muted)">(shown in placeholder faces)</span></span><span id="mk-style">—</span></p>
+      <p class="mk-caption"><span>type: <b id="mk-type">—</b> <span style="color:var(--muted)">(approximated on this page)</span></span><span><button class="copy-btn" id="copy-starter" type="button">copy starter html</button></span></p>
     </div>
   </section>
 
@@ -576,6 +720,30 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
       </label>
       <div class="pcount" id="fcount"></div>
       <div class="fgrid rv" id="fgrid"></div>
+    </div>
+  </section>
+
+  <section id="audit">
+    <div class="wrap">
+      <p class="sec-label rv"><b>$</b> grep -i <span style="color:var(--amber)">"&hellip;"</span> data/ux-guidelines.csv</p>
+      <h2 class="rv">119 UX rules, ready to audit against</h2>
+      <p class="sec-intro rv">The full guideline dataset, severity-coded. Filter by severity, search
+      a concern, and open a rule for its Do / Don&rsquo;t.</p>
+
+      <label class="search-line rv" for="uq" style="margin-top:2rem">
+        <span class="prompt">&#10142; </span><span class="g">grep -i</span>
+        <input id="uq" type="search" autocomplete="off" spellcheck="false" placeholder="focus &middot; contrast &middot; toast &middot; skeleton" aria-label="Search UX guidelines">
+        <span class="g">ux-guidelines.csv</span>
+      </label>
+      <div class="sev-chips rv" id="sev-chips" role="group" aria-label="Filter by severity">
+        <button class="sev-chip" type="button" aria-pressed="true" data-sev=""><i style="background:var(--run)"></i>all</button>
+        <button class="sev-chip" type="button" aria-pressed="false" data-sev="Critical"><i style="background:#EF4444"></i>critical</button>
+        <button class="sev-chip" type="button" aria-pressed="false" data-sev="High"><i style="background:#F59E0B"></i>high</button>
+        <button class="sev-chip" type="button" aria-pressed="false" data-sev="Medium"><i style="background:#38BDF8"></i>medium</button>
+        <button class="sev-chip" type="button" aria-pressed="false" data-sev="Low"><i style="background:#64748B"></i>low</button>
+      </div>
+      <div class="pcount" id="ucount"></div>
+      <div class="uxlist rv" id="uxlist"></div>
     </div>
   </section>
 
@@ -801,6 +969,7 @@ if (FONTS.length && fgrid){
 
 /* mini design-system generator */
 /*<styles>*/const STYLES=[{"n":"Minimalism & Swiss Style","k":"Clean, simple, spacious, functional, white space, high contrast, geometric, sans-serif, grid-based, essential","u":"Enterprise apps, dashboards, documentation sites, SaaS platforms, professional tools","x":"Creative portfolios, entertainment, playful brands, artistic experiments","e":"Subtle hover (200-250ms), smooth transitions, sharp shadows if any, clear type hierarchy, fast loading"},{"n":"Neumorphism","k":"Soft UI, embossed, debossed, convex, concave, light source, subtle depth, rounded (12-16px), monochromatic","u":"Health/wellness apps, meditation platforms, fitness trackers, minimal interaction UIs","x":"Complex apps, critical accessibility, data-heavy dashboards, high-contrast required","e":"Soft box-shadow (multiple: -5px -5px 15px, 5px 5px 15px), smooth press (150ms), inner subtle shadow"},{"n":"Glassmorphism","k":"Frosted glass, transparent, blurred background, layered, vibrant background, light source, depth, multi-layer","u":"Modern SaaS, financial dashboards, high-end corporate, lifestyle apps, modal overlays, navigation","x":"Low-contrast backgrounds, critical accessibility, performance-limited, dark text on dark","e":"Backdrop blur (10-20px), subtle border (1px solid rgba white 0.2), light reflection, Z-depth"},{"n":"Brutalism","k":"Raw, unpolished, stark, high contrast, plain text, default fonts, visible borders, asymmetric, anti-design","u":"Design portfolios, artistic projects, counter-culture brands, editorial/media sites, tech blogs","x":"Corporate environments, conservative industries, critical accessibility, customer-facing professional","e":"No smooth transitions (instant), sharp corners (0px), bold typography (700+), visible grid, large blocks"},{"n":"3D & Hyperrealism","k":"Depth, realistic textures, 3D models, spatial navigation, tactile, skeuomorphic elements, rich detail, immersive","u":"Gaming, product showcase, immersive experiences, high-end e-commerce, architectural viz, VR/AR","x":"Low-end mobile, performance-limited, critical accessibility, data tables/forms","e":"WebGL/Three.js 3D, realistic shadows (layers), physics lighting, parallax (3-5 layers), smooth 3D (300-400ms)"},{"n":"Vibrant & Block-based","k":"Bold, energetic, playful, block layout, geometric shapes, high color contrast, duotone, modern, energetic","u":"Startups, creative agencies, gaming, social media, youth-focused, entertainment, consumer","x":"Financial institutions, healthcare, formal business, government, conservative, elderly","e":"Large sections (48px+ gaps), animated patterns, bold hover (color shift), scroll-snap, large type (32px+), 200"},{"n":"Dark Mode (OLED)","k":"Dark theme, low light, high contrast, deep black, midnight blue, eye-friendly, OLED, night mode, power efficient","u":"Night-mode apps, coding platforms, entertainment, eye-strain prevention, OLED devices, low-light","x":"Print-first content, high-brightness outdoor, color-accuracy-critical","e":"Minimal glow (text-shadow: 0 0 10px), dark-to-light transitions, low white emission, high readability, visible"},{"n":"Accessible & Ethical","k":"Accessible, inclusive interface, high contrast, large text (16px+), keyboard navigation, screen reader friendly, accessibility standards aware, focus state, semantic","u":"Government, healthcare, education, inclusive products, large audience, legal compliance, public","x":"None - accessibility universal","e":"Clear focus rings (3-4px), ARIA labels, skip links, responsive design, reduced motion, 44x44px touch targets"},{"n":"Claymorphism","k":"Soft 3D, chunky, playful, toy-like, bubbly, thick borders (3-4px), double shadows, rounded (16-24px)","u":"Educational apps, children's apps, SaaS platforms, creative tools, fun-focused, onboarding, casual games","x":"Formal corporate, professional services, data-critical, serious/medical, legal apps, finance","e":"Inner+outer shadows (subtle, no hard lines), soft press (200ms ease-out), fluffy elements, smooth transitions"},{"n":"Aurora UI","k":"Vibrant gradients, smooth blend, Northern Lights effect, mesh gradient, luminous, atmospheric, abstract","u":"Modern SaaS, creative agencies, branding, music platforms, lifestyle, premium products, hero sections","x":"Data-heavy dashboards, critical accessibility, content-heavy where distraction issues","e":"Large flowing CSS/SVG gradients, subtle 8-12s animations, depth via color layering, smooth morph"},{"n":"Retro-Futurism","k":"Vintage sci-fi, 80s aesthetic, neon glow, geometric patterns, CRT scanlines, pixel art, cyberpunk, synthwave","u":"Gaming, entertainment, music platforms, tech brands, artistic projects, nostalgic, cyberpunk","x":"Conservative industries, critical accessibility, professional/corporate, elderly, legal/finance","e":"CRT scanlines (::before overlay), neon glow (text-shadow+box-shadow), glitch effects (skew/offset keyframes)"},{"n":"Flat Design","k":"2D, minimalist, bold colors, no shadows, clean lines, simple shapes, typography-focused, modern, icon-heavy","u":"Web apps, mobile apps, cross-platform, startup MVPs, user-friendly, SaaS, dashboards, corporate","x":"Complex 3D, premium/luxury, artistic portfolios, immersive experiences, high-detail","e":"No gradients/shadows, simple hover (color/opacity shift), fast loading, clean transitions (150-200ms ease), mi"},{"n":"Skeuomorphism","k":"Realistic, texture, depth, 3D appearance, real-world metaphors, shadows, gradients, tactile, detailed, material","u":"Legacy apps, gaming, immersive storytelling, premium products, luxury, realistic simulations, education","x":"Modern enterprise, critical accessibility, low-performance, web (use Flat/Modern)","e":"Realistic shadows (layers), depth (perspective), texture details (noise, grain), realistic animations (300-500"},{"n":"Liquid Glass","k":"dynamic material, optical glass, translucency, lensing, refraction, fluid morphing, system navigation","u":"Apple-platform navigation, controls, and system-aligned app chrome","x":"content layers, dense reading surfaces, or custom effects without accessibility fallbacks","e":"Lensing and refraction, adaptive translucency, and fluid morph transitions aligned to Apple platform behavior"},{"n":"Motion-Driven","k":"Animation-heavy, microinteractions, smooth transitions, scroll effects, parallax, entrance anim, page transitions","u":"Portfolio sites, storytelling platforms, interactive experiences, entertainment apps, creative, SaaS","x":"Data dashboards, critical accessibility, low-power devices, content-heavy, motion-sensitive","e":"Scroll anim (Intersection Observer), hover (300-400ms), entrance, parallax (3-5 layers), page transitions"},{"n":"Micro-interactions","k":"Small animations, gesture-based, tactile feedback, subtle animations, contextual interactions, responsive","u":"Mobile apps, touchscreen UIs, productivity tools, user-friendly, consumer apps, interactive components","x":"Desktop-only, critical performance, accessibility-first (alternatives needed)","e":"Small hover (50-100ms), loading spinners, success/error state anim, gesture-triggered (swipe/pinch), haptic"},{"n":"Inclusive Design","k":"Accessible, color-blind friendly, high contrast, haptic feedback, voice interaction, screen reader, enhanced contrast targets, universal","u":"Public services, education, healthcare, finance, government, accessible consumer, inclusive","x":"None - accessibility universal","e":"Haptic feedback (vibration), voice guidance, focus indicators (4px+ ring), motion options, alt content, semant"},{"n":"Zero Interface","k":"Minimal visible UI, voice-first, gesture-based, AI-driven, invisible controls, predictive, context-aware, ambient","u":"Voice assistants, AI platforms, future-forward UX, smart home, contextual computing, ambient experiences","x":"Complex workflows, data-entry heavy, traditional systems, legacy support, explicit control","e":"Voice recognition UI, gesture detection, AI predictions (smooth reveal), progressive disclosure, smart suggest"},{"n":"Soft UI Evolution","k":"Evolved soft UI, better contrast, modern aesthetics, subtle depth, accessibility-focused, improved shadows, hybrid","u":"Modern enterprise apps, SaaS platforms, health/wellness, modern business tools, professional, hybrid","x":"Extreme minimalism, critical performance, systems without modern OS","e":"Improved shadows (softer than flat, clearer than neumorphism), modern (200-300ms), focus visible, measured con"},{"n":"Data-Dense Dashboard","k":"Multiple charts/widgets, data tables, KPI cards, minimal padding, grid layout, space-efficient, maximum data visibility","u":"Business intelligence dashboards, financial analytics, enterprise reporting, operational dashboards, data warehousing","x":"Marketing dashboards, consumer-facing analytics, simple reporting","e":"Hover tooltips, chart zoom on click, row highlighting on hover, smooth filter animations, data loading spinner"},{"n":"Neubrutalism","k":"Bold borders, black outlines, primary colors, thick shadows, no gradients, flat colors, 45° shadows, playful, Gen Z","u":"Gen Z brands, startups, creative agencies, Figma-style apps, Notion-style interfaces, tech blogs","x":"Luxury brands, finance, healthcare, conservative industries (too playful)","e":"box-shadow: 4px 4px 0 #000, border: 3px solid #000, no gradients, sharp corners (0px), bold typography"},{"n":"Bento Box Grid","k":"Modular cards, asymmetric grid, varied sizes, Apple-style, dashboard tiles, negative space, clean hierarchy, cards","u":"Dashboards, product pages, portfolios, Apple-style marketing, feature showcases, SaaS","x":"Dense data tables, text-heavy content, real-time monitoring","e":"grid-template with varied spans, rounded-xl (16px), subtle shadows, hover scale (1.02), smooth transitions"},{"n":"Y2K Aesthetic","k":"Neon pink, chrome, metallic, bubblegum, iridescent, glossy, retro-futurism, 2000s, futuristic nostalgia","u":"Fashion brands, music platforms, Gen Z brands, nostalgia marketing, entertainment, youth-focused","x":"B2B enterprise, healthcare, finance, conservative industries, elderly users","e":"linear-gradient metallic, glossy buttons, 3D chrome effects, glow animations, bubble shapes"},{"n":"Cyberpunk UI","k":"Neon, dark mode, terminal, HUD, sci-fi, glitch, dystopian, futuristic, matrix, tech noir","u":"Gaming platforms, tech products, crypto apps, sci-fi applications, developer tools, entertainment","x":"Corporate enterprise, healthcare, family apps, conservative brands, elderly users","e":"Neon glow (text-shadow), glitch animations (skew/offset), scanlines (::before overlay), terminal fonts"},{"n":"Organic Biophilic","k":"Nature, organic shapes, green, sustainable, rounded, flowing, wellness, earthy, natural textures","u":"Wellness apps, sustainability brands, eco products, health apps, meditation, organic food brands","x":"Tech-focused products, gaming, industrial, urban brands","e":"Rounded corners (16-24px), organic curves (border-radius variations), natural shadows, flowing SVG shapes"},{"n":"AI-Native UI","k":"Chatbot, conversational, voice, assistant, agentic, ambient, minimal chrome, streaming text, AI interactions","u":"AI products, chatbots, voice assistants, copilots, AI-powered tools, conversational interfaces","x":"Traditional forms, data-heavy dashboards, print-first content","e":"Typing indicators (3-dot pulse), streaming text animations, pulse animations, context cards, smooth reveals"},{"n":"Memphis Design","k":"80s, geometric, playful, postmodern, shapes, patterns, squiggles, triangles, neon, abstract, bold","u":"Creative agencies, music sites, youth brands, event promotion, artistic portfolios, entertainment","x":"Corporate finance, healthcare, legal, elderly users, conservative brands","e":"transform: rotate(), clip-path: polygon(), mix-blend-mode, repeating patterns, bold shapes"},{"n":"Dimensional Layering","k":"Depth, overlapping, z-index, layers, 3D, shadows, elevation, floating, cards, spatial hierarchy","u":"Dashboards, card layouts, modals, navigation, product showcases, SaaS interfaces","x":"Print-style layouts, simple blogs, low-end devices, flat design requirements","e":"z-index stacking, box-shadow elevation (4 levels), transform: translateZ(), backdrop-filter, parallax"},{"n":"Exaggerated Minimalism","k":"Bold minimalism, oversized typography, high contrast, negative space, loud minimal, statement design","u":"Fashion, architecture, portfolios, agency landing pages, luxury brands, editorial","x":"E-commerce catalogs, dashboards, forms, data-heavy, elderly users, complex apps","e":"font-size: clamp(3rem 10vw 12rem), font-weight: 900, letter-spacing: -0.05em, massive whitespace"},{"n":"Kinetic Typography","k":"Motion text, animated type, moving letters, dynamic, typing effect, morphing, scroll-triggered text","u":"Hero sections, marketing sites, video platforms, storytelling, creative portfolios, landing pages","x":"Long-form content, accessibility-critical, data interfaces, forms, elderly users","e":"@keyframes text animation, typing effect, background-clip: text, GSAP ScrollTrigger, split text"},{"n":"Parallax Storytelling","k":"Scroll-driven, narrative, layered scrolling, immersive, progressive disclosure, cinematic, scroll-triggered","u":"Brand storytelling, product launches, case studies, portfolios, annual reports, marketing campaigns","x":"E-commerce, dashboards, mobile-first, SEO-critical, accessibility-required","e":"transform: translateY(scroll), position: fixed/sticky, perspective: 1px, scroll-triggered animations"},{"n":"HUD / Sci-Fi FUI","k":"Futuristic, technical, wireframe, neon, data, transparency, iron man, sci-fi, interface","u":"Sci-fi games, space tech, cybersecurity, movie props, immersive dashboards","x":"Standard corporate, reading heavy content, accessible public services","e":"Glow effects, scanning animations, ticker text, blinking markers, fine line drawing"},{"n":"Pixel Art","k":"Retro, 8-bit, 16-bit, gaming, blocky, nostalgic, pixelated, arcade","u":"Indie games, retro tools, creative portfolios, nostalgia marketing, Web3/NFT","x":"Professional corporate, modern SaaS, high-res photography sites","e":"Frame-by-frame sprite animation, blinking cursor, instant transitions, marquee text"},{"n":"Spatial UI (VisionOS)","k":"Glass, depth, immersion, spatial, translucent, gaze, gesture, apple, vision-pro","u":"Spatial computing apps, VR/AR interfaces, immersive media, futuristic dashboards","x":"Text-heavy documents, high-contrast requirements, non-3D capable devices","e":"Parallax depth, dynamic lighting response, gaze-hover effects, smooth scale on focus"},{"n":"E-Ink / Paper","k":"Paper-like, matte, high contrast, texture, reading, calm, slow tech, monochrome","u":"Reading apps, digital newspapers, minimal journals, distraction-free writing, slow-living brands","x":"Gaming, video platforms, high-energy marketing, dark mode dependent apps","e":"No motion blur, distinct page turns, grain/noise texture, sharp transitions (no fade)"},{"n":"Gen Z Chaos / Maximalism","k":"Chaos, clutter, stickers, raw, collage, mixed media, loud, internet culture, ironic","u":"Gen Z lifestyle brands, music artists, creative portfolios, viral marketing, fashion","x":"Corporate, government, healthcare, banking, serious tools","e":"Marquee scrolls, jitter, sticker layering, GIF overload, random placement, drag-and-drop"},{"n":"Biomimetic / Organic 2.0","k":"Nature-inspired, cellular, fluid, breathing, generative, algorithms, life-like","u":"Sustainability tech, biotech, advanced health, meditation, generative art platforms","x":"Standard SaaS, data grids, strict corporate, accounting","e":"Breathing animations, fluid morphing, generative growth, physics-based movement"},{"n":"Anti-Polish / Raw Aesthetic","k":"Hand-drawn, collage, scanned textures, unfinished, imperfect, authentic, human, sketch, raw marks, creative process","u":"Creative portfolios, artist sites, indie brands, handmade products, authentic storytelling, editorial","x":"Corporate enterprise, fintech, healthcare, government, polished SaaS","e":"No smooth transitions, hand-drawn animations, paper texture overlays, jitter effects, sketch reveal"},{"n":"Tactile Digital / Deformable UI","k":"Jelly buttons, chrome, clay, squishy, deformable, bouncy, physical, tactile feedback, press response","u":"Modern mobile apps, playful brands, entertainment, gaming UI, consumer products, interactive demos","x":"Enterprise software, data dashboards, accessibility-critical, professional tools","e":"Press deformation (scale + squish), bounce-back (cubic-bezier), material response, haptic-like feedback, sprin"},{"n":"Nature Distilled","k":"Muted earthy, skin tones, wood, soil, sand, terracotta, warmth, organic materials, handmade warmth","u":"Wellness brands, sustainable products, artisan goods, organic food, spa/beauty, home decor","x":"Tech startups, gaming, nightlife, corporate finance, high-energy brands","e":"Subtle parallax, natural easing (ease-out), texture overlays, grain effects, soft shadows"},{"n":"Interactive Cursor Design","k":"Custom cursor, cursor as tool, hover effects, cursor feedback, pointer transformation, cursor trail, magnetic cursor","u":"Creative portfolios, interactive experiences, agency sites, product showcases, gaming, entertainment","x":"Mobile-first (no cursor), accessibility-critical, data-heavy dashboards, forms","e":"Cursor scale on hover, magnetic pull to elements, cursor morphing, trail effects, blend mode cursors, click fe"},{"n":"Voice-First Multimodal","k":"Voice UI, multimodal, audio feedback, conversational, hands-free, ambient, contextual, speech recognition","u":"Voice assistants, accessibility apps, hands-free tools, smart home, automotive UI, cooking apps","x":"Visual-heavy content, data entry, complex forms, noisy environments","e":"Voice waveform visualization, listening pulse, processing spinner, speak animation, smooth transitions"},{"n":"3D Product Preview","k":"360 product view, rotatable, zoomable, touch-to-spin, AR preview, product configurator, interactive 3D model","u":"E-commerce, furniture, fashion, automotive, electronics, jewelry, product configurators","x":"Content-heavy sites, blogs, dashboards, low-bandwidth, accessibility-critical","e":"Drag-to-rotate, pinch-to-zoom, spin animation, AR placement, material switching, smooth orbit controls"},{"n":"Editorial Grid / Magazine","k":"Magazine layout, asymmetric grid, editorial typography, pull quotes, drop caps, column layout, print-inspired","u":"News sites, blogs, magazines, editorial content, long-form articles, journalism, publishing","x":"Dashboards, apps, e-commerce catalogs, real-time data, short-form content","e":"Smooth scroll, reveal on scroll, parallax images, text animations, page-flip transitions"},{"n":"Vintage Analog / Retro Film","k":"Film grain, VHS, cassette tape, polaroid, analog warmth, faded colors, light leaks, vintage photography","u":"Photography portfolios, music/vinyl brands, vintage fashion, nostalgia marketing, film industry, cafes","x":"Modern tech, SaaS, healthcare, children's apps, corporate enterprise","e":"Film grain overlay, VHS tracking effect, polaroid shake, fade-in transitions, light leak animations"},{"n":"Bauhaus (包豪斯)","k":"bauhaus, geometric, constructivist, primary colors, hard shadow, bold, tactile, functional, poster, mechanical, architectural","u":"Mobile-first apps needing high personality, onboarding flows, branding-forward product screens, artisan/design brands, editorial m","x":"Enterprise dashboards, accessibility-critical contexts (requires extra a11y work), data-heavy screens, conserv","e":"Hard offset shadows (4px 4px 0px black), mechanical press active:translate, no smooth hover — instant 0ms tran"},{"n":"Material 3 Expressive (Mobile)","k":"material 3 expressive, vibrant color, spring motion, adaptive components, flexible typography, contrasting shapes, android","u":"Android, Wear OS, and Pixel-aligned products using Material 3 components","x":"Ultra-minimal brutalist brands, terminal/hacker aesthetics, monochrome editorial apps","e":"Tonal elevation (overlay colors instead of strong shadows), pill-shaped buttons and chips (borderRadius 999), "},{"n":"Fluent 2","k":"fluent 2, microsoft, enterprise, calm, rounded, tokenized, cross-platform, copilot","u":"Microsoft 365, Windows, Copilot, and enterprise line-of-business tools","x":"Products that should not inherit Microsoft platform conventions","e":"Subtle depth, calm transitions, platform-adaptive motion"},{"n":"Shopify Polaris","k":"shopify polaris, merchant admin, commerce, checkout, web components, app home","u":"Shopify admin apps, merchant tools, checkout, customer accounts, POS, and extensions","x":"Generic marketing sites or products outside Shopify surfaces","e":"Purposeful admin feedback and restrained transitions"},{"n":"Adobe Spectrum","k":"adobe spectrum, creative tools, enterprise, content creation, tokenized, cross-platform","u":"Creative tools, media workflows, document products, and Adobe-adjacent enterprise software","x":"Consumer brands that do not need dense professional-tool conventions","e":"Layered depth and restrained professional motion"}];/*</styles>*/
+let currentMatch=null;
 const gq=document.getElementById('gq'), genOut=document.getElementById('gen-out');
 if (genOut && STYLES.length){
   const toks=s=>s.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>2);
@@ -850,10 +1019,16 @@ if (genOut && STYLES.length){
       /neumorph|soft|clay|organic|nature/.test(sk)?' mk-soft':'');
     mk.style.setProperty('--mk-r',
       sk.includes('brutal')?'0px':/soft|clay|playful|rounded|bubble/.test(sk)?'14px':'6px');
+    const famFor=part=>/serif/i.test(part)&&!/sans/i.test(part)?"Georgia,'Times New Roman',serif"
+      :/mono/i.test(part)?"var(--mono)"
+      :/script|hand/i.test(part)?"'Segoe Script','Brush Script MT',cursive"
+      :"var(--sans)";
+    const [hCat,bCat]=(fo.c||'Sans + Sans').split('+');
+    mk.style.setProperty('--mk-hf', famFor(hCat||''));
     document.getElementById('mock-title').textContent=`preview — ${st.n.toLowerCase()}`;
     document.getElementById('mk-eyebrow').textContent=q.split(/\s+/).slice(0,2).join(' ');
     document.getElementById('mk-type').textContent=`${fo.h} + ${fo.b}`;
-    document.getElementById('mk-style').textContent=`palette: ${pa.n}`;
+    currentMatch={q,st,pa,fo};
     if(location.hash.startsWith('#g=')||gq.value)
       history.replaceState(null,'','#g='+encodeURIComponent(q));
   }
@@ -864,6 +1039,133 @@ if (genOut && STYLES.length){
   }
   generate();
 }
+
+/* mockup tabs */
+document.querySelectorAll('.mock-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.mock-tab').forEach(x=>x.setAttribute('aria-selected', x===tab?'true':'false'));
+    document.querySelectorAll('.mk-view').forEach(v=>v.classList.toggle('on', v.dataset.view===tab.dataset.view));
+  });
+});
+
+/* starter html copy */
+function starterHTML(m){
+  const {q,pa,fo}=m;
+  const tokens=ROLES.filter(([,k])=>pa[k]).map(([role,key])=>`      --color-${role}: ${pa[key]};`).join('\n');
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${q}</title>
+  <style>
+    /* Generated by Fenja — palette: ${pa.n}, type: ${fo.h} + ${fo.b} */
+    @import url('${fo.g}');
+    :root {
+${tokens}
+      --font-heading: '${fo.h}', sans-serif;
+      --font-body: '${fo.b}', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      background: var(--color-background); color: var(--color-foreground);
+      font-family: var(--font-body); line-height: 1.6;
+    }
+    h1, h2, h3 { font-family: var(--font-heading); line-height: 1.2; }
+    .wrap { max-width: 64rem; margin: 0 auto; padding: 0 1.25rem; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
+    .btn {
+      display: inline-block; background: var(--color-accent); color: var(--color-on-accent);
+      font-weight: 600; border: none; border-radius: 8px; padding: .7rem 1.3rem; cursor: pointer;
+    }
+    .hero { padding: 4rem 0 3rem; max-width: 38rem; }
+    .hero p { color: var(--color-muted-foreground); margin: 1rem 0 1.5rem; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; padding-bottom: 4rem; }
+    .card {
+      background: var(--color-card); color: var(--color-card-foreground);
+      border: 1px solid var(--color-border); border-radius: 10px; padding: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header><strong>Your brand</strong><button class="btn">Get started</button></header>
+    <section class="hero">
+      <h1>Your headline for ${q}</h1>
+      <p>Swap this copy, keep the tokens. Every color on this page comes from the palette above.</p>
+      <button class="btn">Primary action</button>
+    </section>
+    <section class="cards">
+      <div class="card"><h3>Feature one</h3><p>Describe the value, not the mechanism.</p></div>
+      <div class="card"><h3>Feature two</h3><p>Short, concrete, benefit-first.</p></div>
+      <div class="card"><h3>Feature three</h3><p>End with proof or a number.</p></div>
+    </section>
+  </div>
+</body>
+</html>`;
+}
+const starterBtn=document.getElementById('copy-starter');
+if(starterBtn) starterBtn.addEventListener('click',async()=>{
+  if(!currentMatch) return;
+  const html=starterHTML(currentMatch);
+  try{ await navigator.clipboard.writeText(html);
+    starterBtn.textContent='copied \u2713'; starterBtn.classList.add('done');
+    showToast('Starter page copied \u2014 paste into index.html');
+    setTimeout(()=>{starterBtn.textContent='copy starter html';starterBtn.classList.remove('done');},2400);
+  }catch(e){ showToast('Clipboard blocked \u2014 use the tokens panel below instead'); }
+});
+
+/* ux audit */
+/*<ux>*/const UX=[{"c":"Navigation","i":"Smooth Scroll","p":"Web","d":"Anchor links should scroll smoothly to target section","y":"Use scroll-behavior: smooth on html element","x":"Jump directly without transition","s":"High"},{"c":"Navigation","i":"Sticky Navigation","p":"Web","d":"Fixed nav should not obscure content","y":"Add padding-top to body equal to nav height","x":"Let nav overlap first section content","s":"Medium"},{"c":"Navigation","i":"Active State","p":"All","d":"Current page/section should be visually indicated","y":"Highlight active nav item with color/underline","x":"No visual feedback on current location","s":"Medium"},{"c":"Navigation","i":"Back Button","p":"Mobile","d":"Users expect back to work predictably","y":"Preserve navigation history properly","x":"Break browser/app back button behavior","s":"High"},{"c":"Navigation","i":"Deep Linking","p":"All","d":"URLs should reflect current state for sharing","y":"Update URL on state/view changes","x":"Static URLs for dynamic content","s":"Medium"},{"c":"Navigation","i":"Breadcrumbs","p":"Web","d":"Show user location in site hierarchy","y":"Use for sites with 3+ levels of depth","x":"Use for flat single-level sites","s":"Low"},{"c":"Animation","i":"Excessive Motion","p":"All","d":"Too many animations cause distraction and motion sickness","y":"Animate 1-2 key elements per view maximum","x":"Animate everything that moves","s":"High"},{"c":"Animation","i":"Duration Timing","p":"All","d":"Motion duration depends on distance complexity platform and user context","y":"Use shared motion tokens and test that feedback stays responsive","x":"Present 150-300ms or any cutoff as a universal requirement","s":"Medium"},{"c":"Animation","i":"Reduced Motion","p":"All","d":"Respect user's motion preferences","y":"Check prefers-reduced-motion media query","x":"Ignore accessibility motion settings","s":"High"},{"c":"Animation","i":"Loading States","p":"All","d":"Show feedback during async operations","y":"Use skeleton screens or spinners","x":"Leave UI frozen with no feedback","s":"High"},{"c":"Animation","i":"Hover vs Tap","p":"All","d":"Hover effects don't work on touch devices","y":"Use click/tap for primary interactions","x":"Rely only on hover for important actions","s":"High"},{"c":"Animation","i":"Continuous Animation","p":"All","d":"Infinite animations are distracting","y":"Use for loading indicators only","x":"Use for decorative elements","s":"Medium"},{"c":"Animation","i":"Transform Performance","p":"Web","d":"Some CSS properties trigger expensive repaints","y":"Use transform and opacity for animations","x":"Animate width/height/top/left properties","s":"Medium"},{"c":"Animation","i":"Easing Functions","p":"All","d":"Easing should match how an element changes speed and purpose","y":"Use deceleration when arriving acceleration when leaving and linear for constant-rate progress","x":"Reject linear easing even for steady rotation or progress","s":"Low"},{"c":"Layout","i":"Z-Index Management","p":"Web","d":"Stacking context conflicts cause hidden elements","y":"Define z-index scale system (10 20 30 50)","x":"Use arbitrary large z-index values","s":"High"},{"c":"Layout","i":"Overflow Hidden","p":"Web","d":"Hidden overflow can clip important content","y":"Test all content fits within containers","x":"Blindly apply overflow-hidden","s":"Medium"},{"c":"Layout","i":"Fixed Positioning","p":"Web","d":"Fixed elements can overlap or be inaccessible","y":"Account for safe areas and other fixed elements","x":"Stack multiple fixed elements carelessly","s":"Medium"},{"c":"Layout","i":"Stacking Context","p":"Web","d":"New stacking contexts reset z-index","y":"Understand what creates new stacking context","x":"Expect z-index to work across contexts","s":"Medium"},{"c":"Layout","i":"Content Jumping","p":"Web","d":"Images badges validation text and skeleton replacements can shift nearby content when they update","y":"Reserve appropriate space or keep async states in a stable content-driven container","x":"Insert compact text or media without a layout strategy","s":"High"},{"c":"Layout","i":"Viewport Units","p":"Web","d":"100vh can be problematic on mobile browsers","y":"Use dvh or account for mobile browser chrome","x":"Use 100vh for full-screen mobile layouts","s":"Medium"},{"c":"Layout","i":"Container Width","p":"Web","d":"Content too wide is hard to read","y":"Limit max-width for text content (65-75ch)","x":"Let text span full viewport width","s":"Medium"},{"c":"Touch","i":"Touch Target Size","p":"Mobile","d":"Touch target guidance depends on platform and web context","y":"Use 44pt on iOS and 48dp on Android; for web use the separate WCAG Target Size rule","x":"Treat one unit or minimum as universal across platforms","s":"High"},{"c":"Touch","i":"Touch Spacing","p":"Mobile","d":"Adjacent touch targets need adequate spacing","y":"Minimum 8px gap between touch targets","x":"Tightly packed clickable elements","s":"Medium"},{"c":"Touch","i":"Gesture Conflicts","p":"Mobile","d":"Custom gestures can conflict with system","y":"Avoid horizontal swipe on main content","x":"Override system gestures","s":"Medium"},{"c":"Touch","i":"Tap Delay","p":"Mobile","d":"300ms tap delay feels laggy","y":"Use touch-action CSS or fastclick","x":"Default mobile tap handling","s":"Medium"},{"c":"Touch","i":"Pull to Refresh","p":"Mobile","d":"Accidental refresh is frustrating","y":"Disable where not needed","x":"Enable by default everywhere","s":"Low"},{"c":"Touch","i":"Haptic Feedback","p":"Mobile","d":"Tactile feedback improves interaction feel","y":"Use for confirmations and important actions","x":"Overuse vibration feedback","s":"Low"},{"c":"Interaction","i":"Focus States","p":"All","d":"Keyboard focus, including controls inside a modal, needs a visible indicator","y":"Use a visible focus ring on every interactive control, including modal controls","x":"Remove focus outline without replacement","s":"High"},{"c":"Interaction","i":"Hover States","p":"Web","d":"Visual feedback on interactive elements","y":"Change cursor and add subtle visual change","x":"No hover feedback on clickable elements","s":"Medium"},{"c":"Interaction","i":"Active States","p":"All","d":"Show immediate feedback on press/click","y":"Add pressed/active state visual change","x":"No feedback during interaction","s":"Medium"},{"c":"Interaction","i":"Disabled States","p":"All","d":"Clearly indicate non-interactive elements","y":"Reduce opacity and change cursor","x":"Confuse disabled with normal state","s":"Medium"},{"c":"Interaction","i":"Loading Buttons","p":"All","d":"Prevent double submission during async actions","y":"Disable button and show loading state","x":"Allow multiple clicks during processing","s":"High"},{"c":"Interaction","i":"Error Feedback","p":"All","d":"Users need to know when something fails","y":"Show clear error messages near problem","x":"Silent failures with no feedback","s":"High"},{"c":"Interaction","i":"Success Feedback","p":"All","d":"Confirm successful actions to users","y":"Show success message or visual change","x":"No confirmation of completed action","s":"Medium"},{"c":"Interaction","i":"Confirmation Dialogs","p":"All","d":"Prevent accidental destructive actions","y":"Confirm before delete/irreversible actions","x":"Delete without confirmation","s":"High"},{"c":"Accessibility","i":"Color Contrast","p":"All","d":"Text must be readable against background","y":"Minimum 4.5:1 ratio for normal text","x":"Low contrast text","s":"High"},{"c":"Accessibility","i":"Color Only","p":"All","d":"Don't convey information by color alone","y":"Use icons/text in addition to color","x":"Red/green only for error/success","s":"High"},{"c":"Accessibility","i":"Alt Text","p":"All","d":"Images need text alternatives","y":"Descriptive alt text for meaningful images","x":"Empty or missing alt attributes","s":"High"},{"c":"Accessibility","i":"Heading Hierarchy","p":"Web","d":"Screen readers use headings for navigation","y":"Use sequential heading levels h1-h6","x":"Skip heading levels or misuse for styling","s":"Medium"},{"c":"Accessibility","i":"ARIA Labels","p":"All","d":"Interactive elements need accessible names","y":"Add aria-label for icon-only buttons","x":"Icon buttons without labels","s":"High"},{"c":"Accessibility","i":"Keyboard Navigation","p":"Web","d":"Web users need complete keyboard navigation with visible focus on every operable control","y":"Keep tab order aligned with visual order and test every action without a pointer","x":"Keyboard traps or illogical tab order","s":"High"},{"c":"Accessibility","i":"Screen Reader","p":"All","d":"Content should make sense when read aloud","y":"Use semantic HTML and ARIA properly","x":"Div soup with no semantics","s":"Medium"},{"c":"Accessibility","i":"Form Labels","p":"All","d":"Inputs must have associated labels","y":"Use label with for attribute or wrap input","x":"Placeholder-only inputs","s":"High"},{"c":"Accessibility","i":"Error Messages","p":"All","d":"Error messages must be announced","y":"Use aria-live or role=alert for errors","x":"Visual-only error indication","s":"High"},{"c":"Accessibility","i":"Skip Links","p":"Web","d":"Allow keyboard users to skip navigation","y":"Provide skip to main content link","x":"No skip link on nav-heavy pages","s":"Medium"},{"c":"Performance","i":"Image Optimization","p":"All","d":"Large images slow page load","y":"Use appropriate size and format (WebP)","x":"Unoptimized full-size images","s":"High"},{"c":"Performance","i":"Lazy Loading","p":"All","d":"Load content as needed","y":"Lazy load below-fold images and content","x":"Load everything upfront","s":"Medium"},{"c":"Performance","i":"Code Splitting","p":"Web","d":"Large bundles slow initial load","y":"Split code by route/feature","x":"Single large bundle","s":"Medium"},{"c":"Performance","i":"Caching","p":"Web","d":"Repeat visits should be fast","y":"Set appropriate cache headers","x":"No caching strategy","s":"Medium"},{"c":"Performance","i":"Font Loading","p":"Web","d":"Web fonts can block rendering","y":"Use font-display swap or optional","x":"Invisible text during font load","s":"Medium"},{"c":"Performance","i":"Third Party Scripts","p":"Web","d":"External scripts can block rendering","y":"Load non-critical scripts async/defer","x":"Synchronous third-party scripts","s":"Medium"},{"c":"Performance","i":"Bundle Size","p":"Web","d":"Large JavaScript slows interaction","y":"Monitor and minimize bundle size","x":"Ignore bundle size growth","s":"Medium"},{"c":"Performance","i":"Render Blocking","p":"Web","d":"CSS/JS can block first paint","y":"Inline critical CSS defer non-critical","x":"Large blocking CSS files","s":"Medium"},{"c":"Forms","i":"Input Labels","p":"All","d":"Every input needs a visible label","y":"Always show label above or beside input","x":"Placeholder as only label","s":"High"},{"c":"Forms","i":"Error Placement","p":"All","d":"Each invalid field needs an inline error connected to that field","y":"Show a specific error below the input and reference it with aria-describedby","x":"Show only a top-level error without identifying each invalid field","s":"High"},{"c":"Forms","i":"Inline Validation","p":"All","d":"Validate as user types or on blur","y":"Validate on blur for most fields","x":"Validate only on submit","s":"Medium"},{"c":"Forms","i":"Input Types","p":"All","d":"Use appropriate input types","y":"Use email tel number url etc","x":"Text input for everything","s":"Medium"},{"c":"Forms","i":"Autofill Support","p":"Web","d":"Help browsers autofill correctly","y":"Use autocomplete attribute properly","x":"Block or ignore autofill","s":"Medium"},{"c":"Forms","i":"Required Indicators","p":"All","d":"Mark required fields clearly","y":"Use asterisk or (required) text","x":"No indication of required fields","s":"Medium"},{"c":"Forms","i":"Password Visibility","p":"All","d":"Let users see password while typing","y":"Toggle to show/hide password","x":"No visibility toggle","s":"Medium"},{"c":"Forms","i":"Submit Feedback","p":"All","d":"Confirm form submission status","y":"Show loading then success/error state","x":"No feedback after submit","s":"High"},{"c":"Forms","i":"Input Affordance","p":"All","d":"Inputs should look interactive","y":"Use distinct input styling","x":"Inputs that look like plain text","s":"Medium"},{"c":"Forms","i":"Mobile Keyboards","p":"Mobile","d":"Show appropriate keyboard for input type","y":"Use inputmode attribute","x":"Default keyboard for all inputs","s":"Medium"},{"c":"Responsive","i":"Mobile First","p":"Web","d":"Design for mobile then enhance for larger","y":"Start with mobile styles then add breakpoints","x":"Desktop-first causing mobile issues","s":"Medium"},{"c":"Responsive","i":"Breakpoint Testing","p":"Web","d":"Test at all common screen sizes","y":"Test at 320 375 414 768 1024 1440","x":"Only test on your device","s":"Medium"},{"c":"Responsive","i":"Touch Friendly","p":"Web","d":"Mobile layouts need touch-sized targets","y":"Increase touch targets on mobile","x":"Same tiny buttons on mobile","s":"High"},{"c":"Responsive","i":"Readable Font Size","p":"All","d":"Text must be readable on all devices","y":"Minimum 16px body text on mobile","x":"Tiny text on mobile","s":"High"},{"c":"Responsive","i":"Viewport Meta","p":"Web","d":"Set viewport for mobile devices","y":"Use width=device-width initial-scale=1","x":"Missing or incorrect viewport","s":"High"},{"c":"Responsive","i":"Horizontal Scroll","p":"Web","d":"Avoid horizontal scrolling","y":"Ensure content fits viewport width","x":"Content wider than viewport","s":"High"},{"c":"Responsive","i":"Image Scaling","p":"Web","d":"Images should scale with container","y":"Use max-width: 100% on images","x":"Fixed width images overflow","s":"Medium"},{"c":"Responsive","i":"Table Handling","p":"Web","d":"Tables can overflow on mobile","y":"Use horizontal scroll or card layout","x":"Wide tables breaking layout","s":"Medium"},{"c":"Typography","i":"Line Height","p":"All","d":"Adequate line height improves readability","y":"Use 1.5-1.75 for body text","x":"Cramped or excessive line height","s":"Medium"},{"c":"Typography","i":"Line Length","p":"Web","d":"Long lines are hard to read","y":"Limit to 65-75 characters per line","x":"Full-width text on large screens","s":"Medium"},{"c":"Typography","i":"Font Size Scale","p":"All","d":"Consistent type hierarchy aids scanning","y":"Use consistent modular scale","x":"Random font sizes","s":"Medium"},{"c":"Typography","i":"Font Loading","p":"Web","d":"Fonts should load without layout shift","y":"Reserve space with fallback font","x":"Layout shift when fonts load","s":"Medium"},{"c":"Typography","i":"Contrast Readability","p":"All","d":"Body text needs good contrast","y":"Use darker text on light backgrounds","x":"Gray text on gray background","s":"High"},{"c":"Typography","i":"Heading Clarity","p":"All","d":"Headings should stand out from body","y":"Clear size/weight difference","x":"Headings similar to body text","s":"Medium"},{"c":"Feedback","i":"Loading Indicators","p":"All","d":"Loading feedback should match the expected wait and avoid flashing for near-instant work","y":"Follow platform and component guidance; preserve layout focus and accessible busy status","x":"Apply one timing threshold to every operation or leave long waits unexplained","s":"High"},{"c":"Feedback","i":"Empty States","p":"All","d":"Guide users when no content exists","y":"Show helpful message and action","x":"Blank empty screens","s":"Medium"},{"c":"Feedback","i":"Error Recovery","p":"All","d":"Help users recover from errors","y":"Provide clear next steps","x":"Error without recovery path","s":"Medium"},{"c":"Feedback","i":"Progress Indicators","p":"All","d":"Show progress for multi-step processes","y":"Step indicators or progress bar","x":"No indication of progress","s":"Medium"},{"c":"Feedback","i":"Toast Notifications","p":"All","d":"Transient messages for non-critical info","y":"Auto-dismiss after 3-5 seconds","x":"Toasts that never disappear","s":"Medium"},{"c":"Feedback","i":"Confirmation Messages","p":"All","d":"Confirm successful actions","y":"Brief success message","x":"Silent success","s":"Medium"},{"c":"Content","i":"Truncation","p":"All","d":"Handle long content gracefully","y":"Truncate with ellipsis and expand option","x":"Overflow or broken layout","s":"Medium"},{"c":"Content","i":"Date Formatting","p":"All","d":"Use locale-appropriate date formats","y":"Use relative or locale-aware dates","x":"Ambiguous date formats","s":"Low"},{"c":"Content","i":"Number Formatting","p":"All","d":"Format large numbers for readability","y":"Use thousand separators or abbreviations","x":"Long unformatted numbers","s":"Low"},{"c":"Content","i":"Placeholder Content","p":"All","d":"Show realistic placeholders during dev","y":"Use realistic sample data","x":"Lorem ipsum everywhere","s":"Low"},{"c":"Onboarding","i":"User Freedom","p":"All","d":"Users should be able to skip tutorials","y":"Provide Skip and Back buttons","x":"Force linear unskippable tour","s":"Medium"},{"c":"Search","i":"Autocomplete","p":"Web","d":"Help users find results faster","y":"Show predictions as user types","x":"Require full type and enter","s":"Medium"},{"c":"Search","i":"No Results","p":"Web","d":"Dead ends frustrate users","y":"Show 'No results' with suggestions","x":"Blank screen or '0 results'","s":"Medium"},{"c":"Data Entry","i":"Bulk Actions","p":"Web","d":"Editing one by one is tedious","y":"Allow multi-select and bulk edit","x":"Single row actions only","s":"Low"},{"c":"AI Interaction","i":"Disclaimer","p":"All","d":"Users need to know they talk to AI","y":"Clearly label AI generated content","x":"Present AI as human","s":"High"},{"c":"AI Interaction","i":"Streaming","p":"All","d":"Waiting for full text is slow","y":"Stream text response token by token","x":"Show loading spinner for 10s+","s":"Medium"},{"c":"Spatial UI","i":"Gaze Hover","p":"VisionOS","d":"Elements should respond to eye tracking before pinch","y":"Scale/highlight element on look","x":"Static element until pinch","s":"High"},{"c":"Spatial UI","i":"Depth Layering","p":"VisionOS","d":"UI needs Z-depth to separate content from environment","y":"Use glass material and z-offset","x":"Flat opaque panels blocking view","s":"Medium"},{"c":"Sustainability","i":"Auto-Play Video","p":"Web","d":"Autoplaying media consumes data and creates motion barriers","y":"Prefer click-to-play; provide pause and captions; stop off-screen and honor reduced motion","x":"Auto-play high-resolution loops without pause or captions","s":"Medium"},{"c":"Sustainability","i":"Asset Weight","p":"Web","d":"Heavy 3D/Image assets increase carbon footprint","y":"Compress and lazy load 3D models","x":"Load 50MB textures","s":"Medium"},{"c":"AI Interaction","i":"Feedback Loop","p":"All","d":"AI needs user feedback to improve","y":"Thumps up/down or 'Regenerate'","x":"Static output only","s":"Low"},{"c":"Accessibility","i":"Motion Sensitivity","p":"All","d":"Parallax/Scroll-jacking causes nausea","y":"Honor prefers-reduced-motion and present the final readable state without parallax or scroll-jacking","x":"Force scroll effects","s":"High"},{"c":"Accessibility","i":"Focus Not Obscured (Minimum)","p":"Web","d":"WCAG 2.2 AA requires keyboard focus to remain at least partially visible","y":"Offset sticky UI with scroll-padding and dismiss or move persistent overlays","x":"Let headers footers banners or chat widgets fully cover focus","s":"High"},{"c":"Accessibility","i":"Focus Not Obscured (Enhanced)","p":"Web","d":"WCAG 2.2 AAA requires keyboard focus to remain fully visible","y":"Keep the entire focused component unobscured by author-created content","x":"Present this enhanced AAA criterion as an AA requirement or allow persistent UI to hide any part of focus","s":"Medium"},{"c":"Accessibility","i":"Focus Appearance","p":"Web","d":"WCAG 2.2 AAA defines minimum area and contrast for focus indicators","y":"Use an indicator at least as large as a 2 CSS px perimeter with 3:1 state contrast","x":"Present this enhanced AAA criterion as an AA requirement or use a thin low-contrast outline","s":"Medium"},{"c":"Accessibility","i":"Dragging Movements","p":"All","d":"WCAG 2.2 AA requires a single-pointer alternative for author-controlled drag operations","y":"Add buttons menus or tap-to-move controls and retain keyboard operation","x":"Make dragging the only way to reorder resize or select","s":"High"},{"c":"Accessibility","i":"Target Size (Minimum)","p":"Web","d":"WCAG 2.2 AA requires 24 CSS px pointer targets or an applicable exception","y":"Use at least 24 by 24 CSS px or verify spacing equivalent inline user-agent or essential exceptions","x":"Assume native 44pt or 48dp guidance defines web conformance","s":"High"},{"c":"Accessibility","i":"Consistent Help","p":"All","d":"WCAG 2.2 A requires repeated help mechanisms to stay in the same relative order","y":"Keep contact self-help and automated help in consistent locations","x":"Move help controls to different locations on each page","s":"Medium"},{"c":"Forms","i":"Redundant Entry","p":"All","d":"WCAG 2.2 A avoids requiring the same information twice in one process","y":"Auto-populate prior values or let users select previously entered information","x":"Ask users to retype the same address or account data without necessity","s":"Medium"},{"c":"Security / Accessibility","i":"Accessible Authentication (Minimum)","p":"All","d":"WCAG 2.2 AA says authentication must not depend only on a cognitive function test unless an exception applies","y":"Allow password managers and paste; offer passkeys OAuth or another non-cognitive method","x":"Block paste or require manual OTP transcription with no alternative","s":"Critical"},{"c":"Animation","i":"Auto-Rotating Content Controls","p":"All","d":"Auto-rotating content needs user control","y":"Provide previous next and play/pause; stop on focus or hover and when reduced motion is requested","x":"Auto-advance slides without a stop control","s":"High"},{"c":"Forms / Accessibility","i":"Focusable Error Summary","p":"Web","d":"An error summary for failed validation complements inline field errors and must be easy to find by keyboard and screen reader users","y":"Place it at the top of the form; move focus to its heading or container after failed submit; link each item to its invalid field; retain inline errors","x":"Replace inline errors with a visual-only summary or move focus on every blur","s":"High"},{"c":"Typography","i":"Heading Line Balance","p":"Web","d":"Short multi-line headings may use balanced wrapping as a progressive visual heuristic","y":"Bound the measure and test natural-wrap fallback across widths fonts and locales","x":"Promise an exact final line or insert blanket nonbreaking spaces or hardcoded br tags","s":"Medium"},{"c":"Layout","i":"Long Token Wrapping","p":"Web","d":"URLs identifiers and user content must not force horizontal overflow","y":"Use overflow-wrap anywhere and let flex or grid text children shrink","x":"Apply word-break break-all to all prose","s":"High"},{"c":"Accessibility","i":"Text Reflow and Spacing","p":"Web","d":"Text must remain available at narrow widths zoom and user spacing overrides","y":"Use fluid sizes content-driven height and unitless line height","x":"Clip text in fixed-width or fixed-height boxes","s":"Critical"},{"c":"Content","i":"Essential Text Truncation","p":"All","d":"Headings actions errors safety text and distinguishing names need complete access","y":"Wrap stack resize or provide a visible full-detail path","x":"Clamp essential meaning only to make cards uniform","s":"Critical"},{"c":"Content","i":"Compact Label Semantics","p":"All","d":"Badges communicate state while chips or tags represent values or actions","y":"Choose static or interactive markup from the label's meaning and ownership","x":"Make every pill clickable or encode status with color alone","s":"High"},{"c":"Layout","i":"Chip Collection Reflow","p":"All","d":"Filter chips and editable value collections must preserve labels when space or text size changes","y":"Wrap the collection or use an operable +n disclosure for hidden overflow values","x":"Force all chips into one clipped row or hide overflow values","s":"High"},{"c":"Content","i":"Compact Label Overflow","p":"All","d":"A badge chip or pill label should stay whole on one line when practical and disclose unavoidable truncation","y":"Bound only unpredictable values; use nowrap with a shrinkable label; expose full text to keyboard pointer and touch users","x":"Let one compact label wrap to a second line or use a hover-only tooltip","s":"High"},{"c":"Accessibility","i":"Compact Control Semantics","p":"Web","d":"Interactive chips need a native role accessible name state keyboard operation and visible focus","y":"Prefer a button and expose pressed or selected state that matches the visible label","x":"Use a clickable div or reveal the only action on hover","s":"Critical"},{"c":"Accessibility","i":"Contextual Live Badge Updates","p":"Web","d":"Async badge and count changes should announce a meaningful contextual status without moving focus","y":"Use one appropriate atomic status message such as 3 items in cart","x":"Announce a bare number or make every badge a competing live region","s":"High"},{"c":"Animation","i":"Cancellable State Transitions","p":"Web","d":"Rapid compact-control changes can interrupt an in-flight transition","y":"Cancel or replace prior motion; set the final semantic state directly and handle cancellation cleanup","x":"Depend on animationend or transitionend for required state correctness","s":"High"}];/*</ux>*/
+const uxlist=document.getElementById('uxlist'), uq=document.getElementById('uq'),
+      ucount=document.getElementById('ucount');
+if (uxlist && UX.length){
+  const sevColor={Critical:'#EF4444',High:'#F59E0B',Medium:'#38BDF8',Low:'#64748B'};
+  const rows=UX.map(g=>{
+    const d=document.createElement('details'); d.className='uxrow';
+    d.innerHTML=`<summary>
+        <span class="stripe" style="--sev:${sevColor[g.s]||'#64748B'};background:var(--sev)"></span>
+        <span class="ti">${g.i}<small>${g.c} · ${g.s.toLowerCase()}</small></span>
+        <span class="plat">${g.p}</span>
+      </summary>
+      <div class="body">${g.d}
+        <div class="dd">
+          <div class="do"><b>Do</b>${g.y}</div>
+          <div class="dont"><b>Don't</b>${g.x}</div>
+        </div>
+      </div>`;
+    return d;
+  });
+  rows.forEach(r=>uxlist.appendChild(r));
+  let sevFilter='';
+  const ufilter=()=>{
+    const q2=uq.value.trim().toLowerCase(); let hits=0;
+    rows.forEach((r,i)=>{ const g=UX[i];
+      const hay=(g.i+' '+g.c+' '+g.d+' '+g.y+' '+g.x+' '+g.p).toLowerCase();
+      const hit=(!q2||hay.includes(q2))&&(!sevFilter||g.s===sevFilter);
+      r.style.display=hit?'':'none'; if(hit)hits++; });
+    ucount.textContent=`${hits} / ${UX.length} guidelines`;
+  };
+  uq.addEventListener('input',ufilter);
+  document.querySelectorAll('.sev-chip').forEach(ch=>ch.addEventListener('click',()=>{
+    sevFilter=ch.dataset.sev;
+    document.querySelectorAll('.sev-chip').forEach(x=>x.setAttribute('aria-pressed', x===ch?'true':'false'));
+    ufilter();
+  }));
+  ufilter();
+}
+
+/* scroll progress */
+const prog=document.getElementById('progress');
+let progTick=false;
+addEventListener('scroll',()=>{
+  if(progTick) return; progTick=true;
+  requestAnimationFrame(()=>{
+    const h=document.documentElement;
+    prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+    progTick=false;
+  });
+},{passive:true});
 
 /* count-up for stats */
 function countUp(el){

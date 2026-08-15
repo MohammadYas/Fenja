@@ -61,8 +61,21 @@ with (DATA / "styles.csv").open(newline="", encoding="utf-8") as fh:
             "e": row["Effects & Animation"][:110],
         })
 
+ux = []
+with (DATA / "ux-guidelines.csv").open(newline="", encoding="utf-8") as fh:
+    for row in csv.DictReader(fh):
+        ux.append({
+            "c": row["Category"],
+            "i": row["Issue"],
+            "p": row["Platform"],
+            "d": row["Description"][:160],
+            "y": row["Do"][:160],
+            "x": row["Don't"][:160],
+            "s": row["Severity"],
+        })
+
 html = PAGE.read_text(encoding="utf-8")
-for tag, data in (("palettes", palettes), ("fonts", fonts), ("styles", styles)):
+for tag, data in (("palettes", palettes), ("fonts", fonts), ("styles", styles), ("ux", ux)):
     payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
     block = f"/*<{tag}>*/const {tag.upper()}={payload};/*</{tag}>*/"
     pattern = rf"/\*<{tag}>\*/.*?/\*</{tag}>\*/"
