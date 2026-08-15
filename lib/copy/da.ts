@@ -379,6 +379,10 @@ export const da = {
   footer: {
     vilkaar: "Vilkår",
     privatliv: "Privatliv",
+    produktGruppe: "Produkt",
+    juraGruppe: "Det juridiske",
+    maerkning:
+      "Alle visualiseringer er mærket — synligt og i filens metadata. Det kræver loven, og det er kun rimeligt.",
   },
   fejl: {
     generel: "Noget gik galt. Prøv igen — dine billeder og kreditter er ikke rørt.",

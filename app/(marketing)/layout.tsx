@@ -34,21 +34,57 @@ export default function MarketingLayout({
         <div className="soem-vandret" aria-hidden="true" />
       </header>
       <div className="flex-1">{children}</div>
-      <footer className="border-t border-kant">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-6 text-detalje text-tekst/70">
-          <span className="font-mono uppercase tracking-wide">{da.site.navn}</span>
-          <Link href="/priser" className="soem-link min-h-touch content-center">
-            {da.nav.priser}
-          </Link>
-          <Link href="/laer" className="soem-link min-h-touch content-center">
-            {da.nav.laer}
-          </Link>
-          <Link href="/vilkaar" className="soem-link min-h-touch content-center">
-            {da.footer.vilkaar}
-          </Link>
-          <Link href="/privatliv" className="soem-link min-h-touch content-center">
-            {da.footer.privatliv}
-          </Link>
+      {/* Footer som gran-blok (S23): ordmærke, grupperede links og
+          mærknings-linjen — sidens sidste ord er det ærlige (REDESIGN §2.2) */}
+      <footer className="bg-gran text-kalk">
+        <div className="mx-auto grid max-w-5xl gap-10 px-4 py-12 sm:grid-cols-[1.4fr_1fr_1fr]">
+          <div>
+            <p className="font-display text-hero font-bold uppercase">
+              {da.site.navn}
+            </p>
+            <p className="mt-3 max-w-laesbar text-detalje text-hoer">
+              {da.footer.maerkning}
+            </p>
+          </div>
+          <nav aria-label={da.footer.produktGruppe}>
+            <p className="font-mono text-detalje font-bold uppercase tracking-wide text-hoer">
+              {da.footer.produktGruppe}
+            </p>
+            <ul className="mt-3 flex flex-col gap-2 text-detalje">
+              <li>
+                <Link href="/priser" className="soem-link min-h-touch content-center">
+                  {da.nav.priser}
+                </Link>
+              </li>
+              <li>
+                <Link href="/laer" className="soem-link min-h-touch content-center">
+                  {da.nav.laer}
+                </Link>
+              </li>
+              <li>
+                <Link href="/log-ind" className="soem-link min-h-touch content-center">
+                  {da.nav.logInd}
+                </Link>
+              </li>
+            </ul>
+          </nav>
+          <nav aria-label={da.footer.juraGruppe}>
+            <p className="font-mono text-detalje font-bold uppercase tracking-wide text-hoer">
+              {da.footer.juraGruppe}
+            </p>
+            <ul className="mt-3 flex flex-col gap-2 text-detalje">
+              <li>
+                <Link href="/vilkaar" className="soem-link min-h-touch content-center">
+                  {da.footer.vilkaar}
+                </Link>
+              </li>
+              <li>
+                <Link href="/privatliv" className="soem-link min-h-touch content-center">
+                  {da.footer.privatliv}
+                </Link>
+              </li>
+            </ul>
+          </nav>
         </div>
       </footer>
     </div>

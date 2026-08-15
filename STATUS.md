@@ -5,6 +5,9 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 S23 Footer-blok: gran-footer med FENJA-ordmærke, grupperede links
+  (Produkt / Det juridiske) og mærknings-linjen som sidens sidste ord.
+  .verify/ (lokalt screenshot-harness) gitignoreret + eslint-ignoreret.
 - 2026-08-15 S22 Lær som katalog-indeks: kortstakken (skabelontegn) erstattet
   af nummererede rækker med kant-delelinjer i to spalter på lg — en
   indholdsfortegnelse, hele rækken er klikbar.

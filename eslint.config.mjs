@@ -14,6 +14,7 @@ const config = [
       ".claude/**",
       "coverage/**",
       "next-env.d.ts",
+      ".verify/**",
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),

@@ -45,7 +45,7 @@ tegnet), (d) footeren er en tynd linkrække, (e) rå browser-radios på log-ind.
         med prislap-detalje; sådan-virker-det-tallene større på lg
 [x] S22 Lær som katalog-indeks: kort-stakken erstattes af nummererede rækker
         med søm-delelinjer (ingen bokse), 2 kolonner på lg
-[ ] S23 Footer-blok: gran med stort FENJA-ordmærke, grupperede links og
+[x] S23 Footer-blok: gran med stort FENJA-ordmærke, grupperede links og
         mærknings-linjen — ikke en tynd enkeltrække
 [ ] S24 Log-ind: 18+-valg som taktile valgkort oven på native radios (a11y)
 
