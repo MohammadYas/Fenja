@@ -6,6 +6,12 @@ Sidst opdateret: 2026-08-15 af cloud session (L1, Lighthouse-gaten)
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` og `claude/naeste-task-dcfccg` efter merge
 (én commit pr. opgave):
+- 2026-08-15 CI-gate: Lighthouse-gaten (HANDOFF §8) håndhæves nu i CI — nyt
+  `lighthouse`-job bygger appen keyless og kører `@lhci/cli autorun` mod alle
+  syv marketing-sider med tærskel ≥ 90 i alle fire kategorier
+  (lighthouserc.json). CI bygger dermed også appen, så et knækket build
+  fanges før merge. Valideret lokalt: 7/7 sider bestod. `.lighthouseci/`
+  gitignoreret.
 - 2026-08-15 Ydelse (NFR-2): Supabase-browserklienten (53 KB gzip, 93 % ubrugt
   ved sideindlæsning) lazy-importeres nu først ved submit i log-ind og
   nyt-item — /log-ind faldt 178 → 111 kB First Load JS, og marketing-sidernes
