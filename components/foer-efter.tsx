@@ -1,8 +1,9 @@
 import { vinted } from "@/lib/copy/vinted";
 
-// DUBLET af forsidens before/after-panel (additiv-opgaven 2026-08-15: kopiér
-// frem for at flytte — dubletten ryddes op i integrationsopgaven, se BACKLOG).
-// Sømmen (lodret/vandret) er signatur-elementets skillelinje (DESIGN.md).
+// Before/after-panelet — signatur-elementet (DESIGN.md): den sjuskede seddel
+// mod den færdige leverance, adskilt af sømmen (lodret/vandret skillelinje).
+// Samlet hertil fra components/vinted/foer-efter.tsx og forsidens tidligere
+// inline-panel (dublet-oprydningen fra S28/integrationsopgaven).
 export function FoerEfter() {
   return (
     <figure>

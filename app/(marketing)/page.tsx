@@ -1,174 +1,62 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Billedserie } from "@/components/billedserie";
+import { FoerEfter } from "@/components/foer-efter";
 import { Reveal } from "@/components/reveal";
-import { kontakt } from "@/lib/config";
 import { da } from "@/lib/copy/da";
+import { vinted } from "@/lib/copy/vinted";
+import { hentGuides } from "@/lib/guides";
 
+// Forsiden er Vinted-appen (STRATEGISKIFT 2026-08-15: Fenja er ét produkt
+// udadtil — B2B-studioet er parkeret på /studio, kun linket fra footeren).
+// Indholdet er /vinted-landingen fra feat/vinted-side; /vinted redirecter hertil.
 export const metadata = {
-  title: `${da.site.navn} — ${da.landing.heroTitel}`,
-  description: da.site.beskrivelse,
+  title: vinted.meta.titel,
+  description: vinted.meta.beskrivelse,
+  openGraph: {
+    title: vinted.meta.titel,
+    description: vinted.meta.beskrivelse,
+    locale: "da_DK",
+    type: "website",
+  },
 };
 
-// Landing i v6 "Klar & nordisk" (DESIGN.md §5): B2B først (UGC-annoncer,
-// annoncebilleder, hjemmesider), appen som egen sektion, ingen priser på
-// forsiden. Sektioner adskilles af luft + hairline — én mørk blok (Ærlighed).
 export default function Forside() {
+  const guides = hentGuides().slice(0, 3);
+
   return (
     <main>
-      {/* Hero: virksomheds-sporet. Én primær CTA (mailto), appen som stille
-          sekundær vej — begge målgrupper finder deres dør over folden. */}
-      <section id="virksomheder" className="border-b border-kant">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:py-24 lg:grid lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-14">
+      {/* Hero: before/after-panelet er omdrejningspunktet (signatur-elementet,
+          HANDOFF §2.2.3) */}
+      <section className="border-b border-kant">
+        <div className="mx-auto max-w-6xl px-4 py-16 md:py-24 lg:grid lg:grid-cols-[1fr_1.2fr] lg:items-center lg:gap-14">
           <div className="indgang">
-            <h1 className="max-w-3xl font-display text-plakat font-bold">
-              {da.landing.heroRubrik}
+            <p className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
+              {vinted.hero.maerkat}
+            </p>
+            <h1 className="mt-3 max-w-2xl font-display text-plakat font-bold">
+              {vinted.hero.rubrik}
             </h1>
             <p className="mt-6 max-w-laesbar text-lead text-tekst/80">
-              {da.landing.heroTekst}
+              {vinted.hero.tekst}
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-              <a href={`mailto:${kontakt.email}`} className="knap-link">
-                {da.landing.heroKnap}
-              </a>
-              <a
-                href="#appen"
-                className="soem-link min-h-touch content-center font-medium text-primaer"
-              >
-                {da.landing.heroSekundaer}
-              </a>
-            </div>
+            <Link href="/log-ind" className="knap-link mt-8">
+              {vinted.hero.knap}
+            </Link>
           </div>
-          <div className="mx-auto mt-12 max-w-md lg:mt-0 lg:max-w-none">
-            <Billedserie billeder={da.landing.billedserie} prioritet />
-          </div>
-        </div>
-      </section>
-
-      {/* Ydelser: redaktionelle rækker med hairlines — ikke ikon-grid (manifest
-          §2.1.5). Nummer i mono, indhold i to spalter på md+. */}
-      <section aria-label={da.landing.ydelserTitel} className="border-b border-kant">
-        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <h2 className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
-            {da.landing.ydelserTitel}
-          </h2>
-          <ol className="mt-6">
-            {da.landing.ydelser.map((ydelse, i) => (
-              <li key={ydelse.titel} className="border-t border-kant py-7 first:border-t-0">
-                <Reveal forsinkelseTrin={i}>
-                  <div className="grid gap-2 md:grid-cols-[3rem_16rem_1fr] md:gap-6">
-                    <span
-                      aria-hidden="true"
-                      className="select-none font-mono text-basis text-tekst/50"
-                    >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="font-display text-titel font-semibold">{ydelse.titel}</h3>
-                    <div>
-                      <p className="max-w-laesbar text-tekst/80">{ydelse.tekst}</p>
-                      <p className="mt-2 font-mono text-detalje text-tekst/60">
-                        {ydelse.leverance}
-                      </p>
-                    </div>
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-8 max-w-laesbar text-tekst/80">{da.landing.ydelserCta}</p>
-          <a href={`mailto:${kontakt.email}`} className="knap-link mt-5">
-            {da.landing.heroKnap}
-          </a>
-        </div>
-      </section>
-
-      {/* B2B-FAQ: tre ærlige svar — pris, ejerskab, levering */}
-      <section aria-label={da.landing.b2bFaqTitel} className="border-b border-kant">
-        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <h2 className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
-            {da.landing.b2bFaqTitel}
-          </h2>
-          <div className="mt-6 grid gap-x-10 gap-y-8 md:grid-cols-3">
-            {da.landing.b2bFaq.map((punkt, i) => (
-              <Reveal key={punkt.spoergsmaal} forsinkelseTrin={i}>
-                <div className="border-t border-kant pt-4">
-                  <h3 className="font-display text-lead font-semibold">
-                    {punkt.spoergsmaal}
-                  </h3>
-                  <p className="mt-2 max-w-laesbar text-tekst/80">{punkt.svar}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Appen: Vinted-sporet med before/after-panelet som bevis (signatur-
-          elementet, HANDOFF §2.2.3) og de tre trin som rolige rækker. */}
-      <section id="appen" className="border-b border-kant">
-        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <p className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
-            {da.landing.appenMaerkat}
-          </p>
-          <div className="mt-4 lg:grid lg:grid-cols-[1fr_1.1fr] lg:items-start lg:gap-12">
-            <div>
-              <h2 className="max-w-2xl font-display text-kaempe font-bold">
-                {da.landing.appenTitel}
-              </h2>
-              <p className="mt-4 max-w-laesbar text-tekst/80">{da.landing.appenTekst}</p>
-              <Link href="/log-ind" className="knap-link mt-6">
-                {da.landing.appenKnap}
-              </Link>
-            </div>
+          <div className="mt-12 lg:mt-0">
             <Reveal>
-              <figure className="mt-10 lg:mt-0">
-                <div className="grid overflow-hidden rounded-bloed border border-kant sm:grid-cols-[1fr_auto_1.2fr]">
-                  <div className="bg-flade p-5">
-                    <span className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
-                      {da.landing.foerKort.label}
-                    </span>
-                    <p className="mt-3 font-mono text-detalje lowercase leading-snug text-tekst/80">
-                      {da.landing.foerKort.tekst}
-                    </p>
-                    <p className="mt-1 font-mono text-detalje lowercase text-tekst/80">
-                      {da.landing.foerKort.pris}
-                    </p>
-                  </div>
-                  <div className="soem-vandret sm:hidden" aria-hidden="true" />
-                  <div className="soem hidden sm:block" aria-hidden="true" />
-                  <div className="bg-baggrund p-5">
-                    <span className="font-mono text-detalje font-medium uppercase tracking-wide text-gran">
-                      {da.landing.efterKort.label}
-                    </span>
-                    <p className="mt-3 font-display text-titel font-bold">
-                      {da.landing.efterKort.titel}
-                    </p>
-                    <ul className="mt-2 flex flex-col gap-1 text-detalje text-tekst/80">
-                      {da.landing.efterKort.punkter.map((punkt) => (
-                        <li key={punkt} className="flex gap-2">
-                          <span aria-hidden="true" className="text-tekst/40">
-                            —
-                          </span>
-                          {punkt}
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="mt-3 font-mono text-detalje font-bold text-pris">
-                      {da.landing.efterKort.pris}
-                    </p>
-                  </div>
-                </div>
-                <figcaption className="mt-3 text-detalje text-tekst/70">
-                  {da.landing.heroPladsholder}
-                </figcaption>
-              </figure>
+              <FoerEfter />
             </Reveal>
           </div>
+        </div>
+      </section>
 
-          {/* Visualiserings-stilen som billedpar (ejer-ordre: ingen synlig
-              mærkat — midlertidigt; ægte output efter S12/S25, se STATUS) */}
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:max-w-2xl">
-            {[da.landing.billedserie[0]!, da.landing.billedserie[3]!].map((billede, i) => (
+      {/* Visualiserings-eksempler: fire stykker fra serien (ejer-ordre: ingen
+          synlig mærkat — midlertidigt; ægte output efter S12/S25, se STATUS) */}
+      <section className="border-b border-kant" aria-label={da.landing.appenMaerkat}>
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {da.landing.billedserie.slice(0, 4).map((billede, i) => (
               <Reveal key={billede.src} forsinkelseTrin={i}>
                 <Image
                   src={billede.src}
@@ -180,12 +68,17 @@ export default function Forside() {
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
 
-          <h3 className="mt-12 font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
-            {da.landing.saadanTitel}
-          </h3>
+      {/* Sådan virker det: 3 trin som rolige rækker — nav-ankeret peger her */}
+      <section id="saadan" className="border-b border-kant" aria-label={vinted.saadan.titel}>
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+          <h2 className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
+            {vinted.saadan.titel}
+          </h2>
           <ol className="mt-2">
-            {da.landing.saadanTrin.map((trin, i) => (
+            {vinted.saadan.trin.map((trin, i) => (
               <li
                 key={trin.titel}
                 className="border-t border-kant py-6 first:border-t-0 first:pt-4"
@@ -198,7 +91,7 @@ export default function Forside() {
                     >
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <h4 className="font-display text-lead font-semibold">{trin.titel}</h4>
+                    <h3 className="font-display text-lead font-semibold">{trin.titel}</h3>
                     <p className="max-w-laesbar text-tekst/80">{trin.tekst}</p>
                   </div>
                 </Reveal>
@@ -208,48 +101,69 @@ export default function Forside() {
         </div>
       </section>
 
-      {/* B2B-forløbet: sidens ene mørke bånd */}
-      <section className="bg-koks text-kalk" aria-label={da.landing.procesTitel}>
+      {/* Ærlighed som fordel — sidens ene mørke bånd */}
+      <section className="bg-koks text-kalk" aria-label={vinted.aerlighed.titel}>
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-16">
           <Reveal>
             <h2 className="font-display text-display font-semibold">
-              {da.landing.procesTitel}
+              {vinted.aerlighed.titel}
             </h2>
           </Reveal>
-          <div className="mt-8 grid gap-8 sm:grid-cols-3">
-            {da.landing.procesTrin.map((trin, i) => (
-              <Reveal key={trin.titel} forsinkelseTrin={i}>
-                <div className="border-t border-kalk/20 pt-4">
-                  <span aria-hidden="true" className="font-mono text-detalje text-kalk/50">
-                    {String(i + 1).padStart(2, "0")}
+          <ul className="mt-6 flex max-w-2xl flex-col gap-4">
+            {vinted.aerlighed.punkter.map((punkt, i) => (
+              <Reveal key={punkt} forsinkelseTrin={i}>
+                <li className="flex gap-3 text-kalk/85">
+                  <span aria-hidden="true" className="text-kalk/50">
+                    —
                   </span>
-                  <h3 className="mt-1 font-display text-lead font-semibold">{trin.titel}</h3>
-                  <p className="mt-2 text-detalje text-kalk/80">{trin.tekst}</p>
-                </div>
+                  {punkt}
+                </li>
               </Reveal>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
-      {/* Slut-CTA: begge målgrupper, roligt på kalk */}
+      {/* Lær-teaser: tre guides + vej til dem alle */}
+      <section className="border-b border-kant" aria-label={vinted.laerTeaser.titel}>
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+          <h2 className="font-display text-kaempe font-bold">{vinted.laerTeaser.titel}</h2>
+          <p className="mt-3 max-w-laesbar text-tekst/80">{vinted.laerTeaser.tekst}</p>
+          <div className="mt-6 grid gap-x-10 gap-y-6 md:grid-cols-3">
+            {guides.map((guide, i) => (
+              <Reveal key={guide.slug} forsinkelseTrin={i}>
+                <Link href={`/laer/${guide.slug}`} className="group block border-t border-kant pt-4">
+                  <span className="font-mono text-detalje text-tekst/50">
+                    {String(guide.raekkefoelge).padStart(2, "0")}
+                  </span>
+                  <span className="soem-link mt-1 block font-display text-lead font-semibold group-hover:text-gran">
+                    {guide.titel}
+                  </span>
+                  <span className="mt-2 block text-detalje text-tekst/70">
+                    {guide.beskrivelse}
+                  </span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+          <p className="mt-8">
+            <Link href="/laer" className="soem-link min-h-touch content-center font-medium text-primaer">
+              {vinted.laerTeaser.alleGuides} →
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      {/* Slut-CTA: taler kun til sælgere — vejen til studioet bor i footeren */}
       <section>
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
           <Reveal>
             <h2 className="max-w-2xl font-display text-kaempe font-bold">
-              {da.landing.ctaTitel}
+              {vinted.cta.titel}
             </h2>
-            <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-4">
-              <a href={`mailto:${kontakt.email}`} className="knap-link">
-                {da.landing.ctaVirksomhedKnap}
-              </a>
-              <Link
-                href="/log-ind"
-                className="soem-link min-h-touch content-center font-medium text-primaer"
-              >
-                {da.landing.ctaAppKnap}
-              </Link>
-            </div>
+            <Link href="/log-ind" className="knap-link mt-7">
+              {vinted.cta.knap}
+            </Link>
           </Reveal>
         </div>
       </section>

@@ -1,6 +1,6 @@
-// Copy til den selvstændige /vinted-landing (egen fil — rører ikke da.ts,
-// jf. additiv-opgaven 2026-08-15). Manifest-reglerne gælder (HANDOFF §2.2.4):
-// dansk, konkret, ærlig — tonen her er mere direkte og ung end B2B-sporet.
+// Copy til forsiden (Vinted-landingen — STRATEGISKIFT 2026-08-15: appen ER
+// produktet udadtil). Manifest-reglerne gælder (HANDOFF §2.2.4): dansk,
+// konkret, ærlig — tonen er direkte og ung; B2B-copy bor i da.landing (/studio).
 
 export const vinted = {
   meta: {
@@ -67,9 +67,5 @@ export const vinted = {
   cta: {
     titel: "Prøv med det næste stykke tøj, du vil sælge",
     knap: "Opret dig og lav din første annonce",
-  },
-  studioLinje: {
-    tekst: "Laver du annoncer for en virksomhed?",
-    link: "Fenja Studio",
   },
 } as const;

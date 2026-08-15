@@ -11,7 +11,7 @@ export const da = {
   site: {
     navn: "Fenja",
     beskrivelse:
-      "UGC-annoncer, annoncebilleder og hjemmesider til virksomheder — og en app, der gør dine mobilfotos til færdige Vinted-annoncer.",
+      "Tag 2–4 mobilfotos af dit tøj — Fenja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag, klar til Vinted.",
   },
   nav: {
     virksomheder: "Til virksomheder",
@@ -373,33 +373,38 @@ export const da = {
         tekst: "Materialet er jeres — også arbejdsfilerne. Brug det, hvor I vil.",
       },
     ],
-    // Billedserie (genererede eksempler — ejer-ordre 2026-08-15: ingen synlig
-    // mærkat, midlertidigt; provenance dokumenteret i STATUS.md. Ægte output
-    // erstatter serien efter S12/S25.)
+    // Billedserie v3 (genererede eksempler — ejer-ordre 2026-08-15: ingen
+    // synlig mærkat, midlertidigt; provenance dokumenteret i STATUS.md. Ægte
+    // output erstatter serien efter S12/S25.) Stilen er Vinted-annoncer der
+    // sælger: spejl-selfies, tøj på bøjle, flatlay — skandinavisk og realistisk.
     billedserie: [
       {
-        src: "/eksempler/strik-front.webp",
-        alt: "Mørkeblå uldstrik båret, set forfra i en lys skandinavisk stue",
+        src: "/eksempler/spejl-strik.webp",
+        alt: "Spejl-selfie i mørkeblå uldstrik og lyse jeans i et lyst soveværelse",
       },
       {
-        src: "/eksempler/strik-side.webp",
-        alt: "Mørkeblå uldstrik båret, set fra siden ved et vindue",
+        src: "/eksempler/strik-vindue.webp",
+        alt: "Cremefarvet grov cardigan båret ved et vindue med hørgardiner",
       },
       {
-        src: "/eksempler/strik-detalje.webp",
-        alt: "Nærbillede af strikkens ribstruktur og vaskemærke",
+        src: "/eksempler/skjorte-doer.webp",
+        alt: "Lyseblå stribet skjorte på træbøjle på en hvid garderobedør",
       },
       {
-        src: "/eksempler/jakke-gade.webp",
-        alt: "Olivengrøn overshirt båret på en københavnsk gade",
+        src: "/eksempler/spejl-jakke.webp",
+        alt: "Spejl-selfie i olivengrøn uld-overshirt i en lys entré",
       },
       {
-        src: "/eksempler/flatlay.webp",
-        alt: "Strik, denim og hue foldet på et egetræsbord, set ovenfra",
+        src: "/eksempler/flatlay-seng.webp",
+        alt: "Rustbrun merinostrik og lyse jeans foldet på hørsengetøj, set ovenfra",
       },
       {
-        src: "/eksempler/lager.webp",
-        alt: "Foldet tøj i stakke på en lagerreol",
+        src: "/eksempler/denim-detalje.webp",
+        alt: "Nærbillede af denim: linning, knap og vaskemærke",
+      },
+      {
+        src: "/eksempler/gade-look.webp",
+        alt: "Kamelfarvet uldfrakke over grå strik på en københavnsk gade",
       },
     ],
     ctaTitel: "Skal vi lave jeres næste annonce?",
@@ -514,6 +519,7 @@ export const da = {
     privatliv: "Privatliv",
     produktGruppe: "Produkt",
     juraGruppe: "Det juridiske",
+    studio: "Fenja Studio — annoncer for virksomheder",
     maerkning:
       "Alle visualiseringer er mærket — synligt og i filens metadata. Det kræver loven, og det er kun rimeligt.",
   },

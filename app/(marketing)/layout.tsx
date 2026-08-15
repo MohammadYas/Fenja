@@ -20,13 +20,16 @@ export default function MarketingLayout({
           </Link>
           <div className="flex items-center gap-4 text-detalje">
             <Link
-              href="/#virksomheder"
+              href="/#saadan"
               className="soem-link hidden min-h-touch content-center font-medium sm:block"
             >
-              {da.nav.virksomheder}
+              {da.nav.saadanVirkerDet}
             </Link>
             <Link href="/laer" className="soem-link min-h-touch content-center font-medium">
               {da.nav.laer}
+            </Link>
+            <Link href="/priser" className="soem-link min-h-touch content-center font-medium">
+              {da.nav.priser}
             </Link>
             <Link href="/log-ind" className="knap-link px-4">
               {da.nav.logInd}
@@ -46,6 +49,12 @@ export default function MarketingLayout({
             </p>
             <p className="mt-3 max-w-laesbar text-detalje text-hoer">
               {da.footer.maerkning}
+            </p>
+            {/* Diskret vej til det parkerede B2B-spor (STRATEGISKIFT 2026-08-15) */}
+            <p className="mt-6 text-detalje">
+              <Link href="/studio" className="soem-link min-h-touch content-center text-hoer">
+                {da.footer.studio}
+              </Link>
             </p>
           </div>
           <nav aria-label={da.footer.produktGruppe}>
