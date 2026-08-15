@@ -208,6 +208,7 @@ h2{
 }
 .pv-card .lab{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--pv-mf,#475569);transition:color .35s ease}
 .pv-card .num{font-family:var(--mono);font-weight:700;font-size:1.7rem;font-variant-numeric:tabular-nums;margin-top:.15rem}
+.pv-delta{font-family:var(--mono);font-size:.6rem;font-weight:600;vertical-align:.35em;color:var(--pv-a,#EA580C);background:color-mix(in srgb,var(--pv-a,#EA580C) 14%,transparent);border-radius:99px;padding:.14rem .5rem}
 .pv-bars{display:flex;gap:.45rem;align-items:flex-end;height:3.2rem;margin-top:.7rem}
 .pv-bars i{
   flex:1;border-radius:3px 3px 0 0;background:var(--pv-a,#EA580C);opacity:.9;
@@ -333,7 +334,6 @@ h2{
 .mk-brand .mk-mark{width:1.05rem;height:1.05rem;display:inline-block}
 .mk-links{display:flex;gap:1rem;font-size:.72rem;color:var(--mk-mf,#9D174D)}
 .mk-cta-sm{font-size:.72rem;font-weight:600;background:var(--mk-p,#DB2777);color:var(--mk-op,#fff);border:none;border-radius:var(--mk-r,6px);padding:.4rem .8rem}
-.mk-hero{padding:2.2rem 1.4rem 1.6rem;max-width:34rem}
 .mk-eyebrow{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mk-a,#DB2777);margin-bottom:.5rem}
 .mk-h1{font-size:1.6rem;font-weight:700;line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
 .mk-sub{font-size:.82rem;color:var(--mk-mf,#9D174D);margin-top:.55rem;max-width:26rem;line-height:1.55}
@@ -400,11 +400,6 @@ h2{
 .mk-ph-body{padding:.7rem .8rem .8rem}
 .mk-ph-title{font-size:.95rem;font-weight:700}
 .mk-ph-sub{font-size:.64rem;color:var(--mk-mf);margin-top:.15rem}
-.mk-ph-card{background:var(--mk-c);color:var(--mk-cf);border:1px solid var(--mk-br);border-radius:calc(var(--mk-r,6px) + 4px);padding:.6rem .7rem;margin-top:.55rem;box-shadow:var(--mk-sh,none)}
-.mk-ph-card .row{display:flex;justify-content:space-between;align-items:baseline;font-size:.66rem}
-.mk-ph-card .big{font-family:var(--mono);font-weight:700;font-size:1rem;font-variant-numeric:tabular-nums}
-.mk-ph-bar{height:.3rem;border-radius:99px;background:color-mix(in srgb,var(--mk-a) 22%,transparent);margin-top:.4rem;overflow:hidden}
-.mk-ph-bar i{display:block;height:100%;width:64%;background:var(--mk-a);border-radius:99px}
 .mk-ph-btn{width:100%;margin-top:.6rem;font-size:.7rem;font-weight:600;background:var(--mk-a);color:var(--mk-oa);border:none;border-radius:var(--mk-r,6px);padding:.5rem}
 .mk-tabsbar{display:flex;justify-content:space-around;border-top:1px solid var(--mk-br);padding:.5rem .4rem .6rem;margin-top:.7rem}
 .mk-tabsbar span{font-size:.56rem;color:var(--mk-mf);display:flex;flex-direction:column;align-items:center;gap:.2rem}
@@ -844,7 +839,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
             <div class="pv-body">
               <div class="pv-card">
                 <div class="lab">Månedlig omsætning</div>
-                <div class="num">$48,210</div>
+                <div class="num">$48,210 <span class="pv-delta">▲ 12%</span></div>
                 <div class="pv-bars" aria-hidden="true"><i style="height:38%"></i><i style="height:52%"></i><i style="height:44%"></i><i style="height:66%"></i><i style="height:58%"></i><i style="height:82%"></i></div>
               </div>
               <div class="pv-row">
