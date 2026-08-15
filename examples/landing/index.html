@@ -48,6 +48,8 @@ header{border-bottom:1px solid var(--line)}
 .bar .path{color:var(--muted)}
 .bar .path em{font-style:normal;color:var(--run)}
 @media (max-width:34rem){.bar .path .xs-hide{display:none}}
+.bar a{color:var(--muted);text-decoration:none}
+.bar a:hover{color:var(--run);text-decoration:underline;text-decoration-color:var(--run-dim);text-underline-offset:3px}
 
 /* ---------- hero ---------- */
 .hero{padding:clamp(3.5rem,9vw,6.5rem) 0 clamp(2.5rem,6vw,4rem)}
@@ -309,6 +311,42 @@ h2{
 @keyframes genfade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.gen-out .fade{animation:none}}
 
+
+/* generated mockup */
+.mock{margin-top:.9rem;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;background:var(--bg-deep);box-shadow:0 24px 60px -28px rgba(2,6,23,.85)}
+.mock-chrome{display:flex;align-items:center;gap:.5rem;padding:.6rem .9rem;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.mock-chrome .dots{display:flex;gap:.38rem}
+.mock-chrome i{width:.6rem;height:.6rem;border-radius:50%;background:var(--line-strong);display:block}
+.mk{
+  background:var(--mk-b,#FDF2F8);color:var(--mk-f,#500724);
+  padding:0 0 1.4rem;transition:background .4s ease,color .4s ease;
+}
+.mk *{transition:background .4s ease,color .4s ease,border-color .4s ease,border-radius .3s ease,box-shadow .3s ease}
+.mk-nav{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.4rem;border-bottom:1px solid var(--mk-br,#FBCFE8)}
+.mk-brand{display:flex;align-items:center;gap:.45rem;font-weight:600;font-size:.85rem}
+.mk-brand i{width:.7rem;height:.7rem;border-radius:3px;background:var(--mk-a,#DB2777);display:inline-block}
+.mk-links{display:flex;gap:1rem;font-size:.72rem;color:var(--mk-mf,#9D174D)}
+.mk-cta-sm{font-size:.72rem;font-weight:600;background:var(--mk-p,#DB2777);color:var(--mk-op,#fff);border:none;border-radius:var(--mk-r,6px);padding:.4rem .8rem}
+.mk-hero{padding:2.2rem 1.4rem 1.6rem;max-width:34rem}
+.mk-eyebrow{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mk-a,#DB2777);margin-bottom:.5rem}
+.mk-h1{font-size:1.6rem;font-weight:700;line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
+.mk-sub{font-size:.82rem;color:var(--mk-mf,#9D174D);margin-top:.55rem;max-width:26rem;line-height:1.55}
+.mk-actions{display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap}
+.mk-btn{font-size:.78rem;font-weight:600;background:var(--mk-a,#DB2777);color:var(--mk-oa,#fff);border:none;border-radius:var(--mk-r,6px);padding:.55rem 1.05rem}
+.mk-ghost{font-size:.78rem;font-weight:500;background:none;color:var(--mk-f,#500724);border:1px solid var(--mk-br,#FBCFE8);border-radius:var(--mk-r,6px);padding:.55rem 1.05rem}
+.mk-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;padding:0 1.4rem;margin-top:.6rem}
+@media (max-width:44rem){.mk-cards{grid-template-columns:1fr}}
+.mk-card{background:var(--mk-c,#fff);color:var(--mk-cf,#500724);border:1px solid var(--mk-br,#FBCFE8);border-radius:var(--mk-r,6px);padding:.85rem .9rem;box-shadow:var(--mk-sh,none)}
+.mk-card i{width:1.15rem;height:1.15rem;border-radius:5px;background:var(--mk-a,#DB2777);opacity:.9;display:block;margin-bottom:.5rem}
+.mk-card b{display:block;font-size:.78rem;font-weight:600}
+.mk-card span{display:block;font-size:.7rem;color:var(--mk-mf,#9D174D);margin-top:.2rem;line-height:1.5}
+.mk.mk-brutal .mk-card{border-width:2px;box-shadow:4px 4px 0 var(--mk-f)}
+.mk.mk-brutal .mk-btn,.mk.mk-brutal .mk-cta-sm,.mk.mk-brutal .mk-ghost{border-radius:0}
+.mk.mk-glass .mk-card{background:color-mix(in srgb,var(--mk-c) 55%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.mk.mk-soft .mk-card{border:none;box-shadow:0 10px 26px -14px color-mix(in srgb,var(--mk-f) 42%,transparent)}
+.mk-caption{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-top:.7rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.mk-caption b{color:var(--ink);font-weight:500}
+
 /* ---------- specimen ---------- */
 .spec{margin-top:2.2rem;display:grid;grid-template-columns:1.15fr .85fr;gap:.6rem}
 @media (max-width:52rem){.spec{grid-template-columns:1fr}}
@@ -339,7 +377,9 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
 <header>
   <div class="wrap bar">
     <div class="mark">fenja<b>_</b></div>
-    <div class="path">~/Fenja<span class="xs-hide"> <em>·</em> 7 skills <em>·</em> offline</span></div>
+    <nav class="path" aria-label="Sections">
+      <a href="#generate">generate</a><span class="xs-hide"> <em>·</em> </span><a href="#explore" class="xs-hide">palettes</a><span class="xs-hide"> <em>·</em> </span><a href="#type-explore" class="xs-hide">fonts</a> <em>·</em> <a href="#start">start</a>
+    </nav>
   </div>
 </header>
 
@@ -429,6 +469,32 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
       <div class="term rv" style="margin-top:.8rem">
         <div class="term-body gen-out" id="gen-out" aria-live="polite"></div>
       </div>
+
+      <div class="mock rv" id="mock">
+        <div class="mock-chrome"><span class="dots"><i></i><i></i><i></i></span><span id="mock-title">preview</span></div>
+        <div class="mk" id="mk">
+          <div class="mk-nav">
+            <span class="mk-brand"><i></i>acme co</span>
+            <span class="mk-links" aria-hidden="true"><span>Product</span><span>Pricing</span><span>About</span></span>
+            <button class="mk-cta-sm" type="button" tabindex="-1">Sign up</button>
+          </div>
+          <div class="mk-hero">
+            <div class="mk-eyebrow" id="mk-eyebrow">New</div>
+            <div class="mk-h1">Built for how you actually work</div>
+            <p class="mk-sub">Everything in one place — fast, clear, and on brand from the first day.</p>
+            <div class="mk-actions">
+              <button class="mk-btn" type="button" tabindex="-1">Get started</button>
+              <button class="mk-ghost" type="button" tabindex="-1">See pricing</button>
+            </div>
+          </div>
+          <div class="mk-cards">
+            <div class="mk-card"><i></i><b>Fast setup</b><span>Live in minutes, not weeks — no consultants required.</span></div>
+            <div class="mk-card"><i></i><b>Clear pricing</b><span>One plan, everything included, cancel anytime.</span></div>
+            <div class="mk-card"><i></i><b>Real support</b><span>Answers from people who built it, within the hour.</span></div>
+          </div>
+        </div>
+      </div>
+      <p class="mk-caption"><span>type: <b id="mk-type">—</b> <span style="color:var(--muted)">(shown in placeholder faces)</span></span><span id="mk-style">—</span></p>
     </div>
   </section>
 
@@ -776,9 +842,26 @@ if (genOut && STYLES.length){
     genOut.querySelector('.gen-apply').addEventListener('click',e=>{
       window.applyPalette?.(+e.currentTarget.dataset.pi);
     });
+    const mk=document.getElementById('mk');
+    for(const [k,v] of Object.entries({b:pa.b,f:pa.f,p:pa.p,op:pa.op,a:pa.a,oa:pa.oa,c:pa.c,cf:pa.cf,mf:pa.mf,br:pa.br}))
+      mk.style.setProperty('--mk-'+k, v);
+    const sk=(st.n+' '+st.k).toLowerCase();
+    mk.className='mk'+(sk.includes('brutal')?' mk-brutal':sk.includes('glass')?' mk-glass':
+      /neumorph|soft|clay|organic|nature/.test(sk)?' mk-soft':'');
+    mk.style.setProperty('--mk-r',
+      sk.includes('brutal')?'0px':/soft|clay|playful|rounded|bubble/.test(sk)?'14px':'6px');
+    document.getElementById('mock-title').textContent=`preview — ${st.n.toLowerCase()}`;
+    document.getElementById('mk-eyebrow').textContent=q.split(/\s+/).slice(0,2).join(' ');
+    document.getElementById('mk-type').textContent=`${fo.h} + ${fo.b}`;
+    document.getElementById('mk-style').textContent=`palette: ${pa.n}`;
+    if(location.hash.startsWith('#g=')||gq.value)
+      history.replaceState(null,'','#g='+encodeURIComponent(q));
   }
   let genT;
   gq.addEventListener('input',()=>{clearTimeout(genT);genT=setTimeout(generate,350);});
+  if(location.hash.startsWith('#g=')){
+    try{gq.value=decodeURIComponent(location.hash.slice(3));}catch(e){}
+  }
   generate();
 }
 
