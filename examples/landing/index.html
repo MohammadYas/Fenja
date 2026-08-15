@@ -27,7 +27,7 @@
 .pgrid::-webkit-scrollbar,.fgrid::-webkit-scrollbar,.cgrid::-webkit-scrollbar,.uxlist::-webkit-scrollbar,.tokens pre::-webkit-scrollbar{width:8px;height:8px}
 .pgrid::-webkit-scrollbar-thumb,.fgrid::-webkit-scrollbar-thumb,.cgrid::-webkit-scrollbar-thumb,.uxlist::-webkit-scrollbar-thumb,.tokens pre::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:99px}
 .pgrid::-webkit-scrollbar-track,.fgrid::-webkit-scrollbar-track,.cgrid::-webkit-scrollbar-track,.uxlist::-webkit-scrollbar-track,.tokens pre::-webkit-scrollbar-track{background:transparent}
-html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 body{
   background:var(--bg);
   color:var(--body);
@@ -56,7 +56,9 @@ header{border-bottom:1px solid var(--line)}
 .bar a:hover{color:var(--run);text-decoration:underline;text-decoration-color:var(--run-dim);text-underline-offset:3px}
 
 /* ---------- hero ---------- */
-.hero{padding:clamp(3.5rem,9vw,6.5rem) 0 clamp(2.5rem,6vw,4rem)}
+.hero{padding:clamp(3.5rem,9vw,6.5rem) 0 clamp(2.5rem,6vw,4rem);position:relative}
+.hero::before{content:"";position:absolute;top:8%;right:-12%;width:34rem;height:34rem;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,rgba(34,197,94,.07),transparent 70%)}
+.hero > *{position:relative}
 .eyebrow{font-family:var(--mono);font-size:.75rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--run);margin-bottom:1.1rem}
 h1{
   font-family:var(--mono);font-weight:700;color:var(--ink);
@@ -318,6 +320,7 @@ h2{
 /* generated mockup */
 .mock{margin-top:.9rem;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;background:var(--bg-deep);box-shadow:0 24px 60px -28px rgba(2,6,23,.85)}
 .mock-chrome{display:flex;align-items:center;gap:.5rem;padding:.6rem .9rem;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+#mock-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mock-chrome .glyph{color:var(--run);font-weight:700;font-size:.9rem}
 .mk{
   background:var(--mk-b,#FDF2F8);color:var(--mk-f,#500724);
@@ -555,6 +558,13 @@ h2{
 .mk-what{font-size:.68rem;font-weight:600;line-height:1.25;margin-right:auto}
 .mk-what small{display:block;font-weight:400;color:var(--mk-mf)}
 .mk-appt .mk-pill{font-size:.54rem}
+@media (max-width:44rem){
+  .mk-dash{grid-template-columns:1fr}
+  .mk-tr{grid-template-columns:1.5fr .9fr .8fr}
+  .mk-tr > span:nth-child(2){display:none}
+  .mk-stats{grid-template-columns:1fr 1fr}
+  .mk-chartcard .mk-area{height:3.6rem}
+}
 
 /* ---------- specimen ---------- */
 .spec{margin-top:2.2rem;display:grid;grid-template-columns:1.15fr .85fr;gap:.6rem}
@@ -846,7 +856,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
           <div class="pv-name"><span>anvendt: <b id="pv-name">SaaS (General)</b></span><span id="pv-hex">#2563EB · #EA580C</span></div>
           <div class="tokens">
             <div class="tokens-head"><span>design-tokens.css</span><button class="copy-btn" id="copy-tokens" type="button">kopiér</button></div>
-            <pre id="tokens-out" aria-label="CSS-variabler for den valgte palette"></pre>
+            <pre id="tokens-out" tabindex="0" aria-label="CSS-variabler for den valgte palette"></pre>
           </div>
         </div>
 
@@ -857,7 +867,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
             <span class="g">colors.csv</span>
           </label>
           <div class="pcount" id="pcount"></div>
-          <div class="pgrid" id="pgrid"></div>
+          <div class="pgrid" id="pgrid" tabindex="0" role="region" aria-label="Paletteliste (scrollbar)"></div>
         </div>
       </div>
     </div>
@@ -876,7 +886,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
         <span class="g">typography.csv</span>
       </label>
       <div class="pcount" id="fcount"></div>
-      <div class="fgrid rv" id="fgrid"></div>
+      <div class="fgrid rv" id="fgrid" tabindex="0" role="region" aria-label="Font-parringer (scrollbar)"></div>
     </div>
   </section>
 
@@ -900,7 +910,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
         <button class="sev-chip" type="button" aria-pressed="false" data-sev="Low"><i style="background:#64748B"></i>lav</button>
       </div>
       <div class="pcount" id="ucount"></div>
-      <div class="uxlist rv" id="uxlist"></div>
+      <div class="uxlist rv" id="uxlist" tabindex="0" role="region" aria-label="UX-retningslinjer (scrollbar)"></div>
     </div>
   </section>
 
@@ -917,7 +927,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
         <span class="g">charts.csv</span>
       </label>
       <div class="pcount" id="ccount"></div>
-      <div class="cgrid rv" id="cgrid"></div>
+      <div class="cgrid rv" id="cgrid" tabindex="0" role="region" aria-label="Chart-anbefalinger (scrollbar)"></div>
     </div>
   </section>
 
@@ -1181,7 +1191,7 @@ if (genOut && STYLES.length){
         [pa.b,pa.p,pa.a].map(c=>`<span class="chip" style="background:${c}"></span>`).join('')+
         `<span class="val">${pa.n}</span> <span class="dim2">— ${pa.t}</span>`+
         `<button class="gen-apply" type="button" data-pi="${pi}">anvend ↓</button></div>`,
-      `<div class="ln fade k2">  TYPE      <span class="val">${fo.h} + ${fo.b}</span> <span class="dim2">(${fo.c})</span> <a href="${fo.g}" target="_blank" rel="noopener">fonte ↗</a></div>`,
+      `<div class="ln fade k2">  TYPO      <span class="val">${fo.h} + ${fo.b}</span> <span class="dim2">(${fo.c})</span> <a href="${fo.g}" target="_blank" rel="noopener">fonte ↗</a></div>`,
       `<div class="ln fade k2">  LAYOUT    <span class="val">${ld.n}</span> <span class="dim2">— CTA: ${ld.c.toLowerCase()}</span></div>`,
       `<div class="ln fade dim2">            ${ld.o.split('>').map(s=>s.trim()).slice(0,5).join(' → ')}</div>`,
       `<div class="ln fade k2">  UNDGÅ     <span class="dim2">${st.x}</span></div>`,
