@@ -78,9 +78,8 @@ h1 .dim{color:var(--muted)}
   padding:.65rem .9rem;border-bottom:1px solid var(--line);
   font-family:var(--mono);font-size:.72rem;color:var(--muted);
 }
-.term-head .dots{display:flex;gap:.38rem}
-.term-head i{width:.62rem;height:.62rem;border-radius:50%;background:var(--line-strong);display:block}
-.term-head span{margin-left:.4rem}
+.term-head .glyph{color:var(--run);font-weight:700;font-size:.9rem}
+.term-head span{margin-left:.15rem}
 .term-body{padding:1rem 1.1rem 1.2rem;font-family:var(--mono);font-size:.8rem;line-height:1.75;overflow-x:auto}
 .term-body .ln{white-space:pre;min-width:max-content}
 .prompt{color:var(--run);font-weight:700}
@@ -194,7 +193,7 @@ h2{
   transition:background .35s ease,color .35s ease;
 }
 .pv-top .t{font-weight:600;font-size:.9rem}
-.pv-top .u{width:1.5rem;height:1.5rem;border-radius:50%;background:currentColor;opacity:.35}
+.pv-top .u{width:1.5rem;height:1.5rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;background:color-mix(in srgb,currentColor 22%,transparent)}
 .pv-body{padding:1.1rem 1rem 1.2rem;display:grid;gap:1rem}
 .pv-card{
   background:var(--pv-c,#fff);color:var(--pv-cf,#1E293B);
@@ -315,8 +314,7 @@ h2{
 /* generated mockup */
 .mock{margin-top:.9rem;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;background:var(--bg-deep);box-shadow:0 24px 60px -28px rgba(2,6,23,.85)}
 .mock-chrome{display:flex;align-items:center;gap:.5rem;padding:.6rem .9rem;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:.7rem;color:var(--muted)}
-.mock-chrome .dots{display:flex;gap:.38rem}
-.mock-chrome i{width:.6rem;height:.6rem;border-radius:50%;background:var(--line-strong);display:block}
+.mock-chrome .glyph{color:var(--run);font-weight:700;font-size:.9rem}
 .mk{
   background:var(--mk-b,#FDF2F8);color:var(--mk-f,#500724);
   padding:0 0 1.4rem;transition:background .4s ease,color .4s ease;
@@ -324,7 +322,7 @@ h2{
 .mk *{transition:background .4s ease,color .4s ease,border-color .4s ease,border-radius .3s ease,box-shadow .3s ease}
 .mk-nav{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.4rem;border-bottom:1px solid var(--mk-br,#FBCFE8)}
 .mk-brand{display:flex;align-items:center;gap:.45rem;font-weight:600;font-size:.85rem}
-.mk-brand i{width:.7rem;height:.7rem;border-radius:3px;background:var(--mk-a,#DB2777);display:inline-block}
+.mk-brand .mk-mark{width:1.05rem;height:1.05rem;display:inline-block}
 .mk-links{display:flex;gap:1rem;font-size:.72rem;color:var(--mk-mf,#9D174D)}
 .mk-cta-sm{font-size:.72rem;font-weight:600;background:var(--mk-p,#DB2777);color:var(--mk-op,#fff);border:none;border-radius:var(--mk-r,6px);padding:.4rem .8rem}
 .mk-hero{padding:2.2rem 1.4rem 1.6rem;max-width:34rem}
@@ -337,7 +335,7 @@ h2{
 .mk-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;padding:0 1.4rem;margin-top:.6rem}
 @media (max-width:44rem){.mk-cards{grid-template-columns:1fr}}
 .mk-card{background:var(--mk-c,#fff);color:var(--mk-cf,#500724);border:1px solid var(--mk-br,#FBCFE8);border-radius:var(--mk-r,6px);padding:.85rem .9rem;box-shadow:var(--mk-sh,none)}
-.mk-card i{width:1.15rem;height:1.15rem;border-radius:5px;background:var(--mk-a,#DB2777);opacity:.9;display:block;margin-bottom:.5rem}
+.mk-card .mk-ico{width:1.25rem;height:1.25rem;display:block;margin-bottom:.5rem}
 .mk-card b{display:block;font-size:.78rem;font-weight:600}
 .mk-card span{display:block;font-size:.7rem;color:var(--mk-mf,#9D174D);margin-top:.2rem;line-height:1.5}
 .mk.mk-brutal .mk-card{border-width:2px;box-shadow:4px 4px 0 var(--mk-f)}
@@ -402,9 +400,9 @@ h2{
 .mk-ph-btn{width:100%;margin-top:.6rem;font-size:.7rem;font-weight:600;background:var(--mk-a);color:var(--mk-oa);border:none;border-radius:var(--mk-r,6px);padding:.5rem}
 .mk-tabsbar{display:flex;justify-content:space-around;border-top:1px solid var(--mk-br);padding:.5rem .4rem .6rem;margin-top:.7rem}
 .mk-tabsbar span{font-size:.56rem;color:var(--mk-mf);display:flex;flex-direction:column;align-items:center;gap:.2rem}
-.mk-tabsbar i{width:.85rem;height:.85rem;border-radius:4px;background:var(--mk-mf);opacity:.5}
+.mk-tabsbar svg{width:1rem;height:1rem;opacity:.75}
 .mk-tabsbar span.on{color:var(--mk-a)}
-.mk-tabsbar span.on i{background:var(--mk-a);opacity:1}
+.mk-tabsbar span.on svg{opacity:1}
 
 /* ux audit */
 .sev-chips{display:flex;gap:.4rem;flex-wrap:wrap;margin:.8rem 0 .2rem}
@@ -522,7 +520,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
 
     <div class="term" id="hero-term">
       <div class="term-head" aria-hidden="true">
-        <span class="dots"><i></i><i></i><i></i></span>
+        <span class="glyph">⌁</span>
         <span>fenja — zsh</span>
       </div>
       <div class="term-body" role="img" aria-label="Terminal: design-system-generatoren producerer Fenjas eget mørke developer-tool-designsystem og gemmer det i MASTER.md">
@@ -600,7 +598,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
       </div>
 
       <div class="mock rv" id="mock">
-        <div class="mock-chrome"><span class="dots"><i></i><i></i><i></i></span><span id="mock-title">preview</span>
+        <div class="mock-chrome"><span class="glyph">⌁</span><span id="mock-title">preview</span>
           <div class="mock-tabs" role="tablist" aria-label="Mockup type">
             <button class="mock-tab" role="tab" aria-selected="true" data-view="landing" type="button">landing</button>
             <button class="mock-tab" role="tab" aria-selected="false" data-view="dash" type="button">dashboard</button>
@@ -610,7 +608,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
         <div class="mk" id="mk">
           <div class="mk-view on" data-view="landing">
           <div class="mk-nav">
-            <span class="mk-brand"><i></i>agern &amp; co</span>
+            <span class="mk-brand"><svg class="mk-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10c0-3 3-5.5 7-5.5S19 7 19 10c0 .8-.7 1.5-1.6 1.5H6.6C5.7 11.5 5 10.8 5 10Z" fill="var(--mk-a)"/><path d="M7.5 11.5h9c0 4.2-2.6 7.6-4.5 8.5-1.9-.9-4.5-4.3-4.5-8.5Z" fill="none" stroke="var(--mk-a)" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 4.5c.2-1.2.9-2 2-2.3" fill="none" stroke="var(--mk-a)" stroke-width="1.8" stroke-linecap="round"/></svg>agern &amp; co</span>
             <span class="mk-links" aria-hidden="true"><span>Produkt</span><span>Priser</span><span>Om os</span></span>
             <button class="mk-cta-sm" type="button" tabindex="-1">Opret konto</button>
           </div>
@@ -624,9 +622,9 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
             </div>
           </div>
           <div class="mk-cards">
-            <div class="mk-card"><i></i><b>Hurtig opsætning</b><span>Live på minutter, ikke uger — helt uden konsulenter.</span></div>
-            <div class="mk-card"><i></i><b>Klare priser</b><span>Én plan, alt inkluderet, opsig når som helst.</span></div>
-            <div class="mk-card"><i></i><b>Rigtig support</b><span>Svar fra dem, der byggede det — inden for en time.</span></div>
+            <div class="mk-card"><svg class="mk-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3 5.5 13.5h5L11 21l7.5-10.5h-5L13 3Z" fill="none" stroke="var(--mk-a)" stroke-width="1.8" stroke-linejoin="round"/></svg><b>Hurtig opsætning</b><span>Live på minutter, ikke uger — helt uden konsulenter.</span></div>
+            <div class="mk-card"><svg class="mk-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.6 3.6 20 11a2 2 0 0 1 0 2.8l-6.2 6.2a2 2 0 0 1-2.8 0L3.6 12.6A2 2 0 0 1 3 11.2V5a2 2 0 0 1 2-2h6.2c.5 0 1 .2 1.4.6Z" fill="none" stroke="var(--mk-a)" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.4" fill="var(--mk-a)"/></svg><b>Klare priser</b><span>Én plan, alt inkluderet, opsig når som helst.</span></div>
+            <div class="mk-card"><svg class="mk-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H12l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5v-7Z" fill="none" stroke="var(--mk-a)" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 9h7M8.5 12h4.5" stroke="var(--mk-a)" stroke-width="1.8" stroke-linecap="round"/></svg><b>Rigtig support</b><span>Svar fra dem, der byggede det — inden for en time.</span></div>
           </div>
           </div>
 
@@ -655,7 +653,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
           <div class="mk-view" data-view="app">
             <div class="mk-ph-wrap">
               <div class="mk-phone">
-                <div class="mk-status"><span>9:41</span><span>●●●</span></div>
+                <div class="mk-status"><span>9.41</span><span><svg viewBox="0 0 24 12" aria-hidden="true" style="width:1.2rem;height:.6rem"><rect x="1" y="7" width="3" height="4" rx="1" fill="currentColor"/><rect x="6" y="5" width="3" height="6" rx="1" fill="currentColor"/><rect x="11" y="3" width="3" height="8" rx="1" fill="currentColor"/><rect x="16" y="1" width="3" height="10" rx="1" fill="currentColor" opacity=".35"/></svg></span></div>
                 <div class="mk-ph-body">
                   <div class="mk-ph-title">Godmorgen, Kim</div>
                   <div class="mk-ph-sub">Sådan ser dagen ud.</div>
@@ -668,7 +666,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
                   </div>
                   <button class="mk-ph-btn" type="button" tabindex="-1">Ny booking</button>
                   <div class="mk-tabsbar" aria-hidden="true">
-                    <span class="on"><i></i>Hjem</span><span><i></i>Kalender</span><span><i></i>Kunder</span><span><i></i>Mere</span>
+                    <span class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 11 8-7 8 7v8a1.5 1.5 0 0 1-1.5 1.5h-4V15h-5v5.5h-4A1.5 1.5 0 0 1 4 19v-8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Hjem</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 10.5h16M8.5 4v3.5M15.5 4v3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Kalender</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.5" cy="9" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 19c.6-2.8 2.6-4.3 5-4.3s4.4 1.5 5 4.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15.5 6.6a3 3 0 0 1 0 4.8M17.3 14.9c1.3.6 2.2 1.9 2.6 3.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Kunder</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="18" cy="12" r="1.6" fill="currentColor"/></svg>Mere</span>
                   </div>
                 </div>
               </div>
@@ -711,7 +709,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
       <div class="explore rv">
         <div class="pv-pane">
           <div class="preview" id="pv" aria-live="polite">
-            <div class="pv-top"><span class="t">Agern — Overblik</span><span class="u" aria-hidden="true"></span></div>
+            <div class="pv-top"><span class="t">Agern — Overblik</span><span class="u" aria-hidden="true">A</span></div>
             <div class="pv-body">
               <div class="pv-card">
                 <div class="lab">Månedlig omsætning</div>
