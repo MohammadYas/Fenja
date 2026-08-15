@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { AppNav } from "@/components/app-nav";
+import { SpringLink } from "@/components/spring-link";
 import { Prislap } from "@/components/ui/prislap";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
@@ -24,6 +25,7 @@ export default async function AppLayout({
 
   return (
     <div className="min-h-dvh pb-24">
+      <SpringLink />
       {/* Topbar med søm-underkant; saldoen som lille prislap (REDESIGN §3.2) */}
       <header className="sticky top-0 z-10 bg-baggrund">
         <div className="mx-auto flex min-h-touch max-w-md items-center justify-between px-4 py-1">
@@ -38,7 +40,7 @@ export default async function AppLayout({
         </div>
         <div className="soem-vandret" aria-hidden="true" />
       </header>
-      <div className="mx-auto max-w-md px-4">{children}</div>
+      <div className="mx-auto max-w-md px-4" id="indhold">{children}</div>
       <AppNav />
     </div>
   );

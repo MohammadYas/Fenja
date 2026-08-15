@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SpringLink } from "@/components/spring-link";
 import { da } from "@/lib/copy/da";
 
 // Marketing-skal: enkel topbar + footer. Mobil-først. Links bruger sømmen som
@@ -8,6 +9,7 @@ export default function MarketingLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="flex min-h-dvh flex-col">
+      <SpringLink />
       <header>
         <nav
           aria-label="Hovednavigation"
@@ -33,7 +35,7 @@ export default function MarketingLayout({
         </nav>
         <div className="soem-vandret" aria-hidden="true" />
       </header>
-      <div className="flex-1">{children}</div>
+      <div className="flex-1" id="indhold">{children}</div>
       {/* Footer som gran-blok (S23): ordmærke, grupperede links og
           mærknings-linjen — sidens sidste ord er det ærlige (REDESIGN §2.2) */}
       <footer className="bg-gran text-kalk">
