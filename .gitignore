@@ -26,3 +26,6 @@ next-env.d.ts
 # supabase lokal state
 /supabase/.branches
 /supabase/.temp
+
+# lokale verifikations-screenshots og harness (aldrig committes)
+/.verify/

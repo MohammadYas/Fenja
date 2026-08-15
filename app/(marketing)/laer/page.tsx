@@ -7,38 +7,41 @@ export const metadata = {
   description: da.laer.forklaring,
 };
 
-// Lær-sektionen (F-2): gratis guides — akkvisition og retention, ikke produktet.
+// Lær-sektionen (F-2) som katalog-indeks (S22): nummererede rækker adskilt af
+// søm-linjer — en indholdsfortegnelse, ikke en kortstak. To spalter på store
+// skærme, så siden bruger bredden.
 export default function Laer() {
   const guides = hentGuides();
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-12">
+    <main className="mx-auto max-w-5xl px-4 py-12">
       <h1 className="font-display text-kaempe font-bold uppercase">
         {da.laer.titel}
       </h1>
       <p className="mt-3 max-w-laesbar text-tekst/80">{da.laer.forklaring}</p>
-      {/* Guide-kort med offset-skygge og nummererede rav-tal (REDESIGN §3.6) */}
-      <ul className="mt-10 flex flex-col gap-5">
+
+      <ul className="mt-10 grid gap-x-16 lg:grid-cols-2">
         {guides.map((guide, i) => (
-          <li key={guide.slug}>
-            <div className="kort-taktil flex items-start gap-4 p-4">
+          <li key={guide.slug} className="border-b border-kant">
+            <Link
+              href={`/laer/${guide.slug}`}
+              className="group flex items-baseline gap-5 py-5"
+            >
               <span
                 aria-hidden="true"
                 className="select-none font-mono text-hero font-bold leading-none text-rav"
               >
                 {String(i + 1).padStart(2, "0")}
               </span>
-              <div className="min-w-0">
-                <h2 className="text-titel font-medium">
-                  <Link href={`/laer/${guide.slug}`} className="soem-link">
-                    {guide.titel}
-                  </Link>
-                </h2>
-                <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+              <span className="min-w-0">
+                <span className="soem-link text-titel font-medium group-hover:text-primaer">
+                  {guide.titel}
+                </span>
+                <span className="mt-1 block max-w-laesbar text-detalje text-tekst/70">
                   {guide.beskrivelse}
-                </p>
-              </div>
-            </div>
+                </span>
+              </span>
+            </Link>
           </li>
         ))}
       </ul>
