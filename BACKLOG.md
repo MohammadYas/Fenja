@@ -49,6 +49,12 @@ tegnet), (d) footeren er en tynd linkrække, (e) rå browser-radios på log-ind.
         mærknings-linjen — ikke en tynd enkeltrække
 [x] S24 Log-ind: 18+-valg som taktile valgkort oven på native radios (a11y)
 
+## Udvidelser (fase A-plus, keyless) — 2026-08-15
+[x] U1  FAQ-sektion på /priser (ærlige svar på de spørgsmål, siden ikke selv
+        besvarer) + FAQPage-JSON-LD; sitemap-huller lukket (/priser, /log-ind)
+[x] U2  Guide-navigation: forrige/næste nederst på hver guide + Article-JSON-LD
+[x] U3  A11y-finish: skip-link til indholdet i marketing- og app-layoutet
+[x] U4  Oversigt: statusfilter (Alle/Kladde/Aktiv/Solgt) med antal pr. chip
 ## Redesign
 [x] S17 KOMPLET visuel rebuild efter REDESIGN.md ("katalog møder plakat"):
         tokens v2, plakat-typo, farveblokke, prislap/stempel-motiv, Sømmen 2.0,

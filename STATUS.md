@@ -5,6 +5,16 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 U4 Oversigt: statusfilter-chips (Alle/Kladde/Aktiv/Solgt med antal)
+  over listen — vises først ved 4+ items; listen flyttet til client-komponent,
+  aria-pressed på valget, tom-tilstand med egen linje.
+- 2026-08-15 U3 A11y: skip-link ("Spring til indholdet") som første fokuserbare
+  element i både marketing- og app-layoutet; usynligt indtil tastaturfokus.
+- 2026-08-15 U2 Guides: forrige/næste-navigation nederst på hver guide (følger
+  katalognummeret) + Article-JSON-LD pr. guide.
+- 2026-08-15 U1 FAQ på /priser: fem ærlige spørgsmål/svar (ingen Vinted-adgang,
+  aldrig billede 1, 2–4 fotos, regenerér til ½ kredit, ingen adgangskode) som
+  søm-rækker + FAQPage-JSON-LD; sitemap-huller lukket (/priser, /log-ind).
 - 2026-08-15 Slop-gennemgang del 3 (afsluttende, HANDOFF §8): alle otte
   marketing-flader (forside, log-ind, Lær + guide, vilkår, privatliv, priser,
   404) screenshottet ved 390 OG 320 px — scrollWidth = 320 overalt, ingen

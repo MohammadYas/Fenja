@@ -88,7 +88,44 @@ export default function PriserSide() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-4 py-16">
+      {/* FAQ (U1): svar på det, resten af siden ikke selv siger — rækker med
+          søm-delelinjer som Lær-indekset, ingen akkordeon at gemme svar i */}
+      <section className="mx-auto max-w-5xl px-4 py-16" aria-label={da.priserSide.faqTitel}>
+        <Reveal>
+          <h2 className="font-display text-display font-bold">
+            {da.priserSide.faqTitel}
+          </h2>
+        </Reveal>
+        <dl className="mt-6">
+          {da.priserSide.faq.map((punkt, i) => (
+            <Reveal key={punkt.spoergsmaal} forsinkelseTrin={i}>
+              <div className="border-t border-kant py-5">
+                <dt className="max-w-2xl font-display text-titel font-bold">
+                  {punkt.spoergsmaal}
+                </dt>
+                <dd className="mt-2 max-w-laesbar text-tekst/80">{punkt.svar}</dd>
+              </div>
+            </Reveal>
+          ))}
+        </dl>
+        <script
+          type="application/ld+json"
+          // Egen statisk copy fra da.ts — ikke brugerinput
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: da.priserSide.faq.map((punkt) => ({
+                "@type": "Question",
+                name: punkt.spoergsmaal,
+                acceptedAnswer: { "@type": "Answer", text: punkt.svar },
+              })),
+            }),
+          }}
+        />
+      </section>
+
+      <section className="mx-auto max-w-5xl px-4 pb-16">
         <Reveal>
           <h2 className="max-w-3xl font-display text-kaempe font-bold">
             {da.priserSide.ctaTitel}

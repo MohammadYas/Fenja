@@ -160,6 +160,9 @@ export const da = {
       active: "Aktiv",
       sold: "Solgt",
     },
+    filterLabel: "Vis kun",
+    filterAlle: "Alle",
+    filterTom: "Ingen annoncer med den status endnu.",
     markerSolgt: "Markér som solgt",
     salgsprisLabel: "Salgspris i kr.",
     gemSalg: "Gem salget",
@@ -236,6 +239,29 @@ export const da = {
       {
         overskrift: "Priser er med moms",
         tekst: "Betaling sker via Stripe, som også sender din kvittering. Alle priser er i danske kroner og inklusive moms.",
+      },
+    ],
+    faqTitel: "Spørgsmål, vi ofte får",
+    faq: [
+      {
+        spoergsmaal: "Lægger Fenja annoncen op på Vinted for mig?",
+        svar: "Nej. Fenja har ingen adgang til din Vinted-konto — det er en pointe, ikke en mangel. Du får billeder og tekst serveret, og kopierer selv ind. Det tager under et minut.",
+      },
+      {
+        spoergsmaal: "Må jeg bruge visualiseringen som billede 1?",
+        svar: "Nej. Vinted kræver, at billede 1 er dit eget foto af den faktiske vare. Visualiseringen er mærket og må kun bruges som supplement længere nede i annoncen.",
+      },
+      {
+        spoergsmaal: "Hvor mange fotos skal jeg tage?",
+        svar: "2–4 med din telefon: helhed (påkrævet), og gerne bagside, vaskemærke og eventuelle fejl. Dagslys og et roligt underlag er rigeligt.",
+      },
+      {
+        spoergsmaal: "Hvad hvis jeg vil have en anden visualisering eller tekst?",
+        svar: "Du kan regenerere en enkelt del — ny visualisering i et andet miljø eller en frisk tekst — for en halv kredit pr. del. Der trækkes kun, hvis den lykkes.",
+      },
+      {
+        spoergsmaal: "Skal jeg have en adgangskode?",
+        svar: "Nej. Du logger ind med et link, vi sender til din e-mail. Ingen adgangskode at glemme eller lække.",
       },
     ],
     ctaTitel: "Start med de tre gratis",
@@ -363,6 +389,11 @@ export const da = {
       "Korte guides om at sælge brugt tøj: sourcing, priser, fotos og reglerne, der beskytter din konto. Gratis — også uden konto.",
     laesGuide: "Læs guiden",
     alleGuides: "Alle guides",
+    forrigeGuide: "Forrige guide",
+    naesteGuide: "Næste guide",
+  },
+  a11y: {
+    springTilIndhold: "Spring til indholdet",
   },
   admin: {
     titel: "Drift",
