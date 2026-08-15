@@ -5,7 +5,7 @@
 
 import { kreditter } from "@/lib/config";
 
-export type LedgerAarsag = "signup" | "purchase" | "delivery" | "refund";
+export type LedgerAarsag = "signup" | "purchase" | "delivery" | "refund" | "regen";
 
 // Tyndt db-interface så logikken kan testes uden Supabase (NFR-5)
 export interface LedgerDb {
@@ -31,6 +31,9 @@ export const noegler = {
   koeb: (stripeEventId: string) => `koeb:${stripeEventId}`,
   levering: (itemId: string) => `levering:${itemId}`,
   refundOnModel: (itemId: string) => `refund-onmodel:${itemId}`,
+  // B-8: nøglen er requestId (mintet af API-routen), så genkørsler af samme
+  // regenerering aldrig koster dobbelt
+  regen: (requestId: string) => `regen:${requestId}`,
 } as const;
 
 /** E-1: gratis-kreditter ved signup — idempotent pr. bruger */
@@ -82,6 +85,22 @@ export async function refunderOnModel(db: LedgerDb, userId: string, itemId: stri
     delta: kreditter.prisPrAnnonce,
     reason: "refund",
     idempotencyKey: noegler.refundOnModel(itemId),
+  });
+  if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
+  return resultat.saldo;
+}
+
+/** B-8: træk ved vellykket regenerering — reduceret pris, idempotent pr. request */
+export async function traekRegenerering(
+  db: LedgerDb,
+  userId: string,
+  requestId: string,
+): Promise<number> {
+  const resultat = await db.tilfoejKreditter({
+    userId,
+    delta: -kreditter.prisRegenerering,
+    reason: "regen",
+    idempotencyKey: noegler.regen(requestId),
   });
   if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
   return resultat.saldo;

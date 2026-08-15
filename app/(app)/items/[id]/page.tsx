@@ -7,6 +7,8 @@ import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
 import { Progress } from "./progress";
+import { Regenerer } from "./regenerer";
+import { PRESETS } from "@/lib/pipeline/presets";
 
 const BUCKET = "item-photos";
 
@@ -16,7 +18,12 @@ type FotoRaekke = {
   original_url: string;
   cleaned_url: string | null;
 };
-type GenereringRaekke = { kind: string; status: string; output_url: string | null };
+type GenereringRaekke = {
+  kind: string;
+  status: string;
+  output_url: string | null;
+  created_at: string;
+};
 
 async function signeretUrl(sti: string | null): Promise<string | null> {
   if (!sti) return null;
@@ -40,7 +47,7 @@ export default async function ItemSide({
   const { data: item } = await supabase
     .from("items")
     .select(
-      "id, brand, titel, beskrivelse, soegeord, pris_fra_dkk, pris_til_dkk, pris_begrundelse, defects_text, leveret_at, item_photos(id, role, original_url, cleaned_url), generations(kind, status, output_url)",
+      "id, brand, titel, beskrivelse, soegeord, pris_fra_dkk, pris_til_dkk, pris_begrundelse, defects_text, leveret_at, item_photos(id, role, original_url, cleaned_url), generations(kind, status, output_url, created_at)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -69,8 +76,11 @@ export default async function ItemSide({
 
   const fotos = item.item_photos as FotoRaekke[];
   const generings = item.generations as GenereringRaekke[];
+  // Nyeste først: en regenerering (B-8) skal vinde over originalen
   const visualiseringSti =
-    generings.find((g) => g.kind === "onmodel" && g.status === "succeeded")
+    [...generings]
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))
+      .find((g) => g.kind === "onmodel" && g.status === "succeeded")
       ?.output_url ?? null;
   const visualiseringFejlede = !visualiseringSti;
 
@@ -249,6 +259,19 @@ export default async function ItemSide({
             {da.resultat.vintedReglerLink}
           </a>
         </p>
+      </section>
+
+      {/* 5 · Regenerér enkeltdele (B-8) — reduceret pris, trækkes kun ved succes */}
+      <section className="mt-8" aria-label={da.regenerer.titel}>
+        <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
+          05 — {da.regenerer.titel}
+        </h2>
+        <div className="mt-3">
+          <Regenerer
+            itemId={item.id as string}
+            presets={PRESETS.map((p) => ({ id: p.id, navn: p.navn }))}
+          />
+        </div>
       </section>
     </main>
   );

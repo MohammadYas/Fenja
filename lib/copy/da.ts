@@ -3,6 +3,10 @@
 // Copy-regler (HANDOFF §2.2.4): dansk, konkret, ærlig, lavmælt selvsikker; tal frem
 // for tillægsord; knapper siger hvad de gør; fejl forklarer hvad man gør.
 
+// Kreditsaldi kan indeholde halve (B-8) — dansk komma, aldrig "2.5"
+const formaterKreditTal = (n: number): string =>
+  Number.isInteger(n) ? String(n) : n.toFixed(1).replace(".", ",");
+
 export const da = {
   site: {
     navn: "Fenja",
@@ -20,7 +24,9 @@ export const da = {
     logInd: "Log ind",
     logUd: "Log ud",
     saldo: (antal: number) =>
-      antal === 1 ? "1 annonce tilbage" : `${antal} annoncer tilbage`,
+      antal === 1
+        ? "1 annonce tilbage"
+        : `${formaterKreditTal(antal)} annoncer tilbage`,
   },
   logInd: {
     titel: "Log ind",
@@ -164,11 +170,29 @@ export const da = {
     liggetid: (dage: number) =>
       dage === 1 ? "1 dag i snit før salg" : `${dage} dage i snit før salg`,
   },
+  regenerer: {
+    titel: "Prøv igen med en anden del",
+    forklaring: (pris: string) =>
+      `Ny visualisering i et andet miljø eller en frisk annoncetekst — ${pris} kredit pr. del. Dine rensede fotos er de samme.`,
+    prisLabel: "½ kredit",
+    nyVisualisering: "Ny visualisering",
+    nyTekst: "Ny annoncetekst",
+    presetLabel: "Miljø",
+    koererVisualisering: "Syr en ny visualisering…",
+    koererTekst: "Skriver en ny tekst…",
+    faerdig: "Klar — siden er opdateret.",
+    fejlGraense:
+      "Du har brugt alle forsøg for denne del. Lav en ny annonce, hvis du vil videre.",
+    fejlVisualisering:
+      "Den nye visualisering ramte ikke kvalitetskravet, så vi leverer den ikke — og der er ikke trukket noget. Prøv et andet miljø.",
+    fejlSaldo: "Du mangler kreditter til en regenerering. Køb en pakke under Kreditter.",
+    fejlAlmen: "Noget gik galt undervejs. Der er ikke trukket noget — prøv igen.",
+  },
   kreditter: {
     titel: "Kreditter",
     forklaring:
       "1 kredit = 1 færdig annonce. Kreditter trækkes først, når annoncen er leveret — fejler visualiseringen, får du kreditten tilbage.",
-    saldoNu: (antal: number) => `Du har ${antal} tilbage.`,
+    saldoNu: (antal: number) => `Du har ${formaterKreditTal(antal)} tilbage.`,
     pakkeNavn: (antal: number) => `Fenja · ${antal} annoncer`,
     pakkeLinje: (antal: number, pris: number) => `${antal} annoncer · ${pris} kr.`,
     prisPrStk: (kr: string) => `${kr} kr. pr. annonce`,

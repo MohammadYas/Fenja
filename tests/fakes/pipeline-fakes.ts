@@ -82,6 +82,10 @@ export class FakePipelineDb implements PipelineDb {
   async dagensOmkostningerDkk(): Promise<number> {
     return this.dagensForbrug;
   }
+
+  async antalGenereringer(itemId: string, kind: "onmodel" | "text"): Promise<number> {
+    return this.generings.filter((g) => g.itemId === itemId && g.kind === kind).length;
+  }
 }
 
 export class FakePipelineStorage implements PipelineStorage {

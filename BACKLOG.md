@@ -22,6 +22,8 @@
 [x] S9  Resultatside i compliance-rækkefølge + kopiér-flow + checkliste (B-5)
 [x] S10 Bibliotek + solgt-markering (B-7)
 [x] S11 Stripe Checkout + webhooks + saldo-UI (E-1/E-2/E-6) — testmode, mock i CI
+[x] S18 B-8 Regenerér enkeltdele til reduceret kreditpris (ny visualisering i
+        andet preset / ny tekst); numeric-ledger, idempotent træk kun ved succes
 ## Launch
 [ ] S12 [KRÆVER NØGLER — efter §6] Ende-til-ende mod rigtige providers; kalibrér
         troskabs-tærskel; Gate 2-måling (≤ 2 min)

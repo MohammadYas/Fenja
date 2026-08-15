@@ -20,7 +20,7 @@ export class SupabasePipelineDb implements PipelineDb {
     const { data: item, error } = await this.klient
       .from("items")
       .select(
-        "id, user_id, brand, size, condition, defects_text, category, purchase_price_dkk, item_photos(id, role, original_url)",
+        "id, user_id, brand, size, condition, defects_text, category, purchase_price_dkk, item_photos(id, role, original_url, cleaned_url)",
       )
       .eq("id", itemId)
       .single();
@@ -36,12 +36,18 @@ export class SupabasePipelineDb implements PipelineDb {
       koebsprisDkk: item.purchase_price_dkk as number | null,
       fotos: await Promise.all(
         (
-          item.item_photos as { id: string; role: FotoRolle; original_url: string }[]
+          item.item_photos as {
+            id: string;
+            role: FotoRolle;
+            original_url: string;
+            cleaned_url: string | null;
+          }[]
         ).map(async (f) => ({
           id: f.id,
           rolle: f.role,
           // Providere skal bruge en URL de kan hente — storage-stier signeres
           url: await this.tilUrl(f.original_url),
+          rensetUrl: f.cleaned_url ? await this.tilUrl(f.cleaned_url) : null,
         })),
       ),
     };
@@ -116,6 +122,16 @@ export class SupabasePipelineDb implements PipelineDb {
       .update({ status: "active", leveret_at: new Date().toISOString() })
       .eq("id", itemId);
     if (error) throw new Error(`Kunne ikke markere leveret: ${error.message}`);
+  }
+
+  async antalGenereringer(itemId: string, kind: "onmodel" | "text"): Promise<number> {
+    const { count, error } = await this.klient
+      .from("generations")
+      .select("id", { count: "exact", head: true })
+      .eq("item_id", itemId)
+      .eq("kind", kind);
+    if (error) throw new Error(error.message);
+    return count ?? 0;
   }
 
   async dagensOmkostningerDkk(): Promise<number> {

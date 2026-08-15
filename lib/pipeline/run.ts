@@ -4,7 +4,12 @@
 // idempotent pr. item, så dubletter aldrig koster dobbelt (E-4/NFR-10).
 
 import { misbrugsvaern } from "@/lib/config";
-import { refunderOnModel, traekLevering, type LedgerDb } from "@/lib/credits/ledger";
+import {
+  refunderOnModel,
+  traekLevering,
+  traekRegenerering,
+  type LedgerDb,
+} from "@/lib/credits/ledger";
 import type { ImageProvider } from "@/lib/providers/image";
 import type { AnnonceTekst, TextProvider } from "@/lib/providers/text";
 import { paafoerBadge } from "./badge";
@@ -96,8 +101,10 @@ async function visualiseringsTrin(
   // Badge + AI-metadata påføres ALTID før billedet rører eget storage (C-4)
   const raa = await deps.storage.hentBillede(udfald.billede.url);
   const medBadge = await paafoerBadge(raa);
+  // Stien er unik pr. generering, så en regenerering (B-8) aldrig
+  // overskriver en tidligere visualisering — resultatsiden læser output_url
   const sti = await deps.storage.gemBillede(
-    `${item.userId}/${item.id}/visualisering.jpg`,
+    `${item.userId}/${item.id}/visualisering-${genId}.jpg`,
     medBadge,
   );
   await deps.db.afslutGenerering(genId, {
@@ -150,6 +157,76 @@ async function tekstTrin(
     await deps.db.afslutGenerering(genId, { status: "failed", costDkk: 0 });
     throw fejl;
   }
+}
+
+export class RegenGraenseFejl extends Error {
+  constructor() {
+    super("Grænsen for regenereringer af denne del er nået");
+  }
+}
+
+export class RegenVisualiseringFejl extends Error {
+  constructor() {
+    super("Den nye visualisering ramte ikke kvalitetskravet — der er ikke trukket noget");
+  }
+}
+
+export type RegenDel = "visualisering" | "tekst";
+
+export type RegenResultat = {
+  visualisering: { sti: string; fidelityScore: number } | null;
+  tekst: AnnonceTekst | null;
+  saldoEfter: number;
+};
+
+/**
+ * B-8: regenerér én del af en leveret annonce til reduceret kreditpris.
+ * Kreditten trækkes KUN når delen lykkes (idempotent pr. requestId) —
+ * en fejlet visualisering koster ingenting og kaster RegenVisualiseringFejl.
+ */
+export async function koerRegenerering(
+  deps: PipelineAfhaengigheder,
+  itemId: string,
+  del: RegenDel,
+  opts: { requestId: string; presetId?: string },
+): Promise<RegenResultat> {
+  // Samme kill-switch som hovedpipelinen (E-5)
+  const dagensForbrug = await deps.db.dagensOmkostningerDkk();
+  if (dagensForbrug >= misbrugsvaern.dagligtBudgetloftDkk) {
+    throw new BudgetloftFejl();
+  }
+
+  const item = await deps.db.hentItem(itemId);
+
+  const kind = del === "visualisering" ? "onmodel" : "text";
+  const antal = await deps.db.antalGenereringer(item.id, kind);
+  if (antal >= misbrugsvaern.maksGenereringerPrDel) {
+    throw new RegenGraenseFejl();
+  }
+
+  if (del === "visualisering") {
+    // Referencen er det rensede helhedsfoto fra den oprindelige leverance
+    const helhed =
+      item.fotos.find((f) => f.rolle === "full") ?? item.fotos[0];
+    if (!helhed) throw new Error("item mangler fotos");
+    const visualisering = await visualiseringsTrin(
+      deps,
+      item,
+      helhed.rensetUrl ?? helhed.url,
+      opts.presetId ?? STANDARD_PRESET_ID,
+    );
+    if (!visualisering) throw new RegenVisualiseringFejl();
+    const saldo = await traekRegenerering(deps.ledger, item.userId, opts.requestId);
+    return {
+      visualisering: { sti: visualisering.sti, fidelityScore: visualisering.fidelityScore },
+      tekst: null,
+      saldoEfter: saldo,
+    };
+  }
+
+  const tekst = await tekstTrin(deps, item);
+  const saldo = await traekRegenerering(deps.ledger, item.userId, opts.requestId);
+  return { visualisering: null, tekst, saldoEfter: saldo };
 }
 
 export async function koerItemPipeline(

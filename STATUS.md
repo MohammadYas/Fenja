@@ -5,6 +5,16 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 B-8 Regenerér enkeltdele: ny visualisering (valgfrit preset) eller
+  ny annoncetekst fra resultatsiden til reduceret pris (prisRegenerering: 0,5
+  kredit — EJER-BESLUTNING at justere). Kreditter går fra integer til
+  numeric(6,2) i ny migration (før første db push; ledger-årsag 'regen'
+  tilføjet). Træk sker KUN ved succes, idempotent pr. requestId; loft pr.
+  delaftype (maksGenereringerPrDel: 4); visualiserings-stier er nu unikke pr.
+  generering, og resultatsiden viser nyeste succesfulde. API-route (auth,
+  ejerskab, leveret-tjek, saldo-tjek, Trigger.dev eller inline), sektion
+  05 — PRØV IGEN på resultatsiden med preset-vælger og søm-progress.
+  5 nye tests (80 → 85). Decimal-saldi formateres dansk ("2,5").
 - 2026-08-15 SEO/OG (F-3): typografisk OG-plakat (1200×630, app/opengraph-image.png
   — bygget af egne self-hostede skrifter, ærligt tekst-only, ingen fake
   produktfotos) + alt-tekst, prislap-bomærke som favicon (app/icon.svg),

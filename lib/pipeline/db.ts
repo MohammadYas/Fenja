@@ -13,7 +13,7 @@ export type ItemTilPipeline = {
   kategori: string;
   fejlBeskrivelse: string | null;
   koebsprisDkk: number | null;
-  fotos: { id: string; rolle: FotoRolle; url: string }[];
+  fotos: { id: string; rolle: FotoRolle; url: string; rensetUrl?: string | null }[];
 };
 
 export type GenereringsSlut = {
@@ -39,6 +39,8 @@ export interface PipelineDb {
   markerLeveret(itemId: string): Promise<void>;
   /** Summen af alle generations-omkostninger i dag — budgetloftet (E-5/G-1) */
   dagensOmkostningerDkk(): Promise<number>;
+  /** B-8: antal genereringer af en delaftype for et item — loftet pr. del */
+  antalGenereringer(itemId: string, kind: "onmodel" | "text"): Promise<number>;
 }
 
 export interface PipelineStorage {

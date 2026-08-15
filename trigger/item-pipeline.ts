@@ -4,7 +4,7 @@
 
 import { task } from "@trigger.dev/sdk";
 import { SupabaseLedgerDb } from "@/lib/credits/supabase";
-import { koerItemPipeline } from "@/lib/pipeline/run";
+import { koerItemPipeline, koerRegenerering, type RegenDel } from "@/lib/pipeline/run";
 import {
   SupabasePipelineDb,
   SupabasePipelineStorage,
@@ -39,6 +39,40 @@ export const itemPipeline = task({
       leveret: true,
       delvis: resultat.refunderet,
       totalCostDkk: resultat.totalCostDkk,
+    };
+  },
+});
+
+export type RegenPayload = {
+  itemId: string;
+  del: RegenDel;
+  requestId: string;
+  presetId?: string;
+};
+
+// B-8: regenerering af én del. requestId er ledger-nøglen, så genkørsler af
+// samme job aldrig trækker dobbelt (E-4).
+export const itemRegen = task({
+  id: "item-regen",
+  retry: { maxAttempts: 2 },
+  run: async (payload: RegenPayload) => {
+    const klient = opretServiceKlient();
+    const resultat = await koerRegenerering(
+      {
+        db: new SupabasePipelineDb(klient),
+        storage: new SupabasePipelineStorage(klient),
+        image: await hentImageProvider(),
+        text: await hentTextProvider(),
+        ledger: new SupabaseLedgerDb(klient),
+      },
+      payload.itemId,
+      payload.del,
+      { requestId: payload.requestId, presetId: payload.presetId },
+    );
+    return {
+      itemId: payload.itemId,
+      del: payload.del,
+      saldoEfter: resultat.saldoEfter,
     };
   },
 });

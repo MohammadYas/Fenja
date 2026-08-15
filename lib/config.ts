@@ -8,6 +8,9 @@ export const kreditter = {
     { id: "pakke-30", antal: 30, prisDkk: 69 },
   ],
   prisPrAnnonce: 1, // kreditter trukket pr. leveret annonce
+  // B-8: regenerering af en enkeltdel (ny visualisering/ny tekst) til
+  // reduceret pris. Ejer-justerbar — ½ kredit er startprisen.
+  prisRegenerering: 0.5,
 } as const;
 
 export const pipeline = {
@@ -27,6 +30,8 @@ export const upload = {
 
 export const misbrugsvaern = {
   maksAnnoncerPrBrugerPrDag: 15, // E-5 rate limit
+  // B-8: loft pr. item — originalen + op til 3 regenereringer pr. delaftype
+  maksGenereringerPrDel: 4,
   // Globalt dagligt loft i kr. — kill-switch når nået; kan overstyres med env
   dagligtBudgetloftDkk: Number(process.env.DAILY_BUDGET_CAP_DKK ?? 200),
 } as const;
