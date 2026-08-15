@@ -5,6 +5,13 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 Slop-gennemgang del 2 (app-siderne, HANDOFF §8): oversigt,
+  nyt-item, kreditter og resultatsiden (inkl. regenerér-sektionen) audited
+  keyless via midlertidige preview-ruter (S17-mønstret, slettet igen) ved
+  390/320 px. Ingen manifest-brud fundet — statistik-gran-blok, prislap-saldo
+  med decimal ("2,5"), rollekort og kompliance-rækkefølgen står som designet.
+  Ét copy-fund rettet: "½ kredit kredit pr. del" (dobbelt ord) i
+  regenerér-forklaringen.
 - 2026-08-15 S24 18+-valg som taktile valgkort: native radios beholdt (a11y),
   kortet får koks-kant, hør-grund og offset-skygge når valgt, fokusring via
   focus-within, side om side på sm+.

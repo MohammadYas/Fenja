@@ -173,7 +173,7 @@ export const da = {
   regenerer: {
     titel: "Prøv igen med en anden del",
     forklaring: (pris: string) =>
-      `Ny visualisering i et andet miljø eller en frisk annoncetekst — ${pris} kredit pr. del. Dine rensede fotos er de samme.`,
+      `Ny visualisering i et andet miljø eller en frisk annoncetekst — ${pris} pr. del. Dine rensede fotos er de samme.`,
     prisLabel: "½ kredit",
     nyVisualisering: "Ny visualisering",
     nyTekst: "Ny annoncetekst",
