@@ -35,3 +35,6 @@ next-env.d.ts
 
 # markedsanalyse-output (øjebliksbilleder, aldrig kildekode)
 /data/markedsanalyse/
+
+# gate 1-fotos og -resultater (ejerens egne billeder, aldrig committes)
+/data/gate1/

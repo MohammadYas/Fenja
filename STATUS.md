@@ -6,6 +6,16 @@ Sidst opdateret: 2026-08-15 af cloud session (L1, Lighthouse-gaten)
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` og `claude/naeste-task-dcfccg` efter merge
 (én commit pr. opgave):
+- 2026-08-15 L2 scripts/gate1-fidelity-test.ts skrevet — den manglede, selv
+  om HANDOFF §6 trin 4 beder ejeren køre den. Genbruger den ægte pipeline-
+  logik (rensBaggrund → genererOnModelMedTroskab m. retry → troskabs-tjek),
+  så målingen matcher appens adfærd. CLI: --mappe, --preset <id|alle>,
+  --maks. Udskriver pass-rate samlet + pr. preset (Gate 1-krav ≥ 70 %),
+  tærskel-kalibreringstabel 0,50–0,90 (ærligt markeret konservativ over den
+  konfigurerede tærskel, hvor retry-udfald ikke kendes) og omkostningsskøn
+  (NFR-11) før kørsel. Rigtige fotos uploades til fal storage; mock-tilstand
+  verificeret keyless (3 dummy-fotos × 3 presets, hele kæden grøn).
+  data/gate1/ gitignoreret.
 - 2026-08-15 M1 Vinted-markedsanalyse (ejer-ønske): scripts/markedsanalyse/
   med hent.ts (anonym katalog-høst, hård grænse 60 kald/kørsel, pause+jitter,
   stop ved 429/403, robots-signaler respekteret, sælgerfelter når aldrig

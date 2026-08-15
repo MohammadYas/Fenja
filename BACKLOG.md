@@ -33,9 +33,11 @@
 [x] L1  Lighthouse-gaten (HANDOFF §8) målt keyless: mobil ≥ 90 på alle syv
         marketing-sider (perf 91–96, a11y/BP/SEO 100); a11y-fund rettet
         (kontrast /60→/70, heading-rækkefølge, dl-struktur på /priser)
-[ ] L2  scripts/gate1-fidelity-test.ts SKAL skrives før S12 — HANDOFF §6
-        henviser til den, men den findes ikke; kan skrives keyless mod
-        provider-interfacet (køres først med FAL_KEY + rigtige fotos)
+[x] L2  scripts/gate1-fidelity-test.ts skrevet (manglede trods HANDOFF §6):
+        rens → on-model m. retry → troskab via den ægte pipeline-logik,
+        pass-rate samlet + pr. preset, tærskel-kalibreringstabel,
+        omkostningsskøn før kørsel; mock-verificeret keyless — ejeren
+        kører den med FAL_KEY + ~20 rigtige fotos (S12 trin 1–2)
 ## Markedsanalyse (ejer-værktøj, 2026-08-15)
 [x] M1  Vinted-markedsanalyse som scripts (hent → analysér → dansk rapport):
         lav volumen m. hård kaldsgrænse, sælgerdata filtreres væk ved kilden,
