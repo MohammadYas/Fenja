@@ -1,7 +1,24 @@
 # STATUS
-Sidst opdateret: 2026-08-15 af Claude Code (lokal session, branch `feat/vinted-first`)
+Sidst opdateret: 2026-08-16 af Claude Code (lokal session, branch `feat/onmodel-skabeloner`)
 
 ## Nu
+- **Kategori-skabeloner + hjem-ankre i on-model-prompten** (branch
+  `feat/onmodel-skabeloner`, bygget på ejerens prompt-bibliotek 2026-08-15/16):
+  `lib/pipeline/skabeloner.ts` — (1) kategori-skabeloner (kjole/bukser/jakke/
+  overdel/taske/generisk) med egne visninger (spejl-selfie, ved vinduet,
+  gående) og troskabs-fokus; (2) FAST HJEM pr. sælger (deterministisk af
+  user-id, 5 hjem): alle en sælgers annoncer optages i samme bolig, så
+  profilen ikke ligner tusind forskellige steder — presettet vælger sted I
+  hjemmet; (3) fotostil-blok med ejerens realisme-princip (hurtigt hverdags-
+  foto, aldrig editorial/AI-glans) og udvidet negativ-liste. C-2 uændret
+  (prompten beskriver aldrig tøjet), C-6 håndhævet (ansigt altid skjult).
+  Integreret i onmodel.ts/run.ts via valgfrie userId/kategori. 24 nye tests
+  (109 i alt). Ejerens rå prompt-bibliotek + forside-prompterne er
+  dokumenteret i docs/marketing-billeder.md.
+- **Forsiden (feat/vinted-first, 2026-08-15 aften):** Ærligheds-båndet
+  midlertidigt erstattet af "Det får du" (ejer-ordre — ærligheds-copy
+  genplaceres senere); billedserien genereret om med amatør-realisme
+  (blandet lys, levet-i rod, skæv beskæring), da v3.0 lignede AI for meget.
 - **STRATEGISKIFT (ejer, 2026-08-15, aften): Fenja er ét produkt udadtil —
   Vinted-appen.** Forsiden ER nu Vinted-landingen (fra feat/vinted-side, ejer-
   godkendt); B2B-studioet er PARKERET uændret på `/studio` som outreach-side:

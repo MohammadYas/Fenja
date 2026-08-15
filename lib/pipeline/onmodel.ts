@@ -6,7 +6,8 @@ import { pipeline as cfg } from "@/lib/config";
 import type { ImageProvider } from "@/lib/providers/image";
 import type { TextProvider } from "@/lib/providers/text";
 import { tjekTroskab } from "./fidelity";
-import { bygOnModelPrompt, hentPreset } from "./presets";
+import { hentPreset } from "./presets";
+import { bygOnModelPromptMedSkabelon } from "./skabeloner";
 
 export type OnModelUdfald = {
   /** null når troskaben ikke kunne opnås — rens + tekst leveres alligevel */
@@ -28,9 +29,18 @@ export async function genererOnModelMedTroskab(args: {
   presetId: string;
   /** Renset helhedsfoto som styrende reference */
   referenceUrl: string;
+  /** Sælgerens id — giver det faste hjem-anker, så alle annoncer ligner samme bolig */
+  userId?: string;
+  /** Itemets fritekst-kategori (B-3) — vælger kategori-skabelonen */
+  kategori?: string | null;
 }): Promise<OnModelUdfald> {
   const preset = hentPreset(args.presetId);
-  const prompt = bygOnModelPrompt(preset, args.itemId);
+  const prompt = bygOnModelPromptMedSkabelon({
+    preset,
+    itemId: args.itemId,
+    userId: args.userId,
+    kategori: args.kategori,
+  });
   const vaegte = [cfg.normalReferenceVaegt, cfg.strammereReferenceVaegt];
 
   let cost = 0;

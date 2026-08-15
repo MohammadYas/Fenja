@@ -38,6 +38,13 @@
 [ ] S29 Slet docs/sessions/-notaterne fra feat/faseb-fundament, feat/preset-system
         og feat/emails når PR'erne merges — indholdet er konsolideret i STATUS.md
         (2026-08-15)
+[x] S30 Kategori-skabeloner + fast hjem pr. sælger i on-model-prompten
+        (feat/onmodel-skabeloner, 2026-08-16 — ejerens prompt-bibliotek oversat
+        til C-2/C-6; docs/marketing-billeder.md dokumenterer forside-prompterne)
+[ ] S31 Hjem-anker som brugervalg: lad sælgeren se/skifte sit hjem under Konto
+        (kræver profiles-kolonne + migration; i dag deterministisk af user-id).
+        Genbesøg efter merge af feat/preset-system (prompt-version bør så
+        inkludere skabelon@v + hjem@v i generations.prompt_version, FR-15)
 [ ] S27 Gratis-tier-model besluttes af ejer: nuværende = ingen gratis annoncer;
         alternativ på bordet = kør pipeline gratis men lever sløret/vandmærket,
         betal for at låse op (fuld friktion for misbrug, værdi-først for ærlige).
