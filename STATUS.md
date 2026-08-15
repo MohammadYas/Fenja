@@ -5,6 +5,12 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 S24 18+-valg som taktile valgkort: native radios beholdt (a11y),
+  kortet får koks-kant, hør-grund og offset-skygge når valgt, fokusring via
+  focus-within, side om side på sm+.
+- 2026-08-15 S21 Desktop-rytme: Ærligheds-blokken indrykket bag lodret søm med
+  hero-skala på lg; slut-CTA med hængende prislap-detalje ("3 gratis
+  annoncer") ved knappen.
 - 2026-08-15 S23 Footer-blok: gran-footer med FENJA-ordmærke, grupperede links
   (Produkt / Det juridiske) og mærknings-linjen som sidens sidste ord.
   .verify/ (lokalt screenshot-harness) gitignoreret + eslint-ignoreret.

@@ -107,15 +107,17 @@ export default function Forside() {
         </div>
       </section>
 
-      {/* Ærligheds-blok: hør-grund (REDESIGN §2.2) */}
+      {/* Ærligheds-blok: hør-grund, på desktop indrykket bag en lodret søm
+          så blokken ikke bare er endnu en venstrestillet spalte (S21) */}
       <section className="bg-flade">
-        <div className="mx-auto max-w-5xl px-4 py-14">
+        <div className="mx-auto max-w-5xl px-4 py-14 lg:grid lg:grid-cols-[auto_1fr] lg:gap-12">
+          <div className="soem hidden lg:block" aria-hidden="true" />
           <Reveal>
             <SektionsMarkoer nr={2} />
-            <h2 className="mt-4 font-display text-display font-semibold">
+            <h2 className="mt-4 font-display text-display font-semibold lg:text-hero">
               {da.landing.aerligTitel}
             </h2>
-            <p className="mt-3 max-w-laesbar text-tekst/80">
+            <p className="mt-3 max-w-laesbar text-tekst/80 lg:text-lead">
               {da.landing.aerligTekst}
             </p>
           </Reveal>
@@ -162,9 +164,16 @@ export default function Forside() {
             <h2 className="max-w-3xl font-display text-kaempe font-bold">
               {da.landing.ctaTitel}
             </h2>
-            <Link href="/log-ind" className={`mt-8 ${ctaKlasser}`}>
-              {da.landing.ctaKnap}
-            </Link>
+            <div className="mt-8 flex flex-wrap items-center gap-6">
+              <Link href="/log-ind" className={ctaKlasser}>
+                {da.landing.ctaKnap}
+              </Link>
+              <Prislap taet rotation="hoejre">
+                <span className="font-mono text-detalje font-bold uppercase tracking-wide">
+                  {da.landing.ctaLap}
+                </span>
+              </Prislap>
+            </div>
           </Reveal>
         </div>
       </section>

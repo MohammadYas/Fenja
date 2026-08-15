@@ -277,6 +277,7 @@ export const da = {
     priserDerefter: "Derefter:",
     ctaTitel: "Prøv med det næste stykke tøj, du vil sælge",
     ctaKnap: "Opret dig og få 3 gratis annoncer",
+    ctaLap: "3 gratis annoncer",
   },
   vilkaar: {
     titel: "Vilkår",
