@@ -2,7 +2,15 @@
 Sidst opdateret: 2026-08-15 af Claude Code (lokal session, branch `samlet`)
 
 ## Nu
-- Intet i gang. Næste opgave: S12 [KRÆVER NØGLER] — ejeren kører hjemme-checklisten (HANDOFF §6) først.
+- **4 PRs åbne mod `samlet`, afventer ejer-review** (sessions må ikke merge egne
+  PRs, §5.2): #1 /vinted-landing · #2 fase B-fundament (VideoProvider + UGC-
+  prompt-compiler, 115 tests på branchen) · #3 preset-system til Gate 1
+  (presets.ts → mappe m. bevaret API, preset_stats-migration, gate1-script m.
+  --live-flag) · #4 transaktionsmails (5 skabeloner, mock-Resend, /dev/emails,
+  120 tests på branchen). Bygget parallelt i worktrees; ingen overlappende filer
+  ud over docs/sessions/ og tests/unit/ (distinkte filnavne) — #4 rører desuden
+  vitest.config.ts (jsx: automatic) og .env.example (RESEND_FROM).
+- Derefter: S12 [KRÆVER NØGLER] — ejeren kører hjemme-checklisten (HANDOFF §6) først.
 - v6.1-runden er pushet til `origin/samlet` (ejer-godkendt 2026-08-15). Næste
   session fortsætter herfra — læs denne fil + HANDOFF.md før kode.
 
