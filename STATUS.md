@@ -5,6 +5,9 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 404- og fejlside: app/not-found.tsx (kæmpe rav-mono-404,
+  ærlig besked, én vej hjem) og app/error.tsx (prøv igen-knap via reset,
+  ingen undskyldnings-teater). Copy i da.ts. 320 px ok, alt grønt.
 - 2026-08-15 /priser-side (HANDOFF §3-strukturen): dedikeret marketing-side —
   kaempe-rubrik, ét stempel, kreditpakker som prislapper på gran (genbrugt
   landing-motiv), "Sådan virker kreditter" i fire ærlige punkter (levering-først,

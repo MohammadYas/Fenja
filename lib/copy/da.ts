@@ -179,6 +179,17 @@ export const da = {
       "Betaling er ikke sat op endnu. Skriv til os, hvis du ser denne besked på det rigtige site.",
     kvittering: "Du får kvittering på mail fra Stripe.",
   },
+  fejlsider: {
+    ikkeFundetKode: "404",
+    ikkeFundetTitel: "Den side findes ikke",
+    ikkeFundetTekst:
+      "Linket kan være forkert, eller siden kan være fjernet. Forsiden er det bedste sted at starte forfra.",
+    ikkeFundetKnap: "Til forsiden",
+    fejlTitel: "Noget gik galt",
+    fejlTekst:
+      "Det er ikke dig — det er os. Prøv igen; hjælper det ikke, så vent et øjeblik og prøv en gang til.",
+    fejlKnap: "Prøv igen",
+  },
   priserSide: {
     titel: "Priser",
     lead: "3 annoncer gratis, når du opretter dig. Derefter køber du kun det, du bruger — ingen abonnement, intet der udløber.",
