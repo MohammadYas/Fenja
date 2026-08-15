@@ -6,6 +6,27 @@ Sidst opdateret: 2026-08-15 af Claude Code (lokal session, branch `samlet`)
 - v6.1-runden er pushet til `origin/samlet` (ejer-godkendt 2026-08-15). Næste
   session fortsætter herfra — læs denne fil + HANDOFF.md før kode.
 
+## Session-handoff v6.2 (2026-08-15, aften — ejerens svar på godkendelses-listen)
+Ejeren godkendte via Claude-review: B2B forrest (logget som STRATEGISKIFT: forsiden
+sælger fase B-tilbuddet, appen er sektion — SPEC §1's rækkefølge er ejer-overstyret),
+billeder som midlertidig portfolio, gmail som kontakt indtil domæne. Derudover:
+- **Synlig AI-mærkat FJERNET fra alle billeder** (ejer-ordre, MIDLERTIDIGT — imod
+  reviewens betingelse og manifest §2.1.7; risiko for vildlednings-indtryk er
+  flagget til ejeren). Alt-tekster er neutrale; provenance: alle billeder i
+  public/eksempler/ er AI-genererede (gpt-image-1, 2026-08-15). Ejeren finder
+  "sleek løsning" for mærkning snarest — S25 har deadline Gate 4.
+- **Billedserie v2**: 6 nye, mere skandinavisk-realistiske billeder (strik front/
+  side/detalje, jakke på gade, flatlay, lager) + ny slideshow-komponent
+  (components/billedserie.tsx: crossfade, prikker som knapper, auto-fremdrift
+  slået fra ved prefers-reduced-motion og pause ved hover/fokus). Hero kører
+  serien; app-sektionen viser statisk par. v1-billederne slettet.
+- **B2B-FAQ-rettelse** (reviewens krav): leverings-svaret siger nu at fristen
+  løber fra modtaget materiale.
+- **Åben ejer-beslutning (S27)**: gratis-tier-model — slør/vandmærke-forslaget
+  fra reviewen er IKKE bygget; intet ændret i kreditlogik siden v6.1.
+- Nat-prompt ("hardening & launch-prep", én branch/PR, ingen nøgler) ligger i
+  ejerens Claude-chat — køres som separat session; ikke udført her.
+
 ## Session-handoff v6.1 (2026-08-15, eftermiddag — ejer-ordrer løbende)
 Alt verificeret: lint + typecheck + 85 tests grønne; 320 px uden vandret scroll;
 alle billeder indlæst; ingen priser på forsiden; dashboard renderer med demo-data.

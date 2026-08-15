@@ -314,7 +314,7 @@ export const da = {
       },
       {
         spoergsmaal: "Hvor hurtigt kan I levere?",
-        svar: "Afhænger af pakken — I får en konkret dato i oplægget, ikke et løfte i en annonce.",
+        svar: "Afhænger af pakken — I får en konkret dato i oplægget, og fristen løber fra vi har modtaget jeres materiale.",
       },
     ],
     appenMaerkat: "Vinted-appen",
@@ -373,17 +373,35 @@ export const da = {
         tekst: "Materialet er jeres — også arbejdsfilerne. Brug det, hvor I vil.",
       },
     ],
-    // Genererede eksempelbilleder (ejer-ordre) — ALTID mærket synligt.
-    // Udskiftes med ægte output efter S12 (manifest §2.1.7-linjen genoprettes).
-    eksemplerMaerkat: "Visualisering · genereret eksempel",
-    eksemplerForklaring:
-      "Genererede eksempler på visualiserings-stilen — mærket, som loven kræver. Ved lancering viser vi ægte before/after herfra.",
-    eksemplerAltStrik:
-      "Genereret eksempel: mørkeblå uldstrik båret i en lys minimalistisk stue",
-    eksemplerAltJakke:
-      "Genereret eksempel: olivengrøn overshirt båret på en københavnsk gade",
-    eksemplerAltUgc:
-      "Genereret eksempel: stak af brugt tøj i strik og denim, fotograferet fra oven",
+    // Billedserie (genererede eksempler — ejer-ordre 2026-08-15: ingen synlig
+    // mærkat, midlertidigt; provenance dokumenteret i STATUS.md. Ægte output
+    // erstatter serien efter S12/S25.)
+    billedserie: [
+      {
+        src: "/eksempler/strik-front.webp",
+        alt: "Mørkeblå uldstrik båret, set forfra i en lys skandinavisk stue",
+      },
+      {
+        src: "/eksempler/strik-side.webp",
+        alt: "Mørkeblå uldstrik båret, set fra siden ved et vindue",
+      },
+      {
+        src: "/eksempler/strik-detalje.webp",
+        alt: "Nærbillede af strikkens ribstruktur og vaskemærke",
+      },
+      {
+        src: "/eksempler/jakke-gade.webp",
+        alt: "Olivengrøn overshirt båret på en københavnsk gade",
+      },
+      {
+        src: "/eksempler/flatlay.webp",
+        alt: "Strik, denim og hue foldet på et egetræsbord, set ovenfra",
+      },
+      {
+        src: "/eksempler/lager.webp",
+        alt: "Foldet tøj i stakke på en lagerreol",
+      },
+    ],
     ctaTitel: "Skal vi lave jeres næste annonce?",
     ctaVirksomhedKnap: "Skriv til os",
     ctaAppKnap: "Opret dig og lav din første annonce",

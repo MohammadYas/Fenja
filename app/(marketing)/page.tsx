@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Billedserie } from "@/components/billedserie";
 import { Reveal } from "@/components/reveal";
 import { kontakt } from "@/lib/config";
 import { da } from "@/lib/copy/da";
@@ -38,19 +39,9 @@ export default function Forside() {
               </a>
             </div>
           </div>
-          <figure className="relative mt-12 hidden lg:mt-0 lg:block">
-            <Image
-              src="/eksempler/ugc-still.webp"
-              alt={da.landing.eksemplerAltUgc}
-              width={900}
-              height={1350}
-              priority
-              className="max-h-[520px] w-full rounded-bloed border border-kant object-cover"
-            />
-            <figcaption className="absolute bottom-3 left-3 rounded-stram bg-koks/80 px-2.5 py-1 font-mono text-detalje text-kalk">
-              {da.landing.eksemplerMaerkat}
-            </figcaption>
-          </figure>
+          <div className="mx-auto mt-12 max-w-md lg:mt-0 lg:max-w-none">
+            <Billedserie billeder={da.landing.billedserie} prioritet />
+          </div>
         </div>
       </section>
 
@@ -174,34 +165,21 @@ export default function Forside() {
             </Reveal>
           </div>
 
-          {/* Visualiserings-stilen som billedpar — genererede eksempler,
-              synligt mærket (ejer-ordre; ægte output efter S12) */}
+          {/* Visualiserings-stilen som billedpar (ejer-ordre: ingen synlig
+              mærkat — midlertidigt; ægte output efter S12/S25, se STATUS) */}
           <div className="mt-8 grid grid-cols-2 gap-4 sm:max-w-2xl">
-            {(
-              [
-                ["/eksempler/onmodel-strik.webp", da.landing.eksemplerAltStrik],
-                ["/eksempler/onmodel-jakke.webp", da.landing.eksemplerAltJakke],
-              ] as const
-            ).map(([src, alt], i) => (
-              <Reveal key={src} forsinkelseTrin={i}>
-                <figure className="relative">
-                  <Image
-                    src={src}
-                    alt={alt}
-                    width={900}
-                    height={1350}
-                    className="w-full rounded-bloed border border-kant object-cover"
-                  />
-                  <figcaption className="absolute bottom-2 left-2 rounded-stram bg-koks/80 px-2 py-1 font-mono text-detalje text-kalk">
-                    {da.landing.eksemplerMaerkat}
-                  </figcaption>
-                </figure>
+            {[da.landing.billedserie[0]!, da.landing.billedserie[3]!].map((billede, i) => (
+              <Reveal key={billede.src} forsinkelseTrin={i}>
+                <Image
+                  src={billede.src}
+                  alt={billede.alt}
+                  width={900}
+                  height={1350}
+                  className="w-full rounded-bloed border border-kant object-cover"
+                />
               </Reveal>
             ))}
           </div>
-          <p className="mt-3 max-w-laesbar text-detalje text-tekst/70">
-            {da.landing.eksemplerForklaring}
-          </p>
 
           <h3 className="mt-12 font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
             {da.landing.saadanTitel}

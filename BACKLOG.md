@@ -27,5 +27,12 @@
         på forsiden (UGC-annoncer og hjemmesider til virksomheder), ingen priser på
         forsiden — se DESIGN.md og STATUS.md
 ## Efter S12
-[ ] S25 Udskift landing-hero med ægte before/after fra første rigtige kørsel
+[ ] S25 Udskift landing-billedserien med ægte output fra første rigtige kørsel.
+        DEADLINE: senest Gate 4 (dag 21/lancering) — indtil da kører genererede
+        billeder UDEN synlig mærkat (ejer-ordre 2026-08-15, midlertidigt; "sleek
+        løsning" for mærkning afventer ejer — se STATUS)
+[ ] S27 Gratis-tier-model besluttes af ejer: nuværende = ingen gratis annoncer;
+        alternativ på bordet = kør pipeline gratis men lever sløret/vandmærket,
+        betal for at låse op (fuld friktion for misbrug, værdi-først for ærlige).
+        BYG INTET før ejer har valgt
 [ ] S26 Lighthouse mobil ≥ 90 på marketing-sider + launch-gates (HANDOFF §8)
