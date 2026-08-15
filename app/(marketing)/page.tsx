@@ -59,7 +59,7 @@ export default function Forside() {
               <div className="relative pt-4">
                 {/* Før: krøllet seddel på hør */}
                 <div className="rotate-lap-v relative z-0 max-w-[15rem] rounded-stram border-2 border-koks bg-hoer p-4">
-                  <span className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/60">
+                  <span className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
                     {da.landing.foerKort.label}
                   </span>
                   <p className="mt-2 font-mono text-detalje lowercase leading-snug text-tekst/80">
@@ -115,7 +115,7 @@ export default function Forside() {
           indhold forskudt asymmetrisk (REDESIGN §3.1) */}
       <section className="overflow-x-clip" aria-label={da.landing.saadanTitel}>
         <div className="mx-auto max-w-5xl px-4 py-14">
-          <SektionsMarkoer nr={1} titel={da.landing.saadanTitel} />
+          <SektionsMarkoer nr={1} titel={da.landing.saadanTitel} som="h2" />
           <ol className="mt-10 flex flex-col gap-12">
             {da.landing.saadanTrin.map((trin, i) => (
               <li

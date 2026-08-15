@@ -1,10 +1,25 @@
 # STATUS
-Sidst opdateret: 2026-08-15 af lokal session (S17)
+Sidst opdateret: 2026-08-15 af cloud session (L1, Lighthouse-gaten)
 ## Nu
 - Intet i gang. Næste opgave: S12 [KRÆVER NØGLER] — ejeren kører hjemme-checklisten (HANDOFF §6) først
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
-`claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+`claude/read-all-md-files-fcuyr5` og `claude/naeste-task-dcfccg` efter merge
+(én commit pr. opgave):
+- 2026-08-15 L1 Lighthouse-gaten (HANDOFF §8) målt og bestået keyless:
+  Lighthouse 13.4.1, mobil-emulering, prod-build lokalt — alle syv
+  marketing-sider (forside, /priser, /laer, guide, /vilkaar, /privatliv,
+  /log-ind) ender på performance 91–96 og 100 i tilgængelighed, best
+  practices og SEO. Tre a11y-fund rettet undervejs: (1) kontrast — mono-
+  labels i tekst-koks/60 var 3,60:1 på hør og 4,06:1 på kalk (under AA);
+  nu /70 = 4,73:1 og 5,47:1 (hero-seddlens "foto"-label + forrige/næste-
+  labels på guides); (2) heading-rækkefølge — forsidens "Sådan virker det"
+  sprang h1→h3; SektionsMarkoer kan nu renderes som h2 (`som="h2"`) og
+  bærer sektionsoverskriften; (3) dl-struktur på /priser — dt/dd lå to
+  div-lag nede (Reveal + layout-div); Reveal bærer nu layout-klasserne
+  selv, så dl > div > dt/dd er gyldig. Verificeret: 85 tests, lint,
+  typecheck, build grønt; scrollWidth = 320 på 320 px for alle ændrede
+  sider. Gate 1/2 (troskab, ≤ 2 min) venter fortsat på S12-nøgler.
 - 2026-08-15 V1–V4 Af-skabelonisering af forsiden (ejerens dom: "ligner stadig
   AI"): konturord i plakaten + lodret marginalia (V1); hero-skitserne erstattet
   af annonce-transformationen — sjusket seddel overlappet af den færdige

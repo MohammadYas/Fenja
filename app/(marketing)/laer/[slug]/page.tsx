@@ -62,7 +62,7 @@ export default async function GuideSide({
           <div className="flex flex-col justify-between gap-6 sm:flex-row">
             {forrige ? (
               <Link href={`/laer/${forrige.slug}`} className="group max-w-xs">
-                <span className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/60">
+                <span className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
                   ← {da.laer.forrigeGuide}
                 </span>
                 <span className="soem-link mt-1 block font-medium group-hover:text-gran">
@@ -74,7 +74,7 @@ export default async function GuideSide({
             )}
             {naeste ? (
               <Link href={`/laer/${naeste.slug}`} className="group max-w-xs sm:text-right">
-                <span className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/60">
+                <span className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
                   {da.laer.naesteGuide} →
                 </span>
                 <span className="soem-link mt-1 block font-medium group-hover:text-gran">

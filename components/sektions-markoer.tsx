@@ -4,20 +4,23 @@ export function SektionsMarkoer({
   nr,
   titel,
   paaMoerk = false,
+  som: Element = "p",
 }: {
   nr: number;
   /** Udelades når en synlig overskrift følger lige efter (undgår dublet) */
   titel?: string;
   paaMoerk?: boolean;
+  /** "h2" når markøren ER sektionens eneste overskrift (heading-rækkefølge) */
+  som?: "p" | "h2";
 }) {
   return (
-    <p
+    <Element
       className={`font-mono text-detalje font-bold uppercase tracking-wide ${
         paaMoerk ? "text-hoer" : "text-tekst/70"
       }`}
     >
       {String(nr).padStart(2, "0")}
       {titel ? ` — ${titel}` : null}
-    </p>
+    </Element>
   );
 }
