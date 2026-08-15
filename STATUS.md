@@ -6,6 +6,19 @@ Sidst opdateret: 2026-08-15 af cloud session (L1, Lighthouse-gaten)
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` og `claude/naeste-task-dcfccg` efter merge
 (én commit pr. opgave):
+- 2026-08-15 M1 Vinted-markedsanalyse (ejer-ønske): scripts/markedsanalyse/
+  med hent.ts (anonym katalog-høst, hård grænse 60 kald/kørsel, pause+jitter,
+  stop ved 429/403, robots-signaler respekteret, sælgerfelter når aldrig
+  disken), analyser.ts (dedup, median/p25/p75, favoritter-pr-dag-proxy, andel
+  ny m. prismærker, pr. stand) og rapport.ts (dansk markdown m. forbehold:
+  udbudspriser ≠ salgspriser; katalog-loftet 960 vises som "≥ 960").
+  npm-scripts analyse:hent/beregn/rapport (tsx som ny devDep — runner til
+  scripts, også til L2/gate1). 11 nye tests (85 → 96). Valideret ende-til-
+  ende mod det rigtige katalog: 1.817 annoncer, 19 kald — fandt og rettede
+  to virkeligheds-bugs (dublet-cookies gav 401; standen hedder "Ny med
+  prismærker" i flertal). data/markedsanalyse/ gitignoreret.
+  OBS: scripts/gate1-fidelity-test.ts (HANDOFF §6) findes IKKE — oprettet
+  som L2 i backloggen; skal skrives før S12.
 - 2026-08-15 CI-gate: Lighthouse-gaten (HANDOFF §8) håndhæves nu i CI — nyt
   `lighthouse`-job bygger appen keyless og kører `@lhci/cli autorun` mod alle
   syv marketing-sider med tærskel ≥ 90 i alle fire kategorier

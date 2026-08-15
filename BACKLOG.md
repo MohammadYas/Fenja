@@ -33,6 +33,16 @@
 [x] L1  Lighthouse-gaten (HANDOFF §8) målt keyless: mobil ≥ 90 på alle syv
         marketing-sider (perf 91–96, a11y/BP/SEO 100); a11y-fund rettet
         (kontrast /60→/70, heading-rækkefølge, dl-struktur på /priser)
+[ ] L2  scripts/gate1-fidelity-test.ts SKAL skrives før S12 — HANDOFF §6
+        henviser til den, men den findes ikke; kan skrives keyless mod
+        provider-interfacet (køres først med FAL_KEY + rigtige fotos)
+## Markedsanalyse (ejer-værktøj, 2026-08-15)
+[x] M1  Vinted-markedsanalyse som scripts (hent → analysér → dansk rapport):
+        lav volumen m. hård kaldsgrænse, sælgerdata filtreres væk ved kilden,
+        median/kvartiler/efterspørgsel pr. søgning og stand; 11 tests,
+        data/-output gitignoreret; valideret mod rigtigt katalog (1.817 stk.)
+[ ] M2  Flet markedsstatistikken ind i prisforslaget (D-4) som interval-input
+        til TextProvider, når ejeren har kørt en frisk høst
 [x] S13 Landing page + vilkår/privatliv efter DESIGN.md (F-1) — hero er ægte output fra S12
 [x] S14 Lær-sektion, 8 guides (F-2) + SEO-basics (F-3)
 [x] S15 Misbrugsværn + admin-omkostningsside (E-5, G-1) — Sentry (G-2) afventer ejer-beslutning

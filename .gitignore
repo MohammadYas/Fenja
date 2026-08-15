@@ -32,3 +32,6 @@ next-env.d.ts
 
 # lighthouse ci-rapporter
 /.lighthouseci/
+
+# markedsanalyse-output (øjebliksbilleder, aldrig kildekode)
+/data/markedsanalyse/
