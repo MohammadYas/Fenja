@@ -70,6 +70,17 @@ export default async function ItemSide({
           {da.resultat.titelArbejder}
         </h1>
         <Progress itemId={id} />
+        {/* B-9 batch: pipelinen kører serverside — invitér til at fotografere
+            det næste stykke tøj i stedet for at vente */}
+        <div className="mt-10 border-t border-kant pt-6">
+          <p className="max-w-laesbar text-tekst/80">{da.resultat.batchTekst}</p>
+          <Link
+            href="/nyt-item"
+            className="soem-link mt-3 inline-flex min-h-touch items-center font-medium"
+          >
+            {da.resultat.batchKnap} →
+          </Link>
+        </div>
       </main>
     );
   }

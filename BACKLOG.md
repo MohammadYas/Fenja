@@ -24,6 +24,9 @@
 [x] S11 Stripe Checkout + webhooks + saldo-UI (E-1/E-2/E-6) — testmode, mock i CI
 [x] S18 B-8 Regenerér enkeltdele til reduceret kreditpris (ny visualisering i
         andet preset / ny tekst); numeric-ledger, idempotent træk kun ved succes
+[x] S25 B-9 Batch: fotografér flere i træk — vente-tilstanden inviterer til
+        næste item (pipelinen kører færdig serverside), og oversigten viser
+        "På vej" på kladder med kørende generering
 ## Launch
 [ ] S12 [KRÆVER NØGLER — efter §6] Ende-til-ende mod rigtige providers; kalibrér
         troskabs-tærskel; Gate 2-måling (≤ 2 min)

@@ -6,6 +6,13 @@ Sidst opdateret: 2026-08-15 af cloud session (L1, Lighthouse-gaten)
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` og `claude/naeste-task-dcfccg` efter merge
 (én commit pr. opgave):
+- 2026-08-15 S25 B-9 Batch: resultatsidens vente-tilstand inviterer nu til at
+  fotografere det næste stykke tøj ("Du behøver ikke vente her …" + søm-link
+  til /nyt-item) — pipelinen kører færdig serverside, og backend har hele
+  tiden kørt items parallelt. Oversigten henter generations(status) og viser
+  "På vej"-badge på kladder med kørende/køet generering, så en genererende
+  kladde kan skelnes fra en efterladt. Verificeret keyless via midlertidig
+  preview-rute (S17-mønstret, slettet igen): 390/320 px, scrollWidth ok.
 - 2026-08-15 L1 Lighthouse-gaten (HANDOFF §8) målt og bestået keyless:
   Lighthouse 13.4.1, mobil-emulering, prod-build lokalt — alle syv
   marketing-sider (forside, /priser, /laer, guide, /vilkaar, /privatliv,
