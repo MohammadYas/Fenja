@@ -19,6 +19,7 @@ import { genererValideretAnnonceTekst } from "./listing-text";
 import { findMarkedsinterval } from "./markedspriser";
 import { genererOnModelMedTroskab } from "./onmodel";
 import { STANDARD_PRESET_ID, hentPreset } from "./presets";
+import { byggPromptVersion } from "./skabeloner";
 
 export class BudgetloftFejl extends Error {
   constructor() {
@@ -81,6 +82,14 @@ async function visualiseringsTrin(
   presetId: string,
 ): Promise<{ sti: string; fidelityScore: number; costDkk: number } | null> {
   const preset = hentPreset(presetId);
+  // Sammensat version (FR-15/S31): preset + skabelon + hjem, bygget af samme
+  // deterministiske valg som prompten — så pass-rate kan slices pr. version.
+  const promptVersion = byggPromptVersion({
+    preset,
+    kategori: item.kategori,
+    userId: item.userId,
+    hjemAnker: item.hjemAnker,
+  });
   const genId = await deps.db.startGenerering(item.id, "onmodel", presetId);
   const udfald = await genererOnModelMedTroskab({
     image: deps.image,
@@ -90,13 +99,14 @@ async function visualiseringsTrin(
     referenceUrl,
     userId: item.userId,
     kategori: item.kategori,
+    hjemAnker: item.hjemAnker,
   });
 
   if (!udfald.billede) {
     await deps.db.afslutGenerering(genId, {
       status: "failed",
       costDkk: udfald.costDkk,
-      promptVersion: `${preset.id}@v${preset.version}`,
+      promptVersion,
     });
     return null;
   }
@@ -115,7 +125,7 @@ async function visualiseringsTrin(
     costDkk: udfald.costDkk,
     outputUrl: sti,
     fidelityScore: udfald.billede.fidelityScore,
-    promptVersion: `${preset.id}@v${preset.version}`,
+    promptVersion,
     providerJobId: udfald.billede.providerJobId,
   });
   return { sti, fidelityScore: udfald.billede.fidelityScore, costDkk: udfald.costDkk };

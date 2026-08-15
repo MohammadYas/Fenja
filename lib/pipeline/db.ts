@@ -13,6 +13,8 @@ export type ItemTilPipeline = {
   kategori: string;
   fejlBeskrivelse: string | null;
   koebsprisDkk: number | null;
+  /** Sælgerens selvvalgte hjem-id (S31); null = det deterministiske hjem */
+  hjemAnker: string | null;
   fotos: { id: string; rolle: FotoRolle; url: string; rensetUrl?: string | null }[];
 };
 

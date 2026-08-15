@@ -20,11 +20,14 @@ export class SupabasePipelineDb implements PipelineDb {
     const { data: item, error } = await this.klient
       .from("items")
       .select(
-        "id, user_id, brand, size, condition, defects_text, category, purchase_price_dkk, item_photos(id, role, original_url, cleaned_url)",
+        "id, user_id, brand, size, condition, defects_text, category, purchase_price_dkk, item_photos(id, role, original_url, cleaned_url), profiles(home_anchor)",
       )
       .eq("id", itemId)
       .single();
     if (error || !item) throw new Error(`Item ${itemId} findes ikke: ${error?.message}`);
+    // Profilen embeddes to-one via items.user_id → profiles.id; nogle PostgREST-
+    // versioner giver et array, andre et objekt — håndtér begge (S31).
+    const profil = Array.isArray(item.profiles) ? item.profiles[0] : item.profiles;
     return {
       id: item.id as string,
       userId: item.user_id as string,
@@ -34,6 +37,7 @@ export class SupabasePipelineDb implements PipelineDb {
       kategori: (item.category as string | null) ?? "",
       fejlBeskrivelse: item.defects_text as string | null,
       koebsprisDkk: item.purchase_price_dkk as number | null,
+      hjemAnker: (profil as { home_anchor: string | null } | null)?.home_anchor ?? null,
       fotos: await Promise.all(
         (
           item.item_photos as {

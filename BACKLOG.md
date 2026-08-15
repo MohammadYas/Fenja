@@ -28,12 +28,6 @@ Læs `STATUS.md` + `HANDOFF.md` før du tager en opgave.
     Nu: ingen gratis annoncer. Alternativ på bordet: kør pipelinen gratis, men
     lever sløret/vandmærket resultat, betal for at låse op.
 
-[ ] **S31 · Hjem-anker som brugervalg**
-    Lad sælgeren se/skifte sit hjem under Konto (i dag deterministisk af
-    user-id i `lib/pipeline/skabeloner.ts`). Kræver profiles-kolonne +
-    migration. Samtidig: læg `skabelon@v` + `hjem@v` ind i
-    `generations.prompt_version` (FR-15), så pass-rate kan måles pr. version.
-
 [ ] **S32 · Kobl transaktionsmails på flowet**
     `emails/` + `lib/emails/send.ts` er bygget og testet, men intet kalder dem
     endnu. Kræver RESEND_API_KEY + domæneverifikation (HANDOFF §6).
@@ -48,7 +42,8 @@ Læs `STATUS.md` + `HANDOFF.md` før du tager en opgave.
 Fundament S1–S6 · App S7–S11, S18 (regenerér enkeltdele), B-9 (batch) ·
 Launch S13 (landing), S14 (Lær + SEO), S15 (misbrugsværn + admin), S16
 (presets 2+3, delbart before/after), S28 (Vinted-first-integration), S29
-(session-notater konsolideret), S30 (kategori-skabeloner + hjem-ankre) ·
+(session-notater konsolideret), S30 (kategori-skabeloner + hjem-ankre),
+S31 (hjem som brugervalg under Konto + sammensat prompt_version, FR-15) ·
 L1 (Lighthouse keyless-måling), L2 (gate1-script) ·
 Markedsanalyse M1 (Vinted-scripts) + M2 (markedspriser i prisforslaget) ·
 Design V6 "Klar & nordisk" → Vinted-first (2026-08-16).

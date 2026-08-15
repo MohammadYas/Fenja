@@ -6,8 +6,15 @@ import { MemoryLedgerDb } from "@/lib/credits/memory";
 // Gratis-tier er slået fra (ejer-beslutning) — testene seeder saldo via køb
 const STARTSALDO = 10;
 import { BudgetloftFejl, koerItemPipeline } from "@/lib/pipeline/run";
+import {
+  HJEM,
+  hjemVersionsTag,
+  skabelonVersionsTag,
+  vaelgHjem,
+  vaelgSkabelon,
+} from "@/lib/pipeline/skabeloner";
 import { MockImageProvider, MockTextProvider } from "@/lib/providers/mock";
-import { FakePipelineDb, FakePipelineStorage } from "../fakes/pipeline-fakes";
+import { FakePipelineDb, FakePipelineStorage, testItem } from "../fakes/pipeline-fakes";
 
 async function opsaetning(mock: {
   onModelFejler?: boolean;
@@ -80,6 +87,29 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
     const { deps, db } = await opsaetning();
     db.dagensForbrug = misbrugsvaern.dagligtBudgetloftDkk;
     await expect(koerItemPipeline(deps, "item-1")).rejects.toThrow(BudgetloftFejl);
+  });
+
+  it("prompt_version registrerer preset + skabelon + valgt hjem (FR-15/S31)", async () => {
+    const valgtHjem = HJEM.find((h) => h.id !== vaelgHjem("user-1").id)!;
+    const db = new FakePipelineDb(
+      testItem({ kategori: "Kjole", hjemAnker: valgtHjem.id }),
+    );
+    const ledger = new MemoryLedgerDb();
+    await registrerKoeb(ledger, "user-1", STARTSALDO, "evt_seed");
+    await koerItemPipeline(
+      {
+        db,
+        storage: new FakePipelineStorage(),
+        image: new MockImageProvider(),
+        text: new MockTextProvider(),
+        ledger,
+      },
+      "item-1",
+    );
+
+    const onmodel = db.generings.find((g) => g.kind === "onmodel");
+    expect(onmodel?.promptVersion).toContain(skabelonVersionsTag(vaelgSkabelon("Kjole")));
+    expect(onmodel?.promptVersion).toContain(hjemVersionsTag(valgtHjem));
   });
 
   it("visualiseringen i storage har badge-metadata (C-4)", async () => {

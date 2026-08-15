@@ -33,6 +33,8 @@ export async function genererOnModelMedTroskab(args: {
   userId?: string;
   /** Itemets fritekst-kategori (B-3) — vælger kategori-skabelonen */
   kategori?: string | null;
+  /** Sælgerens selvvalgte hjem-id (S31); ukendt/tomt → det deterministiske */
+  hjemAnker?: string | null;
 }): Promise<OnModelUdfald> {
   const preset = hentPreset(args.presetId);
   const prompt = bygOnModelPromptMedSkabelon({
@@ -40,6 +42,7 @@ export async function genererOnModelMedTroskab(args: {
     itemId: args.itemId,
     userId: args.userId,
     kategori: args.kategori,
+    hjemAnker: args.hjemAnker,
   });
   const vaegte = [cfg.normalReferenceVaegt, cfg.strammereReferenceVaegt];
 

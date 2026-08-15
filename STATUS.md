@@ -1,11 +1,18 @@
 # STATUS
-Sidst opdateret: 2026-08-16 af Claude Code (lokal session)
+Sidst opdateret: 2026-08-16 af Claude Code (cloud session)
 
 ## Sådan står projektet
 - **Én branch: `main`.** Alt arbejde er konsolideret dertil (ejer-ordre
   2026-08-16) — de 12 gamle feature-/claude-branches er merget og slettet
   både lokalt og på GitHub. Der er ingen åbne PRs.
-- **Hele fase A er bygget og grøn:** 203 tests, lint + typecheck rene.
+- **S31 er bygget på branch `claude/laes-lle-md-fortsaet-3lyzud`** (denne
+  session) og afventer ejerens merge til `main`: sælgeren kan nu se/vælge sit
+  faste hjem under Konto (før: kun deterministisk af user-id). `profiles`
+  fik `home_anchor`-kolonne (migration `20260815030000`); et ukendt/tomt valg
+  falder overalt tilbage til det deterministiske hjem. Samtidig bærer
+  `generations.prompt_version` nu et sammensat tag — `preset@v skabelon@v
+  hjem@v` — så pass-rate kan slices pr. version af hver dimension (FR-15).
+- **Hele fase A er bygget og grøn:** 213 tests, lint + typecheck rene.
 - **Supabase er sat op og migreret** (2026-08-16, via Composio):
   projekt `cpqsmtaledmjzirfeztp` (eu-west-1), alle 5 migrations kørt,
   7 tabeller + `credit_balances`-view, RLS aktiv, `item-photos`-bucket
@@ -53,7 +60,8 @@ I appen er samme princip kodet i `lib/pipeline/skabeloner.ts`:
   troskabs-fokus.
 - **Fast hjem pr. sælger:** hver bruger får deterministisk ét af 5 hjem, så
   alle deres annoncer ligner samme bolig — presettet vælger sted *i* hjemmet,
-  aldrig et nyt hjem.
+  aldrig et nyt hjem. Sælgeren kan siden S31 låse et bestemt hjem under Konto
+  (gemmes i `profiles.home_anchor`); intet valg = det deterministiske hjem.
 - **Prompterne er på engelsk** (ejer-tuning 2026-08-16): billedmodellerne
   følger engelske instrukser markant bedre. Testet i `tests/unit/skabeloner.test.ts`.
 - C-2 gælder ubetinget: prompten beskriver ALDRIG tøjet — referencefotoet

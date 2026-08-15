@@ -18,6 +18,7 @@ export function testItem(overrides: Partial<ItemTilPipeline> = {}): ItemTilPipel
     kategori: "Striktrøje",
     fejlBeskrivelse: "lille hul ved venstre søm",
     koebsprisDkk: null,
+    hjemAnker: null,
     fotos: [
       { id: "f1", rolle: "full", url: "https://x/helhed.jpg" },
       { id: "f2", rolle: "label", url: "https://x/label.jpg" },
@@ -34,6 +35,7 @@ type Generering = {
   status: string;
   costDkk: number;
   fidelityScore?: number;
+  promptVersion?: string;
 };
 
 export class FakePipelineDb implements PipelineDb {
@@ -65,6 +67,7 @@ export class FakePipelineDb implements PipelineDb {
     gen.status = slut.status;
     gen.costDkk = slut.costDkk;
     gen.fidelityScore = slut.fidelityScore;
+    gen.promptVersion = slut.promptVersion;
   }
 
   async gemRensetFoto(fotoId: string, cleanedUrl: string): Promise<void> {

@@ -1,6 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { da } from "@/lib/copy/da";
+import { HJEM, hentHjem, vaelgHjem } from "@/lib/pipeline/skabeloner";
 import { opretServerKlient } from "@/lib/supabase/server";
+import { HjemVaelger } from "./hjem-vaelger";
 import { SletKonto } from "./slet-konto";
 
 export const metadata = { title: `${da.konto.titel} · ${da.site.navn}` };
@@ -12,21 +14,34 @@ export default async function Konto() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: saldoRaekke }, { data: koeb }] = await Promise.all([
-    supabase
-      .from("credit_balances")
-      .select("balance")
-      .eq("user_id", user!.id)
-      .maybeSingle(),
-    supabase
-      .from("credit_ledger")
-      .select("delta, ts")
-      .eq("user_id", user!.id)
-      .eq("reason", "purchase")
-      .order("ts", { ascending: false }),
-  ]);
+  const [{ data: saldoRaekke }, { data: koeb }, { data: profil }] =
+    await Promise.all([
+      supabase
+        .from("credit_balances")
+        .select("balance")
+        .eq("user_id", user!.id)
+        .maybeSingle(),
+      supabase
+        .from("credit_ledger")
+        .select("delta, ts")
+        .eq("user_id", user!.id)
+        .eq("reason", "purchase")
+        .order("ts", { ascending: false }),
+      supabase
+        .from("profiles")
+        .select("home_anchor")
+        .eq("id", user!.id)
+        .maybeSingle(),
+    ]);
 
   const saldo = (saldoRaekke?.balance as number | undefined) ?? 0;
+
+  // S31 · effektivt hjem: et gyldigt selvvalg vises som det; ellers det
+  // deterministiske. Navnene kommer fra da.ts (NFR-12).
+  const hjemAnker = (profil?.home_anchor as string | null | undefined) ?? null;
+  const effektivtHjem = hentHjem(hjemAnker) ?? vaelgHjem(user!.id);
+  const effektivtHjemNavn =
+    da.konto.hjem.navne[effektivtHjem.id] ?? effektivtHjem.navn;
 
   return (
     <main className="py-6">
@@ -51,6 +66,17 @@ export default async function Konto() {
             </dd>
           </div>
         </dl>
+      </Card>
+
+      <Card className="mt-6">
+        <h2 className="text-titel font-medium">{da.konto.hjem.titel}</h2>
+        <p className="mt-2 max-w-laesbar text-detalje text-tekst/80">
+          {da.konto.hjem.forklaring}
+        </p>
+        <p className="mt-3 font-mono text-detalje uppercase tracking-wide text-tekst/70">
+          {da.konto.hjem.nuvaerende(effektivtHjemNavn)}
+        </p>
+        <HjemVaelger valgt={hjemAnker} hjemIder={HJEM.map((h) => h.id)} />
       </Card>
 
       <h2 className="mt-8 text-titel font-medium">{da.konto.koebshistorik}</h2>

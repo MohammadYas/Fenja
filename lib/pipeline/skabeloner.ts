@@ -226,14 +226,41 @@ function stabilHash(tekst: string): number {
   return Math.abs(hash);
 }
 
+const HJEM_EFTER_ID = new Map(HJEM.map((h) => [h.id, h]));
+
+/** Slå et hjem op på id; undefined ved ukendt/tomt id */
+export function hentHjem(id: string | null | undefined): Hjem | undefined {
+  return id ? HJEM_EFTER_ID.get(id) : undefined;
+}
+
 /** Deterministisk: samme sælger → altid samme hjem (på tværs af items og retries) */
 export function vaelgHjem(userId: string): Hjem {
   return HJEM[stabilHash(userId) % HJEM.length]!;
 }
 
+/**
+ * Sælgerens hjem (S31): et gyldigt selvvalgt hjem vinder over det
+ * deterministiske. Ukendt/tomt valg falder tilbage til user-id-hashen, så
+ * "samme sælger → samme bolig" fortsat gælder for alle uden et aktivt valg —
+ * og et forældet hjem-id (fjernet fra HJEM) aldrig vælter en kørsel.
+ */
+export function vaelgHjemMedValg(userId: string, valgtHjemId?: string | null): Hjem {
+  return hentHjem(valgtHjemId) ?? vaelgHjem(userId);
+}
+
 /** Sted i sælgerens hjem for et preset; presettets egen setting som fallback */
 export function hentHjemSted(hjem: Hjem, preset: Preset): string {
   return hjem.steder[preset.id] ?? preset.setting;
+}
+
+/** Versions-tag i generations.prompt_version-formatet: "id@vN" (FR-15) */
+export function skabelonVersionsTag(skabelon: KategoriSkabelon): string {
+  return `${skabelon.id}@v${skabelon.version}`;
+}
+
+/** Versions-tag i generations.prompt_version-formatet: "id@vN" (FR-15) */
+export function hjemVersionsTag(hjem: Hjem): string {
+  return `${hjem.id}@v${hjem.version}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -274,18 +301,21 @@ export function vaelgPersonAnkerEngelsk(itemId: string): string {
 
 /**
  * Den fulde on-model-prompt (engelsk): reference-instruks → person + visning →
- * sted (sælgerens faste hjem når userId kendes) → kategori-fokus → fotostil →
- * negativ-liste. Uden userId/kategori: preset-setting + generisk skabelon.
+ * sted (sælgerens hjem når userId kendes; et selvvalgt hjem overtrumfer det
+ * deterministiske, S31) → kategori-fokus → fotostil → negativ-liste. Uden
+ * userId/kategori: preset-setting + generisk skabelon.
  */
 export function bygOnModelPromptMedSkabelon(args: {
   preset: Preset;
   itemId: string;
   userId?: string;
   kategori?: string | null;
+  /** Sælgerens selvvalgte hjem-id (S31); ukendt/tomt → det deterministiske */
+  hjemAnker?: string | null;
 }): string {
   const skabelon = vaelgSkabelon(args.kategori);
   const sted = args.userId
-    ? hentHjemSted(vaelgHjem(args.userId), args.preset)
+    ? hentHjemSted(vaelgHjemMedValg(args.userId, args.hjemAnker), args.preset)
     : args.preset.setting;
 
   return [
@@ -297,4 +327,28 @@ export function bygOnModelPromptMedSkabelon(args: {
     FOTOSTIL,
     NEGATIV_LISTE,
   ].join(" ");
+}
+
+/**
+ * Sammensat prompt-version til generations.prompt_version (FR-15): preset,
+ * kategori-skabelon og hjem — hver med sit versionsnummer — så pass-rate kan
+ * måles pr. version af hver dimension. Taggene beskriver præcis den prompt der
+ * blev kørt: samme deterministiske valg (skabelon fra kategori, hjem fra
+ * userId + evt. selvvalg) som selve prompten. Uden userId er der intet hjem
+ * (preset-settingen bruges), og hjem-tagget udelades.
+ */
+export function byggPromptVersion(args: {
+  preset: Preset;
+  kategori?: string | null;
+  userId?: string;
+  hjemAnker?: string | null;
+}): string {
+  const tags = [
+    `${args.preset.id}@v${args.preset.version}`,
+    skabelonVersionsTag(vaelgSkabelon(args.kategori)),
+  ];
+  if (args.userId) {
+    tags.push(hjemVersionsTag(vaelgHjemMedValg(args.userId, args.hjemAnker)));
+  }
+  return tags.join(" ");
 }

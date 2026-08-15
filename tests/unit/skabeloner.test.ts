@@ -1,12 +1,18 @@
 import { describe, expect, it } from "vitest";
+import { da } from "@/lib/copy/da";
 import { PRESETS, hentPreset } from "@/lib/pipeline/presets";
 import {
   GENERISK_SKABELON_ID,
   HJEM,
   KATEGORI_SKABELONER,
+  byggPromptVersion,
   bygOnModelPromptMedSkabelon,
+  hentHjem,
   hentHjemSted,
+  hjemVersionsTag,
+  skabelonVersionsTag,
   vaelgHjem,
+  vaelgHjemMedValg,
   vaelgSkabelon,
   vaelgVisning,
 } from "@/lib/pipeline/skabeloner";
@@ -94,6 +100,88 @@ describe("hjem-ankre: samme sælger, samme bolig", () => {
       kategori: "kjole",
     });
     expect(stue).toContain(hjem.steder["hyggelig-stue"]!);
+  });
+});
+
+describe("hjem-anker som brugervalg (S31)", () => {
+  // Et hjem forskelligt fra brugerens deterministiske, så et selvvalg er synligt
+  const anderledesHjem = HJEM.find((h) => h.id !== vaelgHjem("bruger-a").id)!;
+
+  it("hentHjem slår op på id og er undefined ved ukendt/tomt", () => {
+    expect(hentHjem(HJEM[0]!.id)?.id).toBe(HJEM[0]!.id);
+    expect(hentHjem("badeforhæng-hjem")).toBeUndefined();
+    expect(hentHjem("")).toBeUndefined();
+    expect(hentHjem(null)).toBeUndefined();
+    expect(hentHjem(undefined)).toBeUndefined();
+  });
+
+  it("et gyldigt selvvalgt hjem vinder over det deterministiske", () => {
+    expect(vaelgHjemMedValg("bruger-a", anderledesHjem.id).id).toBe(anderledesHjem.id);
+  });
+
+  it("ukendt/tomt/manglende valg falder tilbage til det deterministiske", () => {
+    const deterministisk = vaelgHjem("bruger-a").id;
+    expect(vaelgHjemMedValg("bruger-a", "forældet-id").id).toBe(deterministisk);
+    expect(vaelgHjemMedValg("bruger-a", "").id).toBe(deterministisk);
+    expect(vaelgHjemMedValg("bruger-a", null).id).toBe(deterministisk);
+    expect(vaelgHjemMedValg("bruger-a").id).toBe(deterministisk);
+  });
+
+  it("prompten bruger det selvvalgte hjem-sted", () => {
+    const prompt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "kjole",
+      hjemAnker: anderledesHjem.id,
+    });
+    expect(prompt).toContain(anderledesHjem.steder[preset.id]!);
+    expect(prompt).not.toContain(vaelgHjem("bruger-a").steder[preset.id]!);
+  });
+
+  it("da.ts har et brugervendt navn for hvert hjem, og kun for dem (NFR-12)", () => {
+    for (const hjem of HJEM) {
+      expect(da.konto.hjem.navne[hjem.id], `mangler navn for ${hjem.id}`).toBeTruthy();
+    }
+    expect(Object.keys(da.konto.hjem.navne).sort()).toEqual(
+      HJEM.map((h) => h.id).sort(),
+    );
+  });
+});
+
+describe("sammensat prompt-version til pass-rate pr. version (FR-15/S31)", () => {
+  it("indeholder preset-, skabelon- og hjem-tag hver med sit versionsnummer", () => {
+    const version = byggPromptVersion({
+      preset,
+      kategori: "striktrøje",
+      userId: "bruger-a",
+    });
+    expect(version).toContain(`${preset.id}@v${preset.version}`);
+    expect(version).toContain(skabelonVersionsTag(vaelgSkabelon("striktrøje")));
+    expect(version).toContain(hjemVersionsTag(vaelgHjem("bruger-a")));
+  });
+
+  it("afspejler det selvvalgte hjem", () => {
+    const anderledesHjem = HJEM.find((h) => h.id !== vaelgHjem("bruger-a").id)!;
+    const version = byggPromptVersion({
+      preset,
+      kategori: "kjole",
+      userId: "bruger-a",
+      hjemAnker: anderledesHjem.id,
+    });
+    expect(version).toContain(hjemVersionsTag(anderledesHjem));
+  });
+
+  it("udelader hjem-tagget uden userId (preset-setting bruges)", () => {
+    const version = byggPromptVersion({ preset, kategori: "kjole" });
+    expect(version).toContain(`${preset.id}@v${preset.version}`);
+    expect(version).toContain(skabelonVersionsTag(vaelgSkabelon("kjole")));
+    expect(version.split(" ")).toHaveLength(2);
+  });
+
+  it("er deterministisk: samme input giver samme version", () => {
+    const args = { preset, kategori: "kjole", userId: "bruger-a" } as const;
+    expect(byggPromptVersion(args)).toBe(byggPromptVersion(args));
   });
 });
 

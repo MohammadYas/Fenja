@@ -53,6 +53,26 @@ export const da = {
     koebshistorik: "Købshistorik",
     ingenKoeb: "Ingen køb endnu. Køb en pakke under Kreditter, når du er klar.",
     koebLinje: (antal: number, dato: string) => `${antal} kreditter · ${dato}`,
+    // S31 · dit faste hjem på visualiseringerne. Alle dine annoncer optages i
+    // samme bolig, så profilen ligner ét sted — du kan vælge hvilket.
+    hjem: {
+      titel: "Dit hjem på billederne",
+      forklaring:
+        "Alle dine visualiseringer optages i det samme hjem, så din profil ligner ét sted. Vælg et fast hjem, eller lad Fenja vælge for dig.",
+      nuvaerende: (navn: string) => `Nu: ${navn}`,
+      automatisk: "Fenja vælger",
+      automatiskHjaelp: "Vi vælger et fast hjem ud fra din konto.",
+      gem: "Gem hjem",
+      gemt: "Gemt",
+      fejl: "Hjemmet kunne ikke gemmes. Prøv igen.",
+      navne: {
+        "vesterbro-lejlighed": "Lys lejlighed",
+        "aarhus-raekkehus": "Rækkehus",
+        "noerrebro-vaerelse": "Værelse i delelejlighed",
+        "odense-villa": "Villa med have",
+        "aalborg-nybyg": "Nyt byggeri",
+      } as Record<string, string>,
+    },
     sletKonto: "Slet min konto",
     sletForklaring:
       "Sletter din konto, alle billeder og alle data inden for 24 timer. Det kan ikke fortrydes.",
