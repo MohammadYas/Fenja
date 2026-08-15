@@ -3,7 +3,14 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Nu
 - Intet i gang. Næste opgave: S12 [KRÆVER NØGLER] — ejeren kører hjemme-checklisten (HANDOFF §6) først
 ## Senest færdigt
-Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9` (én commit pr. opgave):
+Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
+`claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 Slop-gennemgang del 1 (HANDOFF §8): guide-detaljesiden manglede
+  titel, katalognummer og vej tilbage (kun brødtekst blev renderet) — nu
+  tilbage-link + rav-mononummer + display-titel, konsistent med Lær-listen.
+  Dansk copy strammet: "Send login-link" → "Send mig et link" (manifest
+  §2.1.11), "til login" → "til at logge ind" i privatlivsteksten.
+  Verificeret: 320 px uden vandret scroll, lint/typecheck/77 tests/build grønt.
 - 2026-08-15 S17 Visuel rebuild v2 "katalog møder plakat" (REDESIGN.md): tokens v2
   (plakat/kaempe-typeskala m. clamp, offset-skygge i gran/hør, rotationstrin,
   tekstur-opacity, bevægelses-varigheder 150/300 ms + 60 ms stagger), Sømmen 2.0

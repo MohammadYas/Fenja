@@ -31,9 +31,9 @@ export const da = {
     alderJa: "Ja, jeg er 18 år eller ældre",
     alderNej: "Nej, jeg er under 18",
     alderHjaelp: "Vinted kræver, at sælgere er myndige — det gør vi også.",
-    sendLink: "Send login-link",
+    sendLink: "Send mig et link",
     linkSendt: (email: string) =>
-      `Vi har sendt et login-link til ${email}. Åbn mailen på denne telefon og tryk på linket.`,
+      `Vi har sendt et link til ${email}. Åbn mailen på denne telefon og tryk på linket.`,
     under18:
       "Fenja er for sælgere på 18 år eller derover, fordi Vinted kræver det. Du er velkommen tilbage, når du er fyldt 18.",
     alderPaakraevet: "Bekræft at du er 18 år eller ældre for at fortsætte.",
@@ -276,7 +276,7 @@ export const da = {
       {
         overskrift: "Hvad vi gemmer",
         tekst: [
-          "Din e-mail (til login og beskeder om dine annoncer), dine billeder og annoncedata, din kredithistorik og tekniske logs om genereringer (status og omkostning), så tjenesten kan fungere og fejl kan findes.",
+          "Din e-mail (til at logge ind og til beskeder om dine annoncer), dine billeder og annoncedata, din kredithistorik og tekniske logs om genereringer (status og omkostning), så tjenesten kan fungere og fejl kan findes.",
           "Betalingsoplysninger håndteres af Stripe — vi ser aldrig dit kortnummer.",
         ],
       },
@@ -299,6 +299,7 @@ export const da = {
     forklaring:
       "Korte guides om at sælge brugt tøj: sourcing, priser, fotos og reglerne, der beskytter din konto. Gratis — også uden konto.",
     laesGuide: "Læs guiden",
+    alleGuides: "Alle guides",
   },
   admin: {
     titel: "Drift",
