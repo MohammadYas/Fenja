@@ -31,6 +31,9 @@
         DEADLINE: senest Gate 4 (dag 21/lancering) — indtil da kører genererede
         billeder UDEN synlig mærkat (ejer-ordre 2026-08-15, midlertidigt; "sleek
         løsning" for mærkning afventer ejer — se STATUS)
+[ ] S28 /vinted-integration (efter merge af feat/vinted-side): teaser-link på
+        forsiden + nav-punkt, redirect/anker #appen→/vinted, /vinted i sitemap,
+        fjern dublet components/vinted/foer-efter.tsx (samles med forsidens panel)
 [ ] S27 Gratis-tier-model besluttes af ejer: nuværende = ingen gratis annoncer;
         alternativ på bordet = kør pipeline gratis men lever sløret/vandmærket,
         betal for at låse op (fuld friktion for misbrug, værdi-først for ærlige).

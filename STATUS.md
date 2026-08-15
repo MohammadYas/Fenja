@@ -6,6 +6,16 @@ Sidst opdateret: 2026-08-15 af Claude Code (lokal session, branch `samlet`)
 - v6.1-runden er pushet til `origin/samlet` (ejer-godkendt 2026-08-15). Næste
   session fortsætter herfra — læs denne fil + HANDOFF.md før kode.
 
+## Session-handoff /vinted (2026-08-15, aften — additiv-opgave, branch feat/vinted-side)
+Selvstændig landing for Vinted-appen på /vinted: eget hero m. before/after-panel
+(DUBLET i components/vinted/foer-efter.tsx — bevidst kopi jf. opgaven), billedpar
+fra serie v2, 3 trin, ærlighed-som-fordel, Lær-teaser (3 guides), CTA + diskret
+Fenja Studio-linje. Egen copy-fil lib/copy/vinted.ts; metadata på siden.
+AFVIGELSE fra opgaveteksten: den bad om billeder "med eksisterende mærkat uændret"
+— ejerens senere direkte ordre (ingen synlig mærkat, serie v2) vandt.
+**Afventer integration:** nav, forside-teaser, redirect #appen→/vinted, sitemap,
+dublet-oprydning (foer-efter-panelet findes nu 2 steder) — se BACKLOG S28.
+
 ## Session-handoff v6.2 (2026-08-15, aften — ejerens svar på godkendelses-listen)
 Ejeren godkendte via Claude-review: B2B forrest (logget som STRATEGISKIFT: forsiden
 sælger fase B-tilbuddet, appen er sektion — SPEC §1's rækkefølge er ejer-overstyret),
