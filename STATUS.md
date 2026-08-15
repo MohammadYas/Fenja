@@ -3,8 +3,8 @@ Sidst opdateret: 2026-08-15 af Claude Code (lokal session, branch `samlet`)
 
 ## Nu
 - Intet i gang. Næste opgave: S12 [KRÆVER NØGLER] — ejeren kører hjemme-checklisten (HANDOFF §6) først.
-- BEMÆRK: de seneste commits (v6.1-runden herunder) ligger KUN lokalt på `samlet`
-  — ejeren bad om handoff uden push. Push når ejeren siger til.
+- v6.1-runden er pushet til `origin/samlet` (ejer-godkendt 2026-08-15). Næste
+  session fortsætter herfra — læs denne fil + HANDOFF.md før kode.
 
 ## Session-handoff v6.1 (2026-08-15, eftermiddag — ejer-ordrer løbende)
 Alt verificeret: lint + typecheck + 85 tests grønne; 320 px uden vandret scroll;
