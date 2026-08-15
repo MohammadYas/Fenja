@@ -87,6 +87,8 @@ async function visualiseringsTrin(
     itemId: item.id,
     presetId,
     referenceUrl,
+    userId: item.userId,
+    kategori: item.kategori,
   });
 
   if (!udfald.billede) {
