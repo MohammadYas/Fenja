@@ -36,8 +36,12 @@ export const noegler = {
   regen: (requestId: string) => `regen:${requestId}`,
 } as const;
 
-/** E-1: gratis-kreditter ved signup — idempotent pr. bruger */
+/** E-1: gratis-kreditter ved signup — idempotent pr. bruger.
+ *  Ejer-beslutning 2026-08-15: gratis-tier er slået fra (misbrugsrisiko med
+ *  nye konti/devices). Med gratisVedSignup ≤ 0 er kaldet en no-op, så første
+ *  login ikke skriver tomme ledger-rækker. */
 export async function tilfoejSignupKreditter(db: LedgerDb, userId: string): Promise<number> {
+  if (kreditter.gratisVedSignup <= 0) return db.hentSaldo(userId);
   const resultat = await db.tilfoejKreditter({
     userId,
     delta: kreditter.gratisVedSignup,

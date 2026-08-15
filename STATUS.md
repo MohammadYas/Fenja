@@ -3,6 +3,38 @@ Sidst opdateret: 2026-08-15 af Claude Code (lokal session, branch `samlet`)
 
 ## Nu
 - Intet i gang. Næste opgave: S12 [KRÆVER NØGLER] — ejeren kører hjemme-checklisten (HANDOFF §6) først.
+- BEMÆRK: de seneste commits (v6.1-runden herunder) ligger KUN lokalt på `samlet`
+  — ejeren bad om handoff uden push. Push når ejeren siger til.
+
+## Session-handoff v6.1 (2026-08-15, eftermiddag — ejer-ordrer løbende)
+Alt verificeret: lint + typecheck + 85 tests grønne; 320 px uden vandret scroll;
+alle billeder indlæst; ingen priser på forsiden; dashboard renderer med demo-data.
+- **Gratis-tier FJERNET** (ejer: misbrugsrisiko med nye konti/devices):
+  `gratisVedSignup: 0`, signup-grant er no-op i ledger.ts, al copy om "3 gratis"
+  fjernet, tests seeder nu saldo via køb. E-1 i HANDOFF/SPEC er dermed overstyret.
+- **Lær uden markdown** (ejer-ordre): content/guides/*.md slettet; indholdet
+  konverteret til strukturerede TS-blokke i lib/guides-indhold.ts (rubrik/afsnit/
+  liste), renderet som rigtige elementer — dangerouslySetInnerHTML og `marked`-
+  dependency fjernet. Samme hentGuides/hentGuide-API.
+- **Demo-tilstand** (ejer: "jeg vil ind på dashboardet"): uden Supabase-env og
+  uden production serverer lib/supabase/server.ts en demo-bruger + faste
+  eksempel-items (4 stk., 2 solgte → statistik-båndet tæller til 550 kr.).
+  Med env sat: præcis som før. Middleware var allerede no-op uden env.
+- **Forsiden v6.1**: Ærligheds-blokken taget af (ejer: "skriver det senere et
+  andet sted") → erstattet af "Sådan foregår det" (B2B-forløb i 3 trin på koks).
+  Sektioner nu: B2B-hero (m. billede) → UGC til virksomheder (leverance-linjer
+  pr. ydelse) → B2B-FAQ (pris/ejerskab/levering) → Vinted-appen (before/after +
+  billedpar + 3 trin) → forløb → slut-CTA. Skarpere copy ("Annoncer, folk ikke
+  scroller forbi"; studio-stemme).
+- **Genererede eksempelbilleder** (ejer-ordre, overstyrer manifest §2.1.7):
+  3 stk. i public/eksempler/ (uldstrik båret, overshirt båret, UGC-still) —
+  ALLE mærket synligt "Visualisering · genereret eksempel" + forklaring om at
+  ægte output erstatter dem efter S12. Genereret via ejerens OpenAI-nøgle;
+  nøglen er IKKE gemt nogen steder (kun brugt i sessionens env) — ejeren er
+  rådet til at rotere den, da den stod i chatten.
+- **Animationer** (ejer: "mere animationsrigt, professionelt"): indgangs-stagger
+  på hero (CSS keyframes), smooth scroll til ankre, tryk-skala 0,98 på knapper,
+  eksisterende scroll-reveal/tæller består. Alt bag prefers-reduced-motion.
 
 ## Hvor projektet står (nyt overblik, 2026-08-15)
 - **Hele fase A er bygget og grøn** (S1–S18): auth/magic link + 18+-gate, guidet
@@ -45,6 +77,15 @@ Sidst opdateret: 2026-08-15 af Claude Code (lokal session, branch `samlet`)
   pakkepriser (SPEC Tillæg B: 3.000–5.000 kr.) ved salg; intet beløb er publiceret
 
 ## Beslutninger truffet undervejs
+- 2026-08-15 (v6.1): Gratis-tier afskaffet (E-1 overstyret af ejer — misbrugsværn);
+  første kreditter kræver altid køb. Ledger-API'et er uændret, granten er no-op.
+- 2026-08-15 (v6.1): Genererede billeder tilladt på sitet (ejer overstyrer manifest
+  §2.1.7) MEN altid med synligt "genereret eksempel"-mærkat — ærligheds-linjen og
+  art. 50-mærkningen består. Udskiftes med ægte output efter S12 (se BACKLOG S25).
+- 2026-08-15 (v6.1): Lær-indhold bor i TS (lib/guides-indhold.ts), ikke markdown —
+  copy-testene læser samme kilde. FR-11's "statisk markdown" er overstyret af ejer.
+- 2026-08-15 (v6.1): Demo-tilstand i server.ts er bevidst umulig i production
+  (kræver manglende env + non-production) — aldrig en bagdør.
 - 2026-08-15: Forsiden fører med fase B-tilbuddet (B2B UGC/hjemmesider) selvom fase A
   (Vinted-appen) er MVP'en — ejer-ordre; M3's omsætning kommer primært fra B2B.
   Priser vises aldrig på forsiden (ejer-ordre).

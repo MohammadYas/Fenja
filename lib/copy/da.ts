@@ -51,7 +51,7 @@ export const da = {
     emailLabel: "E-mail",
     saldoLabel: "Kreditsaldo",
     koebshistorik: "Købshistorik",
-    ingenKoeb: "Ingen køb endnu. Dine 3 gratis annoncer fulgte med, da du oprettede dig.",
+    ingenKoeb: "Ingen køb endnu. Køb en pakke under Kreditter, når du er klar.",
     koebLinje: (antal: number, dato: string) => `${antal} kreditter · ${dato}`,
     sletKonto: "Slet min konto",
     sletForklaring:
@@ -222,8 +222,8 @@ export const da = {
   },
   priserSide: {
     titel: "Priser",
-    lead: "3 annoncer gratis, når du opretter dig. Derefter køber du kun det, du bruger — ingen abonnement, intet der udløber.",
-    stempel: "3 gratis annoncer",
+    lead: "Du køber kun det, du bruger — ingen abonnement, intet der udløber.",
+    stempel: "Ingen abonnement",
     pakkerTitel: "Kreditpakker",
     saadanTitel: "Sådan virker kreditter",
     punkter: [
@@ -267,38 +267,57 @@ export const da = {
         svar: "Nej. Du logger ind med et link, vi sender til din e-mail. Ingen adgangskode at glemme eller lække.",
       },
     ],
-    ctaTitel: "Start med de tre gratis",
-    ctaKnap: "Opret dig og få 3 gratis annoncer",
+    ctaTitel: "Køb en pakke og gå i gang",
+    ctaKnap: "Opret dig og køb kreditter",
   },
   landing: {
     // v6 (ejer-beslutning 2026-08-15): forsiden fører med B2B — UGC-annoncer,
     // annoncebilleder og hjemmesider. Appen har egen sektion. Ingen priser her.
     heroTitel: "UGC-annoncer og hjemmesider til virksomheder",
+    heroRubrik: "Annoncer, folk ikke scroller forbi",
     heroTekst:
-      "Fenja laver videoannoncer i UGC-format, annoncebilleder og hurtige hjemmesider for danske virksomheder. Fast pris pr. opgave — og I ejer alt materialet.",
+      "Fenja er et lille dansk studio. Vi laver UGC-video, annoncebilleder og hjemmesider for virksomheder, der vil se ægte ud — ikke som reklame. Fast pris pr. opgave, og I ejer alt materialet.",
     heroKnap: "Skriv til os",
     heroSekundaer: "Sælger du tøj på Vinted? Se appen",
-    ydelserTitel: "Det laver vi",
+    ydelserTitel: "UGC til virksomheder",
     ydelser: [
       {
         titel: "UGC-videoannoncer",
         tekst:
-          "Korte annoncevideoer i det format, folk faktisk ser: håndholdt, talt og ærligt. Leveret i 9:16, klar til Meta og TikTok.",
+          "Manus, optagelse og klip i 9:16 — videoer der ligner en anbefaling fra en ven, ikke et tv-spot. Klar til Meta og TikTok.",
+        leverance: "Klip i 9:16 · undertekster med · klar til upload",
       },
       {
         titel: "Annoncebilleder",
         tekst:
-          "Rensede produktbilleder og before/after-materiale ud fra jeres egne fotos — samme billedpipeline som appen.",
+          "Jeres egne produktfotos renset og sat i scene, plus before/after-materiale der viser forskellen i stedet for at påstå den.",
+        leverance: "Renset og beskåret · 4:5 og 9:16 · katalogklar",
       },
       {
         titel: "Hjemmesider",
         tekst:
-          "Mobil-første sider, der siger én ting klart og gør det let at kontakte jer. Bygget hurtigt og overdraget til jer.",
+          "Én side, ét budskab, én handling. Hurtig på mobilen og skrevet på dansk, der lyder som jer — I får det hele udleveret.",
+        leverance: "Mobil-først · dansk copy · I ejer koden",
       },
     ],
     ydelserCta:
-      "Fortæl os, hvad I sælger — vi svarer med et konkret oplæg og en fast pris.",
-    appenMaerkat: "Appen",
+      "Fortæl os, hvad I sælger — I får ét konkret oplæg og én fast pris retur.",
+    b2bFaqTitel: "Spørgsmål, virksomheder stiller os",
+    b2bFaq: [
+      {
+        spoergsmaal: "Hvad koster det?",
+        svar: "Én fast pris pr. opgave, aftalt på forhånd. Ingen abonnement og ingen timer, der løber.",
+      },
+      {
+        spoergsmaal: "Hvem ejer materialet?",
+        svar: "I gør. Video, billeder, tekst og arbejdsfiler bliver jeres — brug dem hvor og så længe I vil.",
+      },
+      {
+        spoergsmaal: "Hvor hurtigt kan I levere?",
+        svar: "Afhænger af pakken — I får en konkret dato i oplægget, ikke et løfte i en annonce.",
+      },
+    ],
+    appenMaerkat: "Vinted-appen",
     appenTitel: "Sælger du tøj på Vinted?",
     appenTekst:
       "Fenja-appen renser dine mobilfotos, viser hvordan tøjet ser ud på, og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted på cirka 2 minutter.",
@@ -337,12 +356,37 @@ export const da = {
         tekst: "Kopiér titel og beskrivelse, hent billederne, og læg annoncen op. Fejl og slid står ærligt i teksten.",
       },
     ],
-    aerligTitel: "Ærlighed er hele idéen",
-    aerligTekst:
-      "Vinted kræver, at billede 1 er dit eget foto af varen — sådan leverer Fenja det. Visualiseringer er tydeligt mærket, og oplyste fejl kommer altid med i beskrivelsen. Det beskytter din konto og dine handler.",
-    ctaTitel: "Skal vi lave noget sammen?",
+    // Ejer-ordre 2026-08-15: Ærligheds-blokken er taget af forsiden — teksten
+    // genskrives senere et andet sted. Erstattet af B2B-forløbet.
+    procesTitel: "Sådan foregår det",
+    procesTrin: [
+      {
+        titel: "Skriv til os",
+        tekst: "To linjer om, hvad I sælger, er nok. Vedhæft gerne jeres nuværende annoncer.",
+      },
+      {
+        titel: "I får ét oplæg",
+        tekst: "Konkret indhold, én fast pris. Ingen abonnement, ingen møderække.",
+      },
+      {
+        titel: "Vi leverer",
+        tekst: "Materialet er jeres — også arbejdsfilerne. Brug det, hvor I vil.",
+      },
+    ],
+    // Genererede eksempelbilleder (ejer-ordre) — ALTID mærket synligt.
+    // Udskiftes med ægte output efter S12 (manifest §2.1.7-linjen genoprettes).
+    eksemplerMaerkat: "Visualisering · genereret eksempel",
+    eksemplerForklaring:
+      "Genererede eksempler på visualiserings-stilen — mærket, som loven kræver. Ved lancering viser vi ægte before/after herfra.",
+    eksemplerAltStrik:
+      "Genereret eksempel: mørkeblå uldstrik båret i en lys minimalistisk stue",
+    eksemplerAltJakke:
+      "Genereret eksempel: olivengrøn overshirt båret på en københavnsk gade",
+    eksemplerAltUgc:
+      "Genereret eksempel: stak af brugt tøj i strik og denim, fotograferet fra oven",
+    ctaTitel: "Skal vi lave jeres næste annonce?",
     ctaVirksomhedKnap: "Skriv til os",
-    ctaAppKnap: "Opret dig og få 3 gratis annoncer",
+    ctaAppKnap: "Opret dig og lav din første annonce",
   },
   vilkaar: {
     titel: "Vilkår",

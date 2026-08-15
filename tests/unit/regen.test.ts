@@ -3,7 +3,7 @@
 
 import { describe, expect, it } from "vitest";
 import { kreditter, misbrugsvaern } from "@/lib/config";
-import { tilfoejSignupKreditter } from "@/lib/credits/ledger";
+import { registrerKoeb } from "@/lib/credits/ledger";
 import { MemoryLedgerDb } from "@/lib/credits/memory";
 import {
   RegenGraenseFejl,
@@ -18,7 +18,7 @@ import { FakePipelineDb, FakePipelineStorage } from "../fakes/pipeline-fakes";
 async function leveretOpsaetning(mock: { onModelFejler?: boolean } = {}) {
   const db = new FakePipelineDb();
   const ledger = new MemoryLedgerDb();
-  await tilfoejSignupKreditter(ledger, "user-1");
+  await registrerKoeb(ledger, "user-1", 10, "evt_seed");
   const deps = {
     db,
     storage: new FakePipelineStorage(),

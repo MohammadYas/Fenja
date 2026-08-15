@@ -56,7 +56,7 @@ export default async function Konto() {
       <h2 className="mt-8 text-titel font-medium">{da.konto.koebshistorik}</h2>
       {koeb && koeb.length > 0 ? (
         <ul className="mt-3 flex flex-col gap-2">
-          {koeb.map((k, i) => (
+          {koeb.map((k: { delta: unknown; ts: unknown }, i: number) => (
             <li key={i} className="font-mono text-detalje">
               {da.konto.koebLinje(
                 k.delta as number,

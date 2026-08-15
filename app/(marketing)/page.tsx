@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { kontakt } from "@/lib/config";
@@ -17,24 +18,39 @@ export default function Forside() {
       {/* Hero: virksomheds-sporet. Én primær CTA (mailto), appen som stille
           sekundær vej — begge målgrupper finder deres dør over folden. */}
       <section id="virksomheder" className="border-b border-kant">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:py-24">
-          <h1 className="max-w-3xl font-display text-plakat font-bold">
-            {da.landing.heroTitel}
-          </h1>
-          <p className="mt-6 max-w-laesbar text-lead text-tekst/80">
-            {da.landing.heroTekst}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-            <a href={`mailto:${kontakt.email}`} className="knap-link">
-              {da.landing.heroKnap}
-            </a>
-            <a
-              href="#appen"
-              className="soem-link min-h-touch content-center font-medium text-primaer"
-            >
-              {da.landing.heroSekundaer}
-            </a>
+        <div className="mx-auto max-w-6xl px-4 py-16 md:py-24 lg:grid lg:grid-cols-[1.2fr_1fr] lg:items-center lg:gap-14">
+          <div className="indgang">
+            <h1 className="max-w-3xl font-display text-plakat font-bold">
+              {da.landing.heroRubrik}
+            </h1>
+            <p className="mt-6 max-w-laesbar text-lead text-tekst/80">
+              {da.landing.heroTekst}
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+              <a href={`mailto:${kontakt.email}`} className="knap-link">
+                {da.landing.heroKnap}
+              </a>
+              <a
+                href="#appen"
+                className="soem-link min-h-touch content-center font-medium text-primaer"
+              >
+                {da.landing.heroSekundaer}
+              </a>
+            </div>
           </div>
+          <figure className="relative mt-12 hidden lg:mt-0 lg:block">
+            <Image
+              src="/eksempler/ugc-still.webp"
+              alt={da.landing.eksemplerAltUgc}
+              width={900}
+              height={1350}
+              priority
+              className="max-h-[520px] w-full rounded-bloed border border-kant object-cover"
+            />
+            <figcaption className="absolute bottom-3 left-3 rounded-stram bg-koks/80 px-2.5 py-1 font-mono text-detalje text-kalk">
+              {da.landing.eksemplerMaerkat}
+            </figcaption>
+          </figure>
         </div>
       </section>
 
@@ -57,7 +73,12 @@ export default function Forside() {
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <h3 className="font-display text-titel font-semibold">{ydelse.titel}</h3>
-                    <p className="max-w-laesbar text-tekst/80">{ydelse.tekst}</p>
+                    <div>
+                      <p className="max-w-laesbar text-tekst/80">{ydelse.tekst}</p>
+                      <p className="mt-2 font-mono text-detalje text-tekst/60">
+                        {ydelse.leverance}
+                      </p>
+                    </div>
                   </div>
                 </Reveal>
               </li>
@@ -67,6 +88,27 @@ export default function Forside() {
           <a href={`mailto:${kontakt.email}`} className="knap-link mt-5">
             {da.landing.heroKnap}
           </a>
+        </div>
+      </section>
+
+      {/* B2B-FAQ: tre ærlige svar — pris, ejerskab, levering */}
+      <section aria-label={da.landing.b2bFaqTitel} className="border-b border-kant">
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+          <h2 className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
+            {da.landing.b2bFaqTitel}
+          </h2>
+          <div className="mt-6 grid gap-x-10 gap-y-8 md:grid-cols-3">
+            {da.landing.b2bFaq.map((punkt, i) => (
+              <Reveal key={punkt.spoergsmaal} forsinkelseTrin={i}>
+                <div className="border-t border-kant pt-4">
+                  <h3 className="font-display text-lead font-semibold">
+                    {punkt.spoergsmaal}
+                  </h3>
+                  <p className="mt-2 max-w-laesbar text-tekst/80">{punkt.svar}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -132,6 +174,35 @@ export default function Forside() {
             </Reveal>
           </div>
 
+          {/* Visualiserings-stilen som billedpar — genererede eksempler,
+              synligt mærket (ejer-ordre; ægte output efter S12) */}
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:max-w-2xl">
+            {(
+              [
+                ["/eksempler/onmodel-strik.webp", da.landing.eksemplerAltStrik],
+                ["/eksempler/onmodel-jakke.webp", da.landing.eksemplerAltJakke],
+              ] as const
+            ).map(([src, alt], i) => (
+              <Reveal key={src} forsinkelseTrin={i}>
+                <figure className="relative">
+                  <Image
+                    src={src}
+                    alt={alt}
+                    width={900}
+                    height={1350}
+                    className="w-full rounded-bloed border border-kant object-cover"
+                  />
+                  <figcaption className="absolute bottom-2 left-2 rounded-stram bg-koks/80 px-2 py-1 font-mono text-detalje text-kalk">
+                    {da.landing.eksemplerMaerkat}
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+          <p className="mt-3 max-w-laesbar text-detalje text-tekst/70">
+            {da.landing.eksemplerForklaring}
+          </p>
+
           <h3 className="mt-12 font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
             {da.landing.saadanTitel}
           </h3>
@@ -159,15 +230,27 @@ export default function Forside() {
         </div>
       </section>
 
-      {/* Ærlighed: sidens ene mørke bånd — slank udgave */}
-      <section className="bg-koks text-kalk">
+      {/* B2B-forløbet: sidens ene mørke bånd */}
+      <section className="bg-koks text-kalk" aria-label={da.landing.procesTitel}>
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-16">
           <Reveal>
             <h2 className="font-display text-display font-semibold">
-              {da.landing.aerligTitel}
+              {da.landing.procesTitel}
             </h2>
-            <p className="mt-3 max-w-laesbar text-kalk/80">{da.landing.aerligTekst}</p>
           </Reveal>
+          <div className="mt-8 grid gap-8 sm:grid-cols-3">
+            {da.landing.procesTrin.map((trin, i) => (
+              <Reveal key={trin.titel} forsinkelseTrin={i}>
+                <div className="border-t border-kalk/20 pt-4">
+                  <span aria-hidden="true" className="font-mono text-detalje text-kalk/50">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="mt-1 font-display text-lead font-semibold">{trin.titel}</h3>
+                  <p className="mt-2 text-detalje text-kalk/80">{trin.tekst}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

@@ -1,7 +1,6 @@
-import { readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { da } from "@/lib/copy/da";
+import { hentGuides } from "@/lib/guides";
 
 // Designmanifestets hårde copy-regler (HANDOFF §2.1) håndhævet som test:
 // forbudte buzzwords, engelske UI-ord og emojis må aldrig snige sig ind i da.ts.
@@ -53,10 +52,18 @@ describe("copy i da.ts overholder designmanifestet", () => {
 });
 
 describe("Lær-guides overholder manifestet og compliance (F-2)", () => {
-  const mappe = join(process.cwd(), "content/guides");
-  const guides = readdirSync(mappe)
-    .filter((f) => f.endsWith(".md"))
-    .map((f) => ({ navn: f, indhold: readFileSync(join(mappe, f), "utf8") }));
+  // Guides er strukturerede TS-data (lib/guides-indhold.ts) — al tekst
+  // flades ud, så reglerne dækker titler, beskrivelser og alle blokke.
+  const guides = hentGuides().map((guide) => ({
+    navn: guide.slug,
+    indhold: [
+      guide.titel,
+      guide.beskrivelse,
+      ...guide.blokke.flatMap((blok) =>
+        blok.type === "liste" ? blok.punkter : [blok.tekst],
+      ),
+    ].join("\n"),
+  }));
 
   it("der findes mindst 5 guides", () => {
     expect(guides.length).toBeGreaterThanOrEqual(5);

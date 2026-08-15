@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { kreditter, misbrugsvaern } from "@/lib/config";
-import { tilfoejSignupKreditter } from "@/lib/credits/ledger";
+import { registrerKoeb } from "@/lib/credits/ledger";
 import { MemoryLedgerDb } from "@/lib/credits/memory";
+
+// Gratis-tier er slået fra (ejer-beslutning) — testene seeder saldo via køb
+const STARTSALDO = 10;
 import { BudgetloftFejl, koerItemPipeline } from "@/lib/pipeline/run";
 import { MockImageProvider, MockTextProvider } from "@/lib/providers/mock";
 import { FakePipelineDb, FakePipelineStorage } from "../fakes/pipeline-fakes";
@@ -12,7 +15,7 @@ async function opsaetning(mock: {
 } = {}) {
   const db = new FakePipelineDb();
   const ledger = new MemoryLedgerDb();
-  await tilfoejSignupKreditter(ledger, "user-1");
+  await registrerKoeb(ledger, "user-1", STARTSALDO, "evt_seed");
   return {
     deps: {
       db,
@@ -36,7 +39,7 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
     expect(resultat.tekst.beskrivelse).toContain("lille hul");
     expect(resultat.refunderet).toBe(false);
     expect(await ledger.hentSaldo("user-1")).toBe(
-      kreditter.gratisVedSignup - kreditter.prisPrAnnonce,
+      STARTSALDO - kreditter.prisPrAnnonce,
     );
     expect(db.leverede).toContain("item-1");
     // Omkostningslog pr. generering (G-1)
@@ -53,7 +56,7 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
     expect(resultat.refunderet).toBe(true);
     expect(resultat.tekst.titel).toContain("Ganni");
     // Netto nul: træk + refund
-    expect(await ledger.hentSaldo("user-1")).toBe(kreditter.gratisVedSignup);
+    expect(await ledger.hentSaldo("user-1")).toBe(STARTSALDO);
     expect(db.generings.find((g) => g.kind === "onmodel")?.status).toBe("failed");
   });
 
@@ -69,7 +72,7 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
     await koerItemPipeline(deps, "item-1");
     await koerItemPipeline(deps, "item-1"); // retry af hele jobbet
     expect(await ledger.hentSaldo("user-1")).toBe(
-      kreditter.gratisVedSignup - kreditter.prisPrAnnonce,
+      STARTSALDO - kreditter.prisPrAnnonce,
     );
   });
 

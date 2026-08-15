@@ -1,53 +1,26 @@
-import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-import { marked } from "marked";
+// Lær-guides (F-2) som strukturerede TS-data (ejer-ordre 2026-08-15: ingen
+// markdown-filer). Indholdet bor i guides-indhold.ts; denne fil ejer typerne
+// og API'et — samme API som før (hentGuides/hentGuide), så siderne er uændrede.
 
-// Lær-guides (F-2): markdown-filer i /content/guides med simpel frontmatter.
-// Statisk indhold — læses ved build (generateStaticParams) og renderes med marked.
+import { guideIndhold } from "./guides-indhold";
 
-export type Guide = {
+export type GuideBlok =
+  | { type: "rubrik"; tekst: string }
+  | { type: "afsnit"; tekst: string }
+  | { type: "liste"; ordnet: boolean; punkter: string[] };
+
+export type GuideIndhold = {
   slug: string;
   titel: string;
   beskrivelse: string;
   raekkefoelge: number;
-  html: string;
+  blokke: GuideBlok[];
 };
 
-const GUIDE_MAPPE = join(process.cwd(), "content/guides");
+export type Guide = GuideIndhold;
 
-function parseFrontmatter(raa: string): { felter: Record<string, string>; krop: string } {
-  const match = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(raa);
-  if (!match) return { felter: {}, krop: raa };
-  const felter: Record<string, string> = {};
-  for (const linje of match[1]!.split("\n")) {
-    const kolon = linje.indexOf(":");
-    if (kolon === -1) continue;
-    const noegle = linje.slice(0, kolon).trim();
-    const vaerdi = linje
-      .slice(kolon + 1)
-      .trim()
-      .replace(/^"|"$/g, "");
-    felter[noegle] = vaerdi;
-  }
-  return { felter, krop: match[2]! };
-}
-
-export function hentGuides(): Guide[] {
-  return readdirSync(GUIDE_MAPPE)
-    .filter((fil) => fil.endsWith(".md"))
-    .map((fil) => {
-      const { felter, krop } = parseFrontmatter(
-        readFileSync(join(GUIDE_MAPPE, fil), "utf8"),
-      );
-      return {
-        slug: fil.replace(/\.md$/, ""),
-        titel: felter.titel ?? fil,
-        beskrivelse: felter.beskrivelse ?? "",
-        raekkefoelge: Number(felter.raekkefoelge ?? 99),
-        html: marked.parse(krop, { async: false }),
-      };
-    })
-    .sort((a, b) => a.raekkefoelge - b.raekkefoelge);
+export function hentGuides(): readonly Guide[] {
+  return [...guideIndhold].sort((a, b) => a.raekkefoelge - b.raekkefoelge);
 }
 
 export function hentGuide(slug: string): Guide | null {

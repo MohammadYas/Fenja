@@ -17,7 +17,6 @@
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
     "@trigger.dev/sdk": "^4.5.11",
-    "marked": "^18.0.9",
     "next": "^15.4.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

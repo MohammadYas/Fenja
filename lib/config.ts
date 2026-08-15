@@ -1,7 +1,9 @@
 // Central konfiguration — justérbare forretningsværdier samlet ét sted.
 
 export const kreditter = {
-  gratisVedSignup: 3, // E-1
+  // E-1 slået fra (ejer-beslutning 2026-08-15): gratis annoncer inviterer
+  // misbrug via nye konti/devices — alle annoncer kræver købte kreditter.
+  gratisVedSignup: 0,
   // Startpriser jf. E-2 — kan justeres her
   pakker: [
     { id: "pakke-10", antal: 10, prisDkk: 29 },

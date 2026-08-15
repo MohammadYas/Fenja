@@ -35,7 +35,7 @@ export function Button({
       type={type}
       disabled={disabled || travl}
       aria-busy={travl || undefined}
-      className={`inline-flex min-h-touch cursor-pointer items-center justify-center gap-2 rounded-bloed px-5 font-brod text-basis font-medium transition disabled:cursor-not-allowed disabled:opacity-50 ${varianter[variant]} ${className}`}
+      className={`inline-flex min-h-touch cursor-pointer items-center justify-center gap-2 rounded-bloed px-5 font-brod text-basis font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${varianter[variant]} ${className}`}
       {...rest}
     >
       {children}

@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+  /* v6-animationer: rolige ankre — smooth scroll kun når brugeren ikke har
+     bedt om reduceret bevægelse. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   body {
     @apply bg-baggrund bg-tekstur font-brod text-basis text-tekst antialiased;
   }
@@ -29,31 +37,6 @@
 }
 
 @layer components {
-  /* Typografi til markdown-indhold (Lær-guides) — deriverer fra tokens.
-     v2: artikler får plakat-rubrik (REDESIGN §3.6). */
-  .prose-fenja h1 {
-    @apply font-display text-display font-bold;
-  }
-  .prose-fenja h2 {
-    @apply mt-8 text-titel font-medium;
-  }
-  .prose-fenja p {
-    @apply mt-3 max-w-laesbar;
-  }
-  .prose-fenja ul,
-  .prose-fenja ol {
-    @apply mt-3 flex max-w-laesbar list-disc flex-col gap-1.5 pl-5;
-  }
-  .prose-fenja ol {
-    @apply list-decimal;
-  }
-  .prose-fenja strong {
-    @apply font-semibold;
-  }
-  .prose-fenja a {
-    @apply text-primaer underline underline-offset-4;
-  }
-
   /* Sømmen — signatur-elementet (DESIGN.md §6): én fin stiplet tekstilsøm i
      rav. Lodret som skillelinje i before/after, vandret som sektionsdeler.
      Doseret: én søm ad gangen, aldrig som baggrundsmønster. */
@@ -134,11 +117,19 @@
     font-weight: 500;
     background-color: theme("colors.primaer");
     color: theme("colors.primaer-tekst");
-    transition: background-color theme("transitionDuration.DEFAULT")
-      theme("transitionTimingFunction.DEFAULT");
+    transition:
+      background-color theme("transitionDuration.DEFAULT")
+        theme("transitionTimingFunction.DEFAULT"),
+      transform theme("transitionDuration.DEFAULT")
+        theme("transitionTimingFunction.DEFAULT");
   }
   .knap-link:hover {
     background-color: theme("colors.koks");
+  }
+  /* Tryk-feedback (skala 0,98 — HIG/MD scale-feedback): transform + farve,
+     aldrig layout-skift. */
+  .knap-link:active {
+    transform: scale(0.98);
   }
   /* Lys variant til mørke blokke (gran/koks): kalk grund, gran tekst. */
   .knap-link-lys {
@@ -152,6 +143,31 @@
 }
 
 @layer utilities {
+  /* Indgangs-animation til hero-indhold (v6): fade-op med stagger pr. barn.
+     Kun transform/opacity; slået helt fra ved reduceret bevægelse. */
+  @media (prefers-reduced-motion: no-preference) {
+    .indgang > * {
+      opacity: 0;
+      transform: translateY(14px);
+      animation: indgang 500ms theme("transitionTimingFunction.DEFAULT") forwards;
+    }
+    .indgang > *:nth-child(2) {
+      animation-delay: 100ms;
+    }
+    .indgang > *:nth-child(3) {
+      animation-delay: 200ms;
+    }
+    .indgang > *:nth-child(4) {
+      animation-delay: 300ms;
+    }
+    @keyframes indgang {
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  }
+
   /* Scroll-reveal (REDESIGN §2.5): kun transform/opacity, én gang, rå
      IntersectionObserver (components/reveal.tsx). Skjules KUN når scripting er
      aktiv OG brugeren ikke har bedt om reduceret bevægelse — ellers vises alt

@@ -52,11 +52,31 @@ export default async function GuideSide({
         </span>
         <h1 className="font-display text-display font-bold">{guide.titel}</h1>
       </header>
-      <article
-        className="prose-fenja mt-8"
-        // Indholdet er egne statiske markdown-filer fra repoet — ikke brugerinput
-        dangerouslySetInnerHTML={{ __html: guide.html }}
-      />
+      <article className="mt-8">
+        {guide.blokke.map((blok, i) =>
+          blok.type === "rubrik" ? (
+            <h2 key={i} className="mt-8 text-titel font-medium">
+              {blok.tekst}
+            </h2>
+          ) : blok.type === "afsnit" ? (
+            <p key={i} className="mt-3 max-w-laesbar">
+              {blok.tekst}
+            </p>
+          ) : blok.ordnet ? (
+            <ol key={i} className="mt-3 flex max-w-laesbar list-decimal flex-col gap-1.5 pl-5">
+              {blok.punkter.map((punkt) => (
+                <li key={punkt}>{punkt}</li>
+              ))}
+            </ol>
+          ) : (
+            <ul key={i} className="mt-3 flex max-w-laesbar list-disc flex-col gap-1.5 pl-5">
+              {blok.punkter.map((punkt) => (
+                <li key={punkt}>{punkt}</li>
+              ))}
+            </ul>
+          ),
+        )}
+      </article>
       {forrige || naeste ? (
         <nav className="mt-12 border-t border-kant pt-6" aria-label={da.laer.titel}>
           <div className="flex flex-col justify-between gap-6 sm:flex-row">
