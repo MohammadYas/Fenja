@@ -31,6 +31,24 @@
 [x] S14 Lær-sektion, 8 guides (F-2) + SEO-basics (F-3)
 [x] S15 Misbrugsværn + admin-omkostningsside (E-5, G-1) — Sentry (G-2) afventer ejer-beslutning
 [x] S16 Preset 2+3, delbart before/after (C-5, F-4) — polering fra egen brugstest afventer S12
+## Slop-rebuild (desktop) — ejerens dom 2026-08-15: "det ligner AI"
+Diagnose fra 1280 px-gennemgang + AI-tegn-research: (a) hero-rammen er et kæmpe
+TOMT felt, (b) alt indhold ligger i venstre kolonne med død højreside hele vejen
+ned (= mobil blæst op), (c) Lær er en centreret stak identiske kort (skabelon-
+tegnet), (d) footeren er en tynd linkrække, (e) rå browser-radios på log-ind.
+[x] S19 Hero-figuren får indhold: skematiske stregtegninger af tøj i rammen
+        (DIT FOTO-halvdel med kontekst-rod, RENSET-halvdel ren) — stadig ærligt
+        mærket pladsholder; desktop-hero i to kolonner (plakat + ramme)
+[ ] S20 Tørresnoren: prislapperne hænger fra en vandret søm-snor i varierede
+        højder (forside + /priser) — tøj på snor som fysisk motiv
+[ ] S21 Desktop-rytme: Ærlighed-blokken asymmetrisk med lodret søm; slut-CTA
+        med prislap-detalje; sådan-virker-det-tallene større på lg
+[ ] S22 Lær som katalog-indeks: kort-stakken erstattes af nummererede rækker
+        med søm-delelinjer (ingen bokse), 2 kolonner på lg
+[ ] S23 Footer-blok: gran med stort FENJA-ordmærke, grupperede links og
+        mærknings-linjen — ikke en tynd enkeltrække
+[ ] S24 Log-ind: 18+-valg som taktile valgkort oven på native radios (a11y)
+
 ## Redesign
 [x] S17 KOMPLET visuel rebuild efter REDESIGN.md ("katalog møder plakat"):
         tokens v2, plakat-typo, farveblokke, prislap/stempel-motiv, Sømmen 2.0,

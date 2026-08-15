@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 import { SektionsMarkoer } from "@/components/sektions-markoer";
 import { Prislap } from "@/components/ui/prislap";
+import { SkitseFoer, SkitseEfter } from "@/components/hero-skitse";
 import { Stempel } from "@/components/ui/stempel";
 import { kreditter } from "@/lib/config";
 import { da } from "@/lib/copy/da";
@@ -24,36 +25,40 @@ export default function Forside() {
     <main>
       {/* Plakat-hero: overskriften ER hero-grafikken (REDESIGN §2.1) */}
       <section className="overflow-x-clip">
-        <div className="mx-auto max-w-5xl px-4 pb-16 pt-10 md:pt-16">
-          <h1 className="font-display text-plakat font-bold uppercase">
-            {da.landing.heroPlakatLinjer.map((ord) => (
-              <span key={ord} className="block">
-                {ord}
-              </span>
-            ))}
-            <span className="block text-rav">{da.landing.heroPlakatFremhaevet}</span>
-          </h1>
-          <p className="mt-6 max-w-laesbar text-lead text-tekst/80">
-            {da.landing.heroTekst}
-          </p>
-          <Link href="/log-ind" className={`mt-6 ${ctaKlasser}`}>
-            {da.landing.heroKnap}
-          </Link>
+        <div className="mx-auto max-w-5xl px-4 pb-16 pt-10 md:pt-16 lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-12">
+          <div>
+            <h1 className="font-display text-plakat font-bold uppercase">
+              {da.landing.heroPlakatLinjer.map((ord) => (
+                <span key={ord} className="block">
+                  {ord}
+                </span>
+              ))}
+              <span className="block text-rav">{da.landing.heroPlakatFremhaevet}</span>
+            </h1>
+            <p className="mt-6 max-w-laesbar text-lead text-tekst/80">
+              {da.landing.heroTekst}
+            </p>
+            <Link href="/log-ind" className={`mt-6 ${ctaKlasser}`}>
+              {da.landing.heroKnap}
+            </Link>
+          </div>
 
-          {/* Signatur-beviset: before/after med Sømmen, skubbet op i heroen,
-              let roteret, med "2 min"-stempel (REDESIGN §3.1) */}
+          {/* Signatur-beviset: before/after med Sømmen — på desktop ved siden
+              af plakaten, så højresiden aldrig står død (REDESIGN §3.1) */}
           <Reveal>
-            <figure className="relative mt-12 md:mt-16">
+            <figure className="relative mt-12 md:mt-16 lg:mt-0">
               <div className="rotate-ramme">
                 <div className="flex overflow-hidden rounded-bloed border-2 border-koks bg-baggrund shadow-offset-hoer">
-                  <div className="flex aspect-[4/5] flex-1 items-end bg-hoer p-3">
-                    <span className="rounded-stram bg-baggrund px-2 py-0.5 font-mono text-detalje uppercase tracking-wide">
+                  <div className="relative flex aspect-[4/5] flex-1 items-center justify-center bg-hoer p-3">
+                    <SkitseFoer />
+                    <span className="absolute bottom-3 left-3 rounded-stram bg-baggrund px-2 py-0.5 font-mono text-detalje uppercase tracking-wide">
                       {da.landing.heroFoer}
                     </span>
                   </div>
                   <div className="soem shrink-0" aria-hidden="true" />
-                  <div className="flex aspect-[4/5] flex-1 items-end bg-kalk p-3">
-                    <span className="rounded-stram bg-flade px-2 py-0.5 font-mono text-detalje uppercase tracking-wide">
+                  <div className="relative flex aspect-[4/5] flex-1 items-center justify-center bg-kalk p-3">
+                    <SkitseEfter />
+                    <span className="absolute bottom-3 right-3 rounded-stram bg-flade px-2 py-0.5 font-mono text-detalje uppercase tracking-wide">
                       {da.landing.heroEfter}
                     </span>
                   </div>

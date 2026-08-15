@@ -5,6 +5,12 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 S19 Hero-figur (slop-rebuild): den tomme before/after-ramme var
+  desktopens største AI-tegn — nu bærer den skematiske stregtegninger i egen
+  streg (skæv/krøllet trøje m. bøjlestang og rodet gulv → samme trøje ret og
+  ren m. ribkant og blød skygge), stadig ærligt mærket pladsholder til S12.
+  Desktop-hero i to kolonner (plakat + ramme), så højresiden ikke står død.
+  320 px uden scroll; lint/typecheck/85 tests/build grønt.
 - 2026-08-15 B-8 Regenerér enkeltdele: ny visualisering (valgfrit preset) eller
   ny annoncetekst fra resultatsiden til reduceret pris (prisRegenerering: 0,5
   kredit — EJER-BESLUTNING at justere). Kreditter går fra integer til
