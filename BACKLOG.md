@@ -26,7 +26,7 @@
 [ ] S12 [KRÆVER NØGLER — efter §6] Ende-til-ende mod rigtige providers; kalibrér
         troskabs-tærskel; Gate 2-måling (≤ 2 min)
 [x] S13 Landing page + vilkår/privatliv efter DESIGN.md (F-1) — hero er ægte output fra S12
-[x] S14 Lær-sektion, 5 guides (F-2) + SEO-basics (F-3)
+[x] S14 Lær-sektion, 8 guides (F-2) + SEO-basics (F-3)
 [x] S15 Misbrugsværn + admin-omkostningsside (E-5, G-1) — Sentry (G-2) afventer ejer-beslutning
 [x] S16 Preset 2+3, delbart before/after (C-5, F-4) — polering fra egen brugstest afventer S12
 ## Redesign

@@ -5,6 +5,11 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 Tre nye guides (F-2 → 8 stk): "Mål og størrelser" (mål slår
+  størrelsesmærker; hvad man måler pr. tøjtype), "Pak og send" (frister,
+  vandtæt genbrugsemballage, vægt, bedømmelser) og "Sæsonens rytme"
+  (årshjulet, forskudt salg, off-season-prissætning). Samme ærlige tone;
+  anti-buzzword-testen dækker dem automatisk (77 → 80 tests).
 - 2026-08-15 404- og fejlside: app/not-found.tsx (kæmpe rav-mono-404,
   ærlig besked, én vej hjem) og app/error.tsx (prøv igen-knap via reset,
   ingen undskyldnings-teater). Copy i da.ts. 320 px ok, alt grønt.
