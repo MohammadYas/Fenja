@@ -1,0 +1,7 @@
+# Netlify kører kun UI + lette routes; langvarige jobs ligger i Trigger.dev (HANDOFF §3).
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

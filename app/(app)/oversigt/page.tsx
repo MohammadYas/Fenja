@@ -1,0 +1,123 @@
+import Link from "next/link";
+import { Taeller } from "@/components/taeller";
+import { Badge } from "@/components/ui/badge";
+import { da } from "@/lib/copy/da";
+import { opretServerKlient } from "@/lib/supabase/server";
+import { MarkerSolgt } from "./marker-solgt";
+
+export const metadata = { title: `${da.oversigt.titel} · ${da.site.navn}` };
+
+type ItemRaekke = {
+  id: string;
+  brand: string | null;
+  titel: string | null;
+  category: string | null;
+  status: "draft" | "active" | "sold";
+  sold_price_dkk: number | null;
+  leveret_at: string | null;
+  solgt_at: string | null;
+  created_at: string;
+};
+
+// Item-bibliotek (B-7) + statistik (B-10): salgsværdi, antal, liggetid.
+export default async function Oversigt() {
+  const supabase = await opretServerKlient();
+  const { data } = await supabase
+    .from("items")
+    .select(
+      "id, brand, titel, category, status, sold_price_dkk, leveret_at, solgt_at, created_at",
+    )
+    .order("created_at", { ascending: false });
+  const items = (data ?? []) as ItemRaekke[];
+
+  const solgte = items.filter((i) => i.status === "sold");
+  const samletVaerdi = solgte.reduce((sum, i) => sum + (i.sold_price_dkk ?? 0), 0);
+  const liggetider = solgte
+    .filter((i) => i.leveret_at && i.solgt_at)
+    .map(
+      (i) =>
+        (new Date(i.solgt_at!).getTime() - new Date(i.leveret_at!).getTime()) /
+        86_400_000,
+    );
+  const snitLiggetid =
+    liggetider.length > 0
+      ? Math.max(1, Math.round(liggetider.reduce((a, b) => a + b, 0) / liggetider.length))
+      : null;
+
+  if (items.length === 0) {
+    // Tom tilstand som gran-blok (REDESIGN §2.2)
+    return (
+      <main className="py-6">
+        <h1 className="font-display text-kaempe font-bold uppercase">
+          {da.oversigt.titel}
+        </h1>
+        <div className="mt-6 rounded-bloed bg-gran p-6 text-kalk">
+          <p className="max-w-laesbar">{da.oversigt.tom}</p>
+          <Link
+            href="/nyt-item"
+            className="mt-6 inline-flex min-h-touch items-center rounded-bloed bg-kalk px-5 font-medium text-gran shadow-offset-hoer transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-offset-hoer-loeft"
+          >
+            {da.oversigt.foersteKnap}
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="py-6">
+      <h1 className="font-display text-kaempe font-bold uppercase">
+        {da.oversigt.titel}
+      </h1>
+
+      {solgte.length > 0 ? (
+        // Statistik som gran-blok med kæmpe mono-tal — "solgt for X kr." er
+        // heltestallet, og det tæller op (REDESIGN §3.5/§2.5)
+        <section
+          className="mt-6 rounded-bloed bg-gran p-5 text-kalk"
+          aria-label={da.oversigt.statistikTitel}
+        >
+          <p className="font-mono text-detalje font-bold uppercase tracking-wide text-hoer">
+            {da.oversigt.statistikTitel}
+          </p>
+          <p className="mt-3 font-mono text-kaempe font-bold leading-none">
+            <Taeller til={samletVaerdi} /> kr.
+          </p>
+          <p className="mt-3 text-detalje text-hoer">
+            {da.oversigt.solgtMedFenja} · {da.oversigt.solgteAntal(solgte.length)}
+            {snitLiggetid != null ? ` · ${da.oversigt.liggetid(snitLiggetid)}` : null}
+          </p>
+        </section>
+      ) : null}
+
+      <ul className="mt-6 flex flex-col gap-4">
+        {items.map((item) => (
+          <li key={item.id}>
+            {/* Taktilt, interaktivt kort (REDESIGN §2.4) */}
+            <div className="kort-taktil flex flex-col gap-2 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <Link
+                  href={`/items/${item.id}`}
+                  className="soem-link min-w-0 flex-1 font-medium"
+                >
+                  <span className="block truncate">
+                    {item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim()}
+                  </span>
+                </Link>
+                <Badge variant={item.status === "sold" ? "status" : "neutral"}>
+                  {da.oversigt.status[item.status]}
+                </Badge>
+              </div>
+              {item.status === "sold" && item.sold_price_dkk != null ? (
+                <p className="font-mono text-detalje font-bold text-pris">
+                  {item.sold_price_dkk} kr.
+                </p>
+              ) : null}
+              {item.status === "active" ? <MarkerSolgt itemId={item.id} /> : null}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </main>
+  );
+}
