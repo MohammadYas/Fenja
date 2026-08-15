@@ -101,16 +101,17 @@ export default function Forside() {
         </div>
       </section>
 
-      {/* Ærlighed som fordel — sidens ene mørke bånd */}
-      <section className="bg-koks text-kalk" aria-label={vinted.aerlighed.titel}>
+      {/* Leverancen — sidens ene mørke bånd (midlertidig erstatning for
+          Ærligheds-blokken, ejer-ordre 2026-08-15) */}
+      <section className="bg-koks text-kalk" aria-label={vinted.leverance.titel}>
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-16">
           <Reveal>
             <h2 className="font-display text-display font-semibold">
-              {vinted.aerlighed.titel}
+              {vinted.leverance.titel}
             </h2>
           </Reveal>
           <ul className="mt-6 flex max-w-2xl flex-col gap-4">
-            {vinted.aerlighed.punkter.map((punkt, i) => (
+            {vinted.leverance.punkter.map((punkt, i) => (
               <Reveal key={punkt} forsinkelseTrin={i}>
                 <li className="flex gap-3 text-kalk/85">
                   <span aria-hidden="true" className="text-kalk/50">

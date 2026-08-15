@@ -51,12 +51,14 @@ export const vinted = {
       },
     ],
   },
-  aerlighed: {
-    titel: "Ærlighed sælger",
+  // Midlertidig erstatning for Ærlighed-blokken (ejer-ordre 2026-08-15:
+  // fjernet, sættes ind et andet sted senere) — leverancen som mørkt bånd.
+  leverance: {
+    titel: "Det får du",
     punkter: [
-      "Dit eget foto står altid først — det er det, Vinted kræver, og det køberen stoler på.",
-      "Visualiseringer i din leverance er mærkede, så ingen føler sig snydt — og din konto er aldrig i fare.",
-      "Fejl og slid står i teksten. Det lyder farligt, men det er det modsatte: færre returkrav, bedre anmeldelser.",
+      "Rensede salgsfotos i Vinted-format — dine egne billeder, bare skarpere.",
+      "Tøjet vist båret, så køberen kan se det på — ikke kun på bøjlen.",
+      "Titel, beskrivelse og prisforslag, der lyder som dig — klar til at sætte ind.",
     ],
   },
   laerTeaser: {
