@@ -23,6 +23,10 @@
 }
 
 *{box-sizing:border-box;margin:0}
+.pgrid,.fgrid,.cgrid,.uxlist,.tokens pre{scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+.pgrid::-webkit-scrollbar,.fgrid::-webkit-scrollbar,.cgrid::-webkit-scrollbar,.uxlist::-webkit-scrollbar,.tokens pre::-webkit-scrollbar{width:8px;height:8px}
+.pgrid::-webkit-scrollbar-thumb,.fgrid::-webkit-scrollbar-thumb,.cgrid::-webkit-scrollbar-thumb,.uxlist::-webkit-scrollbar-thumb,.tokens pre::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:99px}
+.pgrid::-webkit-scrollbar-track,.fgrid::-webkit-scrollbar-track,.cgrid::-webkit-scrollbar-track,.uxlist::-webkit-scrollbar-track,.tokens pre::-webkit-scrollbar-track{background:transparent}
 html{scroll-behavior:smooth}
 body{
   background:var(--bg);
@@ -266,7 +270,7 @@ h2{
 .tokens pre .vl{color:var(--run)}
 
 /* font pairing cards */
-.fgrid{margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(15.5rem,1fr));gap:.6rem}
+.fgrid{margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(15.5rem,1fr));gap:.6rem;max-height:34rem;overflow-y:auto;padding-right:.15rem}
 .fcard{
   background:var(--surface);border:1px solid var(--line);border-radius:8px;
   padding:1rem 1.05rem;display:flex;flex-direction:column;gap:.55rem;
@@ -317,6 +321,7 @@ h2{
 .mock-chrome .glyph{color:var(--run);font-weight:700;font-size:.9rem}
 .mk{
   background:var(--mk-b,#FDF2F8);color:var(--mk-f,#500724);
+  font-family:var(--mk-bf,var(--sans));
   padding:0 0 1.4rem;transition:background .4s ease,color .4s ease;
 }
 .mk *{transition:background .4s ease,color .4s ease,border-color .4s ease,border-radius .3s ease,box-shadow .3s ease}
@@ -414,7 +419,7 @@ h2{
 .sev-chip:hover{color:var(--ink)}
 .sev-chip[aria-pressed="true"]{color:var(--ink);border-color:var(--run-dim)}
 .sev-chip i{display:inline-block;width:.5rem;height:.5rem;border-radius:50%;margin-right:.35rem;vertical-align:0}
-.uxlist{margin-top:.9rem;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.uxlist{margin-top:.9rem;border:1px solid var(--line);border-radius:8px;overflow-y:auto;max-height:36rem;background:var(--surface)}
 .uxrow{border-bottom:1px solid var(--line)}
 .uxrow:last-child{border-bottom:none}
 .uxrow summary{
@@ -437,7 +442,7 @@ h2{
 
 
 /* chart gallery */
-.cgrid{margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:.6rem}
+.cgrid{margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:.6rem;max-height:40rem;overflow-y:auto;padding-right:.15rem}
 .ccard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.9rem 1rem 1rem;display:flex;flex-direction:column;gap:.5rem;transition:border-color .18s ease,background .18s ease}
 .ccard:hover{background:var(--surface-2);border-color:var(--line-strong)}
 .ccard .ct{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--run)}
@@ -819,7 +824,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
       <p class="sec-label rv"><b>$</b> grep -i <span style="color:var(--amber)">"&hellip;"</span> data/colors.csv</p>
       <h2 class="rv">Prøv datasættet, live</h2>
       <p class="sec-intro rv">Alle 192 produktpaletter fra <code style="font-family:var(--mono);font-size:.85em">colors.csv</code>
-      er indlejret i siden. Søg på branche (på engelsk), tryk på en, og se den om-style preview&rsquo;et —
+      er indlejret i siden. Søg på branche (på engelsk), tryk på en, og se preview&rsquo;et skifte tema —
       samme token-swap som toolkittet laver i din kodebase.</p>
 
       <div class="explore rv">
@@ -903,7 +908,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> grep -i <span style="color:var(--amber)">"&hellip;"</span> data/charts.csv</p>
       <h2 class="rv">Det rigtige chart til dataens opgave</h2>
-      <p class="sec-intro rv">25 dataformer koblet til chartformer, med hvornår-bruges-guidance,
+      <p class="sec-intro rv">25 dataformer koblet til chartformer, med vejledning i hvornår de bruges,
       tilgængeligheds-risiko og en biblioteksanbefaling for hver.</p>
 
       <label class="search-line rv" for="cq" style="margin-top:2rem">
@@ -1200,6 +1205,7 @@ if (genOut && STYLES.length){
       :"var(--sans)";
     const [hCat,bCat]=(fo.c||'Sans + Sans').split('+');
     mk.style.setProperty('--mk-hf', famFor(hCat||''));
+    mk.style.setProperty('--mk-bf', famFor(bCat||''));
     document.getElementById('mock-title').textContent=`preview — ${st.n.toLowerCase()}`;
     document.getElementById('mk-eyebrow').textContent=q.split(/\s+/).slice(0,2).join(' ');
     document.getElementById('mk-type').textContent=`${fo.h} + ${fo.b}`;
@@ -1228,7 +1234,7 @@ function starterHTML(m){
   const {q,pa,fo}=m;
   const tokens=ROLES.filter(([,k])=>pa[k]).map(([role,key])=>`      --color-${role}: ${pa[key]};`).join('\n');
   return `<!doctype html>
-<html lang="en">
+<html lang="da">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
