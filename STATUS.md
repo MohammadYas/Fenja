@@ -1,18 +1,47 @@
 # STATUS
-Sidst opdateret: 2026-08-15 af Claude Code (lokal session, branch `samlet`)
+Sidst opdateret: 2026-08-15 af Claude Code (lokal session, branch `feat/vinted-first`)
 
 ## Nu
-- **4 PRs åbne mod `samlet`, afventer ejer-review** (sessions må ikke merge egne
-  PRs, §5.2): #1 /vinted-landing · #2 fase B-fundament (VideoProvider + UGC-
-  prompt-compiler, 115 tests på branchen) · #3 preset-system til Gate 1
-  (presets.ts → mappe m. bevaret API, preset_stats-migration, gate1-script m.
-  --live-flag) · #4 transaktionsmails (5 skabeloner, mock-Resend, /dev/emails,
-  120 tests på branchen). Bygget parallelt i worktrees; ingen overlappende filer
-  ud over docs/sessions/ og tests/unit/ (distinkte filnavne) — #4 rører desuden
-  vitest.config.ts (jsx: automatic) og .env.example (RESEND_FROM).
+- **STRATEGISKIFT (ejer, 2026-08-15, aften): Fenja er ét produkt udadtil —
+  Vinted-appen.** Forsiden ER nu Vinted-landingen (fra feat/vinted-side, ejer-
+  godkendt); B2B-studioet er PARKERET uændret på `/studio` som outreach-side:
+  ikke i nav, ikke i sitemap, noindex, kun et diskret footer-link ("Fenja
+  Studio — annoncer for virksomheder"). B2B-indholdet er IKKE slettet, og
+  løfteformuleringerne er uændrede (omskrivning afventer ejer). `/vinted`
+  redirecter permanent til `/`. Nav: Sådan virker det / Lær / Priser / Log ind.
+  Dublet-komponenten `components/vinted/foer-efter.tsx` er samlet i
+  `components/foer-efter.tsx` (S28-oprydningen). HANDOFF er v1.1.
+- **Billedserie v3** (ejer-ordre samme aften): 7 nye billeder i Vinted-annonce-
+  stil — spejl-selfies (telefon dækker ansigtet), tøj på bøjle, flatlay på
+  sengetøj, denim-detalje, gadelook beskåret ved hagen. Mere skandinavisk,
+  realistisk og moderne; lagerreol-billedet er droppet. Provenance: alle
+  billeder i public/eksempler/ er AI-genererede (gpt-image-1, 2026-08-15) —
+  ingen synlig mærkat (ejer-ordre, MIDLERTIDIGT, se S25); ingen genkendelige
+  ansigter (C-6). OG-billedet er genlavet fra serien.
+- **3 PRs stadig åbne mod `samlet`, afventer ejer-review** (sessions må ikke
+  merge egne PRs, §5.2): fase B-fundament · preset-system til Gate 1 ·
+  transaktionsmails (se konsolideret oversigt nedenfor). #1 /vinted-landing er
+  ejer-godkendt og indgår i denne branch.
 - Derefter: S12 [KRÆVER NØGLER] — ejeren kører hjemme-checklisten (HANDOFF §6) først.
-- v6.1-runden er pushet til `origin/samlet` (ejer-godkendt 2026-08-15). Næste
-  session fortsætter herfra — læs denne fil + HANDOFF.md før kode.
+
+## Konsolideret fra docs/sessions/ (parallel-sessionerne 2026-08-15)
+Notaterne ligger på hver sin PR-branch og er sammenfattet her (slettes fra
+branchene ved merge, jf. denne konsolidering):
+- **Fase B-fundament** (`feat/faseb-fundament`): rent additivt `lib/video/` —
+  fuldt async `VideoProvider`-interface (submit/status/webhook), deterministisk
+  mock, 8-bloks UGC-prompt-compiler (ordgrænse 2 ord/sek. håndhævet med fejl,
+  varighed 4–15 s, referencer `@image1…`, fast negativ-liste der kun kan
+  udvides), brief→script-typer. 30 nye tests. S3-stubben i lib/providers/
+  video.ts er bevidst urørt — migreres når videopipelinen implementeres.
+- **Preset-system** (`feat/preset-system`): presets.ts → `lib/pipeline/presets/`
+  med bevaret offentlig API og byte-identisk prompt-output; preset_stats-
+  migration (RLS, security definer-rpc); `scripts/gate1-fidelity-test.ts`
+  (mock default, `--live` kræver nøgler) med side-om-side-HTML-rapport og
+  Gate 1-dom. 11 nye tests.
+- **Transaktionsmails** (`feat/emails`): 5 skabeloner som React/tabel-HTML med
+  inline styles afledt af tokens; `EmailAfsender`-interface (mock/Resend);
+  dev-route `/dev/emails` (404 i production); RESEND_FROM i .env.example;
+  vitest jsx: automatic. 35 nye tests. Intet koblet ind i app-flowet endnu.
 
 ## Session-handoff /vinted (2026-08-15, aften — additiv-opgave, branch feat/vinted-side)
 Selvstændig landing for Vinted-appen på /vinted: eget hero m. before/after-panel
@@ -21,8 +50,9 @@ fra serie v2, 3 trin, ærlighed-som-fordel, Lær-teaser (3 guides), CTA + diskre
 Fenja Studio-linje. Egen copy-fil lib/copy/vinted.ts; metadata på siden.
 AFVIGELSE fra opgaveteksten: den bad om billeder "med eksisterende mærkat uændret"
 — ejerens senere direkte ordre (ingen synlig mærkat, serie v2) vandt.
-**Afventer integration:** nav, forside-teaser, redirect #appen→/vinted, sitemap,
-dublet-oprydning (foer-efter-panelet findes nu 2 steder) — se BACKLOG S28.
+**Integrationen er udført i feat/vinted-first (samme dag):** landingen ER nu
+forsiden, /vinted redirecter til /, dubletten er samlet i components/foer-efter.tsx,
+Studio-linjen bor i footeren — S28 er dermed lukket.
 
 ## Session-handoff v6.2 (2026-08-15, aften — ejerens svar på godkendelses-listen)
 Ejeren godkendte via Claude-review: B2B forrest (logget som STRATEGISKIFT: forsiden

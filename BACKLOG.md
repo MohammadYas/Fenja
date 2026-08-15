@@ -31,9 +31,13 @@
         DEADLINE: senest Gate 4 (dag 21/lancering) — indtil da kører genererede
         billeder UDEN synlig mærkat (ejer-ordre 2026-08-15, midlertidigt; "sleek
         løsning" for mærkning afventer ejer — se STATUS)
-[ ] S28 /vinted-integration (efter merge af feat/vinted-side): teaser-link på
-        forsiden + nav-punkt, redirect/anker #appen→/vinted, /vinted i sitemap,
-        fjern dublet components/vinted/foer-efter.tsx (samles med forsidens panel)
+[x] S28 /vinted-integration — LUKKET af STRATEGISKIFTET (feat/vinted-first,
+        2026-08-15): Vinted-landingen ER forsiden, /vinted redirecter til /,
+        dubletten samlet i components/foer-efter.tsx, B2B parkeret på /studio
+        (noindex, kun footer-link). Se STATUS.md
+[ ] S29 Slet docs/sessions/-notaterne fra feat/faseb-fundament, feat/preset-system
+        og feat/emails når PR'erne merges — indholdet er konsolideret i STATUS.md
+        (2026-08-15)
 [ ] S27 Gratis-tier-model besluttes af ejer: nuværende = ingen gratis annoncer;
         alternativ på bordet = kør pipeline gratis men lever sløret/vandmærket,
         betal for at låse op (fuld friktion for misbrug, værdi-først for ærlige).

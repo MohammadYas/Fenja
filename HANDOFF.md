@@ -1,12 +1,14 @@
-# FENJA · HANDOFF.md — Projektbibel v1.0
+# FENJA · HANDOFF.md — Projektbibel v1.1
 > **Dette dokument er lov.** Alle — mennesker og AI-agenter (Claude Code cloud sessions) — læser dette dokument OG `STATUS.md` før én linje kode skrives. Ved konflikt mellem dette dokument og en sessions egen idé vinder dokumentet. Ændringer til dokumentet sker kun via PR med begrundelse.
 >
 > Repo-rod skal indeholde: `HANDOFF.md` (denne fil) · `SPEC.md` (fenja-spec v0.2, den tekniske spec) · `STATUS.md` (levende log) · `BACKLOG.md` (opgaver) · `DESIGN.md` (designbeslutninger, oprettes af design-sessionen)
 ---
 ## 0. Produktet i tre sætninger
-Fenja hjælper folk med at sælge deres tøj hurtigere på Vinted: upload mobilfotos af et stykke tøj, og få rensede salgsbilleder, en visualisering af tøjet båret i nordisk æstetik, og en færdig annoncetekst med prisforslag — klar til copy-paste. Compliance er indbygget: ægte fotos først, visualiseringer tydeligt mærket, fejl fremhævet frem for skjult. Forretningen: 3 gratis annoncer, derefter kreditpakker; sideløbende sælges B2B-annoncepakker manuelt (fase B-motoren).
+Fenja hjælper folk med at sælge deres tøj hurtigere på Vinted: upload mobilfotos af et stykke tøj, og få rensede salgsbilleder, en visualisering af tøjet båret i nordisk æstetik, og en færdig annoncetekst med prisforslag — klar til copy-paste. Compliance er indbygget: ægte fotos først, visualiseringer tydeligt mærket, fejl fremhævet frem for skjult. Forretningen: kreditpakker (gratis-tier afskaffet, ejer-beslutning 2026-08-15); sideløbende sælges B2B-annoncepakker manuelt (fase B-motoren) — B2B er udadtil parkeret på /studio, ikke en del af det offentlige site.
+> Ændringslog v1.1 (2026-08-15): Vinted-first — forsiden er Vinted-appen alene; B2B parkeret på /studio.
 ---
 ## 1. Faserne
+> Ændringslog v1.1 (2026-08-15): Fenja er ét produkt udadtil (fase A/Vinted); fase B sælges via outreach fra /studio, ikke fra forsiden.
 ### Fase A — Fenja for Vinted (MVP, uge 1–3)
 Selvbetjent, mobil-first web-app til private Vinted-sælgere. Billeder + tekst, ingen video. Detaljeret i §4 (krav) og `SPEC.md`.
 **Exit-kriterie:** Live på eget domæne med betaling, ≥ 10 rigtige brugere, troskabs-pass-rate ≥ 70 %, hele kerneflowet ≤ 2 min.
