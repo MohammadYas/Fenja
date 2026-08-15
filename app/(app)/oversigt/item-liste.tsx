@@ -76,7 +76,7 @@ export function ItemListe({ items }: { items: ItemTilListe[] }) {
                 <div className="flex items-center justify-between gap-3">
                   <Link
                     href={`/items/${item.id}`}
-                    className="soem-link min-w-0 flex-1 font-medium"
+                    className="soem-link flex min-h-touch min-w-0 flex-1 items-center font-medium"
                   >
                     <span className="block truncate">{item.titel}</span>
                   </Link>

@@ -39,7 +39,7 @@ export default async function GuideSide({
   return (
     <main className="mx-auto max-w-2xl px-4 py-12">
       <nav>
-        <Link href="/laer" className="soem-link min-h-touch content-center font-medium">
+        <Link href="/laer" className="soem-link inline-flex min-h-touch items-center font-medium">
           ← {da.laer.alleGuides}
         </Link>
       </nav>

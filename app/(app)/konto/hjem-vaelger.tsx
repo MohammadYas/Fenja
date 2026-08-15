@@ -53,7 +53,7 @@ export function HjemVaelger({ valgt, hjemIder }: HjemVaelgerProps) {
         {muligheder.map((m) => (
           <label
             key={m.vaerdi || "auto"}
-            className="flex cursor-pointer items-start gap-3 text-basis"
+            className="flex min-h-touch cursor-pointer items-center gap-3 text-basis"
           >
             <input
               type="radio"
@@ -64,7 +64,7 @@ export function HjemVaelger({ valgt, hjemIder }: HjemVaelgerProps) {
                 setValg(m.vaerdi);
                 setStatus("ren");
               }}
-              className="mt-1 h-4 w-4 accent-primaer"
+              className="h-5 w-5 shrink-0 accent-primaer"
             />
             <span className="flex flex-col">
               <span className="text-tekst">{m.navn}</span>

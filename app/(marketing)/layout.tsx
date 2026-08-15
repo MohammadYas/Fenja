@@ -15,20 +15,23 @@ export default function MarketingLayout({
           aria-label="Hovednavigation"
           className="mx-auto flex min-h-touch max-w-5xl items-center justify-between gap-4 px-4 py-1"
         >
-          <Link href="/" className="soem-link font-display text-lead font-bold">
+          <Link
+            href="/"
+            className="soem-link inline-flex min-h-touch items-center font-display text-lead font-bold"
+          >
             {da.site.navn}
           </Link>
           <div className="flex items-center gap-4 text-detalje">
             <Link
               href="/#saadan"
-              className="soem-link hidden min-h-touch content-center font-medium sm:block"
+              className="soem-link hidden min-h-touch items-center font-medium sm:inline-flex"
             >
               {da.nav.saadanVirkerDet}
             </Link>
-            <Link href="/laer" className="soem-link min-h-touch content-center font-medium">
+            <Link href="/laer" className="soem-link inline-flex min-h-touch items-center font-medium">
               {da.nav.laer}
             </Link>
-            <Link href="/priser" className="soem-link min-h-touch content-center font-medium">
+            <Link href="/priser" className="soem-link inline-flex min-h-touch items-center font-medium">
               {da.nav.priser}
             </Link>
             <Link href="/log-ind" className="knap-link px-4">
@@ -52,7 +55,7 @@ export default function MarketingLayout({
             </p>
             {/* Diskret vej til det parkerede B2B-spor (STRATEGISKIFT 2026-08-15) */}
             <p className="mt-6 text-detalje">
-              <Link href="/studio" className="soem-link min-h-touch content-center text-hoer">
+              <Link href="/studio" className="soem-link inline-flex min-h-touch items-center text-hoer">
                 {da.footer.studio}
               </Link>
             </p>
@@ -63,17 +66,17 @@ export default function MarketingLayout({
             </p>
             <ul className="mt-3 flex flex-col gap-2 text-detalje">
               <li>
-                <Link href="/priser" className="soem-link min-h-touch content-center">
+                <Link href="/priser" className="soem-link inline-flex min-h-touch items-center">
                   {da.nav.priser}
                 </Link>
               </li>
               <li>
-                <Link href="/laer" className="soem-link min-h-touch content-center">
+                <Link href="/laer" className="soem-link inline-flex min-h-touch items-center">
                   {da.nav.laer}
                 </Link>
               </li>
               <li>
-                <Link href="/log-ind" className="soem-link min-h-touch content-center">
+                <Link href="/log-ind" className="soem-link inline-flex min-h-touch items-center">
                   {da.nav.logInd}
                 </Link>
               </li>
@@ -85,12 +88,12 @@ export default function MarketingLayout({
             </p>
             <ul className="mt-3 flex flex-col gap-2 text-detalje">
               <li>
-                <Link href="/vilkaar" className="soem-link min-h-touch content-center">
+                <Link href="/vilkaar" className="soem-link inline-flex min-h-touch items-center">
                   {da.footer.vilkaar}
                 </Link>
               </li>
               <li>
-                <Link href="/privatliv" className="soem-link min-h-touch content-center">
+                <Link href="/privatliv" className="soem-link inline-flex min-h-touch items-center">
                   {da.footer.privatliv}
                 </Link>
               </li>

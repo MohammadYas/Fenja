@@ -97,7 +97,7 @@ export default async function Oversigt() {
           // B-9: en kladde med kørende pipeline er "på vej", ikke efterladt
           paaVej:
             item.status === "draft" &&
-            item.generations.some(
+            (item.generations ?? []).some(
               (g) => g.status === "queued" || g.status === "running",
             ),
         }))}

@@ -33,7 +33,7 @@ export default function StudioSide() {
               </a>
               <Link
                 href="/"
-                className="soem-link min-h-touch content-center font-medium text-primaer"
+                className="soem-link inline-flex min-h-touch items-center font-medium text-primaer"
               >
                 {da.landing.heroSekundaer}
               </Link>

@@ -55,7 +55,10 @@ export default async function ItemSide({
     return (
       <main className="py-6">
         <p className="max-w-laesbar">{da.resultat.ikkeFundet}</p>
-        <Link href="/oversigt" className="mt-4 inline-block text-primaer underline">
+        <Link
+          href="/oversigt"
+          className="mt-4 inline-flex min-h-touch items-center text-primaer underline"
+        >
           {da.nav.oversigt}
         </Link>
       </main>

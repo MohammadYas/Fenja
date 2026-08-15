@@ -13,6 +13,14 @@ Sidst opdateret: 2026-08-16 af Claude Code (cloud session)
   `generations.prompt_version` nu et sammensat tag — `preset@v skabelon@v
   hjem@v` — så pass-rate kan slices pr. version af hver dimension (FR-15).
 - **Hele fase A er bygget og grøn:** 213 tests, lint + typecheck rene.
+- **Mobilgennemgang (samme branch):** alle sider kørt i Chromium ved 320/375/
+  430 px — nul vandret overløb nogen steder. Rettede touch-mål der var under
+  44 px: marketing-nav/footer + tilbage-links brugte `min-h-touch content-center`
+  på inline-links (ingen effekt → nu `inline-flex … items-center`), forside-
+  logoet, oversigtens item-titel-links, S31-hjemvælgeren og billedserie-
+  prikkerne. Demotilstandens `/oversigt` crashede (manglende `generations` på
+  eksempel-items) — nu guardet, så den keyless demo virker. Delvis kvittering
+  på S26's "responsivt ned til 320 px"; Lighthouse-målingen udestår stadig.
 - **Supabase er sat op og migreret** (2026-08-16, via Composio):
   projekt `cpqsmtaledmjzirfeztp` (eu-west-1), alle 5 migrations kørt,
   7 tabeller + `credit_balances`-view, RLS aktiv, `item-photos`-bucket

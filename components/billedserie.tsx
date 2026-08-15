@@ -8,7 +8,7 @@ type Billede = { src: string; alt: string };
 // Rolig billedserie (v6.1, ejer-ordre): crossfade mellem billeder i fast 3:4-
 // ramme. Auto-fremdrift hvert 4. sekund — men ALDRIG ved prefers-reduced-motion,
 // og aldrig mens brugeren peger/fokuserer på serien. Prikkerne er rigtige
-// knapper (touch-mål 44px via padding), så alt kan styres manuelt.
+// knapper med 44px tap-højde (min-h-touch), så alt kan styres manuelt.
 export function Billedserie({
   billeder,
   prioritet = false,
@@ -71,7 +71,7 @@ export function Billedserie({
             aria-label={billede.alt}
             aria-current={i === aktiv || undefined}
             onClick={() => setAktiv(i)}
-            className="cursor-pointer p-2.5"
+            className="flex min-h-touch cursor-pointer items-center justify-center px-2.5"
           >
             <span
               aria-hidden="true"

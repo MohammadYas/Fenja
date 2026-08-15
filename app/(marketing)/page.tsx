@@ -148,7 +148,7 @@ export default function Forside() {
             ))}
           </div>
           <p className="mt-8">
-            <Link href="/laer" className="soem-link min-h-touch content-center font-medium text-primaer">
+            <Link href="/laer" className="soem-link inline-flex min-h-touch items-center font-medium text-primaer">
               {vinted.laerTeaser.alleGuides} →
             </Link>
           </p>
