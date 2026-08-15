@@ -88,27 +88,33 @@ export default function LogInd() {
         <fieldset>
           <legend className="font-medium">{da.logInd.alderSpoergsmaal}</legend>
           <p className="text-detalje text-tekst/70">{da.logInd.alderHjaelp}</p>
-          <div className="mt-2 flex flex-col gap-1">
-            <label className="flex min-h-touch cursor-pointer items-center gap-3">
-              <input
-                type="radio"
-                name="alder"
-                checked={er18 === true}
-                onChange={() => setEr18(true)}
-                className="h-5 w-5 accent-gran"
-              />
-              {da.logInd.alderJa}
-            </label>
-            <label className="flex min-h-touch cursor-pointer items-center gap-3">
-              <input
-                type="radio"
-                name="alder"
-                checked={er18 === false}
-                onChange={() => setEr18(false)}
-                className="h-5 w-5 accent-gran"
-              />
-              {da.logInd.alderNej}
-            </label>
+          {/* Taktile valgkort (S24): native radios under motorhjelmen — kortet
+              får koks-kant + hør-grund når valgt, fokusring via focus-within */}
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            {(
+              [
+                [true, da.logInd.alderJa],
+                [false, da.logInd.alderNej],
+              ] as const
+            ).map(([vaerdi, tekst]) => (
+              <label
+                key={tekst}
+                className={`flex min-h-touch flex-1 cursor-pointer items-center gap-3 rounded-bloed border-2 px-4 py-2.5 transition focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-koks ${
+                  er18 === vaerdi
+                    ? "border-koks bg-flade shadow-offset-hoer"
+                    : "border-kant bg-baggrund hover:border-koks/50"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="alder"
+                  checked={er18 === vaerdi}
+                  onChange={() => setEr18(vaerdi)}
+                  className="h-5 w-5 shrink-0 accent-gran"
+                />
+                {tekst}
+              </label>
+            ))}
           </div>
         </fieldset>
         {fejl ? (
