@@ -29,7 +29,7 @@ export default function Laer() {
             >
               <span
                 aria-hidden="true"
-                className="select-none font-mono text-hero font-bold leading-none text-rav"
+                className="select-none font-mono text-display font-bold leading-none text-rav"
               >
                 {String(i + 1).padStart(2, "0")}
               </span>

@@ -1,9 +1,26 @@
 # STATUS
-Sidst opdateret: 2026-08-15 af lokal session (S17)
+Sidst opdateret: 2026-08-15 af cloud-session (V5, design-overhaul)
 ## Nu
 - Intet i gang. Næste opgave: S12 [KRÆVER NØGLER] — ejeren kører hjemme-checklisten (HANDOFF §6) først
 ## Senest færdigt
-Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
+Design-overhaul på branch `claude/saelg-toj-design-overhaul-ffnmu6`:
+- 2026-08-15 V5 "Roligt katalog" — komplet visuel sanering efter ejerens dom
+  over v2/v3 ("ser ulækkert og AI ud, især boksene"): ALLE offset-skygger,
+  rotationer, stempel-teatralik, hangtag-clip-paths, tøjklemmer/tørresnor,
+  falske stregkoder, skravering og kontur-teksten er fjernet (neubrutalisme-
+  looket var REDESIGN §5.5's eget dødstegn). Beholdt: paletten, plakat-
+  typografien, farveblokkene (koks/gran/hør), mono-systemstemmen og Sømmen —
+  nu som ÉN fin stiplet linje i stedet for dobbelt. Nyt fladesprog: rolige
+  hør-kort med 1 px kant (`Card`/`.kort-klik` — kanten mørkner ved
+  interaktion), flade knapper der mørkner på hover (`.knap-link`), priser som
+  redaktionelle rækker med store mono-tal på gran (landing + /priser),
+  hero-beviset som ét roligt før/efter-panel delt af sømmen, saldo som stille
+  mono-mærkat. Prislap/Tørresnor-komponenterne og skygge/rotations-tokens er
+  slettet. Verificeret: lint + typecheck + 85 tests grønne, build ok,
+  scrollWidth = 320 på alle marketing-sider ved 320 px, app-flader
+  screenshottet keyless via midlertidig preview-rute (slettet igen).
+
+Tidligere arbejde på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
 - 2026-08-15 V1–V4 Af-skabelonisering af forsiden (ejerens dom: "ligner stadig
   AI"): konturord i plakaten + lodret marginalia (V1); hero-skitserne erstattet
@@ -133,6 +150,12 @@ Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 - Landing-hero skal have ægte before/after fra første rigtige S12-kørsel
 - Sentry (G-2, P1) fravalgt indtil videre — kræver DSN; besluttes af ejer
 ## Beslutninger truffet undervejs
+- 2026-08-15: V5 "Roligt katalog" erstatter REDESIGN §2.3–2.4's fysiske
+  rekvisitter (offset-skygger, rotationer, hangtags, stempler): ejerens dom var,
+  at boksene lignede AI-skabelon-neubrutalisme — præcis REDESIGN §5.5's
+  dødstegn. Skala-modet (plakat-typo) og farveblokkene fra REDESIGN §2.1–2.2
+  består; taktiliteten bæres nu alene af Sømmen (én stiplet linje), hør-flader
+  og mono-stemmen. DESIGN.md §5's "fladt, ingen skygger" gælder igen fuldt ud.
 - 2026-08-14: Kreditsaldo = sum af credit_ledger (view credit_balances); intet credits-felt på profilen (E-3 vinder over SPEC §7)
 - 2026-08-14: users-tabellen hedder profiles; auth.users ejer identiteten via trigger
 - 2026-08-14: Palette udvidet med ravDyb #9A6013 — rav består ikke AA på kalk; håndhævet i tests

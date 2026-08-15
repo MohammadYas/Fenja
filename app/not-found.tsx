@@ -19,10 +19,7 @@ export default function IkkeFundet() {
         {da.fejlsider.ikkeFundetTekst}
       </p>
       <p className="mt-8">
-        <Link
-          href="/"
-          className="inline-flex min-h-touch items-center rounded-bloed bg-primaer px-6 font-medium text-primaer-tekst shadow-offset-hoer transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-offset-hoer-loeft"
-        >
+        <Link href="/" className="knap-link">
           {da.fejlsider.ikkeFundetKnap}
         </Link>
       </p>

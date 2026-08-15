@@ -19,11 +19,7 @@ export default function FejlSide({
         {da.fejlsider.fejlTekst}
       </p>
       <p className="mt-8">
-        <button
-          type="button"
-          onClick={reset}
-          className="inline-flex min-h-touch items-center rounded-bloed bg-primaer px-6 font-medium text-primaer-tekst shadow-offset-hoer transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-offset-hoer-loeft"
-        >
+        <button type="button" onClick={reset} className="knap-link">
           {da.fejlsider.fejlKnap}
         </button>
       </p>

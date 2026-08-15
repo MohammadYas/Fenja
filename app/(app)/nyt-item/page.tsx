@@ -136,8 +136,8 @@ export default function NytItem() {
               const info = da.nytItem.roller[rolle];
               const valgt = fotos[rolle];
               return (
-                // Taktilt rollekort (REDESIGN §3.3): koks-kant + hør-offset-skygge
-                <div key={rolle} className="kort-taktil flex items-center gap-4 p-4">
+                // Roligt rollekort: hør-flade, kanten mørkner ved interaktion
+                <div key={rolle} className="kort-klik flex items-center gap-4 p-4">
                   {valgt ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -246,11 +246,11 @@ export default function NytItem() {
           </p>
         ) : null}
 
-        {/* Stor fuld-bredde plakat-knap (REDESIGN §3.3) */}
+        {/* Stor fuld-bredde afsend-knap — vægt gennem størrelse, ikke råben */}
         <Button
           type="submit"
           travl={travl}
-          className="w-full py-4 font-display text-titel font-bold uppercase"
+          className="w-full py-4 font-display text-titel font-semibold"
         >
           {travl ? da.nytItem.uploader : da.nytItem.lavAnnonce}
         </Button>

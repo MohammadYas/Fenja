@@ -69,8 +69,8 @@ export function ItemListe({ items }: { items: ItemTilListe[] }) {
         <ul className="mt-6 flex flex-col gap-4">
           {synlige.map((item) => (
             <li key={item.id}>
-              {/* Taktilt, interaktivt kort (REDESIGN §2.4) */}
-              <div className="kort-taktil flex flex-col gap-2 p-4">
+              {/* Roligt, interaktivt kort: kanten mørkner på hover/fokus */}
+              <div className="kort-klik flex flex-col gap-2 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <Link
                     href={`/items/${item.id}`}

@@ -1,22 +1,17 @@
 import Link from "next/link";
 import { da } from "@/lib/copy/da";
 import { kreditter } from "@/lib/config";
-import { Prislap } from "@/components/ui/prislap";
 import { Stempel } from "@/components/ui/stempel";
 import { Reveal } from "@/components/reveal";
-import { Toerresnor, ToerresnorLap } from "@/components/toerresnor";
 
 export const metadata = {
   title: `${da.priserSide.titel} · ${da.site.navn}`,
   description: da.priserSide.lead,
 };
 
-const ctaKlasser =
-  "inline-flex min-h-touch items-center rounded-bloed bg-primaer px-6 font-medium text-primaer-tekst shadow-offset-hoer transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-offset-hoer-loeft";
-
 // Priser-siden (HANDOFF §3-strukturen): går et lag dybere end landing-sektionen —
-// pakkerne som prislapper på gran og kreditmodellen forklaret ærligt. Ét stempel
-// pr. view (REDESIGN §5.3).
+// pakkerne som redaktionelle prisrækker på gran og kreditmodellen forklaret
+// ærligt. Én mærkat pr. view.
 export default function PriserSide() {
   return (
     <main>
@@ -34,7 +29,7 @@ export default function PriserSide() {
         </Reveal>
       </section>
 
-      {/* Pakkerne: gran-blok med prislapper — samme motiv som landing (REDESIGN §3.1) */}
+      {/* Pakkerne: gran-blok med redaktionelle prisrækker — samme motiv som landing */}
       <section className="bg-gran text-kalk" aria-label={da.priserSide.pakkerTitel}>
         <div className="mx-auto max-w-5xl px-4 py-16">
           <Reveal>
@@ -42,26 +37,26 @@ export default function PriserSide() {
               {da.priserSide.pakkerTitel}
             </h2>
           </Reveal>
-          <div className="mt-6">
-            <Toerresnor>
-              {kreditter.pakker.map((pakke, i) => (
-                <ToerresnorLap key={pakke.id} indeks={i}>
-                  <Reveal forsinkelseTrin={i}>
-                    <Prislap rotation={i % 2 === 0 ? "venstre" : "hoejre"}>
-                      <p className="font-mono text-titel font-bold">
-                        {da.kreditter.pakkeLinje(pakke.antal, pakke.prisDkk)}
-                      </p>
-                      <p className="mt-1 font-mono text-detalje text-tekst/70">
-                        {da.kreditter.prisPrStk(
-                          (pakke.prisDkk / pakke.antal).toFixed(2).replace(".", ","),
-                        )}
-                      </p>
-                      <div className="stregkode mt-3" aria-hidden="true" />
-                    </Prislap>
-                  </Reveal>
-                </ToerresnorLap>
-              ))}
-            </Toerresnor>
+          <div className="mt-6 max-w-2xl border-t border-kalk/20">
+            {kreditter.pakker.map((pakke, i) => (
+              <Reveal key={pakke.id} forsinkelseTrin={i}>
+                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-kalk/20 py-5">
+                  <p className="font-display text-titel font-semibold">
+                    {da.kreditter.pakkeAntal(pakke.antal)}
+                  </p>
+                  <div className="text-right">
+                    <p className="font-mono text-hero font-bold leading-none">
+                      {da.kreditter.pakkePris(pakke.prisDkk)}
+                    </p>
+                    <p className="mt-1 font-mono text-detalje text-hoer">
+                      {da.kreditter.prisPrStk(
+                        (pakke.prisDkk / pakke.antal).toFixed(2).replace(".", ","),
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -131,7 +126,7 @@ export default function PriserSide() {
           <h2 className="max-w-3xl font-display text-kaempe font-bold">
             {da.priserSide.ctaTitel}
           </h2>
-          <Link href="/log-ind" className={`mt-8 ${ctaKlasser}`}>
+          <Link href="/log-ind" className="knap-link mt-8">
             {da.priserSide.ctaKnap}
           </Link>
         </Reveal>

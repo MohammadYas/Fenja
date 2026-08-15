@@ -4,9 +4,7 @@ import {
   farver,
   radius,
   roller,
-  rotation,
   skrifter,
-  skygge,
   tekstur,
   typeskala,
 } from "./lib/design/tokens";
@@ -42,13 +40,9 @@ const config: Config = {
       stram: radius.stram,
       bloed: radius.bloed,
     },
-    // Offset-skygger er solide og aldrig sorte (REDESIGN §5.5) — gran/hør kun.
+    // Fladt udtryk (DESIGN.md §5): ingen dekorative skygger overhovedet.
     boxShadow: {
       none: "none",
-      "offset-gran": `${skygge.offset} ${farver.gran}`,
-      "offset-hoer": `${skygge.offset} ${farver.hoer}`,
-      "offset-gran-loeft": `${skygge.offsetLoeft} ${farver.gran}`,
-      "offset-hoer-loeft": `${skygge.offsetLoeft} ${farver.hoer}`,
     },
     extend: {
       // Næsten usynlig vævning på kalk-flader (REDESIGN §2.4) — inline-SVG,
@@ -62,12 +56,6 @@ const config: Config = {
       },
       transitionTimingFunction: {
         DEFAULT: bevaegelse.kurve,
-      },
-      rotate: {
-        stempel: rotation.stempel,
-        "lap-v": rotation.lapVenstre,
-        "lap-h": rotation.lapHoejre,
-        ramme: rotation.ramme,
       },
       minHeight: {
         touch: "44px",

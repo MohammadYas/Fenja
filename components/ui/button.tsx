@@ -12,16 +12,13 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   travl?: boolean;
 };
 
-// Alt interaktivt reagerer (REDESIGN §2.5): knappen løfter 2 px og
-// offset-skyggen vokser — solid hør/gran, aldrig blur, aldrig sort.
-const loeft =
-  "shadow-offset-hoer hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-offset-hoer-loeft active:translate-x-0 active:translate-y-0 active:shadow-offset-hoer";
-
+// Fladt og roligt (DESIGN.md §5): reaktionen er en grund der mørkner —
+// ingen skygger, intet løft.
 const varianter: Record<Variant, string> = {
-  primaer: `bg-primaer text-primaer-tekst ${loeft}`,
-  sekundaer: `border-2 border-koks bg-baggrund text-tekst ${loeft}`,
+  primaer: "bg-primaer text-primaer-tekst hover:bg-koks",
+  sekundaer: "border border-koks bg-transparent text-tekst hover:bg-flade",
   stille: "bg-transparent text-primaer soem-link",
-  fejl: `bg-fejl text-primaer-tekst ${loeft}`,
+  fejl: "bg-fejl text-primaer-tekst hover:bg-koks",
 };
 
 export function Button({

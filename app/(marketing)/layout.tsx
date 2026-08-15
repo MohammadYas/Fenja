@@ -25,10 +25,7 @@ export default function MarketingLayout({
             <Link href="/laer" className="soem-link min-h-touch content-center font-medium">
               {da.nav.laer}
             </Link>
-            <Link
-              href="/log-ind"
-              className="inline-flex min-h-touch items-center rounded-bloed bg-primaer px-4 font-medium text-primaer-tekst shadow-offset-hoer transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-offset-hoer-loeft"
-            >
+            <Link href="/log-ind" className="knap-link px-4">
               {da.nav.logInd}
             </Link>
           </div>

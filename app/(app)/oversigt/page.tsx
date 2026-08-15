@@ -52,10 +52,7 @@ export default async function Oversigt() {
         </h1>
         <div className="mt-6 rounded-bloed bg-gran p-6 text-kalk">
           <p className="max-w-laesbar">{da.oversigt.tom}</p>
-          <Link
-            href="/nyt-item"
-            className="mt-6 inline-flex min-h-touch items-center rounded-bloed bg-kalk px-5 font-medium text-gran shadow-offset-hoer transition hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-offset-hoer-loeft"
-          >
+          <Link href="/nyt-item" className="knap-link knap-link-lys mt-6 px-5">
             {da.oversigt.foersteKnap}
           </Link>
         </div>

@@ -46,7 +46,7 @@ export default async function GuideSide({
       <header className="mt-6 flex items-baseline gap-4">
         <span
           aria-hidden="true"
-          className="select-none font-mono text-hero font-bold leading-none text-rav"
+          className="select-none font-mono text-display font-bold leading-none text-rav"
         >
           {String(guide.raekkefoelge).padStart(2, "0")}
         </span>

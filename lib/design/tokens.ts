@@ -1,7 +1,7 @@
 // Eneste kilde til farver, typografi, spacing og radius (HANDOFF §2.2.1).
 // Tailwind-temaet og alle komponenter deriverer herfra — ingen ad hoc-værdier.
-// Begrundelser og kontrast-regler: se DESIGN.md; v2-retningen ("katalog møder
-// plakat"): se REDESIGN.md.
+// Begrundelser og kontrast-regler: se DESIGN.md; retningen "roligt katalog"
+// (v4, efter ejerens dom over v2's offset-skygger og rekvisitter): STATUS.md.
 
 export const farver = {
   kalk: "#F1F3F2",
@@ -79,22 +79,6 @@ export const bevaegelse = {
   stagger: "60ms", // forskydning mellem søskende i reveal
   taeller: 400, // ms — tal der tæller op (saldo/statistik)
   kurve: "ease-out",
-} as const;
-
-// Offset-"skygge" (REDESIGN §2.4): solid, aldrig blur, aldrig sort —
-// plakat-tricket. Kun på interaktive kort/knapper.
-export const skygge = {
-  offset: "4px 4px 0 0",
-  offsetLoeft: "6px 6px 0 0", // hover: elementet løfter 2 px, skyggen vokser
-} as const;
-
-// Rotationstrin (REDESIGN §4): deterministiske pr. element — aldrig random,
-// aldrig animeret rotation. Maks. 1–2 roterede motiver pr. view.
-export const rotation = {
-  stempel: "-3deg",
-  lapVenstre: "-2deg",
-  lapHoejre: "1.5deg",
-  ramme: "1.5deg",
 } as const;
 
 // Vævnings-tekstur på kalk-flader (REDESIGN §2.4): skal kunne anes, ikke ses.

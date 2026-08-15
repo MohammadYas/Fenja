@@ -99,9 +99,9 @@ export default function LogInd() {
             ).map(([vaerdi, tekst]) => (
               <label
                 key={tekst}
-                className={`flex min-h-touch flex-1 cursor-pointer items-center gap-3 rounded-bloed border-2 px-4 py-2.5 transition focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-koks ${
+                className={`flex min-h-touch flex-1 cursor-pointer items-center gap-3 rounded-bloed border px-4 py-2.5 transition focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-koks ${
                   er18 === vaerdi
-                    ? "border-koks bg-flade shadow-offset-hoer"
+                    ? "border-gran bg-flade"
                     : "border-kant bg-baggrund hover:border-koks/50"
                 }`}
               >

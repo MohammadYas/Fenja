@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { AppNav } from "@/components/app-nav";
 import { SpringLink } from "@/components/spring-link";
-import { Prislap } from "@/components/ui/prislap";
+import { Badge } from "@/components/ui/badge";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 
@@ -26,17 +26,13 @@ export default async function AppLayout({
   return (
     <div className="min-h-dvh pb-24">
       <SpringLink />
-      {/* Topbar med søm-underkant; saldoen som lille prislap (REDESIGN §3.2) */}
+      {/* Topbar med søm-underkant; saldoen altid synlig som stille mærkat (E-1) */}
       <header className="sticky top-0 z-10 bg-baggrund">
         <div className="mx-auto flex min-h-touch max-w-md items-center justify-between px-4 py-1">
           <span className="font-display text-lead font-bold uppercase">
             {da.site.navn}
           </span>
-          <Prislap taet>
-            <span className="font-mono text-detalje font-medium">
-              {da.nav.saldo(saldo)}
-            </span>
-          </Prislap>
+          <Badge>{da.nav.saldo(saldo)}</Badge>
         </div>
         <div className="soem-vandret" aria-hidden="true" />
       </header>

@@ -198,6 +198,8 @@ export const da = {
     saldoNu: (antal: number) => `Du har ${formaterKreditTal(antal)} tilbage.`,
     pakkeNavn: (antal: number) => `Fenja · ${antal} annoncer`,
     pakkeLinje: (antal: number, pris: number) => `${antal} annoncer · ${pris} kr.`,
+    pakkeAntal: (antal: number) => `${antal} annoncer`,
+    pakkePris: (pris: number) => `${pris} kr.`,
     prisPrStk: (kr: string) => `${kr} kr. pr. annonce`,
     koeb: "Køb",
     koebSucces: "Betalingen gik igennem. Kreditterne står på din saldo om et øjeblik.",

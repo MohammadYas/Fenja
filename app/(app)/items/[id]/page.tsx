@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { KopierKnap } from "@/components/kopier-knap";
-import { Prislap } from "@/components/ui/prislap";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
@@ -205,17 +204,17 @@ export default async function ItemSide({
               </div>
             </Card>
           ) : null}
-          {/* Prisforslaget som stor prislap — tøjets eget motiv (REDESIGN §3.4).
+          {/* Prisforslaget som roligt hør-kort med stort mono-tal.
               ravDyb på hør er kun til store tal (≥ 24 px, AA large-text). */}
           <div>
-            <Prislap rotation="hoejre" className="max-w-full">
+            <Card>
               <p className="font-mono text-detalje uppercase tracking-wide text-tekst/70">
                 {da.resultat.prisLabel}
               </p>
               <p className="mt-1 font-mono text-hero font-bold text-ravDyb">
                 {da.resultat.prisVisning(item.pris_fra_dkk ?? 0, item.pris_til_dkk ?? 0)}
               </p>
-            </Prislap>
+            </Card>
             <p className="mt-3 max-w-laesbar text-detalje text-tekst/70">
               {item.pris_begrundelse}
             </p>
