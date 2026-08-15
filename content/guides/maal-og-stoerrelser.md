@@ -17,7 +17,7 @@ Læg tøjet fladt på et bord og brug et målebånd. Rund ned, ikke op.
 
 ## Sådan skriver du det
 
-Skriv målene som en kort linje i beskrivelsen: "Brystmål 52 cm fladt, længde 68 cm." Det tager tyve sekunder og besparer dig for beskeder som "tror du den passer en 175 cm høj?". Svar på målespørgsmål med tal, ikke gæt.
+Skriv målene som en kort linje i beskrivelsen: "Brystmål 52 cm fladt, længde 68 cm." Det tager tyve sekunder og sparer dig for beskeder som "tror du den passer en 175 cm høj?". Svar på målespørgsmål med tal, ikke gæt.
 
 Fenja aflæser størrelsen fra dit labelfoto, når den kan — men labelen viser kun den trykte størrelse. Målene kender kun du, så tag dem, mens tøjet alligevel ligger fremme til fotografering.
 

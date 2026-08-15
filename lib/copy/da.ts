@@ -60,7 +60,7 @@ export const da = {
     sletEndeligt: "Slet alt permanent",
     sletFejl: "Kontoen kunne ikke slettes. Prøv igen, eller skriv til os hvis det fortsætter.",
     kraevAldersbekraeftelse:
-      "Din konto mangler alders-bekræftelse. Log ud og ind igen for at bekræfte.",
+      "Din konto mangler aldersbekræftelse. Log ud og ind igen for at bekræfte.",
   },
   nytItem: {
     titel: "Nyt item",
@@ -178,8 +178,8 @@ export const da = {
     nyVisualisering: "Ny visualisering",
     nyTekst: "Ny annoncetekst",
     presetLabel: "Miljø",
-    koererVisualisering: "Syr en ny visualisering…",
-    koererTekst: "Skriver en ny tekst…",
+    koererVisualisering: "Syr en ny visualisering …",
+    koererTekst: "Skriver en ny tekst …",
     faerdig: "Klar — siden er opdateret.",
     fejlGraense:
       "Du har brugt alle forsøg for denne del. Lav en ny annonce, hvis du vil videre.",

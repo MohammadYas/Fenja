@@ -5,6 +5,14 @@ Sidst opdateret: 2026-08-15 af lokal session (S17)
 ## Senest færdigt
 Alt på branch `claude/ga-i-fang-og-beug-uxux-ha52r9`, videreført på
 `claude/read-all-md-files-fcuyr5` efter merge (én commit pr. opgave):
+- 2026-08-15 Slop-gennemgang del 3 (afsluttende, HANDOFF §8): alle otte
+  marketing-flader (forside, log-ind, Lær + guide, vilkår, privatliv, priser,
+  404) screenshottet ved 390 OG 320 px — scrollWidth = 320 overalt, ingen
+  vandret scroll, ingen manifest-brud, ingen engelsk UI-copy (grep af JSX).
+  Dansk korrektur af da.ts + alle 8 guides: "alders-bekræftelse" →
+  "aldersbekræftelse", imperativ "Strøg" → "Stryg" (fototeknik), "besparer
+  dig for" → "sparer dig for" (mål og størrelser), ensartet mellemrum før
+  udeladelsesprikker i regenerér-statuslinjerne.
 - 2026-08-15 Slop-gennemgang del 2 (app-siderne, HANDOFF §8): oversigt,
   nyt-item, kreditter og resultatsiden (inkl. regenerér-sektionen) audited
   keyless via midlertidige preview-ruter (S17-mønstret, slettet igen) ved

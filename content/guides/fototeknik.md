@@ -25,5 +25,5 @@ Et jævnt, roligt underlag: et lyst gulv, en hvid væg, et strøget lagen. Fenja
 
 - Tør skærmen og linsen af først. Det lyder banalt; det virker.
 - Hold telefonen lodret over tøjet, og brug gitterlinjerne til at holde det lige.
-- Strøg eller damp tøjet. Krøller koster mere på prisen end fem minutter med strygejernet.
+- Stryg eller damp tøjet. Krøller koster mere på prisen end fem minutter med strygejernet.
 - Tag billederne i én omgang pr. stykke tøj — så er metadata og lys ens.
