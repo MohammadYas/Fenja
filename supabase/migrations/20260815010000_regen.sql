@@ -6,10 +6,15 @@
 
 alter type public.ledger_reason add value if not exists 'regen';
 
+-- View'et afhænger af delta-kolonnen og SKAL droppes før typeskiftet
+-- (0A000: cannot alter type of a column used by a view) — fundet ved første
+-- kørsel mod cloud-databasen 2026-08-16.
+drop view public.credit_balances;
+
 alter table public.credit_ledger
   alter column delta type numeric(6, 2) using delta::numeric(6, 2);
 
-create or replace view public.credit_balances
+create view public.credit_balances
   with (security_invoker = true) as
 select user_id, coalesce(sum(delta), 0)::numeric(8, 2) as balance
 from public.credit_ledger
