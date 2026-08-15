@@ -179,6 +179,33 @@ export const da = {
       "Betaling er ikke sat op endnu. Skriv til os, hvis du ser denne besked på det rigtige site.",
     kvittering: "Du får kvittering på mail fra Stripe.",
   },
+  priserSide: {
+    titel: "Priser",
+    lead: "3 annoncer gratis, når du opretter dig. Derefter køber du kun det, du bruger — ingen abonnement, intet der udløber.",
+    stempel: "3 gratis annoncer",
+    pakkerTitel: "Kreditpakker",
+    saadanTitel: "Sådan virker kreditter",
+    punkter: [
+      {
+        overskrift: "1 kredit = 1 færdig annonce",
+        tekst: "Rensede billeder, mærket visualisering og annoncetekst — alt sammen for én kredit.",
+      },
+      {
+        overskrift: "Du betaler først ved levering",
+        tekst: "Kreditten trækkes, når annoncen er klar. Fejler visualiseringen, leverer vi resten og sætter kreditten tilbage automatisk.",
+      },
+      {
+        overskrift: "Kreditter udløber ikke",
+        tekst: "Køb en pakke i dag, brug den til foråret. Saldoen står, til du bruger den.",
+      },
+      {
+        overskrift: "Priser er med moms",
+        tekst: "Betaling sker via Stripe, som også sender din kvittering. Alle priser er i danske kroner og inklusive moms.",
+      },
+    ],
+    ctaTitel: "Start med de tre gratis",
+    ctaKnap: "Opret dig og få 3 gratis annoncer",
+  },
   landing: {
     // Plakat-heroen (REDESIGN §3.1): ét ord pr. linje, sidste ord fremhævet i rav.
     heroPlakatLinjer: ["Sælg", "dit tøj"],

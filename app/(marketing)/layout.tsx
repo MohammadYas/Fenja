@@ -17,6 +17,9 @@ export default function MarketingLayout({
             {da.site.navn}
           </Link>
           <div className="flex items-center gap-4 text-detalje">
+            <Link href="/priser" className="soem-link min-h-touch content-center font-medium">
+              {da.nav.priser}
+            </Link>
             <Link href="/laer" className="soem-link min-h-touch content-center font-medium">
               {da.nav.laer}
             </Link>
@@ -34,6 +37,12 @@ export default function MarketingLayout({
       <footer className="border-t border-kant">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-6 text-detalje text-tekst/70">
           <span className="font-mono uppercase tracking-wide">{da.site.navn}</span>
+          <Link href="/priser" className="soem-link min-h-touch content-center">
+            {da.nav.priser}
+          </Link>
+          <Link href="/laer" className="soem-link min-h-touch content-center">
+            {da.nav.laer}
+          </Link>
           <Link href="/vilkaar" className="soem-link min-h-touch content-center">
             {da.footer.vilkaar}
           </Link>
