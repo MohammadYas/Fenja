@@ -52,7 +52,7 @@ export default function LogInd() {
   if (tilstand.trin === "sendt") {
     return (
       <main className="mx-auto max-w-md px-4 py-16">
-        <h1 className="font-display text-kaempe font-bold uppercase">
+        <h1 className="font-display text-kaempe font-bold">
           {da.logInd.titel}
         </h1>
         <p className="mt-4 max-w-laesbar">{da.logInd.linkSendt(tilstand.email)}</p>
@@ -63,7 +63,7 @@ export default function LogInd() {
   if (tilstand.trin === "under18") {
     return (
       <main className="mx-auto max-w-md px-4 py-16">
-        <h1 className="font-display text-kaempe font-bold uppercase">
+        <h1 className="font-display text-kaempe font-bold">
           {da.logInd.titel}
         </h1>
         <p className="mt-4 max-w-laesbar">{da.logInd.under18}</p>

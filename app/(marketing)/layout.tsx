@@ -15,12 +15,15 @@ export default function MarketingLayout({
           aria-label="Hovednavigation"
           className="mx-auto flex min-h-touch max-w-5xl items-center justify-between gap-4 px-4 py-1"
         >
-          <Link href="/" className="soem-link font-display text-lead font-bold uppercase">
+          <Link href="/" className="soem-link font-display text-lead font-bold">
             {da.site.navn}
           </Link>
           <div className="flex items-center gap-4 text-detalje">
-            <Link href="/priser" className="soem-link min-h-touch content-center font-medium">
-              {da.nav.priser}
+            <Link
+              href="/#virksomheder"
+              className="soem-link hidden min-h-touch content-center font-medium sm:block"
+            >
+              {da.nav.virksomheder}
             </Link>
             <Link href="/laer" className="soem-link min-h-touch content-center font-medium">
               {da.nav.laer}
@@ -38,7 +41,7 @@ export default function MarketingLayout({
       <footer className="bg-gran text-kalk">
         <div className="mx-auto grid max-w-5xl gap-10 px-4 py-12 sm:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <p className="font-display text-hero font-bold uppercase">
+            <p className="font-display text-hero font-bold">
               {da.site.navn}
             </p>
             <p className="mt-3 max-w-laesbar text-detalje text-hoer">
@@ -46,7 +49,7 @@ export default function MarketingLayout({
             </p>
           </div>
           <nav aria-label={da.footer.produktGruppe}>
-            <p className="font-mono text-detalje font-bold uppercase tracking-wide text-hoer">
+            <p className="font-mono text-detalje font-bold tracking-wide text-hoer">
               {da.footer.produktGruppe}
             </p>
             <ul className="mt-3 flex flex-col gap-2 text-detalje">
@@ -68,7 +71,7 @@ export default function MarketingLayout({
             </ul>
           </nav>
           <nav aria-label={da.footer.juraGruppe}>
-            <p className="font-mono text-detalje font-bold uppercase tracking-wide text-hoer">
+            <p className="font-mono text-detalje font-bold tracking-wide text-hoer">
               {da.footer.juraGruppe}
             </p>
             <ul className="mt-3 flex flex-col gap-2 text-detalje">

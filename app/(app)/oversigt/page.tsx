@@ -47,7 +47,7 @@ export default async function Oversigt() {
     // Tom tilstand som gran-blok (REDESIGN §2.2)
     return (
       <main className="py-6">
-        <h1 className="font-display text-kaempe font-bold uppercase">
+        <h1 className="font-display text-kaempe font-bold">
           {da.oversigt.titel}
         </h1>
         <div className="mt-6 rounded-bloed bg-gran p-6 text-kalk">
@@ -62,7 +62,7 @@ export default async function Oversigt() {
 
   return (
     <main className="py-6">
-      <h1 className="font-display text-kaempe font-bold uppercase">
+      <h1 className="font-display text-kaempe font-bold">
         {da.oversigt.titel}
       </h1>
 
@@ -73,7 +73,7 @@ export default async function Oversigt() {
           className="mt-6 rounded-bloed bg-gran p-5 text-kalk"
           aria-label={da.oversigt.statistikTitel}
         >
-          <p className="font-mono text-detalje font-bold uppercase tracking-wide text-hoer">
+          <p className="font-mono text-detalje font-bold tracking-wide text-hoer">
             {da.oversigt.statistikTitel}
           </p>
           <p className="mt-3 font-mono text-kaempe font-bold leading-none">

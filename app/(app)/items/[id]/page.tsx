@@ -103,7 +103,7 @@ export default async function ItemSide({
 
       {/* 1 · Ægte fotos først — altid (compliance-rækkefølgen, FR-6) */}
       <section className="mt-10" aria-label={da.resultat.aegteFotosTitel}>
-        <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
+        <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
           01 — {da.resultat.aegteFotosTitel}
         </h2>
         <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
@@ -138,7 +138,7 @@ export default async function ItemSide({
       {/* 2 · Visualisering efter — med badge, aldrig først */}
       <section className="mt-8" aria-label={da.resultat.visualiseringTitel}>
         <div className="flex items-center gap-3">
-          <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
+          <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
             02 — {da.resultat.visualiseringTitel}
           </h2>
           <Badge variant="visualisering">{da.resultat.visualiseringBadge}</Badge>
@@ -177,7 +177,7 @@ export default async function ItemSide({
 
       {/* 3 · Annoncetekst med kopiér-knap pr. element */}
       <section className="mt-8" aria-label={da.resultat.tekstTitel}>
-        <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
+        <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
           03 — {da.resultat.tekstTitel}
         </h2>
         <div className="mt-3 flex flex-col gap-4">
@@ -239,7 +239,7 @@ export default async function ItemSide({
 
       {/* 4 · Checkliste */}
       <section className="mt-8" aria-label={da.resultat.checklisteTitel}>
-        <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
+        <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
           04 — {da.resultat.checklisteTitel}
         </h2>
         <ol className="mt-3 flex max-w-laesbar list-decimal flex-col gap-2 pl-5">
@@ -262,7 +262,7 @@ export default async function ItemSide({
 
       {/* 5 · Regenerér enkeltdele (B-8) — reduceret pris, trækkes kun ved succes */}
       <section className="mt-8" aria-label={da.regenerer.titel}>
-        <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-tekst/70">
+        <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
           05 — {da.regenerer.titel}
         </h2>
         <div className="mt-3">

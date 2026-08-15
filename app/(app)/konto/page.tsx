@@ -30,7 +30,7 @@ export default async function Konto() {
 
   return (
     <main className="py-6">
-      <h1 className="font-display text-kaempe font-bold uppercase">
+      <h1 className="font-display text-kaempe font-bold">
         {da.konto.titel}
       </h1>
 

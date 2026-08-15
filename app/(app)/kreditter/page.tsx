@@ -26,7 +26,7 @@ export default async function Kreditter({
 
   return (
     <main className="py-6">
-      <h1 className="font-display text-kaempe font-bold uppercase">
+      <h1 className="font-display text-kaempe font-bold">
         {da.kreditter.titel}
       </h1>
       <p className="mt-3 max-w-laesbar text-tekst/80">{da.kreditter.forklaring}</p>

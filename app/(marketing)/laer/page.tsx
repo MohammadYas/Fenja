@@ -15,7 +15,7 @@ export default function Laer() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12">
-      <h1 className="font-display text-kaempe font-bold uppercase">
+      <h1 className="font-display text-kaempe font-bold">
         {da.laer.titel}
       </h1>
       <p className="mt-3 max-w-laesbar text-tekst/80">{da.laer.forklaring}</p>

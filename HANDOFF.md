@@ -1,37 +1,24 @@
 # FENJA · HANDOFF.md — Projektbibel v1.0
-
 > **Dette dokument er lov.** Alle — mennesker og AI-agenter (Claude Code cloud sessions) — læser dette dokument OG `STATUS.md` før én linje kode skrives. Ved konflikt mellem dette dokument og en sessions egen idé vinder dokumentet. Ændringer til dokumentet sker kun via PR med begrundelse.
 >
 > Repo-rod skal indeholde: `HANDOFF.md` (denne fil) · `SPEC.md` (fenja-spec v0.2, den tekniske spec) · `STATUS.md` (levende log) · `BACKLOG.md` (opgaver) · `DESIGN.md` (designbeslutninger, oprettes af design-sessionen)
-
 ---
-
 ## 0. Produktet i tre sætninger
-
 Fenja hjælper folk med at sælge deres tøj hurtigere på Vinted: upload mobilfotos af et stykke tøj, og få rensede salgsbilleder, en visualisering af tøjet båret i nordisk æstetik, og en færdig annoncetekst med prisforslag — klar til copy-paste. Compliance er indbygget: ægte fotos først, visualiseringer tydeligt mærket, fejl fremhævet frem for skjult. Forretningen: 3 gratis annoncer, derefter kreditpakker; sideløbende sælges B2B-annoncepakker manuelt (fase B-motoren).
-
 ---
-
 ## 1. Faserne
-
 ### Fase A — Fenja for Vinted (MVP, uge 1–3)
 Selvbetjent, mobil-first web-app til private Vinted-sælgere. Billeder + tekst, ingen video. Detaljeret i §4 (krav) og `SPEC.md`.
 **Exit-kriterie:** Live på eget domæne med betaling, ≥ 10 rigtige brugere, troskabs-pass-rate ≥ 70 %, hele kerneflowet ≤ 2 min.
-
 ### Fase B — Videoannonce-motoren (B2B, uge 3+)
 Seedance 2.0-pipelinen (brief → scripts → UGC-video → assembly) som beskrevet i `SPEC.md` Tillæg B. Sælges som annoncepakker (3.000–5.000 kr.) til danske SMB'er. Genbruger fase A's auth, jobs, kreditter, provider-lag og storage.
 **Exit-kriterie:** Første betalende B2B-leverance gennem pipelinen.
-
 ### Fase C — Skalering (måned 2+)
 Flere sprog/lande (Vinted findes i 20+ markeder — appen bygges i18n-klar fra dag 1, se NFR-13), crosslisting (Trendsales/DBA), evt. mobilapp, evt. selvbetjent version af videomotoren.
 **Exit-kriterie:** Defineres ved fase B-exit.
-
 ---
-
 ## 2. Designmanifest — ABSOLUT KRAV: intet AI-slop
-
 Dette er et P0-krav på linje med funktionalitet. Fenja skal ligne et produkt bygget af et lille, seriøst dansk studio med holdninger — ikke endnu en AI-SaaS fra en skabelon. Brugerne er unge mennesker med veludviklet bullshit-radar; ét AI-slop-signal, og tilliden er væk.
-
 ### 2.1 Forbudt (hård liste — PR'er der bryder disse afvises)
 1. Lilla/blå gradient-heroes, glassmorphism, neon-glow, mesh-gradients
 2. Emojis som ikoner eller i UI-tekst; ✨🚀🔥-sprog overalt
@@ -45,7 +32,6 @@ Dette er et P0-krav på linje med funktionalitet. Fenja skal ligne et produkt by
 10. Overflødige animationer, parallax-cirkus, scroll-hijacking, AI-chatbot-widget i hjørnet
 11. Engelske buzzwords i dansk copy; "dashboard", "features", "pricing" i UI'et (hedder: oversigt, sådan virker det, priser)
 12. Cookie-banner-teater ud over det lovpligtige; nyhedsbrev-popup
-
 ### 2.2 Påkrævet
 1. **Én designfase FØR UI-kode:** en dedikeret session producerer `DESIGN.md` med token-system (4–6 navngivne farver i hex, 2–3 skrifter med roller, typeskala, spacing, layoutkoncept, ét signatur-element) + begrundelser. Al UI-kode deriverer derefter fra tokens — ingen ad hoc-farver eller -størrelser
 2. **Retning (startforslag — design-sessionen må udfordre det, men skal begrunde):** nordisk redaktionelt & taktilt. Tøj er tekstil — designet må gerne føles materielt. Forslag til tokens: Kalk `#F1F3F2` (baggrund), Koks `#212523` (tekst), Gran `#24513F` (primær), Hør `#D8D3C6` (flader), Rav `#C97F1B` (kun til pris/CTA-detaljer). Skrifter: karakterfuld grotesk til display (fri licens, self-hosted), rolig læseskrift til brødtekst, mono til tal/priser. Dette er bevidst IKKE nogen af de tre forbudte defaults
@@ -53,16 +39,11 @@ Dette er et P0-krav på linje med funktionalitet. Fenja skal ligne et produkt by
 4. **Copy-regler:** dansk, konkret, ærlig, lavmælt selvsikker. Aktiv form. Tal frem for tillægsord ("færdig annonce på 2 minutter", ikke "lynhurtigt"). Knapper siger hvad de gør ("Lav min annonce", ikke "Kom i gang"). Fejlbeskeder forklarer hvad der skete og hvad man gør — uden undskyldnings-teater
 5. **Kvalitetsgulv uden at prale af det:** responsivt ned til 320 px, synligt keyboard-fokus, `prefers-reduced-motion` respekteret, rigtige alt-tekster, kontrast ≥ WCAG AA
 6. **Fotografisk ærlighed:** produktbilleder på sitet er uredigerede skærmbilleder/output. Visualiserings-badge ("Visualisering" + AI-mærkning i metadata) er lovpligtigt på genererede billeder og fjernes ALDRIG — det er ikke i konflikt med 2.1.4: brandet praler ikke af AI, men produktet skjuler den heller ikke hvor loven og ærligheden kræver mærkning
-
 ### 2.3 Slop-tjek (køres af hver UI-PR)
 Selvkritik i PR-beskrivelsen: "Hvilke 3 elementer i denne ændring kunne stamme fra en hvilken som helst AI-genereret SaaS — og hvad gjorde jeg ved dem?" Kan spørgsmålet ikke besvares konkret, er PR'en ikke klar.
-
 ---
-
 ## 3. Arkitektur & repo-struktur
-
 Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Netlify (kun UI + lette routes; langvarige jobs i Trigger.dev) · Supabase via CLI (Postgres, Auth magic link, Storage) · Trigger.dev · fal.ai bag provider-interfaces · Claude API (tekst) · Stripe · Resend · Tailwind + egne tokens · sharp.
-
 ```
 /                     HANDOFF.md · SPEC.md · STATUS.md · BACKLOG.md · DESIGN.md
 /app                  Next.js App Router (da som default-locale, i18n-klar)
@@ -84,11 +65,8 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 /public/fonts         self-hostede skrifter (fri licens, licensfil vedlagt)
 .env.example          ALLE nødvendige nøgler, dokumenteret, ingen værdier
 ```
-
 ---
-
 ## 4. Komplet kravliste
-
 ### Epic 1 · Konto & adgang
 | ID | Krav | Prio |
 |---|---|---|
@@ -97,7 +75,6 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | A-3 | Konto-side: e-mail, kreditsaldo, købshistorik, slet konto | P0 |
 | A-4 | Slet konto = fuld sletning af alle billeder, items og persondata inden 24 t (GDPR) | P0 |
 | A-5 | Session-håndtering der overlever app-genstart på mobil | P0 |
-
 ### Epic 2 · Item-flowet (kernen)
 | ID | Krav | Prio |
 |---|---|---|
@@ -111,7 +88,6 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | B-8 | Regenerér enkeltdele (ny visualisering i andet preset, ny tekst) til reduceret kreditpris | P1 |
 | B-9 | Batch: fotografér flere items i træk, pipeline kører dem parallelt | P1 |
 | B-10 | Statistik: samlet salgsværdi, antal solgte, gennemsnitlig liggetid | P1 |
-
 ### Epic 3 · Billedpipeline
 | ID | Krav | Prio |
 |---|---|---|
@@ -123,7 +99,6 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | C-6 | Person-diversitet i rotation; aldrig genkendelige/virkelige personer; ingen "forbedring" af hvordan tøjet sidder | P0 |
 | C-7 | Alle provider-kald bag `ImageProvider`-interface med mock-implementering til test/CI | P0 |
 | C-8 | Output-formater matcher Vinteds visning (4:5-venlig beskæring tilbydes) | P1 |
-
 ### Epic 4 · Annoncetekst
 | ID | Krav | Prio |
 |---|---|---|
@@ -131,7 +106,6 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | D-2 | Fejl fra fejl-feltet SKAL fremgå af beskrivelsen — håndhævet med validering, ikke kun prompt | P0 |
 | D-3 | Label-fotoet aflæses (materiale, vaskeanvisning) og flettes ind når muligt | P1 |
 | D-4 | Prisforslag baseret på mærke/kategori/stand med kort begrundelse ("lignende [mærke]-striktrøjer ligger typisk X–Y kr.") — formuleret som forslag, aldrig garanti | P0 |
-
 ### Epic 5 · Kreditter & betaling
 | ID | Krav | Prio |
 |---|---|---|
@@ -141,7 +115,6 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | E-4 | Idempotente webhooks og jobs: dubletter må aldrig koste dobbelt | P0 |
 | E-5 | Misbrugsværn: rate limits pr. bruger, globalt dagligt API-budgetloft med kill-switch, e-mailverifikation før gratis-kreditter | P0 |
 | E-6 | Kvitteringer via Stripe; moms korrekt konfigureret (dansk B2C) | P0 |
-
 ### Epic 6 · Marketing-site & Lær
 | ID | Krav | Prio |
 |---|---|---|
@@ -149,7 +122,6 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | F-2 | "Lær"-sektion: 5–8 guides som markdown (sourcing: genbrug/kilosalg/loppemarked/dødsbo; prissætning; fototeknik; Vinteds regler; hvornår Vinted Pro). Indhold må ALDRIG opfordre til kommercielt salg på privat konto | P1 |
 | F-3 | SEO-basics: metadata, OG-billeder (ægte output), sitemap, semantisk HTML, dansk lang-tag | P1 |
 | F-4 | Delbart before/after-billede pr. item, formateret til TikTok-slideshow (brugerens valg, aldrig automatisk deling) | P1 |
-
 ### Epic 7 · Drift & observability
 | ID | Krav | Prio |
 |---|---|---|
@@ -157,13 +129,11 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | G-2 | Fejlsporing (Sentry el. lign. free tier) på app + jobs | P1 |
 | G-3 | Trigger.dev-runs synlige med genkørsel af fejlede jobs | P0 |
 | G-4 | Backup: Supabase PITR/backup aktiveret; migrations gør skemaet reproducérbart | P1 |
-
 ### Epic 8 · Fase B-forberedelse (bygges nu, bruges senere)
 | ID | Krav | Prio |
 |---|---|---|
 | H-1 | `VideoProvider`-interface defineret parallelt med `ImageProvider` (implementering venter) | P1 |
 | H-2 | Ingen fase A-beslutning må blokere Tillæg B-pipelinen (jobs, storage og kreditter skal kunne bære video-workloads) | P1 |
-
 ### Ikke-funktionelle krav
 | ID | Krav |
 |---|---|
@@ -180,11 +150,8 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | NFR-11 | AI-cost pr. komplet annonce ≤ 2 kr.; måles i G-1 |
 | NFR-12 | Al brugervendt tekst i `/lib/copy/da.ts` — aldrig hårdkodet i komponenter |
 | NFR-13 | i18n-klar: locale-struktur fra dag 1, dansk som eneste aktive sprog i fase A |
-
 ---
-
 ## 5. Arbejdsprotokol — sådan arbejder sessions i dette repo
-
 ### 5.1 Hver session, hver gang
 1. Læs `HANDOFF.md` + `STATUS.md` + relevant afsnit af `SPEC.md`/`DESIGN.md`
 2. Tag ÉN opgave fra `BACKLOG.md` (øverste uafhængige, medmindre opgaven er givet i prompten)
@@ -192,7 +159,6 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 4. Små commits, conventional commits på engelsk (`feat: add credit ledger with idempotent delivery charge`)
 5. Afslut ALTID med: (a) alle tests/lint/typecheck grønne, (b) PR med beskrivelse: hvad, hvorfor, hvordan testet, screenshots ved UI (+ slop-tjekket fra §2.3), (c) opdatering af `STATUS.md` og afkrydsning i `BACKLOG.md` i samme PR
 6. Én opgave = én PR. Ingen "mens jeg var i gang"-ændringer uden for opgavens scope
-
 ### 5.2 Forbudt for sessions
 - Committe secrets eller rigtige nøgler (kun `.env.example` opdateres)
 - Kalde rigtige betalings-/billed-APIs uden at opgaven eksplicit siger det og nøgler findes
@@ -200,10 +166,8 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 - Tilføje dependencies uden begrundelse i PR (og aldrig for noget under ~30 linjer egen kode)
 - Bryde designmanifestet (§2) eller compliance-reglerne (`SPEC.md` §8.2)
 - Merge sine egne PR'er — ejeren reviewer og merger
-
 ### 5.3 Definition of Done (gælder alle opgaver)
 Kode typechecker og linter rent · relevante tests skrevet og grønne · fungerer med mock-providers uden nøgler · mobilvisning verificeret ved UI · copy i `/lib/copy/da.ts` og på manifest-dansk · `STATUS.md` opdateret · ingen TODO'er uden tilhørende BACKLOG-punkt
-
 ### 5.4 STATUS.md-format (opret som første opgave)
 ```
 # STATUS
@@ -217,11 +181,8 @@ Sidst opdateret: <dato> af <session/menneske>
 ## Beslutninger truffet undervejs
 - <dato>: <beslutning + hvorfor>
 ```
-
 ---
-
 ## 6. Ejerens hjemme-checkliste (det eneste, der IKKE kan gøres fra mobilen)
-
 Når du er hjemme (~1 time første gang):
 1. `supabase init` er allerede i repoet fra session 1 — kør `supabase start` lokalt, verificér migrations med `supabase db reset`
 2. Opret Supabase-projekt i skyen → `supabase link` → `supabase db push`
@@ -231,13 +192,9 @@ Når du er hjemme (~1 time første gang):
 6. Trigger.dev-projekt + Resend-domæneverifikation
 7. Registrér domæne (tjek fenja.ai/getfenja.com/fenja.studio + virk.dk/EUIPO for navnet)
 8. Push evt. lokale ændringer — herefter kan ALT igen køre fra mobilen via cloud sessions
-
 Indtil da: alle sessions arbejder mod mocks og lokal Supabase-config. Intet i backloggen før session 12 kræver rigtige nøgler.
-
 ---
-
 ## 7. BACKLOG.md — startindhold (kopiér ind som fil, sessions arbejder oppefra)
-
 ```
 # BACKLOG — fase A
 ## Fundament
@@ -271,17 +228,10 @@ Indtil da: alle sessions arbejder mod mocks og lokal Supabase-config. Intet i ba
 [ ] S15 Misbrugsværn + admin-omkostningsside (E-5, G-1) + Sentry (G-2)
 [ ] S16 Preset 2+3, delbart before/after (C-5, F-4), polering fra egen brugstest
 ```
-
 ---
-
 ## 8. Kvalitetsgates før offentlig lancering
-
 Alle skal være grønne: Gate 1 troskab ≥ 70 % (ellers: on-model slås fra, MVP = rens+tekst) · Gate 2 komplet annonce ≤ 2 min · compliance-testene grønne (badge, rækkefølge, fejl-i-tekst kan ikke omgås) · Lighthouse mobil ≥ 90 på marketing-sider · én person uden instruktion gennemfører flowet på egen telefon · slop-gennemgang af HELE sitet mod §2.1-listen · vilkår + privatliv + moms på plads · budgetloft og kill-switch testet.
-
 ---
-
 ## 9. Referencer
-
 `SPEC.md` (fenja-spec v0.2): fuld teknisk spec — datamodel, billedpipeline-detaljer, preset-system, unit economics, risici, Tillæg B (videomotoren). Vinteds katalogregler + kommercielt salg-regler: læses af enhver session, der rører compliance-logik eller Lær-indhold. EU AI-forordningens mærkningskrav (art. 50, i kraft 2/8-2026): baggrund for C-4.
-
 *Handoff slut. Én opgave, én PR, opdatér STATUS — og intet slop.*

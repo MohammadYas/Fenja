@@ -29,7 +29,7 @@ export default async function AppLayout({
       {/* Topbar med søm-underkant; saldoen altid synlig som stille mærkat (E-1) */}
       <header className="sticky top-0 z-10 bg-baggrund">
         <div className="mx-auto flex min-h-touch max-w-md items-center justify-between px-4 py-1">
-          <span className="font-display text-lead font-bold uppercase">
+          <span className="font-display text-lead font-bold">
             {da.site.navn}
           </span>
           <Badge>{da.nav.saldo(saldo)}</Badge>

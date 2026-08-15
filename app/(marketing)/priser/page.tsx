@@ -17,7 +17,7 @@ export default function PriserSide() {
     <main>
       <section className="mx-auto max-w-5xl px-4 pb-12 pt-10">
         <Reveal>
-          <h1 className="font-display text-kaempe font-bold uppercase">
+          <h1 className="font-display text-kaempe font-bold">
             {da.priserSide.titel}
           </h1>
           <p className="mt-4 max-w-laesbar text-lead text-tekst/80">
@@ -33,7 +33,7 @@ export default function PriserSide() {
       <section className="bg-gran text-kalk" aria-label={da.priserSide.pakkerTitel}>
         <div className="mx-auto max-w-5xl px-4 py-16">
           <Reveal>
-            <h2 className="font-mono text-detalje font-bold uppercase tracking-wide text-hoer">
+            <h2 className="font-mono text-detalje font-bold tracking-wide text-hoer">
               {da.priserSide.pakkerTitel}
             </h2>
           </Reveal>

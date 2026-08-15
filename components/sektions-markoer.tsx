@@ -12,7 +12,7 @@ export function SektionsMarkoer({
 }) {
   return (
     <p
-      className={`font-mono text-detalje font-bold uppercase tracking-wide ${
+      className={`font-mono text-detalje font-bold tracking-wide ${
         paaMoerk ? "text-hoer" : "text-tekst/70"
       }`}
     >

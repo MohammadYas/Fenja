@@ -32,7 +32,7 @@
   /* Typografi til markdown-indhold (Lær-guides) — deriverer fra tokens.
      v2: artikler får plakat-rubrik (REDESIGN §3.6). */
   .prose-fenja h1 {
-    @apply font-display text-kaempe font-bold uppercase;
+    @apply font-display text-display font-bold;
   }
   .prose-fenja h2 {
     @apply mt-8 text-titel font-medium;
@@ -66,13 +66,11 @@
     );
   }
 
+  /* v6: vandrette delelinjer er rolige hairlines — den stiplede søm er
+     reserveret til before/after-panelet (lodret) og progress-sporet. */
   .soem-vandret {
-    height: 2px;
-    background-image: repeating-linear-gradient(
-      to right,
-      theme("colors.rav") 0 6px,
-      transparent 6px 11px
-    );
+    height: 1px;
+    background-color: theme("colors.kant");
   }
 
   /* Søm som hover/aktiv-markering på links og nav (REDESIGN §2.4/§2.5) —
@@ -84,10 +82,10 @@
   .soem-link:focus-visible,
   .soem-link[aria-current] {
     text-decoration-line: underline;
-    text-decoration-style: dashed;
-    text-decoration-color: theme("colors.rav");
-    text-decoration-thickness: 2px;
-    text-underline-offset: 5px;
+    text-decoration-style: solid;
+    text-decoration-color: theme("colors.gran");
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
   }
 
   /* Den syende søm: progress-spor (koks/15) + fyld (rav-søm) der "syr sig selv"

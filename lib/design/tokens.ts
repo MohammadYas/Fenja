@@ -57,10 +57,10 @@ export const typeskala: Record<
   display: ["1.75rem", { lineHeight: "1.2" }],
   hero: ["2.25rem", { lineHeight: "1.1" }],
   mega: ["3rem", { lineHeight: "1.05" }],
-  kaempe: ["clamp(2.5rem, 10vw, 5rem)", { lineHeight: "1", letterSpacing: "-0.01em" }],
+  kaempe: ["clamp(2rem, 5vw, 3.25rem)", { lineHeight: "1.1", letterSpacing: "-0.01em" }],
   plakat: [
-    "clamp(3.25rem, 15vw, 9rem)",
-    { lineHeight: "0.95", letterSpacing: "-0.02em" },
+    "clamp(2.5rem, 7vw, 4.5rem)",
+    { lineHeight: "1.05", letterSpacing: "-0.01em" },
   ],
 };
 

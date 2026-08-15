@@ -11,9 +11,10 @@ export const da = {
   site: {
     navn: "Fenja",
     beskrivelse:
-      "Upload mobilfotos af dit tøj og få rensede salgsbilleder, en mærket visualisering og en færdig annoncetekst — klar til Vinted.",
+      "UGC-annoncer, annoncebilleder og hjemmesider til virksomheder — og en app, der gør dine mobilfotos til færdige Vinted-annoncer.",
   },
   nav: {
+    virksomheder: "Til virksomheder",
     oversigt: "Oversigt",
     nytItem: "Nyt item",
     saadanVirkerDet: "Sådan virker det",
@@ -270,16 +271,38 @@ export const da = {
     ctaKnap: "Opret dig og få 3 gratis annoncer",
   },
   landing: {
-    // Plakat-heroen (REDESIGN §3.1): ét ord pr. linje, sidste ord fremhævet i rav.
-    heroPlakatLinjer: ["Sælg", "dit tøj"],
-    heroPlakatFremhaevet: "hurtigere",
-    heroStempel: "2 min",
-    heroTitel: "Færdig Vinted-annonce på 2 minutter",
+    // v6 (ejer-beslutning 2026-08-15): forsiden fører med B2B — UGC-annoncer,
+    // annoncebilleder og hjemmesider. Appen har egen sektion. Ingen priser her.
+    heroTitel: "UGC-annoncer og hjemmesider til virksomheder",
     heroTekst:
-      "Tag et par mobilfotos af dit tøj. Fenja renser billederne, viser hvordan tøjet ser ud på, og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted.",
-    heroKnap: "Lav min annonce",
-    heroFoer: "Dit foto",
-    heroEfter: "Renset",
+      "Fenja laver videoannoncer i UGC-format, annoncebilleder og hurtige hjemmesider for danske virksomheder. Fast pris pr. opgave — og I ejer alt materialet.",
+    heroKnap: "Skriv til os",
+    heroSekundaer: "Sælger du tøj på Vinted? Se appen",
+    ydelserTitel: "Det laver vi",
+    ydelser: [
+      {
+        titel: "UGC-videoannoncer",
+        tekst:
+          "Korte annoncevideoer i det format, folk faktisk ser: håndholdt, talt og ærligt. Leveret i 9:16, klar til Meta og TikTok.",
+      },
+      {
+        titel: "Annoncebilleder",
+        tekst:
+          "Rensede produktbilleder og before/after-materiale ud fra jeres egne fotos — samme billedpipeline som appen.",
+      },
+      {
+        titel: "Hjemmesider",
+        tekst:
+          "Mobil-første sider, der siger én ting klart og gør det let at kontakte jer. Bygget hurtigt og overdraget til jer.",
+      },
+    ],
+    ydelserCta:
+      "Fortæl os, hvad I sælger — vi svarer med et konkret oplæg og en fast pris.",
+    appenMaerkat: "Appen",
+    appenTitel: "Sælger du tøj på Vinted?",
+    appenTekst:
+      "Fenja-appen renser dine mobilfotos, viser hvordan tøjet ser ud på, og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted på cirka 2 minutter.",
+    appenKnap: "Lav min annonce",
     // Før/efter-kortene (v3): annoncen som transformation — den sjuskede seddel
     // mod den færdige leverance. Skitseret eksempel, tydeligt mærket som sådan.
     foerKort: {
@@ -297,7 +320,6 @@ export const da = {
       ],
       pris: "Prisforslag: 120–160 kr.",
     },
-    marginal: "Katalog 2026 · annoncer uden pynt",
     heroPladsholder:
       "Skitseret eksempel — når appen er i drift, viser vi et ægte før/efter herfra.",
     saadanTitel: "Sådan virker det",
@@ -318,12 +340,9 @@ export const da = {
     aerligTitel: "Ærlighed er hele idéen",
     aerligTekst:
       "Vinted kræver, at billede 1 er dit eget foto af varen — sådan leverer Fenja det. Visualiseringer er tydeligt mærket, og oplyste fejl kommer altid med i beskrivelsen. Det beskytter din konto og dine handler.",
-    priserTitel: "Priser",
-    priserGratis: "3 annoncer gratis, når du opretter dig.",
-    priserDerefter: "Derefter:",
-    ctaTitel: "Prøv med det næste stykke tøj, du vil sælge",
-    ctaKnap: "Opret dig og få 3 gratis annoncer",
-    ctaLap: "3 gratis annoncer",
+    ctaTitel: "Skal vi lave noget sammen?",
+    ctaVirksomhedKnap: "Skriv til os",
+    ctaAppKnap: "Opret dig og få 3 gratis annoncer",
   },
   vilkaar: {
     titel: "Vilkår",

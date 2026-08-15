@@ -13,6 +13,12 @@ export const kreditter = {
   prisRegenerering: 0.5,
 } as const;
 
+// B2B-henvendelser (UGC-annoncer/hjemmesider) — skift til domæne-mail når
+// domænet er registreret (HANDOFF §6.7).
+export const kontakt = {
+  email: "visual.studio.tuturials@gmail.com",
+} as const;
+
 export const pipeline = {
   troskabsTaerskel: 0.7, // K1 — kalibreres i S12 mod rigtige providers
   onModelForsoeg: 2, // 1 retry med strammere reference (C-3)
