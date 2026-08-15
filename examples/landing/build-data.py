@@ -74,8 +74,31 @@ with (DATA / "ux-guidelines.csv").open(newline="", encoding="utf-8") as fh:
             "s": row["Severity"],
         })
 
+charts = []
+with (DATA / "charts.csv").open(newline="", encoding="utf-8") as fh:
+    for row in csv.DictReader(fh):
+        charts.append({
+            "n": row["Best Chart Type"],
+            "t": row["Data Type"],
+            "k": row["Keywords"],
+            "w": row["When to Use"][:120],
+            "l": row["Library Recommendation"].split(";")[0][:60],
+            "a": row["Accessibility Risk"].replace("risk:", ""),
+        })
+
+landing = []
+with (DATA / "landing.csv").open(newline="", encoding="utf-8") as fh:
+    for row in csv.DictReader(fh):
+        landing.append({
+            "n": row["Pattern Name"],
+            "k": row["Keywords"],
+            "o": row["Section Order"],
+            "c": row["Primary CTA Placement"][:60],
+        })
+
 html = PAGE.read_text(encoding="utf-8")
-for tag, data in (("palettes", palettes), ("fonts", fonts), ("styles", styles), ("ux", ux)):
+for tag, data in (("palettes", palettes), ("fonts", fonts), ("styles", styles),
+                  ("ux", ux), ("charts", charts), ("landing", landing)):
     payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
     block = f"/*<{tag}>*/const {tag.upper()}={payload};/*</{tag}>*/"
     pattern = rf"/\*<{tag}>\*/.*?/\*</{tag}>\*/"
