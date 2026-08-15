@@ -507,58 +507,58 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
   <div class="wrap bar">
     <div class="mark">fenja<b>_</b></div>
     <nav class="path" aria-label="Sections">
-      <a href="#generate">generate</a><span class="xs-hide"> <em>·</em> </span><a href="#explore" class="xs-hide">palettes</a><span class="xs-hide"> <em>·</em> </span><a href="#type-explore" class="xs-hide">fonts</a> <em>·</em> <a href="#start">start</a>
+      <a href="#generate">generator</a><span class="xs-hide"> <em>·</em> </span><a href="#explore" class="xs-hide">paletter</a><span class="xs-hide"> <em>·</em> </span><a href="#type-explore" class="xs-hide">fonte</a> <em>·</em> <a href="#start">start</a>
     </nav>
   </div>
 </header>
 
 <main>
   <div class="wrap hero">
-    <p class="eyebrow">Design toolkit for Claude Code</p>
-    <h1>The design studio that lives in your <span class="dim">terminal.</span></h1>
-    <p class="lede">Fenja is seven Claude Code skills that take a product from
-    <strong>brand</strong> to <strong>tokens</strong> to <strong>shipped UI</strong> —
-    backed by curated local datasets and plain Python. No cloud, no login, no waiting.</p>
+    <p class="eyebrow">Design-toolkit til Claude Code</p>
+    <h1>Designstudiet, der bor i din <span class="dim">terminal.</span></h1>
+    <p class="lede">Fenja er syv Claude Code-skills, der tager et produkt fra
+    <strong>brand</strong> til <strong>tokens</strong> til <strong>færdig UI</strong> —
+    drevet af kuraterede lokale datasæt og ren Python. Ingen sky, intet login, ingen ventetid.</p>
 
     <div class="term" id="hero-term">
       <div class="term-head" aria-hidden="true">
         <span class="dots"><i></i><i></i><i></i></span>
         <span>fenja — zsh</span>
       </div>
-      <div class="term-body" role="img" aria-label="Terminal: the design-system generator produces Fenja's own dark developer-tool design system and persists it to MASTER.md">
+      <div class="term-body" role="img" aria-label="Terminal: design-system-generatoren producerer Fenjas eget mørke developer-tool-designsystem og gemmer det i MASTER.md">
 <div class="ln"><span class="prompt">➜ </span><span class="cmd type-target" id="typed">python3 .claude/skills/ui-ux-pro-max/scripts/search.py <span class="flag">"design toolkit"</span> --design-system -p Fenja</span><span class="caret" id="caret"></span></div>
 <div class="stream" id="stream">
 <div class="ln out">──────────────────────────────────────────────</div>
-<div class="ln out key">  PATTERN   <span class="val">Developer Tool / IDE</span></div>
-<div class="ln out key">  STYLE     <span class="val">Dark Mode (OLED)</span> — light not-recommended</div>
-<div class="ln out key">  PRIMARY   <span class="chip" style="background:#1E293B"></span><span class="val">#1E293B</span>   ACCENT  <span class="chip" style="background:#22C55E"></span><span class="val">#22C55E</span></div>
-<div class="ln out key">  SURFACE   <span class="chip" style="background:#1B2336"></span><span class="val">#1B2336</span>   BG      <span class="chip" style="background:#0F172A"></span><span class="val">#0F172A</span></div>
-<div class="ln out key">  HEADING   <span class="val">JetBrains Mono</span>    BODY    <span class="val">IBM Plex Sans</span></div>
-<div class="ln out key">  SPACING   <span class="val">4 / 8 / 16 / 24 / 32 px</span> rhythm</div>
+<div class="ln out key">  MØNSTER   <span class="val">Developer Tool / IDE</span></div>
+<div class="ln out key">  STIL      <span class="val">Dark Mode (OLED)</span> — lys frarådes</div>
+<div class="ln out key">  PRIMÆR    <span class="chip" style="background:#1E293B"></span><span class="val">#1E293B</span>   ACCENT  <span class="chip" style="background:#22C55E"></span><span class="val">#22C55E</span></div>
+<div class="ln out key">  FLADE     <span class="chip" style="background:#1B2336"></span><span class="val">#1B2336</span>   BG      <span class="chip" style="background:#0F172A"></span><span class="val">#0F172A</span></div>
+<div class="ln out key">  TYPO      <span class="val">JetBrains Mono</span> + <span class="val">IBM Plex Sans</span></div>
+<div class="ln out key">  RYTME     <span class="val">4 / 8 / 16 / 24 / 32 px</span> spacing</div>
 <div class="ln out">──────────────────────────────────────────────</div>
-<div class="ln ok">✔ persisted to examples/design-system/fenja/MASTER.md</div>
+<div class="ln ok">✔ gemt i examples/design-system/fenja/MASTER.md</div>
 </div>
       </div>
     </div>
-    <p class="sec-intro rv" style="font-size:.85rem;color:var(--muted)">Real output — this page is built from the design system Fenja generated for itself.</p>
+    <p class="sec-intro rv" style="font-size:.85rem;color:var(--muted)">Ægte output — denne side er bygget på det designsystem, Fenja genererede til sig selv.</p>
   </div>
 
   <section id="skills">
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> ls .claude/skills/</p>
-      <h2 class="rv">Seven skills, one pipeline</h2>
-      <p class="sec-intro rv">Each skill is self-contained: instructions, reference guides,
-      and searchable CSV datasets that run offline with the Python standard library.</p>
+      <h2 class="rv">Syv skills, én pipeline</h2>
+      <p class="sec-intro rv">Hver skill er selvbærende: instruktioner, referenceguides
+      og søgbare CSV-datasæt, der kører offline med Pythons standardbibliotek.</p>
 
       <div class="index rv">
-        <div class="index-head"><span>skill</span><span>what it does</span><span>data</span></div>
-        <div class="row"><span class="name">ui-ux-pro-max</span><span class="desc">Design intelligence — generates complete, reasoned design systems from a one-line brief.</span><span class="meta">18 datasets</span></div>
-        <div class="row"><span class="name">design</span><span class="desc">Logos, corporate identity, icons and social photos; 55 logo styles, 50 CIP deliverables.</span><span class="meta">9 datasets</span></div>
-        <div class="row"><span class="name">brand</span><span class="desc">Voice, visual identity and messaging — synced from guidelines straight into tokens.</span><span class="meta">4 scripts</span></div>
-        <div class="row"><span class="name">design-system</span><span class="desc">Three-layer tokens (primitive → semantic → component) and a strategic slide engine.</span><span class="meta">8 datasets</span></div>
-        <div class="row"><span class="name">ui-styling</span><span class="desc">shadcn/ui and Tailwind implementation patterns, theming, and accessibility.</span><span class="meta">7 references</span></div>
-        <div class="row"><span class="name">slides</span><span class="desc">Persuasion-first HTML presentations with Chart.js and copywriting formulas.</span><span class="meta">5 references</span></div>
-        <div class="row"><span class="name">banner-design</span><span class="desc">22 art directions with pixel-exact PNG export through headless Chromium.</span><span class="meta">1 exporter</span></div>
+        <div class="index-head"><span>skill</span><span>hvad den gør</span><span>data</span></div>
+        <div class="row"><span class="name">ui-ux-pro-max</span><span class="desc">Designintelligens — genererer komplette, begrundede designsystemer ud fra én linjes brief.</span><span class="meta">18 datasæt</span></div>
+        <div class="row"><span class="name">design</span><span class="desc">Logoer, corporate identity, ikoner og social photos; 55 logostile, 50 CIP-leverancer.</span><span class="meta">9 datasæt</span></div>
+        <div class="row"><span class="name">brand</span><span class="desc">Tone, visuel identitet og budskaber — synkroniseret fra guidelines direkte til tokens.</span><span class="meta">4 scripts</span></div>
+        <div class="row"><span class="name">design-system</span><span class="desc">Trelags tokens (primitiv → semantisk → komponent) og en strategisk slide-motor.</span><span class="meta">8 datasæt</span></div>
+        <div class="row"><span class="name">ui-styling</span><span class="desc">Implementeringsmønstre for shadcn/ui og Tailwind, theming og tilgængelighed.</span><span class="meta">7 referencer</span></div>
+        <div class="row"><span class="name">slides</span><span class="desc">Overbevisende HTML-præsentationer med Chart.js og copywriting-formler.</span><span class="meta">5 referencer</span></div>
+        <div class="row"><span class="name">banner-design</span><span class="desc">22 art directions med pixel-præcis PNG-eksport via headless Chromium.</span><span class="meta">1 eksporter</span></div>
       </div>
     </div>
   </section>
@@ -566,18 +566,18 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
   <section id="pipeline">
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> cat pipeline</p>
-      <h2 class="rv">Brand in, product out</h2>
-      <p class="sec-intro rv">One source of truth flows through every deliverable. Change a brand
-      color once and the tokens, slides, and banners follow.</p>
+      <h2 class="rv">Brand ind, produkt ud</h2>
+      <p class="sec-intro rv">Én kilde til sandhed løber gennem alle leverancer. Ret en brandfarve
+      ét sted, og tokens, slides og bannere følger med.</p>
 
       <div class="pipe rv">
-        <div class="stage"><div class="k">brand</div><div class="f">brand-guidelines.md</div><p>Voice, palette, and typography defined in one reviewable file.</p></div>
+        <div class="stage"><div class="k">brand</div><div class="f">brand-guidelines.md</div><p>Tone, palette og typografi defineret i én gennemskuelig fil.</p></div>
         <div class="link" aria-hidden="true">──▶</div>
-        <div class="stage"><div class="k">tokens</div><div class="f">design-tokens.json</div><p>Synced to a three-layer token architecture with CSS variables.</p></div>
+        <div class="stage"><div class="k">tokens</div><div class="f">design-tokens.json</div><p>Synkroniseret til en trelags token-arkitektur med CSS-variabler.</p></div>
         <div class="link" aria-hidden="true">──▶</div>
-        <div class="stage"><div class="k">interface</div><div class="f">var(--color-primary)</div><p>Components, slides, and banners consume tokens — never raw hex.</p></div>
+        <div class="stage"><div class="k">interface</div><div class="f">var(--color-primary)</div><p>Komponenter, slides og bannere bruger tokens — aldrig rå hex.</p></div>
         <div class="link" aria-hidden="true">──▶</div>
-        <div class="stage"><div class="k">export</div><div class="f">1500×500 · PNG</div><p>Pixel-exact renders straight from HTML via headless Chromium.</p></div>
+        <div class="stage"><div class="k">eksport</div><div class="f">1500×500 · PNG</div><p>Pixel-præcise renderinger direkte fra HTML via headless Chromium.</p></div>
       </div>
     </div>
   </section>
@@ -585,14 +585,14 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
   <section id="generate">
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> ./generate --design-system</p>
-      <h2 class="rv">Describe your product, get a direction</h2>
-      <p class="sec-intro rv">A miniature of the toolkit&rsquo;s <code style="font-family:var(--mono);font-size:.85em">--design-system</code>
-      search runs right here in the page: your words are scored against the style, palette,
-      and typography datasets, and the best match streams back.</p>
+      <h2 class="rv">Beskriv dit produkt, få en retning</h2>
+      <p class="sec-intro rv">En miniature af toolkittets <code style="font-family:var(--mono);font-size:.85em">--design-system</code>-søgning
+      kører direkte her på siden: dine ord scores mod stil-, palette- og typografi-datasættene,
+      og det bedste match streamer tilbage. Søg på engelsk — datasættene er engelske.</p>
 
       <label class="search-line rv" for="gq" style="margin-top:2rem">
         <span class="prompt">&#10142; </span><span class="g">./generate</span>
-        <input id="gq" type="search" autocomplete="off" spellcheck="false" placeholder="beauty spa wellness service" aria-label="Describe your product">
+        <input id="gq" type="search" autocomplete="off" spellcheck="false" placeholder="beauty spa wellness service" aria-label="Beskriv dit produkt (på engelsk)">
         <span class="g">--design-system</span>
       </label>
       <div class="term rv" style="margin-top:.8rem">
@@ -610,43 +610,43 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
         <div class="mk" id="mk">
           <div class="mk-view on" data-view="landing">
           <div class="mk-nav">
-            <span class="mk-brand"><i></i>acme co</span>
-            <span class="mk-links" aria-hidden="true"><span>Product</span><span>Pricing</span><span>About</span></span>
-            <button class="mk-cta-sm" type="button" tabindex="-1">Sign up</button>
+            <span class="mk-brand"><i></i>agern &amp; co</span>
+            <span class="mk-links" aria-hidden="true"><span>Produkt</span><span>Priser</span><span>Om os</span></span>
+            <button class="mk-cta-sm" type="button" tabindex="-1">Opret konto</button>
           </div>
           <div class="mk-hero">
             <div class="mk-eyebrow" id="mk-eyebrow">New</div>
-            <div class="mk-h1">Built for how you actually work</div>
-            <p class="mk-sub">Everything in one place — fast, clear, and on brand from the first day.</p>
+            <div class="mk-h1">Bygget til den måde, du faktisk arbejder</div>
+            <p class="mk-sub">Alt samlet ét sted — hurtigt, klart og på brand fra dag ét.</p>
             <div class="mk-actions">
-              <button class="mk-btn" type="button" tabindex="-1">Get started</button>
-              <button class="mk-ghost" type="button" tabindex="-1">See pricing</button>
+              <button class="mk-btn" type="button" tabindex="-1">Kom i gang</button>
+              <button class="mk-ghost" type="button" tabindex="-1">Se priser</button>
             </div>
           </div>
           <div class="mk-cards">
-            <div class="mk-card"><i></i><b>Fast setup</b><span>Live in minutes, not weeks — no consultants required.</span></div>
-            <div class="mk-card"><i></i><b>Clear pricing</b><span>One plan, everything included, cancel anytime.</span></div>
-            <div class="mk-card"><i></i><b>Real support</b><span>Answers from people who built it, within the hour.</span></div>
+            <div class="mk-card"><i></i><b>Hurtig opsætning</b><span>Live på minutter, ikke uger — helt uden konsulenter.</span></div>
+            <div class="mk-card"><i></i><b>Klare priser</b><span>Én plan, alt inkluderet, opsig når som helst.</span></div>
+            <div class="mk-card"><i></i><b>Rigtig support</b><span>Svar fra dem, der byggede det — inden for en time.</span></div>
           </div>
           </div>
 
           <div class="mk-view" data-view="dash">
             <div class="mk-dash">
               <div class="mk-side">
-                <span class="it on">Overview</span><span class="it">Orders</span><span class="it">Customers</span><span class="it">Reports</span><span class="it">Settings</span>
+                <span class="it on">Overblik</span><span class="it">Ordrer</span><span class="it">Kunder</span><span class="it">Rapporter</span><span class="it">Indstillinger</span>
               </div>
               <div class="mk-main">
-                <div class="mk-dash-title">Overview</div>
+                <div class="mk-dash-title">Overblik</div>
                 <div class="mk-stats">
-                  <div class="mk-stat"><span class="l">Revenue</span><div class="v">$48.2k<em>+12%</em></div></div>
-                  <div class="mk-stat"><span class="l">Active</span><div class="v">1,284<em>+4%</em></div></div>
+                  <div class="mk-stat"><span class="l">Omsætning</span><div class="v">$48.2k<em>+12%</em></div></div>
+                  <div class="mk-stat"><span class="l">Aktive</span><div class="v">1,284<em>+4%</em></div></div>
                   <div class="mk-stat"><span class="l">Churn</span><div class="v">1.9%<em>−0.3</em></div></div>
                 </div>
                 <div class="mk-table">
-                  <div class="mk-tr hd"><span>Customer</span><span>Plan</span><span>Status</span><span>MRR</span></div>
-                  <div class="mk-tr"><span>Nordlys ApS</span><span>Growth</span><span class="mk-pill">Active</span><span>$490</span></div>
-                  <div class="mk-tr"><span>Brava Studio</span><span>Starter</span><span class="mk-pill">Trial</span><span>$0</span></div>
-                  <div class="mk-tr"><span>Kastanje &amp; Co</span><span>Growth</span><span class="mk-pill">Active</span><span>$490</span></div>
+                  <div class="mk-tr hd"><span>Kunde</span><span>Plan</span><span>Status</span><span>MRR</span></div>
+                  <div class="mk-tr"><span>Nordlys ApS</span><span>Growth</span><span class="mk-pill">Aktiv</span><span>$490</span></div>
+                  <div class="mk-tr"><span>Brava Studio</span><span>Starter</span><span class="mk-pill">Prøve</span><span>$0</span></div>
+                  <div class="mk-tr"><span>Kastanje &amp; Co</span><span>Growth</span><span class="mk-pill">Aktiv</span><span>$490</span></div>
                 </div>
               </div>
             </div>
@@ -657,18 +657,18 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
               <div class="mk-phone">
                 <div class="mk-status"><span>9:41</span><span>●●●</span></div>
                 <div class="mk-ph-body">
-                  <div class="mk-ph-title">Good morning, Kim</div>
-                  <div class="mk-ph-sub">Here's how today looks.</div>
+                  <div class="mk-ph-title">Godmorgen, Kim</div>
+                  <div class="mk-ph-sub">Sådan ser dagen ud.</div>
                   <div class="mk-ph-card">
-                    <div class="row"><span>Today's bookings</span><span class="big">14</span></div>
+                    <div class="row"><span>Dagens bookinger</span><span class="big">14</span></div>
                     <div class="mk-ph-bar"><i></i></div>
                   </div>
                   <div class="mk-ph-card">
-                    <div class="row"><span>Next: 10:30 — Facial, room 2</span></div>
+                    <div class="row"><span>Næste: 10.30 — Ansigtsbehandling, rum 2</span></div>
                   </div>
-                  <button class="mk-ph-btn" type="button" tabindex="-1">New booking</button>
+                  <button class="mk-ph-btn" type="button" tabindex="-1">Ny booking</button>
                   <div class="mk-tabsbar" aria-hidden="true">
-                    <span class="on"><i></i>Home</span><span><i></i>Calendar</span><span><i></i>Clients</span><span><i></i>More</span>
+                    <span class="on"><i></i>Hjem</span><span><i></i>Kalender</span><span><i></i>Kunder</span><span><i></i>Mere</span>
                   </div>
                 </div>
               </div>
@@ -676,26 +676,26 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
           </div>
         </div>
       </div>
-      <p class="mk-caption"><span>type: <b id="mk-type">—</b> <span style="color:var(--muted)">(approximated on this page)</span></span><span><button class="copy-btn" id="copy-starter" type="button">copy starter html</button></span></p>
+      <p class="mk-caption"><span>typografi: <b id="mk-type">—</b> <span style="color:var(--muted)">(tilnærmet på denne side)</span></span><span><button class="copy-btn" id="copy-starter" type="button">kopiér starter-html</button></span></p>
     </div>
   </section>
 
   <section id="data">
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> wc -l data/*.csv</p>
-      <h2 class="rv">Curated data, not guesswork</h2>
-      <p class="sec-intro rv">Every recommendation is retrieved from hand-curated datasets with a
-      BM25 search engine — deterministic, inspectable, and versioned in git.</p>
+      <h2 class="rv">Kurateret data, ikke gætværk</h2>
+      <p class="sec-intro rv">Hver anbefaling hentes fra håndkuraterede datasæt med en
+      BM25-søgemaskine — deterministisk, gennemskuelig og versioneret i git.</p>
 
       <div class="stats rv">
-        <div class="stat"><div class="n" data-count="79">79</div><div class="l">searchable UI styles</div></div>
-        <div class="stat"><div class="n" data-count="192">192</div><div class="l">product palettes &amp; reasoning profiles</div></div>
-        <div class="stat"><div class="n" data-count="119">119</div><div class="l">UX guidelines</div></div>
-        <div class="stat"><div class="n" data-count="74">74</div><div class="l">font pairings</div></div>
-        <div class="stat"><div class="n" data-count="105">105</div><div class="l">icon recommendations</div></div>
-        <div class="stat"><div class="n" data-count="25">25</div><div class="l">chart types with configs</div></div>
-        <div class="stat"><div class="n" data-count="22">22</div><div class="l">framework stack guides</div></div>
-        <div class="stat"><div class="n" data-count="0">0</div><div class="l">network calls required</div></div>
+        <div class="stat"><div class="n" data-count="79">79</div><div class="l">søgbare UI-stilarter</div></div>
+        <div class="stat"><div class="n" data-count="192">192</div><div class="l">produktpaletter &amp; reasoning-profiler</div></div>
+        <div class="stat"><div class="n" data-count="119">119</div><div class="l">UX-retningslinjer</div></div>
+        <div class="stat"><div class="n" data-count="74">74</div><div class="l">font-parringer</div></div>
+        <div class="stat"><div class="n" data-count="105">105</div><div class="l">ikon-anbefalinger</div></div>
+        <div class="stat"><div class="n" data-count="25">25</div><div class="l">charttyper med configs</div></div>
+        <div class="stat"><div class="n" data-count="22">22</div><div class="l">framework-stackguides</div></div>
+        <div class="stat"><div class="n" data-count="0">0</div><div class="l">netværkskald påkrævet</div></div>
       </div>
     </div>
   </section>
@@ -703,38 +703,38 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
   <section id="explore">
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> grep -i <span style="color:var(--amber)">"&hellip;"</span> data/colors.csv</p>
-      <h2 class="rv">Try the dataset, live</h2>
-      <p class="sec-intro rv">All 192 product palettes from <code style="font-family:var(--mono);font-size:.85em">colors.csv</code>
-      are embedded in this page. Search by industry, tap one, and watch it re-skin the preview —
-      the same token swap the toolkit performs in your codebase.</p>
+      <h2 class="rv">Prøv datasættet, live</h2>
+      <p class="sec-intro rv">Alle 192 produktpaletter fra <code style="font-family:var(--mono);font-size:.85em">colors.csv</code>
+      er indlejret i siden. Søg på branche (på engelsk), tryk på en, og se den om-style preview&rsquo;et —
+      samme token-swap som toolkittet laver i din kodebase.</p>
 
       <div class="explore rv">
         <div class="pv-pane">
           <div class="preview" id="pv" aria-live="polite">
-            <div class="pv-top"><span class="t">Acme — Overview</span><span class="u" aria-hidden="true"></span></div>
+            <div class="pv-top"><span class="t">Agern — Overblik</span><span class="u" aria-hidden="true"></span></div>
             <div class="pv-body">
               <div class="pv-card">
-                <div class="lab">Monthly revenue</div>
+                <div class="lab">Månedlig omsætning</div>
                 <div class="num">$48,210</div>
                 <div class="pv-bars" aria-hidden="true"><i style="height:38%"></i><i style="height:52%"></i><i style="height:44%"></i><i style="height:66%"></i><i style="height:58%"></i><i style="height:82%"></i></div>
               </div>
               <div class="pv-row">
                 <span class="pv-note" id="pv-note">Trust blue + orange CTA contrast</span>
-                <button class="pv-btn" type="button" tabindex="-1">Upgrade plan</button>
+                <button class="pv-btn" type="button" tabindex="-1">Opgrader plan</button>
               </div>
             </div>
           </div>
-          <div class="pv-name"><span>applied: <b id="pv-name">SaaS (General)</b></span><span id="pv-hex">#2563EB · #EA580C</span></div>
+          <div class="pv-name"><span>anvendt: <b id="pv-name">SaaS (General)</b></span><span id="pv-hex">#2563EB · #EA580C</span></div>
           <div class="tokens">
-            <div class="tokens-head"><span>design-tokens.css</span><button class="copy-btn" id="copy-tokens" type="button">copy</button></div>
-            <pre id="tokens-out" aria-label="CSS variables for the selected palette"></pre>
+            <div class="tokens-head"><span>design-tokens.css</span><button class="copy-btn" id="copy-tokens" type="button">kopiér</button></div>
+            <pre id="tokens-out" aria-label="CSS-variabler for den valgte palette"></pre>
           </div>
         </div>
 
         <div>
           <label class="search-line" for="pq">
             <span class="prompt">➜ </span><span class="g">grep -i</span>
-            <input id="pq" type="search" autocomplete="off" spellcheck="false" placeholder="fintech · beauty · gaming · crypto" aria-label="Search product palettes">
+            <input id="pq" type="search" autocomplete="off" spellcheck="false" placeholder="fintech · beauty · gaming · crypto" aria-label="Søg i produktpaletter (på engelsk)">
             <span class="g">colors.csv</span>
           </label>
           <div class="pcount" id="pcount"></div>
@@ -747,13 +747,13 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
   <section id="type-explore">
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> grep -i <span style="color:var(--amber)">"&hellip;"</span> data/typography.csv</p>
-      <h2 class="rv">74 font pairings, matched to mood</h2>
-      <p class="sec-intro rv">Every pairing carries its category, mood keywords, and the products
-      it suits &mdash; with a direct link to the faces on Google Fonts.</p>
+      <h2 class="rv">74 font-parringer, matchet på stemning</h2>
+      <p class="sec-intro rv">Hver parring har sin kategori, stemnings-nøgleord og de produkter,
+      den passer til &mdash; med direkte link til fontene på Google Fonts.</p>
 
       <label class="search-line rv" for="fq" style="margin-top:2rem">
         <span class="prompt">&#10142; </span><span class="g">grep -i</span>
-        <input id="fq" type="search" autocomplete="off" spellcheck="false" placeholder="elegant &middot; playful &middot; brutalist &middot; editorial" aria-label="Search font pairings">
+        <input id="fq" type="search" autocomplete="off" spellcheck="false" placeholder="elegant &middot; playful &middot; brutalist &middot; editorial" aria-label="Søg i font-parringer (på engelsk)">
         <span class="g">typography.csv</span>
       </label>
       <div class="pcount" id="fcount"></div>
@@ -764,21 +764,21 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
   <section id="audit">
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> grep -i <span style="color:var(--amber)">"&hellip;"</span> data/ux-guidelines.csv</p>
-      <h2 class="rv">119 UX rules, ready to audit against</h2>
-      <p class="sec-intro rv">The full guideline dataset, severity-coded. Filter by severity, search
-      a concern, and open a rule for its Do / Don&rsquo;t.</p>
+      <h2 class="rv">119 UX-regler klar til audit</h2>
+      <p class="sec-intro rv">Hele retningslinje-datasættet, kodet efter alvorlighed. Filtrér, søg
+      (på engelsk), og fold en regel ud for dens Gør / Undgå.</p>
 
       <label class="search-line rv" for="uq" style="margin-top:2rem">
         <span class="prompt">&#10142; </span><span class="g">grep -i</span>
-        <input id="uq" type="search" autocomplete="off" spellcheck="false" placeholder="focus &middot; contrast &middot; toast &middot; skeleton" aria-label="Search UX guidelines">
+        <input id="uq" type="search" autocomplete="off" spellcheck="false" placeholder="focus &middot; contrast &middot; toast &middot; skeleton" aria-label="Søg i UX-retningslinjer (på engelsk)">
         <span class="g">ux-guidelines.csv</span>
       </label>
-      <div class="sev-chips rv" id="sev-chips" role="group" aria-label="Filter by severity">
-        <button class="sev-chip" type="button" aria-pressed="true" data-sev=""><i style="background:var(--run)"></i>all</button>
-        <button class="sev-chip" type="button" aria-pressed="false" data-sev="Critical"><i style="background:#EF4444"></i>critical</button>
-        <button class="sev-chip" type="button" aria-pressed="false" data-sev="High"><i style="background:#F59E0B"></i>high</button>
-        <button class="sev-chip" type="button" aria-pressed="false" data-sev="Medium"><i style="background:#38BDF8"></i>medium</button>
-        <button class="sev-chip" type="button" aria-pressed="false" data-sev="Low"><i style="background:#64748B"></i>low</button>
+      <div class="sev-chips rv" id="sev-chips" role="group" aria-label="Filtrér efter alvorlighed">
+        <button class="sev-chip" type="button" aria-pressed="true" data-sev=""><i style="background:var(--run)"></i>alle</button>
+        <button class="sev-chip" type="button" aria-pressed="false" data-sev="Critical"><i style="background:#EF4444"></i>kritisk</button>
+        <button class="sev-chip" type="button" aria-pressed="false" data-sev="High"><i style="background:#F59E0B"></i>høj</button>
+        <button class="sev-chip" type="button" aria-pressed="false" data-sev="Medium"><i style="background:#38BDF8"></i>mellem</button>
+        <button class="sev-chip" type="button" aria-pressed="false" data-sev="Low"><i style="background:#64748B"></i>lav</button>
       </div>
       <div class="pcount" id="ucount"></div>
       <div class="uxlist rv" id="uxlist"></div>
@@ -788,13 +788,13 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
   <section id="charts">
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> grep -i <span style="color:var(--amber)">"&hellip;"</span> data/charts.csv</p>
-      <h2 class="rv">The right chart for the data&rsquo;s job</h2>
-      <p class="sec-intro rv">25 data shapes mapped to chart forms, with when-to-use guidance,
-      accessibility grades, and a library recommendation for each.</p>
+      <h2 class="rv">Det rigtige chart til dataens opgave</h2>
+      <p class="sec-intro rv">25 dataformer koblet til chartformer, med hvornår-bruges-guidance,
+      tilgængeligheds-risiko og en biblioteksanbefaling for hver.</p>
 
       <label class="search-line rv" for="cq" style="margin-top:2rem">
         <span class="prompt">&#10142; </span><span class="g">grep -i</span>
-        <input id="cq" type="search" autocomplete="off" spellcheck="false" placeholder="trend &middot; funnel &middot; distribution &middot; realtime" aria-label="Search chart recommendations">
+        <input id="cq" type="search" autocomplete="off" spellcheck="false" placeholder="trend &middot; funnel &middot; distribution &middot; realtime" aria-label="Søg i chart-anbefalinger (på engelsk)">
         <span class="g">charts.csv</span>
       </label>
       <div class="pcount" id="ccount"></div>
@@ -805,9 +805,9 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
   <section id="specimen">
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> cat examples/design-system/fenja/MASTER.md</p>
-      <h2 class="rv">Eating its own cooking</h2>
-      <p class="sec-intro rv">The palette and type pairing on this page came out of the generator,
-      unedited. Code-dark slate, a single run-green accent, and a mono/sans pairing built for tooling.</p>
+      <h2 class="rv">Fenja følger sin egen opskrift</h2>
+      <p class="sec-intro rv">Paletten og font-parringen på denne side kom ud af generatoren,
+      uredigeret. Kode-mørk slate, én run-grøn accent og en mono/sans-parring bygget til værktøj.</p>
 
       <div class="spec rv">
         <div class="swatches">
@@ -822,13 +822,13 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
         </div>
         <div class="type-card">
           <div>
-            <div class="cap">heading — jetbrains mono 700</div>
-            <div class="fh">Ship the interface.</div>
+            <div class="cap">overskrift — jetbrains mono 700</div>
+            <div class="fh">Send interfacet afsted.</div>
           </div>
           <div>
-            <div class="cap">body — ibm plex sans 400</div>
-            <p class="fb">Precise, quietly technical, and comfortable at paragraph length.
-            Chosen for the mood: code, developer, functional.</p>
+            <div class="cap">brødtekst — ibm plex sans 400</div>
+            <p class="fb">Præcis, stilfærdigt teknisk og behagelig i afsnitslængde.
+            Valgt for stemningen: kode, developer, funktionel.</p>
           </div>
         </div>
       </div>
@@ -838,28 +838,28 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
   <section id="start">
     <div class="wrap">
       <p class="sec-label rv"><b>$</b> make start</p>
-      <h2 class="rv">Three commands to a design system</h2>
+      <h2 class="rv">Tre kommandoer til et designsystem</h2>
 
       <div class="steps">
         <div class="step rv">
           <div class="no">01</div>
           <div>
             <div class="term"><div class="term-body"><div class="ln"><span class="prompt">➜ </span><span class="cmd">git clone https://github.com/MohammadYas/Fenja</span></div></div></div>
-            <p>The skills load automatically in any Claude Code session opened in the repo.</p>
+            <p>Skillsene indlæses automatisk i enhver Claude Code-session, der åbnes i repoet.</p>
           </div>
         </div>
         <div class="step rv">
           <div class="no">02</div>
           <div>
             <div class="term"><div class="term-body"><div class="ln"><span class="prompt">➜ </span><span class="cmd">python3 .claude/skills/ui-ux-pro-max/scripts/search.py <span class="flag">"your product"</span> --design-system --persist</span></div></div></div>
-            <p>Generates and saves a complete design system — pattern, style, palette, type, spacing, anti-patterns.</p>
+            <p>Genererer og gemmer et komplet designsystem — mønster, stil, palette, typografi, spacing, anti-patterns.</p>
           </div>
         </div>
         <div class="step rv">
           <div class="no">03</div>
           <div>
             <div class="term"><div class="term-body"><div class="ln"><span class="prompt">➜ </span><span class="cmd">python3 .claude/skills/banner-design/scripts/export-banner.py --input hero.html --width 1500 --height 500 --output hero.png</span></div></div></div>
-            <p>Build with the tokens, then export pixel-exact assets — <code>--scale 2</code> for retina.</p>
+            <p>Byg med dine tokens, og eksportér pixel-præcise assets — <code>--scale 2</code> til retina.</p>
           </div>
         </div>
       </div>
@@ -870,7 +870,7 @@ footer{border-top:1px solid var(--line);margin-top:clamp(2.5rem,6vw,4rem)}
 <footer>
   <div class="wrap foot">
     <span class="mark">fenja<b style="color:var(--run)">_</b></span>
-    <span>MIT · Python stdlib · runs offline</span>
+    <span>MIT · Python stdlib · kører offline</span>
     <span>github.com/MohammadYas/Fenja</span>
   </div>
 </footer>
@@ -940,12 +940,12 @@ if(copyBtn) copyBtn.addEventListener('click',async()=>{
   const css=tokensCSS(PALETTES[currentPalette]);
   try{ await navigator.clipboard.writeText(css);
     copyBtn.textContent='copied \u2713'; copyBtn.classList.add('done');
-    showToast('16 tokens copied to clipboard');
-    setTimeout(()=>{copyBtn.textContent='copy';copyBtn.classList.remove('done');},2200);
+    showToast('16 tokens kopieret til udklipsholderen');
+    setTimeout(()=>{copyBtn.textContent='kopiér';copyBtn.classList.remove('done');},2200);
   }catch(e){
     const r=document.createRange(); r.selectNodeContents(document.getElementById('tokens-out'));
     const s=getSelection(); s.removeAllRanges(); s.addRange(r);
-    showToast('Clipboard blocked \u2014 text selected, copy manually');
+    showToast('Udklipsholder blokeret \u2014 teksten er markeret, kopiér manuelt');
   }
 });
 
@@ -983,7 +983,7 @@ if (PALETTES.length){
     cards.forEach((c,i)=>{ const p=PALETTES[i];
       const hit=!q||(p.n+' '+p.t).toLowerCase().includes(q);
       c.style.display=hit?'':'none'; if(hit)hits++; });
-    pcount.textContent=`${hits} / ${PALETTES.length} palettes`;
+    pcount.textContent=`${hits} / ${PALETTES.length} paletter`;
   }
   pq.addEventListener('input',filter);
   filter(); apply(0);
@@ -1002,10 +1002,10 @@ if (FONTS.length && fgrid){
     const tags=f.k.split(',').slice(0,4).map(x=>`<span class="tag">${x.trim()}</span>`).join('');
     d.innerHTML=`<span class="cat">${f.c}</span>
       <span class="fh2">${f.h}</span>
-      <span class="fb2">with <b>${f.b}</b></span>
+      <span class="fb2">med <b>${f.b}</b></span>
       <span class="tags">${tags}</span>
       <span class="use">${f.u}</span>
-      <a href="${f.g}" target="_blank" rel="noopener">view on Google Fonts \u2197</a>`;
+      <a href="${f.g}" target="_blank" rel="noopener">se på Google Fonts \u2197</a>`;
     return d;
   });
   fcards.forEach(c=>fgrid.appendChild(c));
@@ -1015,7 +1015,7 @@ if (FONTS.length && fgrid){
       const hay=(f.n+' '+f.c+' '+f.h+' '+f.b+' '+f.k+' '+f.u).toLowerCase();
       const hit=!q||hay.includes(q);
       c.style.display=hit?'':'none'; if(hit)hits++; });
-    fcount.textContent=`${hits} / ${FONTS.length} pairings`;
+    fcount.textContent=`${hits} / ${FONTS.length} parringer`;
   };
   fq.addEventListener('input',ffilter);
   ffilter();
@@ -1056,18 +1056,18 @@ if (genOut && STYLES.length){
     const st=STYLES[si], pa=PALETTES[pi], fo=FONTS[fi], ld=LANDING[li];
     genOut.innerHTML=[
       `<div class="ln fade dim2">──────────────────────────────────────────────</div>`,
-      `<div class="ln fade k2">  STYLE     <span class="val">${st.n}</span></div>`,
+      `<div class="ln fade k2">  STIL      <span class="val">${st.n}</span></div>`,
       `<div class="ln fade dim2">            ${st.e}</div>`,
       `<div class="ln fade k2">  PALETTE   `+
         [pa.b,pa.p,pa.a].map(c=>`<span class="chip" style="background:${c}"></span>`).join('')+
         `<span class="val">${pa.n}</span> <span class="dim2">— ${pa.t}</span>`+
-        `<button class="gen-apply" type="button" data-pi="${pi}">apply ↓</button></div>`,
-      `<div class="ln fade k2">  TYPE      <span class="val">${fo.h} + ${fo.b}</span> <span class="dim2">(${fo.c})</span> <a href="${fo.g}" target="_blank" rel="noopener">fonts ↗</a></div>`,
+        `<button class="gen-apply" type="button" data-pi="${pi}">anvend ↓</button></div>`,
+      `<div class="ln fade k2">  TYPE      <span class="val">${fo.h} + ${fo.b}</span> <span class="dim2">(${fo.c})</span> <a href="${fo.g}" target="_blank" rel="noopener">fonte ↗</a></div>`,
       `<div class="ln fade k2">  LAYOUT    <span class="val">${ld.n}</span> <span class="dim2">— CTA: ${ld.c.toLowerCase()}</span></div>`,
       `<div class="ln fade dim2">            ${ld.o.split('>').map(s=>s.trim()).slice(0,5).join(' → ')}</div>`,
-      `<div class="ln fade k2">  AVOID     <span class="dim2">${st.x}</span></div>`,
+      `<div class="ln fade k2">  UNDGÅ     <span class="dim2">${st.x}</span></div>`,
       `<div class="ln fade dim2">──────────────────────────────────────────────</div>`,
-      `<div class="ln fade ok">✔ matched from 50 styles · 192 palettes · 74 pairings</div>`,
+      `<div class="ln fade ok">✔ matchet blandt 50 stilarter · 192 paletter · 74 parringer</div>`,
     ].join('');
     genOut.querySelector('.gen-apply').addEventListener('click',e=>{
       window.applyPalette?.(+e.currentTarget.dataset.pi);
@@ -1150,16 +1150,16 @@ ${tokens}
 </head>
 <body>
   <div class="wrap">
-    <header><strong>Your brand</strong><button class="btn">Get started</button></header>
+    <header><strong>Dit brand</strong><button class="btn">Kom i gang</button></header>
     <section class="hero">
-      <h1>Your headline for ${q}</h1>
-      <p>Swap this copy, keep the tokens. Every color on this page comes from the palette above.</p>
-      <button class="btn">Primary action</button>
+      <h1>Din overskrift til ${q}</h1>
+      <p>Udskift teksten, behold dine tokens. Alle farver på siden kommer fra paletten ovenfor.</p>
+      <button class="btn">Primær handling</button>
     </section>
     <section class="cards">
-      <div class="card"><h3>Feature one</h3><p>Describe the value, not the mechanism.</p></div>
-      <div class="card"><h3>Feature two</h3><p>Short, concrete, benefit-first.</p></div>
-      <div class="card"><h3>Feature three</h3><p>End with proof or a number.</p></div>
+      <div class="card"><h3>Funktion et</h3><p>Beskriv værdien, ikke mekanikken.</p></div>
+      <div class="card"><h3>Funktion to</h3><p>Kort, konkret, fordel først.</p></div>
+      <div class="card"><h3>Funktion tre</h3><p>Slut med bevis eller et tal.</p></div>
     </section>
   </div>
 </body>
@@ -1171,9 +1171,9 @@ if(starterBtn) starterBtn.addEventListener('click',async()=>{
   const html=starterHTML(currentMatch);
   try{ await navigator.clipboard.writeText(html);
     starterBtn.textContent='copied \u2713'; starterBtn.classList.add('done');
-    showToast('Starter page copied \u2014 paste into index.html');
-    setTimeout(()=>{starterBtn.textContent='copy starter html';starterBtn.classList.remove('done');},2400);
-  }catch(e){ showToast('Clipboard blocked \u2014 use the tokens panel below instead'); }
+    showToast('Starter-side kopieret \u2014 sæt ind i index.html');
+    setTimeout(()=>{starterBtn.textContent='kopiér starter-html';starterBtn.classList.remove('done');},2400);
+  }catch(e){ showToast('Udklipsholder blokeret \u2014 brug tokens-panelet nedenfor'); }
 });
 
 /* chart gallery */
@@ -1231,7 +1231,7 @@ if (cgrid && CHARTS.length){
     const d=document.createElement('div'); d.className='ccard';
     d.innerHTML=`<span class="ct">${c.t}</span><span class="cn">${c.n}</span>${mini(c.n+' '+c.t+' '+c.k)}
       <span class="cw">${c.w}</span>
-      <span class="cl"><span>${c.l}</span><span class="ag">a11y risk: ${c.a}</span></span>`;
+      <span class="cl"><span>${c.l}</span><span class="ag">a11y-risiko: ${c.a}</span></span>`;
     return d;
   });
   cards.forEach(c=>cgrid.appendChild(c));
@@ -1245,7 +1245,7 @@ if (cgrid && CHARTS.length){
       const hay=(g.n+' '+g.t+' '+g.k+' '+g.w+' '+g.l).toLowerCase();
       const hit=!q2||hay.includes(q2);
       c.style.display=hit?'':'none'; if(hit)hits++; });
-    ccount.textContent=`${hits} / ${CHARTS.length} chart types`;
+    ccount.textContent=`${hits} / ${CHARTS.length} charttyper`;
   };
   cq.addEventListener('input',cfilter);
   cfilter();
@@ -1261,13 +1261,13 @@ if (uxlist && UX.length){
     const d=document.createElement('details'); d.className='uxrow';
     d.innerHTML=`<summary>
         <span class="stripe" style="--sev:${sevColor[g.s]||'#64748B'};background:var(--sev)"></span>
-        <span class="ti">${g.i}<small>${g.c} · ${g.s.toLowerCase()}</small></span>
+        <span class="ti">${g.i}<small>${g.c} · ${({Critical:'kritisk',High:'høj',Medium:'mellem',Low:'lav'})[g.s]||g.s}</small></span>
         <span class="plat">${g.p}</span>
       </summary>
       <div class="body">${g.d}
         <div class="dd">
-          <div class="do"><b>Do</b>${g.y}</div>
-          <div class="dont"><b>Don't</b>${g.x}</div>
+          <div class="do"><b>Gør</b>${g.y}</div>
+          <div class="dont"><b>Undgå</b>${g.x}</div>
         </div>
       </div>`;
     return d;
@@ -1280,7 +1280,7 @@ if (uxlist && UX.length){
       const hay=(g.i+' '+g.c+' '+g.d+' '+g.y+' '+g.x+' '+g.p).toLowerCase();
       const hit=(!q2||hay.includes(q2))&&(!sevFilter||g.s===sevFilter);
       r.style.display=hit?'':'none'; if(hit)hits++; });
-    ucount.textContent=`${hits} / ${UX.length} guidelines`;
+    ucount.textContent=`${hits} / ${UX.length} retningslinjer`;
   };
   uq.addEventListener('input',ufilter);
   document.querySelectorAll('.sev-chip').forEach(ch=>ch.addEventListener('click',()=>{
