@@ -3,6 +3,7 @@ import { Reveal } from "@/components/reveal";
 import { SektionsMarkoer } from "@/components/sektions-markoer";
 import { Prislap } from "@/components/ui/prislap";
 import { SkitseFoer, SkitseEfter } from "@/components/hero-skitse";
+import { Toerresnor, ToerresnorLap } from "@/components/toerresnor";
 import { Stempel } from "@/components/ui/stempel";
 import { kreditter } from "@/lib/config";
 import { da } from "@/lib/copy/da";
@@ -131,24 +132,26 @@ export default function Forside() {
             </h2>
             <p className="mt-3 text-hoer">{da.landing.priserDerefter}</p>
           </Reveal>
-          <ul className="mt-8 flex flex-wrap items-start gap-6">
-            {kreditter.pakker.map((pakke, i) => (
-              <li key={pakke.id}>
-                <Reveal forsinkelseTrin={i}>
-                  <Prislap rotation={i % 2 === 0 ? "venstre" : "hoejre"}>
-                    <p className="font-mono text-titel font-bold">
-                      {da.kreditter.pakkeLinje(pakke.antal, pakke.prisDkk)}
-                    </p>
-                    <p className="mt-1 font-mono text-detalje text-tekst/70">
-                      {da.kreditter.prisPrStk(
-                        (pakke.prisDkk / pakke.antal).toFixed(2).replace(".", ","),
-                      )}
-                    </p>
-                  </Prislap>
-                </Reveal>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-8">
+            <Toerresnor>
+              {kreditter.pakker.map((pakke, i) => (
+                <ToerresnorLap key={pakke.id} indeks={i}>
+                  <Reveal forsinkelseTrin={i}>
+                    <Prislap rotation={i % 2 === 0 ? "venstre" : "hoejre"}>
+                      <p className="font-mono text-titel font-bold">
+                        {da.kreditter.pakkeLinje(pakke.antal, pakke.prisDkk)}
+                      </p>
+                      <p className="mt-1 font-mono text-detalje text-tekst/70">
+                        {da.kreditter.prisPrStk(
+                          (pakke.prisDkk / pakke.antal).toFixed(2).replace(".", ","),
+                        )}
+                      </p>
+                    </Prislap>
+                  </Reveal>
+                </ToerresnorLap>
+              ))}
+            </Toerresnor>
+          </div>
         </div>
       </section>
 

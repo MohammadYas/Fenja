@@ -39,7 +39,7 @@ tegnet), (d) footeren er en tynd linkrække, (e) rå browser-radios på log-ind.
 [x] S19 Hero-figuren får indhold: skematiske stregtegninger af tøj i rammen
         (DIT FOTO-halvdel med kontekst-rod, RENSET-halvdel ren) — stadig ærligt
         mærket pladsholder; desktop-hero i to kolonner (plakat + ramme)
-[ ] S20 Tørresnoren: prislapperne hænger fra en vandret søm-snor i varierede
+[x] S20 Tørresnoren: prislapperne hænger fra en vandret søm-snor i varierede
         højder (forside + /priser) — tøj på snor som fysisk motiv
 [ ] S21 Desktop-rytme: Ærlighed-blokken asymmetrisk med lodret søm; slut-CTA
         med prislap-detalje; sådan-virker-det-tallene større på lg
