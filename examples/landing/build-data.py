@@ -48,8 +48,21 @@ with (DATA / "typography.csv").open(newline="", encoding="utf-8") as fh:
             "g": row["Google Fonts URL"],
         })
 
+styles = []
+with (DATA / "styles.csv").open(newline="", encoding="utf-8") as fh:
+    for row in csv.DictReader(fh):
+        if row.get("Status", "active").strip().lower() not in ("", "active"):
+            continue
+        styles.append({
+            "n": row["Style Category"],
+            "k": row["Keywords"],
+            "u": row["Best For"][:130],
+            "x": row["Do Not Use For"][:110],
+            "e": row["Effects & Animation"][:110],
+        })
+
 html = PAGE.read_text(encoding="utf-8")
-for tag, data in (("palettes", palettes), ("fonts", fonts)):
+for tag, data in (("palettes", palettes), ("fonts", fonts), ("styles", styles)):
     payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
     block = f"/*<{tag}>*/const {tag.upper()}={payload};/*</{tag}>*/"
     pattern = rf"/\*<{tag}>\*/.*?/\*</{tag}>\*/"
