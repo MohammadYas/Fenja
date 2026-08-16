@@ -43,14 +43,19 @@ export async function POST(request: NextRequest) {
   // (krediteringen er no-op), så en sjælden ægte Stripe-dublet kan gentage
   // supplement-mailen. Ufarligt (kun et supplement), men fuld én-gang kræver at
   // tilfoej_kreditters "nyindsat"-signal føres op — se BACKLOG S34.
-  if (udfald.haandteret) {
+  // Kun engangskøb (pakke/top-up) får supplementet — for abonnementer sender
+  // Stripe selv kvittering pr. faktura
+  if (udfald.haandteret && udfald.slags !== "abonnement") {
     await bedstMuligt(async () => {
       const { data: profil } = await service
         .from("profiles")
         .select("email")
         .eq("id", udfald.userId)
         .maybeSingle();
-      const pakke = kreditter.pakker.find((p) => p.antal === udfald.antal);
+      const pakke =
+        udfald.slags === "topup"
+          ? kreditter.topUp
+          : kreditter.pakker.find((p) => p.antal === udfald.antal);
       const til = profil?.email as string | undefined;
       if (!til || !pakke) return;
       await sendKvittering(hentEmailAfsender(), {

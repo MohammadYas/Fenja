@@ -34,7 +34,7 @@ export const emails = {
       "Få rensede fotos, en mærket visualisering og en færdig annoncetekst — klar til at sætte ind på Vinted på cirka 2 minutter.",
     ],
     kreditNote:
-      "Annoncer betales med kreditter: 1 kredit = 1 færdig annonce. Du køber kun det, du bruger, og kreditterne udløber ikke.",
+      "Annoncer betales med kreditter: 1 kredit = 1 færdig annonce. Du køber kun det, du bruger; kreditter gælder 12 måneder fra køb.",
     knap: "Lav min første annonce",
   },
   annonceKlar: {
@@ -56,7 +56,7 @@ export const emails = {
     koebslinje: (antal: number, prisDkk: number) => `${antal} annoncer · ${prisDkk} kr.`,
     stripeNote:
       "Selve kvitteringen kommer i en separat mail fra Stripe, som håndterer betalingen.",
-    udloeb: "Kreditterne udløber ikke — brug dem, når det passer dig.",
+    udloeb: "Kreditterne gælder 12 måneder fra i dag — udløbsdatoen står på din kreditside.",
     knap: "Se min saldo",
   },
   // Delvis leverance (B-6): visualiseringen fejlede, resten er leveret,

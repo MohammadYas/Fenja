@@ -2,10 +2,35 @@
 // Al skrivning går gennem SQL-funktionen tilfoej_kreditter (transaktionel,
 // idempotent — se migration 20260814130000). Dette lag ejer idempotency-nøglerne,
 // så dubletter fra webhooks/jobs aldrig koster dobbelt (E-4).
+//
+// Pricing v3.0 (ejer-beslutning 2026-08-16): hver kreditering bærer en kilde
+// og evt. udløbsdato, og forbrug dækkes i en fast rækkefølge. Rækkefølgen ER
+// prisstrategien — ærligt begrundet, intet skjult for brugeren:
+//   1) subscription — månedskvoten brændes først, så en abonnent aldrig
+//      oplever at kvoten gik til spilde mens købte kreditter blev brugt.
+//   2) topup — de dyreste engangskreditter pr. stk. brændes før pakkerne,
+//      så pakke-lageret består (fyldt lager = mindre grund til at churne).
+//   3) pack — ældste købsdato først (FIFO): de udløber først og er derfor
+//      mindst værd at gemme. NB: ejerens brief var tvetydig her ("ældste
+//      sidst" ét sted, "ældste først" et andet) — FIFO er implementeret og
+//      valget er flaget i PR'en, så ejeren kan omgøre det.
+//   Kilde-løse bevægelser (refunds + alt fra før v3.0) udløber aldrig og
+//   brændes sidst — det mest generøse valg for brugeren.
+// Udløb (12 mdr., lib/config.ts) håndhæves i beregningen: udløbne kreditter
+// bortfalder automatisk. Se lib/credits/beregn.ts + migration 20260816100000.
 
-import { kreditter } from "@/lib/config";
+import { abonnementer, kreditter } from "@/lib/config";
+import type { KreditKilde, KreditStatus } from "./beregn";
 
-export type LedgerAarsag = "signup" | "purchase" | "delivery" | "refund" | "regen";
+export type { KreditKilde, KreditStatus } from "./beregn";
+
+export type LedgerAarsag =
+  | "signup"
+  | "purchase"
+  | "delivery"
+  | "refund"
+  | "regen"
+  | "subscription";
 
 // Tyndt db-interface så logikken kan testes uden Supabase (NFR-5)
 export interface LedgerDb {
@@ -15,8 +40,11 @@ export interface LedgerDb {
     reason: LedgerAarsag;
     idempotencyKey: string;
     stripeRef?: string;
+    kilde?: KreditKilde;
+    udloeber?: Date;
   }): Promise<{ saldo: number } | { fejl: "utilstraekkelig_saldo" }>;
   hentSaldo(userId: string): Promise<number>;
+  hentStatus(userId: string): Promise<KreditStatus>;
 }
 
 export class UtilstraekkeligSaldoFejl extends Error {
@@ -29,12 +57,23 @@ export class UtilstraekkeligSaldoFejl extends Error {
 export const noegler = {
   signup: (userId: string) => `signup:${userId}`,
   koeb: (stripeEventId: string) => `koeb:${stripeEventId}`,
+  topUp: (stripeEventId: string) => `topup:${stripeEventId}`,
+  // Abonnementskvote: nøglen er fakturareferencen (én pr. betalingsperiode),
+  // så Stripes gentagne leveringsforsøg aldrig giver dobbelt kvote
+  abonnement: (fakturaRef: string) => `abo:${fakturaRef}`,
   levering: (itemId: string) => `levering:${itemId}`,
   refundOnModel: (itemId: string) => `refund-onmodel:${itemId}`,
   // B-8: nøglen er requestId (mintet af API-routen), så genkørsler af samme
   // regenerering aldrig koster dobbelt
   regen: (requestId: string) => `regen:${requestId}`,
 } as const;
+
+/** Udløbsdato for en kreditering: 12 mdr. fra købsdatoen (lib/config.ts) */
+export function nyUdloebsdato(fra: Date = new Date()): Date {
+  const dato = new Date(fra);
+  dato.setMonth(dato.getMonth() + kreditter.udloebMdr);
+  return dato;
+}
 
 /** E-1: gratis-kreditter ved signup — idempotent pr. bruger.
  *  Ejer-beslutning 2026-08-15: gratis-tier er slået fra (misbrugsrisiko med
@@ -52,7 +91,8 @@ export async function tilfoejSignupKreditter(db: LedgerDb, userId: string): Prom
   return resultat.saldo;
 }
 
-/** E-2: køb via Stripe — idempotent pr. Stripe-event, dubletter er no-ops */
+/** E-2: pakkekøb via Stripe — idempotent pr. Stripe-event, dubletter er no-ops.
+ *  v3.0: kilden er 'pack' og kreditterne gælder 12 mdr. fra købet. */
 export async function registrerKoeb(
   db: LedgerDb,
   userId: string,
@@ -65,6 +105,61 @@ export async function registrerKoeb(
     reason: "purchase",
     idempotencyKey: noegler.koeb(stripeEventId),
     stripeRef: stripeEventId,
+    kilde: "pack",
+    udloeber: nyUdloebsdato(),
+  });
+  if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
+  return resultat.saldo;
+}
+
+/** v3.0: top-up-køb ("Fyld op") — som pakkekøb, men kilden 'topup' brændes
+ *  før pakkerne (se forbrugsrækkefølgen øverst). Idempotent pr. Stripe-event. */
+export async function registrerTopUp(
+  db: LedgerDb,
+  userId: string,
+  antalKreditter: number,
+  stripeEventId: string,
+): Promise<number> {
+  const resultat = await db.tilfoejKreditter({
+    userId,
+    delta: antalKreditter,
+    reason: "purchase",
+    idempotencyKey: noegler.topUp(stripeEventId),
+    stripeRef: stripeEventId,
+    kilde: "topup",
+    udloeber: nyUdloebsdato(),
+  });
+  if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
+  return resultat.saldo;
+}
+
+/** v3.0: månedskvote fra et abonnement (Plus/Pro) — idempotent pr. faktura.
+ *  Rollover med loft: ubrugt kvote følger med, men den samlede abonnements-
+ *  saldo er loftet til rolloverLoftFaktor × månedskvoten, så kvoten ikke
+ *  bliver en ubegrænset opsparing (FORSLAG — flaget i PR'en). */
+export async function registrerAbonnementsKvote(
+  db: LedgerDb,
+  userId: string,
+  tierId: (typeof abonnementer.tiers)[number]["id"],
+  fakturaRef: string,
+): Promise<number> {
+  const tier = abonnementer.tiers.find((t) => t.id === tierId);
+  if (!tier) throw new Error(`Ukendt abonnements-tier: ${tierId}`);
+  const status = await db.hentStatus(userId);
+  const loft = tier.annoncerPrMd * abonnementer.rolloverLoftFaktor;
+  const kvote = Math.min(
+    tier.annoncerPrMd,
+    Math.max(0, loft - status.prKilde.subscription),
+  );
+  if (kvote <= 0) return status.saldo;
+  const resultat = await db.tilfoejKreditter({
+    userId,
+    delta: kvote,
+    reason: "subscription",
+    idempotencyKey: noegler.abonnement(fakturaRef),
+    stripeRef: fakturaRef,
+    kilde: "subscription",
+    udloeber: nyUdloebsdato(),
   });
   if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
   return resultat.saldo;
@@ -112,4 +207,9 @@ export async function traekRegenerering(
 
 export async function hentSaldo(db: LedgerDb, userId: string): Promise<number> {
   return db.hentSaldo(userId);
+}
+
+/** v3.0: fuld kreditstatus — saldo pr. kilde + tidligste udløb (kreditsiden) */
+export async function hentStatus(db: LedgerDb, userId: string): Promise<KreditStatus> {
+  return db.hentStatus(userId);
 }

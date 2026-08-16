@@ -27,6 +27,8 @@ export type MockOpsaetning = {
   /** Kast fejl ved baggrundsrens */
   rensFejler?: boolean;
   labelTekst?: string | null;
+  /** Cost pr. on-model-billede — Gate 1-trekampen spejler providernes skøn i mock */
+  onModelCostDkk?: number;
 };
 
 export class MockImageProvider implements ImageProvider {
@@ -50,7 +52,7 @@ export class MockImageProvider implements ImageProvider {
     return {
       url: `${input.referenceUrl}#onmodel-${this.kald.length}`,
       providerJobId: `mock-job-${this.kald.length}`,
-      costDkk: 0.35,
+      costDkk: this.opsaetning.onModelCostDkk ?? 0.35,
     };
   }
 }
