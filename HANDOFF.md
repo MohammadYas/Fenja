@@ -161,19 +161,24 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 ---
 ## 5. Arbejdsprotokol — sådan arbejder sessions i dette repo
 ### 5.1 Hver session, hver gang
+> **Branch-regel (ejer-ordre 2026-08-16, erstatter det gamle PR-flow): der
+> findes KUN `main`.** Ingen feature-branches, ingen PRs. Arbejd trunk-based:
+> små commits direkte på main, pushet løbende. Arbejdes der parallelt (fx
+> agenter i worktrees), rebases på nyeste main og leveres til main med det
+> samme — branchen slettes i samme åndedrag. Alt der før stod om "PR" læses
+> som "commit-serie på main med samme beskrivelseskrav".
 1. Læs `HANDOFF.md` + `STATUS.md` + relevant afsnit af `SPEC.md`/`DESIGN.md`
 2. Tag ÉN opgave fra `BACKLOG.md` (øverste uafhængige, medmindre opgaven er givet i prompten)
-3. Branch: `feat/<opgave-id>-kort-navn` · `fix/...` · `design/...`
-4. Små commits, conventional commits på engelsk (`feat: add credit ledger with idempotent delivery charge`)
-5. Afslut ALTID med: (a) alle tests/lint/typecheck grønne, (b) PR med beskrivelse: hvad, hvorfor, hvordan testet, screenshots ved UI (+ slop-tjekket fra §2.3), (c) opdatering af `STATUS.md` og afkrydsning i `BACKLOG.md` i samme PR
-6. Én opgave = én PR. Ingen "mens jeg var i gang"-ændringer uden for opgavens scope
+3. Små commits, conventional commits på engelsk (`feat: add credit ledger with idempotent delivery charge`)
+4. Afslut ALTID med: (a) alle tests/lint/typecheck grønne FØR push, (b) afsluttende commit-besked med: hvad, hvorfor, hvordan testet (+ slop-tjekket fra §2.3 ved UI), (c) opdatering af `STATUS.md` og afkrydsning i `BACKLOG.md` i samme serie
+5. Én opgave = én sammenhængende commit-serie. Ingen "mens jeg var i gang"-ændringer uden for opgavens scope
 ### 5.2 Forbudt for sessions
 - Committe secrets eller rigtige nøgler (kun `.env.example` opdateres)
 - Kalde rigtige betalings-/billed-APIs uden at opgaven eksplicit siger det og nøgler findes
 - Køre `supabase link`/`db push` mod produktion, deploye, eller ændre Netlify/Stripe-konfiguration — det gør KUN ejeren (se §6)
 - Tilføje dependencies uden begrundelse i PR (og aldrig for noget under ~30 linjer egen kode)
 - Bryde designmanifestet (§2) eller compliance-reglerne (`SPEC.md` §8.2)
-- Merge sine egne PR'er — ejeren reviewer og merger
+- Efterlade branches: `main` er den eneste branch (§5.1). Opstår en midlertidig worktree-branch, slettes den ved levering
 ### 5.3 Definition of Done (gælder alle opgaver)
 Kode typechecker og linter rent · relevante tests skrevet og grønne · fungerer med mock-providers uden nøgler · mobilvisning verificeret ved UI · copy i `/lib/copy/da.ts` og på manifest-dansk · `STATUS.md` opdateret · ingen TODO'er uden tilhørende BACKLOG-punkt
 ### 5.4 STATUS.md-format (opret som første opgave)
