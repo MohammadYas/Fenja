@@ -56,11 +56,13 @@ Selja bruger disse brede brugerrettede valg:
 - Strik og cardigans
 - Sweatshirts og hoodies
 - Bukser og jeans
-- Shorts og nederdele
+- Shorts
+- Nederdele
 - Kjoler og heldragter
 - Jakker, blazere og veste
 - Frakker og overtøj
-- Sportstøj og badetøj
+- Sportstøj
+- Badetøj
 - Undertøj og nattøj
 
 ### Sko
@@ -102,6 +104,7 @@ API-validering og promptvalg. En post har denne form:
 type Varetype = {
   id: string;
   label: string;
+  kategori: string;
   gruppeId: string;
   promptFamilie:
     | "overdel"
@@ -117,11 +120,15 @@ type Varetype = {
 };
 ```
 
+`label` er teksten i vælgeren. `kategori` er den entydige danske tekst, der
+gemmes og sendes videre; de er ens undtagen for de korte valg under `Børn og
+baby`, hvor kategorien fx er `Børne- og babytøj`.
+
 Klienten sender `varetypeId` til `POST /api/items`. Serveren afviser ukendte
-id'er, slår den kanoniske label op og gemmer labelen i det eksisterende
+id'er, slår den kanoniske kategori op og gemmer den i det eksisterende
 `items.category`-felt. Der kræves ingen databasemigration.
 
-Pipelinevalg forsøger først et eksakt opslag af den kanoniske label og bruger
+Pipelinevalg forsøger først et eksakt opslag af den kanoniske kategori og bruger
 det eksisterende nøgleordsbaserede fallback til ældre items. De nuværende
 prompts fortsætter indtil ejeren leverer det nye promptbibliotek; katalogets
 promptfamilier bliver de stabile pladser, de nye prompts senere kobles på.
