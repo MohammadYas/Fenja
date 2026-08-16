@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Taeller } from "@/components/taeller";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
+import { SupplierKommerSnartKort } from "../suppliers/supplier-kommer-snart-kort";
 import { ItemListe } from "./item-liste";
 
 export const metadata = { title: `${da.oversigt.titel} · ${da.site.navn}` };
@@ -44,64 +45,63 @@ export default async function Oversigt() {
       ? Math.max(1, Math.round(liggetider.reduce((a, b) => a + b, 0) / liggetider.length))
       : null;
 
-  if (items.length === 0) {
-    // Tom tilstand som gran-blok (REDESIGN §2.2)
-    return (
-      <main className="py-6">
-        <h1 className="font-display text-kaempe font-bold">
-          {da.oversigt.titel}
-        </h1>
-        <div className="mt-6 rounded-bloed bg-gran p-6 text-kalk">
-          <p className="max-w-laesbar">{da.oversigt.tom}</p>
-          <Link href="/nyt-item" className="knap-link knap-link-lys mt-6 px-5">
-            {da.oversigt.foersteKnap}
-          </Link>
-        </div>
-      </main>
-    );
-  }
-
   return (
     <main className="py-6">
       <h1 className="font-display text-kaempe font-bold">
         {da.oversigt.titel}
       </h1>
 
-      {solgte.length > 0 ? (
-        // Statistik som gran-blok med kæmpe mono-tal — "solgt for X kr." er
-        // heltestallet, og det tæller op (REDESIGN §3.5/§2.5)
-        <section
-          className="mt-6 rounded-bloed bg-gran p-5 text-kalk"
-          aria-label={da.oversigt.statistikTitel}
-        >
-          <p className="font-mono text-detalje font-bold tracking-wide text-hoer">
-            {da.oversigt.statistikTitel}
-          </p>
-          <p className="mt-3 font-mono text-kaempe font-bold leading-none">
-            <Taeller til={samletVaerdi} /> kr.
-          </p>
-          <p className="mt-3 text-detalje text-hoer">
-            {da.oversigt.solgtMedSelja} · {da.oversigt.solgteAntal(solgte.length)}
-            {snitLiggetid != null ? ` · ${da.oversigt.liggetid(snitLiggetid)}` : null}
-          </p>
-        </section>
-      ) : null}
+      <SupplierKommerSnartKort />
 
-      <ItemListe
-        items={items.map((item) => ({
-          id: item.id,
-          titel:
-            item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
-          status: item.status,
-          soldPrisDkk: item.sold_price_dkk,
-          // B-9: en kladde med kørende pipeline er "på vej", ikke efterladt
-          paaVej:
-            item.status === "draft" &&
-            (item.generations ?? []).some(
-              (g) => g.status === "queued" || g.status === "running",
-            ),
-        }))}
-      />
+      {items.length === 0 ? (
+        // Tom tilstand som gran-blok (REDESIGN §2.2)
+        <div className="mt-6 rounded-bloed bg-gran p-6 text-kalk">
+          <p className="max-w-laesbar">{da.oversigt.tom}</p>
+          <Link href="/nyt-item" className="knap-link knap-link-lys mt-6 px-5">
+            {da.oversigt.foersteKnap}
+          </Link>
+        </div>
+      ) : (
+        <>
+          {solgte.length > 0 ? (
+            // Statistik som gran-blok med kæmpe mono-tal — "solgt for X kr." er
+            // heltestallet, og det tæller op (REDESIGN §3.5/§2.5)
+            <section
+              className="mt-6 rounded-bloed bg-gran p-5 text-kalk"
+              aria-label={da.oversigt.statistikTitel}
+            >
+              <p className="font-mono text-detalje font-bold tracking-wide text-hoer">
+                {da.oversigt.statistikTitel}
+              </p>
+              <p className="mt-3 font-mono text-kaempe font-bold leading-none">
+                <Taeller til={samletVaerdi} /> kr.
+              </p>
+              <p className="mt-3 text-detalje text-hoer">
+                {da.oversigt.solgtMedSelja} · {da.oversigt.solgteAntal(solgte.length)}
+                {snitLiggetid != null
+                  ? ` · ${da.oversigt.liggetid(snitLiggetid)}`
+                  : null}
+              </p>
+            </section>
+          ) : null}
+
+          <ItemListe
+            items={items.map((item) => ({
+              id: item.id,
+              titel:
+                item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
+              status: item.status,
+              soldPrisDkk: item.sold_price_dkk,
+              // B-9: en kladde med kørende pipeline er "på vej", ikke efterladt
+              paaVej:
+                item.status === "draft" &&
+                (item.generations ?? []).some(
+                  (g) => g.status === "queued" || g.status === "running",
+                ),
+            }))}
+          />
+        </>
+      )}
     </main>
   );
 }

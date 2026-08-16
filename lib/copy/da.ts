@@ -210,6 +210,25 @@ export const da = {
     liggetid: (dage: number) =>
       dage === 1 ? "1 dag i snit før salg" : `${dage} dage i snit før salg`,
   },
+  suppliers: {
+    titel: "Suppliers",
+    stempel: "Kommer snart",
+    kortTekst:
+      "Kuraterede supplier-links kommer efter lanceringen af Seljas Vinted-værktøj.",
+    laesMere: "Læs mere",
+    sideIntro:
+      "Vi bygger en lille butik med kuraterede supplier-links. Den åbner først, når Vinted-værktøjet er godt lanceret.",
+    fokusTitel: "Vinted først",
+    fokusTekst:
+      "Lige nu bruger vi kræfterne på at gøre dine Vinted-annoncer hurtigere og bedre. Supplier-butikken åbner som næste del af Selja.",
+    indholdTitel: "Det får du, når vi åbner",
+    indhold: [
+      "Et direkte supplier-link, som er manuelt undersøgt af Selja.",
+      "Klare oplysninger om kategori, land, minimumsbestilling og levering, før du vælger.",
+      "Et engangskøb i danske kroner, helt adskilt fra dine billedkreditter.",
+    ],
+    tilbage: "Tilbage til Oversigt",
+  },
   regenerer: {
     titel: "Prøv igen med en anden del",
     forklaring: (pris: string) =>
