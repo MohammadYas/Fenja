@@ -29,6 +29,7 @@ next-env.d.ts
 
 # lokale verifikations-screenshots og harness (aldrig committes)
 /.verify/
+/.worktrees/
 
 # lighthouse ci-rapporter
 /.lighthouseci/
