@@ -85,7 +85,7 @@ export const da = {
     },
     sletKonto: "Slet min konto",
     sletForklaring:
-      "Sletter din konto, alle billeder og alle data inden for 24 timer. Det kan ikke fortrydes.",
+      "Sletter din konto, alle billeder og annoncedata inden for 24 timer, og stopper et eventuelt abonnement. Det kan ikke fortrydes. Bilag for dine køb gemmes i 5 år (bogføringsloven).",
     sletBekraeft: "Skriv SLET for at bekræfte",
     sletBekraeftOrd: "SLET",
     sletEndeligt: "Slet alt permanent",
@@ -552,7 +552,7 @@ export const da = {
   },
   vilkaar: {
     titel: "Vilkår",
-    opdateret: "Senest opdateret: 14. august 2026",
+    opdateret: "Senest opdateret: 16. august 2026",
     afsnit: [
       {
         overskrift: "Hvad Selja er",
@@ -583,6 +583,15 @@ export const da = {
         ],
       },
       {
+        overskrift: "Abonnement",
+        tekst: [
+          "Abonnementet fylder din kvote hver måned og fornys automatisk — månedligt eller årligt, alt efter hvad du har valgt — indtil du opsiger det. Der er ingen binding: du kan opsige når som helst under Kreditter → Administrér abonnement, og abonnementet løber så perioden ud uden at forny.",
+          "Ubrugt månedskvote følger med til næste måned, dog højst op til det dobbelte af din månedskvote ad gangen.",
+          "Du har 14 dages fortrydelsesret på køb. Når du bruger kreditter, accepterer du, at leveringen går i gang med det samme — fortryder du inden for fristen, refunderer vi det, du ikke har brugt.",
+          "Ændrer vi priserne, varsler vi dig pr. mail mindst 30 dage, før ændringen rammer dit abonnement.",
+        ],
+      },
+      {
         overskrift: "Ansvar",
         tekst: [
           "Selja leverer værktøjet — selve handlen er mellem dig og din køber. Vi kan ikke garantere, at dit tøj bliver solgt, og vi er ikke part i dine handler på Vinted.",
@@ -592,38 +601,60 @@ export const da = {
       {
         overskrift: "Ophør",
         tekst: [
-          "Du kan slette din konto når som helst under Konto. Så sletter vi alle dine billeder og data inden for 24 timer.",
+          "Du kan slette din konto når som helst under Konto. Så sletter vi dine billeder, annoncer og kontodata inden for 24 timer. Bilag for dine køb skal vi efter bogføringsloven gemme i 5 år — de ligger hos Stripe og i vores regnskab, ikke som en aktiv profil.",
+          "Har du et aktivt abonnement, så opsig det under Kreditter → Administrér abonnement, inden du sletter kontoen — ellers stopper vi det for dig ved sletningen.",
         ],
       },
     ],
   },
   privatliv: {
     titel: "Privatliv",
-    opdateret: "Senest opdateret: 14. august 2026",
+    opdateret: "Senest opdateret: 16. august 2026",
     afsnit: [
       {
         overskrift: "Kort version",
         tekst: [
-          "Dine billeder bruges kun til at lave din egen annonce. Vi træner ikke modeller på dem, vi deler dem ikke, og vi sælger ingen data. Sletter du din konto, sletter vi alt inden for 24 timer.",
+          "Dine billeder bruges kun til at lave din egen annonce. Vi træner ikke modeller på dem, vi deler dem ikke, og vi sælger ingen data. Sletter du din konto, sletter vi dine billeder og annoncedata inden for 24 timer — kun bilag for dine køb gemmes længere, fordi bogføringsloven kræver det.",
         ],
       },
       {
-        overskrift: "Hvad vi gemmer",
+        overskrift: "Hvem er ansvarlig",
         tekst: [
-          "Din e-mail (til at logge ind og til beskeder om dine annoncer), dine billeder og annoncedata, din kredithistorik og tekniske logs om genereringer (status og omkostning), så tjenesten kan fungere og fejl kan findes.",
+          "Dataansvarlig er Selja. Har du spørgsmål om dine data, så skriv til visual.studio.tuturials@gmail.com — adressen skifter til en domæne-mail, når domænet er på plads.",
+        ],
+      },
+      {
+        overskrift: "Hvad vi gemmer, og hvorfor vi må",
+        tekst: [
+          "Din e-mail og adgangskode (til at logge ind og til beskeder om dine annoncer), dine billeder og annoncedata, din kredithistorik og abonnementsstatus samt tekniske logs om genereringer (status og omkostning), så tjenesten kan fungere og fejl kan findes.",
+          "Grundlaget er aftalen med dig (GDPR art. 6, stk. 1, litra b) for alt, der skal til for at levere tjenesten, retlige forpligtelser (litra c) for bogføringsbilag, og vores legitime interesse (litra f) for tekniske fejllogs.",
           "Betalingsoplysninger håndteres af Stripe — vi ser aldrig dit kortnummer.",
+          "Selja er for brugere på 18 år eller derover; det bekræfter du ved oprettelsen.",
         ],
       },
       {
         overskrift: "Hvor det ligger",
         tekst: [
-          "Data ligger hos vores databehandlere: Supabase (database og billeder, privat lager med signerede links), Stripe (betaling), Resend (mails) samt de billed- og tekstmodeller, der laver din leverance. Billeder sendes kun til modellerne for at lave netop din annonce.",
+          "Data ligger hos vores databehandlere: Supabase (database og billeder i EU, privat lager med signerede links), Stripe (betaling), Resend (mails) samt de billed- og tekstmodeller, der laver din leverance. Billeder sendes kun til modellerne for at lave netop din annonce — aldrig til træning.",
+          "Nogle af modellerne (fx Google og fal) behandler data i USA. Overførslen sker efter EU's godkendte rammer (EU-U.S. Data Privacy Framework eller standardkontraktbestemmelser).",
+        ],
+      },
+      {
+        overskrift: "Hvor længe",
+        tekst: [
+          "Så længe du har en konto. Sletter du den under Konto, fjernes billeder, annoncer og kontodata inden for 24 timer. Bilag for køb opbevares i 5 år efter regnskabsårets udløb (bogføringsloven) — hos Stripe og i vores regnskab.",
+        ],
+      },
+      {
+        overskrift: "Cookies",
+        tekst: [
+          "Kun det nødvendige: en login-session, når du er logget ind. Ingen sporing, ingen annonce-cookies, ingen tredjeparts-statistik — derfor heller intet cookie-banner.",
         ],
       },
       {
         overskrift: "Dine rettigheder",
         tekst: [
-          "Du kan få indsigt i, rette eller slette dine data. Sletning klarer du selv under Konto — alt fjernes inden for 24 timer. Vil du klage, kan du kontakte Datatilsynet.",
+          "Du kan få indsigt i, rette, flytte eller slette dine data og gøre indsigelse mod behandlingen. Sletning klarer du selv under Konto. Vil du klage, kan du kontakte Datatilsynet (datatilsynet.dk) — men skriv gerne til os først, så løser vi det nok hurtigere.",
         ],
       },
     ],
