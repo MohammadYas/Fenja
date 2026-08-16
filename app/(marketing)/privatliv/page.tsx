@@ -1,7 +1,10 @@
 import { JuridiskSide } from "@/components/juridisk-side";
 import { da } from "@/lib/copy/da";
 
-export const metadata = { title: `${da.privatliv.titel} · ${da.site.navn}` };
+export const metadata = {
+  title: `${da.privatliv.titel} · ${da.site.navn}`,
+  alternates: { canonical: "/privatliv" },
+};
 
 export default function Privatliv() {
   return (

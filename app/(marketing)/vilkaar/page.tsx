@@ -1,7 +1,10 @@
 import { JuridiskSide } from "@/components/juridisk-side";
 import { da } from "@/lib/copy/da";
 
-export const metadata = { title: `${da.vilkaar.titel} · ${da.site.navn}` };
+export const metadata = {
+  title: `${da.vilkaar.titel} · ${da.site.navn}`,
+  alternates: { canonical: "/vilkaar" },
+};
 
 export default function Vilkaar() {
   return (

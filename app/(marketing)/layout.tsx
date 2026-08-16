@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { JsonLd } from "@/components/json-ld";
 import { SpringLink } from "@/components/spring-link";
 import { da } from "@/lib/copy/da";
+import { basisGraf } from "@/lib/seo/jsonld";
 
 // Marketing-skal: enkel topbar + footer. Mobil-først. Links bruger sømmen som
 // hover-markering (REDESIGN §2.4) — aldrig standard-underline.
@@ -9,6 +11,8 @@ export default function MarketingLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="flex min-h-dvh flex-col">
+      {/* Site-wide struktureret data: organisation + website (SEO + LLM-findbarhed) */}
+      <JsonLd data={basisGraf()} />
       <SpringLink />
       <header>
         <nav

@@ -5,6 +5,7 @@ import { hentGuides } from "@/lib/guides";
 export const metadata = {
   title: `${da.laer.titel} · ${da.site.navn}`,
   description: da.laer.forklaring,
+  alternates: { canonical: "/laer" },
 };
 
 // Lær-sektionen (F-2) som katalog-indeks (S22): nummererede rækker adskilt af

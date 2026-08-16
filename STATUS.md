@@ -12,7 +12,14 @@ Sidst opdateret: 2026-08-16 af Claude Code (cloud session)
   falder overalt tilbage til det deterministiske hjem. Samtidig bærer
   `generations.prompt_version` nu et sammensat tag — `preset@v skabelon@v
   hjem@v` — så pass-rate kan slices pr. version af hver dimension (FR-15).
-- **Hele fase A er bygget og grøn:** 219 tests, lint + typecheck rene.
+- **Hele fase A er bygget og grøn:** 232 tests, lint + typecheck rene.
+- **SEO + LLM-findbarhed (branch `feat/seo-llm`, oven på omdøbningen):**
+  struktureret data (schema.org/JSON-LD) på forside (WebApplication + HowTo +
+  kreditpriser i DKK), guides (Article + BreadcrumbList) og priser (Product +
+  Offers) — alt afledt af config/copy, ingen opdigtede tal/ratings. Ny
+  `/llms.txt` (llmstxt.org) beskriver produktet, trin, priser, compliance og
+  nøglesider for sprogmodeller. `metadataBase` + canonical bruger nu
+  `SELJA_DOMAIN`. Bygger videre på F-3.
 - **Mobilgennemgang (samme branch):** alle sider kørt i Chromium ved 320/375/
   430 px — nul vandret overløb nogen steder. Rettede touch-mål der var under
   44 px: marketing-nav/footer + tilbage-links brugte `min-h-touch content-center`

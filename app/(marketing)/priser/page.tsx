@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { da } from "@/lib/copy/da";
 import { kreditter } from "@/lib/config";
+import { JsonLd } from "@/components/json-ld";
 import { Stempel } from "@/components/ui/stempel";
 import { Reveal } from "@/components/reveal";
+import { priserGraf } from "@/lib/seo/jsonld";
 
 export const metadata = {
   title: `${da.priserSide.titel} · ${da.site.navn}`,
   description: da.priserSide.lead,
+  alternates: { canonical: "/priser" },
 };
 
 // Priser-siden (HANDOFF §3-strukturen): går et lag dybere end landing-sektionen —
@@ -15,6 +18,8 @@ export const metadata = {
 export default function PriserSide() {
   return (
     <main>
+      {/* Kreditpakkerne som produkt + tilbud (DKK) til rich results/LLM */}
+      <JsonLd data={priserGraf()} />
       <section className="mx-auto max-w-5xl px-4 pb-12 pt-10">
         <Reveal>
           <h1 className="font-display text-kaempe font-bold">

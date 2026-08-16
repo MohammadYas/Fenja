@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FoerEfter } from "@/components/foer-efter";
+import { JsonLd } from "@/components/json-ld";
 import { Reveal } from "@/components/reveal";
 import { da } from "@/lib/copy/da";
 import { vinted } from "@/lib/copy/vinted";
 import { hentGuides } from "@/lib/guides";
+import { forsideGraf } from "@/lib/seo/jsonld";
 
 // Forsiden er Vinted-appen (STRATEGISKIFT 2026-08-15: Selja er ét produkt
 // udadtil — B2B-studioet er parkeret på /studio, kun linket fra footeren).
@@ -12,6 +14,7 @@ import { hentGuides } from "@/lib/guides";
 export const metadata = {
   title: vinted.meta.titel,
   description: vinted.meta.beskrivelse,
+  alternates: { canonical: "/" },
   openGraph: {
     title: vinted.meta.titel,
     description: vinted.meta.beskrivelse,
@@ -25,6 +28,8 @@ export default function Forside() {
 
   return (
     <main>
+      {/* Produkt (web-app + priser) og trin-for-trin how-to til rich results/LLM */}
+      <JsonLd data={forsideGraf()} />
       {/* Hero: before/after-panelet er omdrejningspunktet (signatur-elementet,
           HANDOFF §2.2.3) */}
       <section className="border-b border-kant">

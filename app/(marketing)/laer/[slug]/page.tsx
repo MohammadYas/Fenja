@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/json-ld";
 import { da } from "@/lib/copy/da";
 import { hentGuide, hentGuides } from "@/lib/guides";
+import { guideGraf } from "@/lib/seo/jsonld";
 
 export function generateStaticParams() {
   return hentGuides().map((guide) => ({ slug: guide.slug }));
@@ -18,6 +20,7 @@ export async function generateMetadata({
   return {
     title: `${guide.titel} · ${da.site.navn}`,
     description: guide.beskrivelse,
+    alternates: { canonical: `/laer/${guide.slug}` },
   };
 }
 
@@ -38,6 +41,8 @@ export default async function GuideSide({
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-12">
+      {/* Artikel + brødkrummesti (Selja → Lær → guide) */}
+      <JsonLd data={guideGraf(guide)} />
       <nav>
         <Link href="/laer" className="soem-link inline-flex min-h-touch items-center font-medium">
           ← {da.laer.alleGuides}
