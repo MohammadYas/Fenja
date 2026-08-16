@@ -62,6 +62,16 @@ løfteformuleringerne er urørte (omskrivning afventer ejer).
 Log ind.
 
 ## Åbne ejer-beslutninger
+- **Katalog-offentliggørelse (besluttet 2026-08-16, bygges i kommende
+  katalog-opgave):** brugere skal kunne offentliggøre deres visualisering i
+  et katalog på sitet. GDPR-korrekt udgave (ejer-godkendt): toggle er
+  **aktivt tilvalg (default FRA)** — aldrig default til; kun den mærkede
+  AI-visualisering kan offentliggøres, ALDRIG brugerens rå fotos (NFR-7
+  gælder fortsat for ægte fotos). Admin skal kunne skjule/slette. Moderation
+  før offentliggørelse via eksisterende providers (Gemini safety-ratings /
+  Claude vision) — IKKE DeepSeek (GDPR-overførsel + unødig dependency).
+  Forside-kataloget fyldes indtil da med Gemini-genererede billeder
+  (ejerens prompts er på vej).
 - **S27 gratis-tier:** nu ingen gratis annoncer. Alternativ på bordet: gratis
   kørsel med sløret/vandmærket resultat, betal for at låse op. Byg intet endnu.
 - **Mærkning af genererede billeder:** synlig AI-mærkat er MIDLERTIDIGT fjernet
