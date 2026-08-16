@@ -81,7 +81,7 @@ export default async function Oversigt() {
             <Taeller til={samletVaerdi} /> kr.
           </p>
           <p className="mt-3 text-detalje text-hoer">
-            {da.oversigt.solgtMedFenja} · {da.oversigt.solgteAntal(solgte.length)}
+            {da.oversigt.solgtMedSelja} · {da.oversigt.solgteAntal(solgte.length)}
             {snitLiggetid != null ? ` · ${da.oversigt.liggetid(snitLiggetid)}` : null}
           </p>
         </section>

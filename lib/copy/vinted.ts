@@ -4,15 +4,15 @@
 
 export const vinted = {
   meta: {
-    titel: "Fenja til Vinted — færdig annonce på 2 minutter",
+    titel: "Selja til Vinted — færdig annonce på 2 minutter",
     beskrivelse:
-      "Tag 2–4 mobilfotos af dit tøj. Fenja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted.",
+      "Tag 2–4 mobilfotos af dit tøj. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted.",
   },
   hero: {
-    maerkat: "Fenja til Vinted",
+    maerkat: "Selja til Vinted",
     rubrik: "Din annonce. Færdig på 2 minutter.",
     tekst:
-      "Tag 2–4 fotos med telefonen. Fenja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — du kopierer bare ind på Vinted.",
+      "Tag 2–4 fotos med telefonen. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — du kopierer bare ind på Vinted.",
     knap: "Lav min annonce",
   },
   foerEfter: {
@@ -22,7 +22,7 @@ export const vinted = {
       pris: "100 kr. eller byd",
     },
     efter: {
-      label: "Efter — med Fenja",
+      label: "Efter — med Selja",
       titel: "Mørkeblå uldstrik · str. M",
       punkter: [
         "Rensede fotos, klar til Vinted",
@@ -38,10 +38,10 @@ export const vinted = {
     trin: [
       {
         titel: "Fotografér",
-        tekst: "Helhed, bagside, label og fejl. Dagslys er nok — resten klarer Fenja.",
+        tekst: "Helhed, bagside, label og fejl. Dagslys er nok — resten klarer Selja.",
       },
       {
-        titel: "Fenja arbejder",
+        titel: "Selja arbejder",
         tekst:
           "Cirka 90 sekunder: rensede billeder, tøjet vist båret og en tekst, der lyder som dig — ikke som en reklame.",
       },

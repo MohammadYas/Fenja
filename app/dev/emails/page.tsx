@@ -13,7 +13,7 @@ import { MagicLinkMail } from "@/emails/magic-link";
 import { VelkomstMail } from "@/emails/velkomst";
 import { emails } from "@/lib/copy/emails";
 
-export const metadata = { title: "Mails (dev) · Fenja" };
+export const metadata = { title: "Mails (dev) · Selja" };
 
 const EKSEMPEL_TITEL = "Mørkeblå uldstrik · str. M";
 const EKSEMPEL_BASE = "http://localhost:3000";

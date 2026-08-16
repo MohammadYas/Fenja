@@ -1,10 +1,15 @@
 // Central konfiguration — justérbare forretningsværdier samlet ét sted.
 
+// Produktets domæne — ÉN kilde til alle domæne-referencer. PLACEHOLDER indtil
+// ejeren bekræfter det købte domæne; i produktion sættes NEXT_PUBLIC_SITE_URL,
+// ellers skiftes kun denne ene linje.
+export const SELJA_DOMAIN = "selja.studio";
+
 // Sidens offentlige base-URL. Bruges hvor der ikke findes en request-origin
 // (Trigger.dev-jobs, transaktionsmails) til at bygge absolutte links. Samme
 // kilde og fallback som app/robots.ts og sitemap'et.
 export const site = {
-  baseUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://fenja.studio",
+  baseUrl: process.env.NEXT_PUBLIC_SITE_URL ?? `https://${SELJA_DOMAIN}`,
 } as const;
 
 export const kreditter = {

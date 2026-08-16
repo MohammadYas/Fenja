@@ -51,7 +51,7 @@ export const guideIndhold: readonly GuideIndhold[] = [
       },
       {
         "type": "afsnit",
-        "tekst": "Sælger du jævnligt med det formål at tjene penge, kan du ramme grænsen for privat salg — både hos Vinted og hos Skat. Køber du ind for at videresælge i større stil, så læs guiden om Vinted Pro, før du fortsætter. Fenja hjælper dig ikke med at omgå reglerne — det er din konto, der er på spil."
+        "tekst": "Sælger du jævnligt med det formål at tjene penge, kan du ramme grænsen for privat salg — både hos Vinted og hos Skat. Køber du ind for at videresælge i større stil, så læs guiden om Vinted Pro, før du fortsætter. Selja hjælper dig ikke med at omgå reglerne — det er din konto, der er på spil."
       }
     ]
   },
@@ -88,7 +88,7 @@ export const guideIndhold: readonly GuideIndhold[] = [
       },
       {
         "type": "afsnit",
-        "tekst": "Fenjas prisforslag giver dig et interval at starte fra — det er et forslag baseret på mærke, kategori og stand, ikke en garanti."
+        "tekst": "Seljas prisforslag giver dig et interval at starte fra — det er et forslag baseret på mærke, kategori og stand, ikke en garanti."
       },
       {
         "type": "rubrik",
@@ -132,7 +132,7 @@ export const guideIndhold: readonly GuideIndhold[] = [
       },
       {
         "type": "afsnit",
-        "tekst": "Et jævnt, roligt underlag: et lyst gulv, en hvid væg, et strøget lagen. Fenja renser baggrunden for dig, men jo bedre udgangspunkt, jo bedre resultat. Undgå rodede senge og fyldte knagerækker."
+        "tekst": "Et jævnt, roligt underlag: et lyst gulv, en hvid væg, et strøget lagen. Selja renser baggrunden for dig, men jo bedre udgangspunkt, jo bedre resultat. Undgå rodede senge og fyldte knagerækker."
       },
       {
         "type": "rubrik",
@@ -144,7 +144,7 @@ export const guideIndhold: readonly GuideIndhold[] = [
         "punkter": [
           "Helhed: hele tøjet, glat og lige på. Det bliver dit billede 1 på Vinted.",
           "Bagside: bagsiden — købere spørger alligevel.",
-          "Label: vaskemærket, skarpt og læsbart. Så aflæser Fenja materiale og størrelse.",
+          "Label: vaskemærket, skarpt og læsbart. Så aflæser Selja materiale og størrelse.",
           "Fejl: tæt på pletter, huller eller slid. Det føles forkert at fremhæve fejl — men det er det, der beskytter dig mod returkrav og dårlige anmeldelser."
         ]
       },
@@ -182,7 +182,7 @@ export const guideIndhold: readonly GuideIndhold[] = [
         "type": "liste",
         "ordnet": false,
         "punkter": [
-          "Billede 1 skal være dit eget foto af den faktiske vare. Ikke et pressefoto, ikke et genereret billede. Det er derfor, Fenja altid leverer dine rensede, ægte fotos først med besked om at bruge dem som billede 1.",
+          "Billede 1 skal være dit eget foto af den faktiske vare. Ikke et pressefoto, ikke et genereret billede. Det er derfor, Selja altid leverer dine rensede, ægte fotos først med besked om at bruge dem som billede 1.",
           "Beskrivelsen skal være ærlig. Fejl og slid, du ikke oplyser, giver køberen ret til at returnere med begrundelsen \"ikke som beskrevet\" — og så betaler du fragten og risikerer en dårlig anmeldelse.",
           "Sælg kun det, du må sælge. Kopivarer, parfume med brudt segl og visse mærkevarer uden kvittering giver problemer."
         ]
@@ -193,7 +193,7 @@ export const guideIndhold: readonly GuideIndhold[] = [
       },
       {
         "type": "afsnit",
-        "tekst": "Genererede billeder er et gråzoneområde, som Vinted kan stramme op på når som helst. Fenjas holdning er enkel: visualiseringer er et supplement, aldrig en erstatning. De er altid tydeligt mærket — synligt på billedet og i filens metadata, som EU-reglerne kræver — og de må aldrig være dit billede 1. Bruger du dem sådan, står du på den sikre side, uanset hvad Vinted beslutter."
+        "tekst": "Genererede billeder er et gråzoneområde, som Vinted kan stramme op på når som helst. Seljas holdning er enkel: visualiseringer er et supplement, aldrig en erstatning. De er altid tydeligt mærket — synligt på billedet og i filens metadata, som EU-reglerne kræver — og de må aldrig være dit billede 1. Bruger du dem sådan, står du på den sikre side, uanset hvad Vinted beslutter."
       },
       {
         "type": "rubrik",
@@ -209,7 +209,7 @@ export const guideIndhold: readonly GuideIndhold[] = [
       },
       {
         "type": "afsnit",
-        "tekst": "Vinteds regler ændrer sig — Fenja følger dem, det bør du også. Find de aktuelle katalogregler i Vinteds hjælpecenter, og tjek dem, hvis du er i tvivl om en konkret vare."
+        "tekst": "Vinteds regler ændrer sig — Selja følger dem, det bør du også. Find de aktuelle katalogregler i Vinteds hjælpecenter, og tjek dem, hvis du er i tvivl om en konkret vare."
       }
     ]
   },
@@ -262,7 +262,7 @@ export const guideIndhold: readonly GuideIndhold[] = [
       },
       {
         "type": "afsnit",
-        "tekst": "Regn på det, før grænsen tvinger dig. Et CVR-nummer og en Pro-konto er en formalitet — en lukket konto med 400 gode anmeldelser er et reelt tab. Fenja hjælper dig med annoncerne uanset hvad, men vi bygger ikke funktioner, der hjælper kommercielt salg med at gemme sig på private konti."
+        "tekst": "Regn på det, før grænsen tvinger dig. Et CVR-nummer og en Pro-konto er en formalitet — en lukket konto med 400 gode anmeldelser er et reelt tab. Selja hjælper dig med annoncerne uanset hvad, men vi bygger ikke funktioner, der hjælper kommercielt salg med at gemme sig på private konti."
       }
     ]
   },
@@ -304,7 +304,7 @@ export const guideIndhold: readonly GuideIndhold[] = [
       },
       {
         "type": "afsnit",
-        "tekst": "Fenja aflæser størrelsen fra dit labelfoto, når den kan — men labelen viser kun den trykte størrelse. Målene kender kun du, så tag dem, mens tøjet alligevel ligger fremme til fotografering."
+        "tekst": "Selja aflæser størrelsen fra dit labelfoto, når den kan — men labelen viser kun den trykte størrelse. Målene kender kun du, så tag dem, mens tøjet alligevel ligger fremme til fotografering."
       },
       {
         "type": "rubrik",

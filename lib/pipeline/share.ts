@@ -39,7 +39,7 @@ function soemSvg(): Buffer {
 function ordmaerkeSvg(): Buffer {
   return Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${BREDDE}" height="80">
-      <text x="${BREDDE / 2}" y="52" text-anchor="middle" font-family="monospace" font-size="34" letter-spacing="6" fill="${DELE_FARVER.koks}">FENJA</text>
+      <text x="${BREDDE / 2}" y="52" text-anchor="middle" font-family="monospace" font-size="34" letter-spacing="6" fill="${DELE_FARVER.koks}">SELJA</text>
     </svg>`,
   );
 }

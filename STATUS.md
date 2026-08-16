@@ -31,7 +31,7 @@ Sidst opdateret: 2026-08-16 af Claude Code (cloud session)
   FAL_KEY + ANTHROPIC_API_KEY i `.env.local` — se BACKLOG.
 
 ## Produktet udadtil (ejer-beslutning 2026-08-15/16)
-Fenja er **ét produkt udadtil: Vinted-appen.** Forsiden er Vinted-landingen
+Selja er **ét produkt udadtil: Vinted-appen.** Forsiden er Vinted-landingen
 (før/efter-hero, billedserie, 3 trin, "Det får du", Lær-teaser, sælger-CTA).
 B2B-studioet er **parkeret uændret på `/studio`**: ikke i nav, ikke i sitemap,
 `noindex`, kun et diskret footer-link. B2B-indholdet er ikke slettet, og
@@ -76,6 +76,11 @@ I appen er samme princip kodet i `lib/pipeline/skabeloner.ts`:
   styrer. C-6: ansigtet er altid skjult eller beskåret væk.
 
 ## Vigtige tidligere beslutninger (gælder stadig)
+- **Omdøbt Fenja → Selja** (15/8-2026, navnekonflikt): Selja = oldnordisk
+  "at sælge". Alle varianter (Fenja/fenja/FENJA) erstattet i kode, copy, docs,
+  metadata, mails og eksempler. Domæne-referencer går gennem `SELJA_DOMAIN` i
+  `lib/config.ts` (placeholder `selja.studio` indtil ejeren bekræfter købt
+  domæne; `NEXT_PUBLIC_SITE_URL` overstyrer). GitHub-repoet omdøber ejeren selv.
 - **Gratis-tier afskaffet** (misbrugsværn): `gratisVedSignup: 0`, signup-grant
   er no-op i ledger.ts. E-1 i HANDOFF/SPEC er dermed overstyret.
 - **Lær-indhold bor i TS** (`lib/guides-indhold.ts`), ikke markdown —

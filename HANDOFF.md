@@ -1,15 +1,16 @@
-# FENJA · HANDOFF.md — Projektbibel v1.1
+# SELJA · HANDOFF.md — Projektbibel v1.1
 > **Dette dokument er lov.** Alle — mennesker og AI-agenter (Claude Code cloud sessions) — læser dette dokument OG `STATUS.md` før én linje kode skrives. Ved konflikt mellem dette dokument og en sessions egen idé vinder dokumentet. Ændringer til dokumentet sker kun via PR med begrundelse.
 >
-> Repo-rod skal indeholde: `HANDOFF.md` (denne fil) · `SPEC.md` (fenja-spec v0.2, den tekniske spec) · `STATUS.md` (levende log) · `BACKLOG.md` (opgaver) · `DESIGN.md` (designbeslutninger, oprettes af design-sessionen)
+> Repo-rod skal indeholde: `HANDOFF.md` (denne fil) · `SPEC.md` (selja-spec v0.2, den tekniske spec) · `STATUS.md` (levende log) · `BACKLOG.md` (opgaver) · `DESIGN.md` (designbeslutninger, oprettes af design-sessionen)
 ---
 ## 0. Produktet i tre sætninger
-Fenja hjælper folk med at sælge deres tøj hurtigere på Vinted: upload mobilfotos af et stykke tøj, og få rensede salgsbilleder, en visualisering af tøjet båret i nordisk æstetik, og en færdig annoncetekst med prisforslag — klar til copy-paste. Compliance er indbygget: ægte fotos først, visualiseringer tydeligt mærket, fejl fremhævet frem for skjult. Forretningen: kreditpakker (gratis-tier afskaffet, ejer-beslutning 2026-08-15); sideløbende sælges B2B-annoncepakker manuelt (fase B-motoren) — B2B er udadtil parkeret på /studio, ikke en del af det offentlige site.
+Selja hjælper folk med at sælge deres tøj hurtigere på Vinted: upload mobilfotos af et stykke tøj, og få rensede salgsbilleder, en visualisering af tøjet båret i nordisk æstetik, og en færdig annoncetekst med prisforslag — klar til copy-paste. Compliance er indbygget: ægte fotos først, visualiseringer tydeligt mærket, fejl fremhævet frem for skjult. Forretningen: kreditpakker (gratis-tier afskaffet, ejer-beslutning 2026-08-15); sideløbende sælges B2B-annoncepakker manuelt (fase B-motoren) — B2B er udadtil parkeret på /studio, ikke en del af det offentlige site.
 > Ændringslog v1.1 (2026-08-15): Vinted-first — forsiden er Vinted-appen alene; B2B parkeret på /studio.
+> Omdøbt fra Fenja 15/8-2026 (navnekonflikt): Selja = oldnordisk "at sælge".
 ---
 ## 1. Faserne
-> Ændringslog v1.1 (2026-08-15): Fenja er ét produkt udadtil (fase A/Vinted); fase B sælges via outreach fra /studio, ikke fra forsiden.
-### Fase A — Fenja for Vinted (MVP, uge 1–3)
+> Ændringslog v1.1 (2026-08-15): Selja er ét produkt udadtil (fase A/Vinted); fase B sælges via outreach fra /studio, ikke fra forsiden.
+### Fase A — Selja for Vinted (MVP, uge 1–3)
 Selvbetjent, mobil-first web-app til private Vinted-sælgere. Billeder + tekst, ingen video. Detaljeret i §4 (krav) og `SPEC.md`.
 **Exit-kriterie:** Live på eget domæne med betaling, ≥ 10 rigtige brugere, troskabs-pass-rate ≥ 70 %, hele kerneflowet ≤ 2 min.
 ### Fase B — Videoannonce-motoren (B2B, uge 3+)
@@ -20,7 +21,7 @@ Flere sprog/lande (Vinted findes i 20+ markeder — appen bygges i18n-klar fra d
 **Exit-kriterie:** Defineres ved fase B-exit.
 ---
 ## 2. Designmanifest — ABSOLUT KRAV: intet AI-slop
-Dette er et P0-krav på linje med funktionalitet. Fenja skal ligne et produkt bygget af et lille, seriøst dansk studio med holdninger — ikke endnu en AI-SaaS fra en skabelon. Brugerne er unge mennesker med veludviklet bullshit-radar; ét AI-slop-signal, og tilliden er væk.
+Dette er et P0-krav på linje med funktionalitet. Selja skal ligne et produkt bygget af et lille, seriøst dansk studio med holdninger — ikke endnu en AI-SaaS fra en skabelon. Brugerne er unge mennesker med veludviklet bullshit-radar; ét AI-slop-signal, og tilliden er væk.
 ### 2.1 Forbudt (hård liste — PR'er der bryder disse afvises)
 1. Lilla/blå gradient-heroes, glassmorphism, neon-glow, mesh-gradients
 2. Emojis som ikoner eller i UI-tekst; ✨🚀🔥-sprog overalt
@@ -192,7 +193,7 @@ Når du er hjemme (~1 time første gang):
 4. Opret fal.ai-konto + nøgle; kør `scripts/gate1-fidelity-test.ts` med 20 fotos af tøj fra din egen garderobe → skriv resultatet i `STATUS.md` (Gate 1!)
 5. Stripe: opret produkt/priser i testmode; sæt webhook mod Netlify-URL
 6. Trigger.dev-projekt + Resend-domæneverifikation
-7. Registrér domæne (tjek fenja.ai/getfenja.com/fenja.studio + virk.dk/EUIPO for navnet)
+7. Registrér domæne (tjek selja.ai/getselja.com/selja.studio + virk.dk/EUIPO for navnet)
 8. Push evt. lokale ændringer — herefter kan ALT igen køre fra mobilen via cloud sessions
 Indtil da: alle sessions arbejder mod mocks og lokal Supabase-config. Intet i backloggen før session 12 kræver rigtige nøgler.
 ---
@@ -235,5 +236,5 @@ Indtil da: alle sessions arbejder mod mocks og lokal Supabase-config. Intet i ba
 Alle skal være grønne: Gate 1 troskab ≥ 70 % (ellers: on-model slås fra, MVP = rens+tekst) · Gate 2 komplet annonce ≤ 2 min · compliance-testene grønne (badge, rækkefølge, fejl-i-tekst kan ikke omgås) · Lighthouse mobil ≥ 90 på marketing-sider · én person uden instruktion gennemfører flowet på egen telefon · slop-gennemgang af HELE sitet mod §2.1-listen · vilkår + privatliv + moms på plads · budgetloft og kill-switch testet.
 ---
 ## 9. Referencer
-`SPEC.md` (fenja-spec v0.2): fuld teknisk spec — datamodel, billedpipeline-detaljer, preset-system, unit economics, risici, Tillæg B (videomotoren). Vinteds katalogregler + kommercielt salg-regler: læses af enhver session, der rører compliance-logik eller Lær-indhold. EU AI-forordningens mærkningskrav (art. 50, i kraft 2/8-2026): baggrund for C-4.
+`SPEC.md` (selja-spec v0.2): fuld teknisk spec — datamodel, billedpipeline-detaljer, preset-system, unit economics, risici, Tillæg B (videomotoren). Vinteds katalogregler + kommercielt salg-regler: læses af enhver session, der rører compliance-logik eller Lær-indhold. EU AI-forordningens mærkningskrav (art. 50, i kraft 2/8-2026): baggrund for C-4.
 *Handoff slut. Én opgave, én PR, opdatér STATUS — og intet slop.*

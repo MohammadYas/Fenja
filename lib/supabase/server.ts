@@ -118,7 +118,7 @@ function opretDemoKlient() {
   return {
     auth: {
       getUser: async () => ({
-        data: { user: { id: "demo-bruger", email: "demo@fenja.dk" } },
+        data: { user: { id: "demo-bruger", email: "demo@selja.dk" } },
         error: null,
       }),
       signOut: async () => ({ error: null }),

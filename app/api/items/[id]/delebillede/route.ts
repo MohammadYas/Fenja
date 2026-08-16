@@ -56,7 +56,7 @@ export async function GET(
   return new NextResponse(new Uint8Array(billede), {
     headers: {
       "Content-Type": "image/jpeg",
-      "Content-Disposition": `attachment; filename="fenja-foer-efter.jpg"`,
+      "Content-Disposition": `attachment; filename="selja-foer-efter.jpg"`,
       "Cache-Control": "private, max-age=3600",
     },
   });

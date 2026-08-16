@@ -1,7 +1,7 @@
 # Supabase lokal konfiguration — bruges af `supabase start` / `supabase db reset`.
 # AL skemaændring sker som migration i /supabase/migrations — aldrig via dashboard (HANDOFF §3).
 
-project_id = "fenja"
+project_id = "selja"
 
 [api]
 enabled = true

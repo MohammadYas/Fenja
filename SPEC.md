@@ -1,14 +1,14 @@
-# Fenja · Teknisk kravspecifikation & MVP-plan — v0.2
-**Produkt:** Fenja — hjælper Vinted-sælgere med at sælge mere: upload mobilfotos af dit tøj → få rensede salgsbilleder, en nordisk AI-outfit-visualisering af det konkrete stykke tøj, og en færdig annoncetekst. Plus strategier og sourcing-viden, der gør salg på Vinted til en reel indtægt.
-*(Navn: jættekvinden Fenja driver møllen Grotte, der maler hvad ejeren ønsker. Kort, nordisk, internationalt udtaleligt. Tjek fenja.ai / getfenja.com, virk.dk og EUIPO før commit.)*
+# Selja · Teknisk kravspecifikation & MVP-plan — v0.2
+**Produkt:** Selja — hjælper Vinted-sælgere med at sælge mere: upload mobilfotos af dit tøj → få rensede salgsbilleder, en nordisk AI-outfit-visualisering af det konkrete stykke tøj, og en færdig annoncetekst. Plus strategier og sourcing-viden, der gør salg på Vinted til en reel indtægt.
+*(Navn: Selja — oldnordisk "at sælge". Kort, nordisk, internationalt udtaleligt. Tjek selja.ai / getselja.com, virk.dk og EUIPO før commit.)*
 **Ejer:** Dig (solo, vibecoder, remote) · **Dato:** 14. august 2026 · **Version 0.2**
 **Ændring fra v0.1:** Vinted-modulet er nu MVP (fase A). Video-annoncemotoren (Seedance) er flyttet til fase B som B2B-spor — dens fulde krav er bevaret i Tillæg B.
 ---
 ## 1. Vision & strategi
-**Fase A (MVP, uge 1–3): Fenja for Vinted.** Selvbetjent web-app til private sælgere. Billeder, ikke video — billigere, hurtigere, enklere pipeline, kæmpe målgruppe, og din TikTok-slideshow-evne er den perfekte akkvisitionskanal til præcis dét publikum.
+**Fase A (MVP, uge 1–3): Selja for Vinted.** Selvbetjent web-app til private sælgere. Billeder, ikke video — billigere, hurtigere, enklere pipeline, kæmpe målgruppe, og din TikTok-slideshow-evne er den perfekte akkvisitionskanal til præcis dét publikum.
 **Fase B (uge 3+): B2B-annoncemotoren.** Seedance-videopipelinen (Tillæg B) sælges som annoncepakker til virksomheder — dit hurtige cashflow, mens B2C-appen vokser.
 **Fase C (senere): Udland.** Vinted findes i 20+ lande; appen bygges sprogsagnostisk fra dag 1 (da/en i UI, flere senere).
-**Strategisk kerne: compliance er produktet.** Konkurrenter (fx Vintedify) sælger AI-fotos i en gråzone. Fenja bygges som *den ansvarlige mulighed*: ægte fotos først, AI som mærket supplement, fejl fremhævet — ikke skjult. Når Vinted en dag strammer grebet, er Fenja den app der overlever, og det er også det etisk rigtige overfor unge brugere, hvis konti er deres indtægt.
+**Strategisk kerne: compliance er produktet.** Konkurrenter (fx Vintedify) sælger AI-fotos i en gråzone. Selja bygges som *den ansvarlige mulighed*: ægte fotos først, AI som mærket supplement, fejl fremhævet — ikke skjult. Når Vinted en dag strammer grebet, er Selja den app der overlever, og det er også det etisk rigtige overfor unge brugere, hvis konti er deres indtægt.
 ---
 ## 2. Mål & succeskriterier (30 dage)
 | ID | Mål | Målepunkt |
@@ -26,7 +26,7 @@
 **Ikke-mål (30 dage):** mobilapp (web-first, mobiloptimeret), automatisk upload til Vinted (ingen offentlig API — copy-paste-flow i stedet), crosslisting til Trendsales/DBA (fase C), video, teams, engelsk marketing.
 ---
 ## 3. Brugerrejser
-**UR-1 · Vinted-sælgeren (kerne):** Åbner fenja-appen på mobilen → opretter konto (magic link) → nyt item → tager/uploader 2–4 fotos (guidet: helhed, bagside, label, evt. fejl) → udfylder 4 hurtige felter (mærke, størrelse, stand, evt. fejl) → ~90 sek. senere: rensede fotos, 1–2 nordiske on-model-billeder (mærket "AI-visualisering"), færdig titel + beskrivelse + prisforslag → kopierer alt til Vinted med ét tryk pr. element → markerer som solgt (statistik).
+**UR-1 · Vinted-sælgeren (kerne):** Åbner selja-appen på mobilen → opretter konto (magic link) → nyt item → tager/uploader 2–4 fotos (guidet: helhed, bagside, label, evt. fejl) → udfylder 4 hurtige felter (mærke, størrelse, stand, evt. fejl) → ~90 sek. senere: rensede fotos, 1–2 nordiske on-model-billeder (mærket "AI-visualisering"), færdig titel + beskrivelse + prisforslag → kopierer alt til Vinted med ét tryk pr. element → markerer som solgt (statistik).
 **UR-2 · Strategi-sporet:** Bruger åbner "Lær"-sektionen: korte guides (sourcing i genbrug/kilosalg/dødsbo, prissætning, hvornår Vinted Pro, foto-teknik). Gratis — det er akkvisition og retention, ikke produktet.
 **UR-3 · Dig (B2B, fase B):** Uændret fra v0.1 — brief → video-annoncer → leverance (Tillæg B).
 ---
@@ -46,7 +46,7 @@
 | FR-11 | "Lær"-sektion: 5–8 korte guides (sourcing: genbrug, kilosalg, loppemarked, dødsbo; prissætning; Vinted Pro-grænsen; fototeknik). Statisk markdown-indhold, let at udvide | P1 |
 | FR-12 | Nordiske stil-presets: 3–5 valgbare æstetikker (minimal studio, københavnsk gade, hyggelig stue, natur) — samme tøj, forskellig setting | P1 |
 | FR-13 | Delbart resultat: auto-genereret before/after-billede optimeret til TikTok-slideshows (viral loop: brugernes resultater er din marketing) | P1 |
-| FR-14 | Statistik: solgt-markering, samlet salgsværdi ("du har solgt for X kr. med Fenja") — retention + socialt bevis | P1 |
+| FR-14 | Statistik: solgt-markering, samlet salgsværdi ("du har solgt for X kr. med Selja") — retention + socialt bevis | P1 |
 | FR-15 | Prompt-/preset-versionering med pass-rate-statistik pr. version (genbrugt princip fra v0.1) | P1 |
 **Bevidst udeladt:** alt der opfordrer til kommercielt salg på private konti (dropshipping-suppliers, "bestillingsvarer", bulk-listing af nye varer) — det er brud på Vinteds vilkår og ville udsætte brugerne for bans. Sourcing-indholdet (FR-11) handler om brugt/vintage og om at skifte til Vinted Pro, når man krydser grænsen.
 ---
@@ -102,7 +102,7 @@ Invariant: kreditter trækkes i samme transaktion som leverancen markeres komple
 2. AI-billeder altid med synligt badge + metadata (AI-forordningens mærkningskrav, i kraft siden 2/8-2026).
 3. Fejl/slid: brugerens fejl-foto og fejl-felt SKAL med i leverancen — uviste fejl giver køber returret som "ikke som beskrevet", så ærlighed er også salgsrådgivning.
 4. Ingen features der understøtter kommercielt salg på private konti (Vinteds forbud).
-5. In-app disclaimer: "Vinteds regler ændrer sig — Fenja følger dem, det bør du også" + link.
+5. In-app disclaimer: "Vinteds regler ændrer sig — Selja følger dem, det bør du også" + link.
 ### 8.3 Vinted-API-realitet
 Vinted har ingen offentlig API til oprettelse af annoncer, og scraping/automatisering af brugerkonti er vilkårsbrud. Derfor FR-9's polerede copy-paste-flow — og derfor er "automatisk upload" et permanent ikke-mål, indtil Vinted evt. åbner en API.
 ---
@@ -126,7 +126,7 @@ Gate-regel uændret: fix det blokerende, skær P1, flyt aldrig en gate > 3 dage.
 | # | Risiko | Sandsynl. | Mitigering |
 |---|---|---|---|
 | R1 | Tøj-troskab for lav (print/logo forvanskes) — den vigtigste tekniske risiko | Middel-høj | G1-eksperimentet FØR alt andet; troskabs-tjek + refund; fallback-MVP uden on-model |
-| R2 | Vinted strammer/håndhæver mod AI-billeder | Middel | Compliance-by-design (§8.2) er hele positioneringen; ægte-foto-først gør Fenja robust; følg Vinteds regelændringer månedligt |
+| R2 | Vinted strammer/håndhæver mod AI-billeder | Middel | Compliance-by-design (§8.2) er hele positioneringen; ægte-foto-først gør Selja robust; følg Vinteds regelændringer månedligt |
 | R3 | B2C tjener for lidt på 30 dage | Høj | Indregnet: M3 dækkes primært af manuelle B2B-pakker; appen måles på brugere/betalende, ikke omsætning, i måned 1 |
 | R4 | Konkurrence (Vintedify m.fl.) | Middel | Nordisk fokus, dansk indhold, TikTok-distribution, compliance-brand; hastighed |
 | R5 | Misbrug af gratis-tier / genererings-misbrug | Middel | FR-10 lofter, e-mailverifikation, rate limits |

@@ -1,4 +1,4 @@
--- Fenja · første migration — kerneskemaet fra SPEC §7.
+-- Selja · første migration — kerneskemaet fra SPEC §7.
 -- Invariant (E-3): kreditsaldo ER summen af credit_ledger; den gemmes ikke som tal
 -- på profilen. Trækning sker i samme transaktion som leverancen markeres komplet.
 

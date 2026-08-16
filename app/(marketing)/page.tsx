@@ -6,7 +6,7 @@ import { da } from "@/lib/copy/da";
 import { vinted } from "@/lib/copy/vinted";
 import { hentGuides } from "@/lib/guides";
 
-// Forsiden er Vinted-appen (STRATEGISKIFT 2026-08-15: Fenja er ét produkt
+// Forsiden er Vinted-appen (STRATEGISKIFT 2026-08-15: Selja er ét produkt
 // udadtil — B2B-studioet er parkeret på /studio, kun linket fra footeren).
 // Indholdet er /vinted-landingen fra feat/vinted-side; /vinted redirecter hertil.
 export const metadata = {

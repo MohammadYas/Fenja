@@ -4,7 +4,7 @@ import { Reveal } from "@/components/reveal";
 import { kontakt } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 
-// Fenja Studio — B2B-sporet PARKERET som outreach-side (STRATEGISKIFT
+// Selja Studio — B2B-sporet PARKERET som outreach-side (STRATEGISKIFT
 // 2026-08-15: forsiden er Vinted-appen alene). Sektionerne er flyttet UÆNDRET
 // fra den gamle forside: hero, ydelser, FAQ og "Sådan foregår det".
 // Ikke i nav, ikke i sitemap, noindex — kun det diskrete footer-link peger her.

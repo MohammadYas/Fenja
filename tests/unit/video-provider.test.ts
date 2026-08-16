@@ -57,7 +57,7 @@ describe("MockVideoProvider · jobforløb", () => {
     await provider.hentStatus(providerJobId);
     const resultat = await provider.hentResultat(providerJobId);
     expect(resultat.url).toBe(
-      "https://mock.fenja.local/video/mock-video-job-1.mp4",
+      "https://mock.selja.local/video/mock-video-job-1.mp4",
     );
     expect(resultat.varighedSek).toBe(10);
     expect(resultat.format).toBe("1:1");

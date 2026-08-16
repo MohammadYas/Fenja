@@ -7,17 +7,17 @@
 
 export const emails = {
   faelles: {
-    afsenderNavn: "Fenja",
+    afsenderNavn: "Selja",
     // Under knappen, til klienter der ikke viser knappen ordentligt.
     knapFallback: "Virker knappen ikke? Kopiér linket herunder ind i din browser:",
     footer:
-      "Fenja — rensede fotos, mærket visualisering og færdig annoncetekst til dit brugte tøj.",
-    footerHvorfor: "Du får denne mail, fordi din e-mail er brugt hos Fenja.",
+      "Selja — rensede fotos, mærket visualisering og færdig annoncetekst til dit brugte tøj.",
+    footerHvorfor: "Du får denne mail, fordi din e-mail er brugt hos Selja.",
   },
   magicLink: {
     emne: "Dit link til at logge ind",
     forhaandsvisning: "Tryk på linket, så er du logget ind. Det virker i en time.",
-    overskrift: "Log ind hos Fenja",
+    overskrift: "Log ind hos Selja",
     brod: "Tryk på knappen, så er du logget ind. Linket virker i en time og kan kun bruges én gang.",
     knap: "Log mig ind",
     ikkeDig:
@@ -27,7 +27,7 @@ export const emails = {
     emne: "Din konto er klar",
     forhaandsvisning: "Sådan laver du din første annonce.",
     overskrift: "Din konto er klar",
-    brod: "Velkommen til Fenja. Sådan laver du en annonce:",
+    brod: "Velkommen til Selja. Sådan laver du en annonce:",
     trin: [
       "Tag 2–4 fotos af tøjet med din telefon.",
       "Udfyld mærke, størrelse, stand og kategori.",

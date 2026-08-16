@@ -4,11 +4,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { da } from "@/lib/copy/da";
 
-// S31 · vælg det faste hjem visualiseringerne optages i. Tom værdi = lad Fenja
+// S31 · vælg det faste hjem visualiseringerne optages i. Tom værdi = lad Selja
 // vælge (det deterministiske hjem). Navnene kommer fra da.ts (NFR-12); listen
 // af hjem-id'er er den samme kilde som pipelinen bruger, sendt fra siden.
 type HjemVaelgerProps = {
-  /** Nuværende valg (home_anchor); null/ukendt vises som "Fenja vælger" */
+  /** Nuværende valg (home_anchor); null/ukendt vises som "Selja vælger" */
   valgt: string | null;
   /** Hjem-id'er i visningsrækkefølge (fra HJEM, serveret af siden) */
   hjemIder: string[];

@@ -6,7 +6,7 @@ import sharp from "sharp";
 
 export const BADGE_TEKST = "VISUALISERING";
 export const AI_METADATA_TEKST =
-  "AI-genereret visualisering. Maerket jf. EU AI-forordningen art. 50. Lavet med Fenja.";
+  "AI-genereret visualisering. Maerket jf. EU AI-forordningen art. 50. Lavet med Selja.";
 
 function badgeSvg(bredde: number): { svg: Buffer; hoejde: number; margin: number } {
   // Skalerer med billedet: ~4 % af bredden i højde, mono-uppercase som i UI'et.
@@ -56,7 +56,7 @@ export async function paafoerBadge(billede: Buffer): Promise<Buffer> {
     .withExif({
       IFD0: {
         ImageDescription: AI_METADATA_TEKST,
-        Software: "Fenja (AI-genereret visualisering)",
+        Software: "Selja (AI-genereret visualisering)",
       },
     })
     .jpeg({ quality: 88 })

@@ -9,9 +9,9 @@ const formaterKreditTal = (n: number): string =>
 
 export const da = {
   site: {
-    navn: "Fenja",
+    navn: "Selja",
     beskrivelse:
-      "Tag 2–4 mobilfotos af dit tøj — Fenja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag, klar til Vinted.",
+      "Tag 2–4 mobilfotos af dit tøj — Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag, klar til Vinted.",
   },
   nav: {
     virksomheder: "Til virksomheder",
@@ -42,7 +42,7 @@ export const da = {
     linkSendt: (email: string) =>
       `Vi har sendt et link til ${email}. Åbn mailen på denne telefon og tryk på linket.`,
     under18:
-      "Fenja er for sælgere på 18 år eller derover, fordi Vinted kræver det. Du er velkommen tilbage, når du er fyldt 18.",
+      "Selja er for sælgere på 18 år eller derover, fordi Vinted kræver det. Du er velkommen tilbage, når du er fyldt 18.",
     alderPaakraevet: "Bekræft at du er 18 år eller ældre for at fortsætte.",
     fejl: "Linket kunne ikke sendes. Tjek at e-mailen er rigtig, og prøv igen.",
   },
@@ -58,9 +58,9 @@ export const da = {
     hjem: {
       titel: "Dit hjem på billederne",
       forklaring:
-        "Alle dine visualiseringer optages i det samme hjem, så din profil ligner ét sted. Vælg et fast hjem, eller lad Fenja vælge for dig.",
+        "Alle dine visualiseringer optages i det samme hjem, så din profil ligner ét sted. Vælg et fast hjem, eller lad Selja vælge for dig.",
       nuvaerende: (navn: string) => `Nu: ${navn}`,
-      automatisk: "Fenja vælger",
+      automatisk: "Selja vælger",
       automatiskHjaelp: "Vi vælger et fast hjem ud fra din konto.",
       gem: "Gem hjem",
       gemt: "Gemt",
@@ -167,12 +167,12 @@ export const da = {
       "Åbn Vinted og tryk på Sælg.",
       "Upload det rensede helhedsfoto som billede 1, og de øvrige fotos efter.",
       "Tilføj eventuelt visualiseringen til sidst — aldrig som første billede.",
-      "Kopiér titel og beskrivelse ind fra Fenja.",
+      "Kopiér titel og beskrivelse ind fra Selja.",
       "Sæt prisen ud fra prisforslaget, og justér efter din tidshorisont.",
       "Tjek at fejl og slid står i beskrivelsen, og send annoncen af sted.",
     ],
     vintedDisclaimer:
-      "Vinteds regler ændrer sig — Fenja følger dem, det bør du også.",
+      "Vinteds regler ændrer sig — Selja følger dem, det bør du også.",
     vintedReglerLink: "Læs Vinteds katalogregler",
     ikkeFundet: "Vi kan ikke finde den annonce. Gå til oversigten og prøv derfra.",
   },
@@ -196,7 +196,7 @@ export const da = {
     statistikTitel: "Dine tal",
     solgteAntal: (antal: number) => (antal === 1 ? "1 solgt" : `${antal} solgte`),
     // Heltestallet i statistik-blokken: kæmpe mono-tal + denne linje under (REDESIGN §3.5)
-    solgtMedFenja: "solgt med Fenja",
+    solgtMedSelja: "solgt med Selja",
     liggetid: (dage: number) =>
       dage === 1 ? "1 dag i snit før salg" : `${dage} dage i snit før salg`,
   },
@@ -223,7 +223,7 @@ export const da = {
     forklaring:
       "1 kredit = 1 færdig annonce. Kreditter trækkes først, når annoncen er leveret — fejler visualiseringen, får du kreditten tilbage.",
     saldoNu: (antal: number) => `Du har ${formaterKreditTal(antal)} tilbage.`,
-    pakkeNavn: (antal: number) => `Fenja · ${antal} annoncer`,
+    pakkeNavn: (antal: number) => `Selja · ${antal} annoncer`,
     pakkeLinje: (antal: number, pris: number) => `${antal} annoncer · ${pris} kr.`,
     pakkeAntal: (antal: number) => `${antal} annoncer`,
     pakkePris: (pris: number) => `${pris} kr.`,
@@ -273,8 +273,8 @@ export const da = {
     faqTitel: "Spørgsmål, vi ofte får",
     faq: [
       {
-        spoergsmaal: "Lægger Fenja annoncen op på Vinted for mig?",
-        svar: "Nej. Fenja har ingen adgang til din Vinted-konto — det er en pointe, ikke en mangel. Du får billeder og tekst serveret, og kopierer selv ind. Det tager under et minut.",
+        spoergsmaal: "Lægger Selja annoncen op på Vinted for mig?",
+        svar: "Nej. Selja har ingen adgang til din Vinted-konto — det er en pointe, ikke en mangel. Du får billeder og tekst serveret, og kopierer selv ind. Det tager under et minut.",
       },
       {
         spoergsmaal: "Må jeg bruge visualiseringen som billede 1?",
@@ -302,7 +302,7 @@ export const da = {
     heroTitel: "UGC-annoncer og hjemmesider til virksomheder",
     heroRubrik: "Annoncer, folk ikke scroller forbi",
     heroTekst:
-      "Fenja er et lille dansk studio. Vi laver UGC-video, annoncebilleder og hjemmesider for virksomheder, der vil se ægte ud — ikke som reklame. Fast pris pr. opgave, og I ejer alt materialet.",
+      "Selja er et lille dansk studio. Vi laver UGC-video, annoncebilleder og hjemmesider for virksomheder, der vil se ægte ud — ikke som reklame. Fast pris pr. opgave, og I ejer alt materialet.",
     heroKnap: "Skriv til os",
     heroSekundaer: "Sælger du tøj på Vinted? Se appen",
     ydelserTitel: "UGC til virksomheder",
@@ -346,7 +346,7 @@ export const da = {
     appenMaerkat: "Vinted-appen",
     appenTitel: "Sælger du tøj på Vinted?",
     appenTekst:
-      "Fenja-appen renser dine mobilfotos, viser hvordan tøjet ser ud på, og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted på cirka 2 minutter.",
+      "Selja-appen renser dine mobilfotos, viser hvordan tøjet ser ud på, og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted på cirka 2 minutter.",
     appenKnap: "Lav min annonce",
     // Før/efter-kortene (v3): annoncen som transformation — den sjuskede seddel
     // mod den færdige leverance. Skitseret eksempel, tydeligt mærket som sådan.
@@ -356,7 +356,7 @@ export const da = {
       pris: "100 kr. eller byd",
     },
     efterKort: {
-      label: "Efter — med Fenja",
+      label: "Efter — med Selja",
       titel: "Mørkeblå uldstrik · str. M",
       punkter: [
         "Rensede fotos, klar til Vinted",
@@ -374,7 +374,7 @@ export const da = {
         tekst: "2–4 fotos med telefonen: helhed, bagside, label og eventuelle fejl.",
       },
       {
-        titel: "Fenja arbejder",
+        titel: "Selja arbejder",
         tekst: "Billederne renses, en mærket visualisering laves, og annonceteksten skrives — på cirka 90 sekunder.",
       },
       {
@@ -442,17 +442,17 @@ export const da = {
     opdateret: "Senest opdateret: 14. august 2026",
     afsnit: [
       {
-        overskrift: "Hvad Fenja er",
+        overskrift: "Hvad Selja er",
         tekst: [
-          "Fenja hjælper dig med at lave annoncer til dit brugte tøj: rensede billeder, en tydeligt mærket visualisering og en færdig annoncetekst. Du lægger selv annoncen på Vinted — Fenja har ingen adgang til din Vinted-konto.",
+          "Selja hjælper dig med at lave annoncer til dit brugte tøj: rensede billeder, en tydeligt mærket visualisering og en færdig annoncetekst. Du lægger selv annoncen på Vinted — Selja har ingen adgang til din Vinted-konto.",
         ],
       },
       {
         overskrift: "Krav til dig",
         tekst: [
-          "Du skal være mindst 18 år for at bruge Fenja — det er også Vinteds egen aldersgrænse.",
+          "Du skal være mindst 18 år for at bruge Selja — det er også Vinteds egen aldersgrænse.",
           "Du må kun uploade billeder af tøj, du selv ejer og har ret til at sælge, og du er ansvarlig for indholdet af de annoncer, du lægger op.",
-          "Fenja er lavet til privat salg af brugt tøj. Brug ikke Fenja til kommercielt salg på en privat Vinted-konto — det er brud på Vinteds vilkår og kan koste dig kontoen.",
+          "Selja er lavet til privat salg af brugt tøj. Brug ikke Selja til kommercielt salg på en privat Vinted-konto — det er brud på Vinteds vilkår og kan koste dig kontoen.",
         ],
       },
       {
@@ -472,8 +472,8 @@ export const da = {
       {
         overskrift: "Ansvar",
         tekst: [
-          "Fenja leverer værktøjet — selve handlen er mellem dig og din køber. Vi kan ikke garantere, at dit tøj bliver solgt, og vi er ikke part i dine handler på Vinted.",
-          "Vinteds regler ændrer sig løbende. Fenja følger dem — det bør du også.",
+          "Selja leverer værktøjet — selve handlen er mellem dig og din køber. Vi kan ikke garantere, at dit tøj bliver solgt, og vi er ikke part i dine handler på Vinted.",
+          "Vinteds regler ændrer sig løbende. Selja følger dem — det bør du også.",
         ],
       },
       {
@@ -545,7 +545,7 @@ export const da = {
     privatliv: "Privatliv",
     produktGruppe: "Produkt",
     juraGruppe: "Det juridiske",
-    studio: "Fenja Studio — annoncer for virksomheder",
+    studio: "Selja Studio — annoncer for virksomheder",
     maerkning:
       "Alle visualiseringer er mærket — synligt og i filens metadata. Det kræver loven, og det er kun rimeligt.",
   },

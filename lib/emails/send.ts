@@ -52,7 +52,7 @@ export class ResendEmailAfsender implements EmailAfsender {
   }
 }
 
-const FALLBACK_AFSENDER = "Fenja <onboarding@resend.dev>";
+const FALLBACK_AFSENDER = "Selja <onboarding@resend.dev>";
 
 /** Rigtig afsender når nøglen findes, ellers mock. Tving mock med MOCK_PROVIDERS=1. */
 export function hentEmailAfsender(): EmailAfsender {

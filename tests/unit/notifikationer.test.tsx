@@ -13,9 +13,9 @@ import { MockEmailAfsender } from "@/lib/emails/send";
 // til den rigtige modtager gennem en injiceret afsender (mock i test/CI).
 
 const TIL = "saelger@eksempel.dk";
-const ITEM_URL = "https://fenja.studio/items/i1";
-const START_URL = "https://fenja.studio/nyt-item";
-const SALDO_URL = "https://fenja.studio/kreditter";
+const ITEM_URL = "https://selja.studio/items/i1";
+const START_URL = "https://selja.studio/nyt-item";
+const SALDO_URL = "https://selja.studio/kreditter";
 const TITEL = "Mørkeblå uldstrik · str. M";
 
 describe("transaktionsmail-helpers (S32)", () => {

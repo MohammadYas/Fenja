@@ -1,4 +1,4 @@
-# FENJA · DESIGN.md — designbeslutninger v6 "Klar & nordisk"
+# SELJA · DESIGN.md — designbeslutninger v6 "Klar & nordisk"
 
 > Erstatter v1–v5. Baggrund: ejeren har forkastet tre retninger — v1 ("fladt,
 > dødt"), v2/v3-rekvisitterne ("AI-bokse") og V5's rolige katalog ("grimt og

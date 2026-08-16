@@ -33,7 +33,7 @@ export function mockVideoResultat(
   input: VideoJobInput,
 ): VideoResultat {
   return {
-    url: `https://mock.fenja.local/video/${providerJobId}.mp4`,
+    url: `https://mock.selja.local/video/${providerJobId}.mp4`,
     varighedSek: input.varighedSek,
     format: input.format,
     costDkk: mockKlipPrisDkk(input.varighedSek),
