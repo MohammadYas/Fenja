@@ -16,15 +16,80 @@ export const kreditter = {
   // E-1 slået fra (ejer-beslutning 2026-08-15): gratis annoncer inviterer
   // misbrug via nye konti/devices — alle annoncer kræver købte kreditter.
   gratisVedSignup: 0,
-  // Startpriser jf. E-2 — kan justeres her
+  // Pricing v3.0 (ejer-beslutning 2026-08-16): tre pakker med tydelig
+  // værdistige — prisen pr. annonce falder fra Prøv (9,80) over Sælger (5,93)
+  // til Bunke (4,23). Navnene bor i lib/copy/da.ts (NFR-12).
   pakker: [
-    { id: "pakke-10", antal: 10, prisDkk: 29 },
-    { id: "pakke-30", antal: 30, prisDkk: 69 },
+    { id: "proev", antal: 5, prisDkk: 49 },
+    { id: "saelger", antal: 15, prisDkk: 89 },
+    { id: "bunke", antal: 40, prisDkk: 169 },
   ],
+  // Ankeret på /priser — den pakke vi anbefaler (ærlig anbefaling, intet pres)
+  anbefaletPakkeId: "saelger",
+  // Top-up: impulskøbet — vises KUN for indloggede på kreditsiden når saldoen
+  // er lav (aldrig på offentlig /priser).
+  topUp: { id: "fyld-op", antal: 10, prisDkk: 69 },
+  topUpVedSaldoHoejst: 5,
+  // Alle købte kreditter (pakker, top-up og abonnementskvoter) gælder 12
+  // måneder fra købsdatoen; udløbne kreditter bortfalder i saldo-beregningen.
+  udloebMdr: 12,
   prisPrAnnonce: 1, // kreditter trukket pr. leveret annonce
   // B-8: regenerering af en enkeltdel (ny visualisering/ny tekst) til
   // reduceret pris. Ejer-justerbar — ½ kredit er startprisen.
   prisRegenerering: 0.5,
+} as const;
+
+// Abonnementer (pricing v3.0): månedskvote der brændes før købte kreditter —
+// se forbrugsrækkefølgen i lib/credits/ledger.ts. Årsprisen svarer til 10 mdr.
+export const abonnementer = {
+  // Rollover: ubrugt kvote følger med til næste måned, men den samlede
+  // abonnements-saldo er loftet til rolloverLoftFaktor × månedskvoten, så
+  // kvoten ikke bliver en ubegrænset opsparing. FORSLAG — ejeren har ikke
+  // eksplicit besluttet et loft; flaget i PR'en.
+  rolloverLoftFaktor: 2,
+  tiers: [
+    {
+      id: "plus",
+      annoncerPrMd: 12,
+      prisDkkPrMd: 59,
+      prisDkkPrAar: 590,
+      // Feature-flags pr. tier — selve favorit-overvågningen er en senere
+      // opgave (BACKLOG S35); flagene her er den fulde konfiguration.
+      favoritOvervaagning: {
+        maksFavoritter: 25 as number | null, // null = uden loft
+        opdatering: "daglig" as "daglig" | "realtid",
+        prisanbefaling: "statisk" as "statisk" | "dynamisk",
+        konkurrentVarsler: false,
+        batchPrisredigering: false,
+      },
+    },
+    {
+      id: "pro",
+      annoncerPrMd: 30,
+      prisDkkPrMd: 119,
+      prisDkkPrAar: 1190,
+      favoritOvervaagning: {
+        maksFavoritter: null as number | null,
+        opdatering: "realtid" as "daglig" | "realtid",
+        prisanbefaling: "dynamisk" as "statisk" | "dynamisk",
+        konkurrentVarsler: true,
+        batchPrisredigering: true,
+      },
+    },
+  ],
+} as const;
+
+export type AbonnementsTier = (typeof abonnementer.tiers)[number];
+
+// Stripe-pris-id'er for abonnementerne — TESTMODE-PLADSHOLDERE. Ejeren
+// opretter priserne i Stripe testmode (HANDOFF §6.5) og sætter de rigtige
+// id'er her eller via env. Pakker og top-up bruger inline price_data og
+// behøver ingen id'er. ALDRIG rigtige nøgler/id'er committet.
+export const stripePriser = {
+  plusMd: process.env.STRIPE_PRICE_PLUS_MD ?? "price_test_plus_md",
+  plusAar: process.env.STRIPE_PRICE_PLUS_AAR ?? "price_test_plus_aar",
+  proMd: process.env.STRIPE_PRICE_PRO_MD ?? "price_test_pro_md",
+  proAar: process.env.STRIPE_PRICE_PRO_AAR ?? "price_test_pro_aar",
 } as const;
 
 // B2B-henvendelser (UGC-annoncer/hjemmesider) — skift til domæne-mail når
@@ -53,6 +118,25 @@ export const billedProvidere: {
     final: { model: "gemini-3-pro-image-preview", costDkk: 0.95 }, // Nano Banana Pro
   },
 };
+
+// Vagthund på AI-omkostningen pr. komplet annonce (NFR-11: budget ≤ 2 kr.).
+// Overstiger det rullende gennemsnit tærsklen i vinduet, varsles ejeren på
+// kontakt-adressen (IKKE en hårdkodet domæne-mail — domænet er ikke
+// registreret endnu). Selve varslingen kobles på admin-siden (G-1) senere.
+export const aiCostWatch = {
+  taerskelDkkPrAnnonce: 3,
+  vinduesDage: 14,
+  alertEmail: kontakt.email,
+} as const;
+
+// Preview-tilstand (ejer-beslutning 2026-08-16): 3 gratis previews pr. konto,
+// estimeret kostpris 0,60 kr. pr. preview, globalt dagligt budget 50 kr.
+// Kun konfigurationen her — selve preview-flowet er en senere opgave.
+export const preview = {
+  gratisPrKonto: 3,
+  costEstimatDkk: 0.6,
+  dagligtBudgetDkk: 50,
+} as const;
 
 export const pipeline = {
   troskabsTaerskel: 0.7, // K1 — kalibreres i S12 mod rigtige providers
