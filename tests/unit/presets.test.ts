@@ -145,6 +145,7 @@ describe("preset-statistik (C-5/FR-15)", () => {
       {
         presetId: "lys-minimalisme",
         version: 1,
+        provider: "fal",
         runs: 3,
         passes: 2,
         avgFidelity: 0.7,
@@ -152,11 +153,50 @@ describe("preset-statistik (C-5/FR-15)", () => {
       {
         presetId: "lys-minimalisme",
         version: 2,
+        provider: "fal",
         runs: 1,
         passes: 1,
         avgFidelity: 0.95,
       },
     ]);
     expect(passRate(statistik[0]!)).toBeCloseTo(2 / 3);
+  });
+
+  it("provider-dimensionen skiller kørsler ad (Gate 1-trekamp)", async () => {
+    const store = new MockPresetStatsStore();
+    // Udeladt provider = 'fal' (bagudkompatibelt)
+    await store.registrerKoersel({
+      presetId: "lys-minimalisme",
+      version: 1,
+      bestaaet: true,
+      fidelityScore: 0.9,
+    });
+    await store.registrerKoersel({
+      presetId: "lys-minimalisme",
+      version: 1,
+      provider: "gemini-final",
+      bestaaet: false,
+      fidelityScore: 0.5,
+    });
+
+    const statistik = await store.hentStatistik();
+    expect(statistik).toEqual([
+      {
+        presetId: "lys-minimalisme",
+        version: 1,
+        provider: "fal",
+        runs: 1,
+        passes: 1,
+        avgFidelity: 0.9,
+      },
+      {
+        presetId: "lys-minimalisme",
+        version: 1,
+        provider: "gemini-final",
+        runs: 1,
+        passes: 0,
+        avgFidelity: 0.5,
+      },
+    ]);
   });
 });
