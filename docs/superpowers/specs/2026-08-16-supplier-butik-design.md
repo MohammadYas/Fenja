@@ -1,8 +1,8 @@
 # Supplier-butik · designspecifikation
 
-**Status:** Godkendt retning, skrevet 16. august 2026  
+**Status:** Godkendt med launch-gate, opdateret 16. august 2026
 **Produkt:** Selja  
-**Leverance:** Første selvstændige delprojekt i den samlede Selja-udvidelse
+**Leverance:** Kommer snart-side ved Vinted-launch; fuld butik efter launch
 
 ## 1. Formål
 
@@ -19,44 +19,71 @@ Leverancen omfatter også det generelle kontaktflow, som supplier-supporten
 afhænger af: en kontaktside under Konto, en indbakke i adminpanelet og svar,
 der både gemmes i Selja og sendes til brugerens e-mail.
 
+Selja lanceres først med Vinted-produktet. Ved første launch er supplier-delen
+derfor kun et tydeligt `Kommer snart`-kort på Oversigt og en informativ side på
+`/suppliers`. Katalog, supplier-data, betaling, adgang og supplier-admin bygges
+først, når ejeren aktivt åbner fase 2 efter Vinted-lanceringen. Kontaktflowet kan
+bygges tidligere som en del af Vinted-produktets support.
+
 ## 2. Bindende produktbeslutninger
 
-1. Supplier-butikken bor i samme deployment og kodebase som Selja.
-2. Kataloget er admin-kurateret; suppliers kan ikke selv oprette profiler.
-3. Adgang købes enkeltvis og er permanent for den købende Selja-konto.
-4. Betaling sker i DKK via Stripe Checkout som et engangskøb.
-5. Supplier-køb og billedkreditter har separate tabeller, checkout-typer,
+1. Vinted-produktet lanceres før supplier-butikken.
+2. Første launch viser kun `Kommer snart`; der kan ikke købes supplier-links.
+3. Supplier-butikken bor senere i samme deployment og kodebase som Selja.
+4. Kataloget er admin-kurateret; suppliers kan ikke selv oprette profiler.
+5. Adgang købes enkeltvis og er permanent for den købende Selja-konto.
+6. Betaling sker i DKK via Stripe Checkout som et engangskøb.
+7. Supplier-køb og billedkreditter har separate tabeller, checkout-typer,
    kvitteringstekster og regnskabsspor.
-6. Et købt link kan kun deaktiveres for en bruger efter en gennemført
+8. Et købt link kan kun deaktiveres for en bruger efter en gennemført
    refundering eller dokumenteret betalingssvig. En generel deaktivering af
    supplieren sletter ikke købshistorikken.
-7. Selja lover adgang til de beskrevne supplier-oplysninger, ikke lager,
+9. Selja lover adgang til de beskrevne supplier-oplysninger, ikke lager,
    fortjeneste, levering, kvalitet eller accept hos supplieren.
-8. Supplier-linket er personligt. Selja forsøger ikke at bygge DRM: en køber,
+10. Supplier-linket er personligt. Selja forsøger ikke at bygge DRM: en køber,
    som kan åbne et eksternt link, kan teknisk dele det videre. Systemet
    beskytter linket før køb og logger åbninger, men fremsætter ikke et falsk
    løfte om, at deling kan forhindres.
-9. Der bygges ikke abonnement eller “køb alle”-pakke i denne leverance.
-10. De kommende billedprompts, Gemini-ændringerne, Nyt item, mærkesøgning og
-    reparationen af billedkreditternes reservationsflow hører til næste
-    selvstændige delprojekt.
+11. Der bygges ikke abonnement eller “køb alle”-pakke i denne leverance.
+12. De kommende billedprompts, Gemini-ændringerne, Nyt item, mærkesøgning og
+    reparationen af billedkreditternes reservationsflow gennemføres før den
+    fulde supplier-butik.
 
 ## 3. Brugeroplevelse
 
 ### 3.1 Indgang fra Oversigt
 
 `/oversigt` viser altid et supplier-kort, både når brugeren har nul items, og
-når item-listen er udfyldt. Kortet indeholder:
+når item-listen er udfyldt. Ved første launch indeholder kortet:
 
-- overskriften `Find suppliers`;
-- en kort dansk forklaring om, at links er undersøgt og sælges enkeltvis;
-- CTA'en `Se suppliers`, der går til `/suppliers`;
+- overskriften `Suppliers`;
+- et synligt `Kommer snart`-stempel;
+- en kort dansk forklaring om, at kuraterede supplier-links kommer efter
+  Vinted-lanceringen;
+- CTA'en `Læs mere`, der går til `/suppliers`;
 - ingen opdigtede antal, rabatter eller indtjeningsløfter.
 
 Kortet placeres efter sidens titel og før item-statistik/tomtilstand. Det bliver
 ikke et femte punkt i bundnavigationen; Oversigt er den faste indgang.
 
-### 3.2 Katalog
+### 3.2 Første launch: `/suppliers` kommer snart
+
+Siden kræver login og viser kun en rolig introduktion til den kommende butik:
+
+- hvad en supplier-post senere vil indeholde;
+- at links bliver manuelt undersøgt;
+- at køb bliver engangskøb og ikke bruger billedkreditter;
+- at Vinted-værktøjet er Seljas aktuelle fokus;
+- et link tilbage til Oversigt.
+
+Der vises ingen supplier-kort, priser, falske eksempler, nedtælling eller
+ventelisteformular ved første launch. Siden må ikke antyde, at funktionen er
+åben. Denne fase kræver ingen nye supplier-tabeller eller Stripe-flow.
+
+Resten af afsnit 3 beskriver den godkendte fase 2, som først aktiveres efter
+Vinted-lanceringen.
+
+### 3.3 Katalog
 
 `/suppliers` kræver login og viser kun aktive suppliers. Hvert kort viser de
 oplysninger, brugeren skal bruge for at vurdere købet uden at afsløre linket:
@@ -74,7 +101,7 @@ oplysninger, brugeren skal bruge for at vurdere købet uden at afsløre linket:
 Kataloget kan filtreres på kategori og land. Første version bruger almindelige
 server-renderede filtre i query-parametre og tilføjer ikke en tung søgemotor.
 
-### 3.3 Supplier-detalje før køb
+### 3.4 Supplier-detalje før køb
 
 `/suppliers/[slug]` viser den fulde redaktionelle beskrivelse, men aldrig den
 hemmelige destination. Siden viser også:
@@ -88,7 +115,7 @@ hemmelige destination. Siden viser også:
 
 En allerede berettiget bruger ser `Åbn supplier` i stedet for købsknappen.
 
-### 3.4 Checkout og digital levering
+### 3.5 Checkout og digital levering
 
 Før Stripe Checkout skal brugeren aktivt markere en ikke-forudafkrydset boks:
 
@@ -105,7 +132,7 @@ Efter Stripe sender brugeren tilbage til supplier-detaljen med en ventetilstand.
 Klienten kan kort genhente adgangsstatus, men viser ikke linket på baggrund af
 retur-URL'en alene. Kun den signerede Stripe-webhook kan give adgang.
 
-### 3.5 Supplier-detalje efter køb
+### 3.6 Supplier-detalje efter køb
 
 En køber ser:
 
@@ -119,7 +146,7 @@ Den eksterne URL indlejres ikke i React Server Component-data eller side-HTML.
 Redirect-ruten kontrollerer session og adgang ved hvert klik, logger åbningen
 og svarer derefter med en 303-redirect.
 
-### 3.6 Kontakt under Konto
+### 3.7 Kontakt under Konto
 
 `/konto` får et kort med link til `/konto/kontakt`. Kontaktsiden viser brugerens
 tidligere samtaler og en formular med emne, kategori og besked. En bruger kan
@@ -129,7 +156,7 @@ Kategorierne er `Supplier`, `Betaling`, `Generering` og `Konto`. Et supplier-
 problem kan forudfylde supplier og ordre via interne id'er; brugeren kan ikke
 indsende en anden brugers ordre-id.
 
-### 3.7 Admin
+### 3.8 Admin
 
 Det eksisterende `/admin` bliver en lille adminforside med links til:
 
@@ -158,6 +185,13 @@ sende et svar, gensende en fejlet e-mail og lukke/genåbne tråden.
 ## 4. Arkitektur og ruter
 
 ### 4.1 Sider
+
+Ved første launch oprettes kun:
+
+- `app/(app)/suppliers/page.tsx` — statisk `Kommer snart`-side.
+- et supplier-kort i `app/(app)/oversigt/page.tsx`.
+
+Efter Vinted-lanceringen udvides siden og følgende fase 2-ruter tilføjes:
 
 - `app/(app)/suppliers/page.tsx` — katalog med server-side filtre.
 - `app/(app)/suppliers/[slug]/page.tsx` — låst eller oplåst detalje.
@@ -202,7 +236,8 @@ kontaktformular, adminformular og svarformular får hver sin fil.
 
 ## 5. Datamodel
 
-Alle nye tabeller oprettes i én additiv Supabase-migration.
+Alle nye tabeller oprettes i én additiv Supabase-migration i fase 2. Første
+launchs `Kommer snart`-visning ændrer ikke databasen.
 
 ### 5.1 `suppliers`
 
@@ -387,7 +422,11 @@ deaktivere den.
 Implementeringen følger red–green–refactor. Domænelogikken testes mod memory-
 adaptere; ruter og komponenter får målrettede tests.
 
-Mindstekrav:
+Ved første launch testes kun, at både tom og udfyldt Oversigt viser supplier-
+indgangen, at `/suppliers` tydeligt siger `Kommer snart`, og at siden ikke
+indeholder købsknapper, priser eller supplier-eksempler.
+
+Fase 2 har disse mindstekrav:
 
 - kataloget afslører aldrig secret URL i låst HTML/data;
 - kun aktive suppliers vises til ikke-købere;
@@ -409,20 +448,38 @@ Mindstekrav:
 
 ## 13. Udrulning
 
-1. Kør migrationen i lokal/test-Supabase.
-2. Deploy kode med supplier-kataloget tomt og adminruterne skjult for andre.
-3. Opret første supplier som kladde, verificer link og checkout i Stripe
+### Første launch
+
+1. Tilføj supplier-kortet på begge tilstande af Oversigt.
+2. Deploy den autentificerede `/suppliers`-side med `Kommer snart`.
+3. Verificer, at der ikke findes aktive supplier-køb eller supplier-data.
+4. Lancér og prioritér Vinted-flowet.
+
+### Fase 2 efter Vinted-launch
+
+1. Ejeren træffer en eksplicit beslutning om at åbne supplier-butikken.
+2. Kør migrationen i lokal/test-Supabase.
+3. Deploy kode med supplier-kataloget tomt og adminruterne skjult for andre.
+4. Opret første supplier som kladde, verificer link og checkout i Stripe
    testmode.
-4. Kontrollér webhook-retry, kvittering, redirect, kontakt og refundering.
-5. Aktivér supplieren manuelt.
-6. Kør en rigtig lille betaling og refundering før flere suppliers oprettes.
+5. Kontrollér webhook-retry, kvittering, redirect, kontakt og refundering.
+6. Aktivér supplieren manuelt.
+7. Kør en rigtig lille betaling og refundering før flere suppliers oprettes.
 
 Der udføres ingen automatisk produktion-migration, Stripe-produktændring eller
 deploy fra implementeringsarbejdet; ejeren udfører disse trin efter test.
 
 ## 14. Acceptkriterier
 
-Leverancen er færdig, når:
+Første launchs supplier-del er færdig, når:
+
+1. både tom og udfyldt Oversigt viser `Suppliers · Kommer snart`;
+2. kortet fører til en autentificeret `/suppliers`-side;
+3. siden forklarer den kommende funktion uden priser, opdigtet indhold eller
+   købsmulighed;
+4. billedkredit-, item- og Stripe-flowet er helt uændret.
+
+Fase 2 er senere færdig, når:
 
 1. en indlogget bruger kan gå fra Oversigt til supplier-kataloget;
 2. brugeren kan vurdere en supplier uden at få dens URL;
