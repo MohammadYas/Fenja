@@ -1,10 +1,43 @@
 # STATUS
-Sidst opdateret: 2026-08-16 af Claude Code (afslutnings-session)
+Sidst opdateret: 2026-08-16 (aften) af Claude Code (Stripe/abonnement-session)
+
+## Denne session (16/8 aften) — Stripe live + abonnement-pivot
+- **EJER-ORDRE (mid-session, gælder alt): abonnement er STANDARDVEJEN for
+  køb; top-up må KUN kunne købes, når man er løbet tør** (saldo ≤ 0,5 —
+  `topUpVedSaldoHoejst` i lib/config.ts). Kreditpakkerne (Prøv/Sælger/Bunke)
+  er ude af alt UI, men config + checkout-API + webhook understøtter dem
+  stadig (gamle events, evt. fortrydelse af pivot = kun UI-arbejde).
+- **Stripe LIVE-katalog oprettet via Composio** (konto acct_…huwJ, selja.dk,
+  DKK): produkter `selja_plus`/`selja_pro` + 4 recurring-priser, moms-inklusiv,
+  lookup keys `selja_plus_md/aar`, `selja_pro_md/aar`. Price-id'erne står i
+  `.env.local` (STRIPE_PRICE_*) og kan altid genfindes i Stripe på lookup key.
+  **MANGLER: `STRIPE_SECRET_KEY` + `STRIPE_WEBHOOK_SECRET`** (hent i
+  dashboardet; nøgle-reveal via Composio er blokeret) **og webhook-endpointet
+  i Stripe** (kræver deployet URL → `/api/webhooks/stripe`).
+- **/priser (S36 leveret):** abonnementer i gran-blokken med md./år-skifte —
+  glidende tommel + "pris-rul"-animation (nye autoriserede mikro-animationer,
+  DESIGN.md §6). Kreditside: abonnementskøb (md./år), Stripe-**kundeportal**
+  ("Administrér abonnement" → skift kort/fakturaer/opsig; ny rute
+  `/api/stripe/portal`), top-up kun ved tom saldo.
+- **Kontosletning opsiger nu aktive Stripe-abonnementer** (best-effort) før
+  data slettes (app/api/konto/slet).
+- **Eksperiment-flagsystem** (`lib/eksperimenter.ts`): flags + env-kill-switch
+  `EKSPERIMENTER_FRA` ("alle" eller kommaliste — slår fra uden commit).
+  Forside-eksperiment "Populært lige nu": mest aktive søgninger + "giver mest
+  ved gensalg" + interaktiv pristjekker — ALT fra den committede markedshøst
+  (ægte tal, synlig høstdato), intet opdigtet.
+- **GDPR:** privatliv + vilkår opdateret (dataansvarlig, retsgrundlag,
+  opbevaring/bogføringslov, tredjelande, cookies, abonnementsvilkår med
+  fortrydelse/fornyelse/prisvarsel). **Audit: docs/gdpr-audit-2026-08-16.md**
+  — konklusion: lav-til-moderat risiko; lukkeliste P1-P4 (DPA-dokumentation,
+  tredjelands-verifikation, art. 30-fortegnelse, brud-beredskab).
+- feat/nyt-item-varetype-maerkesoegning (varetype-katalog + mærkesøgning)
+  merget til main og slettet (ejer-regel: kun main).
 
 ## Sådan står projektet
 - **Én branch: `main`.** Alt er trunk-based og pushet til main — ingen andre
   branches, ingen PRs (stående ejer-regel, HANDOFF §5.1). Fase A er komplet
-  og grøn: **265 tests, lint + typecheck rene.**
+  og grøn: **290 tests, lint + typecheck + build rene.**
 - **Login er nu traditionelt (e-mail + adgangskode)** — magic link er udfaset
   (ejer-beslutning 2026-08-16, A-1 overstyret). Signup auto-bekræftes (ingen
   verifikationsmail — "ingen 2fa med mail"); Supabase auth-config sat til
@@ -18,27 +51,25 @@ Sidst opdateret: 2026-08-16 af Claude Code (afslutnings-session)
   `preset_stats_provider` + `kredit_kilder` (pricing v3.0). RLS aktiv,
   `item-photos`-bucket, `credit_balances`-view. Auth = e-mail+adgangskode.
   Dashboard: https://supabase.com/dashboard/project/cpqsmtaledmjzirfeztp
-- **`.env.local` MANGLER** på maskinen → appen kører demo-mode lokalt. Genskab
-  fra `.env.example`: URL = https://cpqsmtaledmjzirfeztp.supabase.co; anon +
-  service_role fra dashboardet (Settings → API). Sæt også `ADMIN_EMAIL`.
+- **`.env.local` findes igen** (Supabase-nøgler + ADMIN_EMAIL + Stripe
+  price-id'er). Stadig uden STRIPE_SECRET_KEY/WEBHOOK_SECRET og
+  provider-nøgler (FAL/GEMINI/ANTHROPIC) — se §6-checklisten.
 - **Gemini som 3. ImageProvider** (`lib/providers/gemini.ts`, REST, ingen ny
   dependency). Model-id'er/cost i config (`billedProvidere`): final =
   gemini-3-pro-image-preview, preview = gemini-2.5-flash-image. fal er fortsat
   failover. Gate 1-scriptet kører alle 3 providers × presets (pass-rate + cost
   side om side, `docs/gate1-eksempel-rapport.md`). Rigtige kald bag `--live` +
   `GEMINI_API_KEY`.
-- **Pricing v3.0 live:** pakker Prøv 5/49, Sælger 15/89 (anbefalet), Bunke
-  40/169; top-up "Fyld op" 10/69 (kun kreditsiden ved saldo ≤ 5); Plus 59/md.
-  (12 annoncer, rollover), Pro 119/md. (30), år 590/1190 — alt i `lib/config.ts`.
-  Ledgeren har kredit-kilde (subscription/topup/pack) + 12 mdr. udløb; saldo
-  beregnes ved genafspilning (`beregn_kredit_status`), forbrug i rækkefølgen
-  subscription → topup → pack (ældste først). Stripe-checkout + webhook for
-  top-up og abonnementer, idempotent.
-  **FLAG til ejeren:** (1) pack-rækkefølge = ÆLDSTE FØRST (briefen modsagde sig
-  selv) — sig til hvis omvendt. (2) Rollover-loft 2× månedskvote er et FORSLAG
-  (`abonnementer.rolloverLoftFaktor`), ikke besluttet. (3) /priser viser endnu
-  ikke abonnementer/pakkenavne (S36). (4) Årsabonnement giver kun kvote ved
-  betaling — de øvrige 11 mdr. kræver scheduled job (S37).
+- **Pricing v3.1 (abonnement-standard, 16/8 aften):** Plus 59/md. el. 590/år
+  (12 annoncer/md.), Pro 119/md. el. 1190/år (30) — købes på /priser og
+  kreditsiden. Top-up 10/69 KUN ved saldo ≤ 0,5. Pakkerne findes kun i
+  config/API (ikke UI). Ledger uændret: kredit-kilde + 12 mdr. udløb, forbrug
+  subscription → topup → pack (ældste først), idempotent webhook.
+  **FLAG til ejeren:** (1) Rollover-loft 2× månedskvote er stadig et FORSLAG.
+  (2) Årsabonnement giver kun kvote ved betaling — de øvrige 11 mdr. kræver
+  scheduled job (S37). (3) Fortrydelses-/prisvarsel-formuleringerne i
+  vilkårene (14 dage / 30 dage) er mine standardvalg — justér hvis du vil
+  andet. (4) Pris-id'er er LIVE mode — testkøb rammer rigtige penge.
 - **Forsiden:** Vinted-landingen. Billedserie v4 (spejl-selfies, se nedenfor).
   Hero-mærkat + "skitseret eksempel"-note fjernet (ejer-ordre "skriger AI").
   Ingen kronepriser/fast kreditforhold på forsiden — kun neutral kreditvarsling.

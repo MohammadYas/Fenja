@@ -66,10 +66,15 @@ kun footer-link). Rækkefølgen:
 4. **Sådan bruger du resultatet:** sidens ene mørke bånd forklarer billede 1,
    supplerende billeder og at brugeren selv lægger annoncen på Vinted.
 5. Lær-teaser: 3 guides + vej til alle.
-6. Slut-CTA med neutral kreditvarsling (kun sælgere; studioets vej bor i
+6. EKSPERIMENT (2026-08-16, flag-styret i lib/eksperimenter.ts): "Populært
+   lige nu" — ærlige markedstal fra høsten (antal annoncer, medianpriser,
+   høstdato) + pristjekker. Kan slås fra med ét flag/env uden designbrud.
+7. Slut-CTA med neutral kreditvarsling (kun sælgere; studioets vej bor i
    footeren).
-**Ingen kronepriser eller fast kreditforhold på forsiden.** Den siger kun, at
-kreditter kræves, købes når brugeren er klar og ikke er et abonnement.
+**Ingen Selja-kronepriser eller fast kreditforhold på forsiden.** Den siger, at
+kreditter kræves, og at abonnementet er standardvejen — uden binding (ejer-ordre
+2026-08-16; det tidligere "ikke et abonnement" er dermed vendt). Markedstal i
+eksperiment-sektionen er Vinted-priser, ikke Seljas — de er tilladt.
 
 ## 6. Interaktion
 
@@ -77,4 +82,7 @@ Uændret fra V5: flade knapper der mørkner på hover, kort-kant der mørkner,
 150/300 ms ease-out, scroll-reveal bag scripting+reduced-motion-gates, fokusring
 2 px koks. Marketingnavigationen markerer den aktuelle side; "Sådan virker
 det" forkortes visuelt til "Sådan" på mobil, men bevarer sit fulde tilgængelige
-navn. Ingen nye animationer i v6.
+navn. Autoriserede mikro-animationer (S36, ejer-ønske 2026-08-16 om et mere
+levende købs-flow): md./år-skiftets glidende tommel (150 ms ease-out) og
+"pris-rul" (nyt pristal ruller ind nedefra, 300 ms — globals.css), begge kun
+bag scripting+reduced-motion-gates. Derudover ingen nye animationer.
