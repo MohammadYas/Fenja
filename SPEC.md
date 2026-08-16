@@ -46,7 +46,7 @@
 | FR-5 | Annoncetekst: Claude genererer titel, beskrivelse (mærke/størrelse/stand/materiale fra felter + label-foto), søgeord og prisforslag. Fejl fra brugerens felter SKAL indgå i beskrivelsen | P0 |
 | FR-6 | Compliance-rækkefølge: output præsenteres altid som: ægte fotos først (med instruks "brug dette som billede 1 på Vinted"), AI-billeder efter. In-app tekst forklarer Vinteds regler kort | P0 |
 | FR-7 | Kreditsystem: INGEN gratis annoncer (ejer-beslutning 2026-08-15; S27 overvejer alternativ). Kreditpakker/top-up/abonnementer via Stripe Checkout — produkter og priser bor i `lib/config.ts` (pricing v3.0); kreditter trækkes kun ved leveret resultat | P0 |
-| FR-8 | Konto & bibliotek: magic link-login, alle items gemt med status (kladde/aktiv/solgt), gen-download | P0 |
+| FR-8 | Konto & bibliotek: login med e-mail+adgangskode (ejer-beslutning 2026-08-16, ikke magic link), alle items gemt med status (kladde/aktiv/solgt), gen-download | P0 |
 | FR-9 | Copy-paste-flow: ét-tryks kopiering af titel, beskrivelse og billeddownload i Vinted-venlig rækkefølge (ingen Vinted-API findes — flowet skal føles som "næsten automatisk") | P0 |
 | FR-10 | Omkostningsmåler + budgetloft pr. bruger og globalt (misbrugsværn) | P0 |
 | FR-11 | "Lær"-sektion: 5–8 korte guides (sourcing: genbrug, kilosalg, loppemarked, dødsbo; prissætning; Vinted Pro-grænsen; fototeknik). TS-data i `lib/guides-indhold.ts` (ejer-beslutning — ikke markdown), let at udvide | P1 |
@@ -71,7 +71,7 @@
 ## 6. Arkitektur
 ```
 [Next.js app på Netlify]  (UI + lette API-routes; mobil-first)
-  ├──> [Supabase]  Auth (magic link) · Postgres · Storage
+  ├──> [Supabase]  Auth (e-mail+adgangskode, autoconfirm) · Postgres · Storage
   │      (alt via Supabase CLI: lokal dev, migrations i git, genererede typer)
   ├──> [Trigger.dev]  item-pipeline som ét job:
   │       1. rens (baggrund + lys)  ──┐
@@ -81,7 +81,7 @@
   │       5. annoncetekst (Claude API)
   │       6. kredit-træk (kun ved succes)
   ├──> [Stripe]  Checkout til kreditpakker · webhooks → credits
-  └──> [Resend]  magic links + "din annonce er klar"
+  └──> [Resend]  transaktionsmails (velkomst + "din annonce er klar")
 ```
 Forskel fra v0.1: ingen ffmpeg-worker, ingen Railway, ingen ElevenLabs i fase A — billedpipelinen er væsentligt lettere end video. Railway/ffmpeg tilføjes først med Tillæg B.
 ## 7. Datamodel (kerne)

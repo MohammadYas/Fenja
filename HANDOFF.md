@@ -51,7 +51,7 @@ Dette er et P0-krav på linje med funktionalitet. Selja skal ligne et produkt by
 Selvkritik i PR-beskrivelsen: "Hvilke 3 elementer i denne ændring kunne stamme fra en hvilken som helst AI-genereret SaaS — og hvad gjorde jeg ved dem?" Kan spørgsmålet ikke besvares konkret, er PR'en ikke klar.
 ---
 ## 3. Arkitektur & repo-struktur
-Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Netlify (kun UI + lette routes; langvarige jobs i Trigger.dev) · Supabase via CLI (Postgres, Auth magic link, Storage) · Trigger.dev · fal.ai bag provider-interfaces · Claude API (tekst) · Stripe · Resend · Tailwind + egne tokens · sharp.
+Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Netlify (kun UI + lette routes; langvarige jobs i Trigger.dev) · Supabase via CLI (Postgres, Auth med e-mail+adgangskode, Storage) · Trigger.dev · fal.ai + Gemini bag provider-interfaces · Claude API (tekst) · Stripe · Resend · Tailwind + egne tokens · sharp.
 ```
 /                     HANDOFF.md · SPEC.md · STATUS.md · BACKLOG.md · DESIGN.md
 /app                  Next.js App Router (da som default-locale, i18n-klar)
@@ -78,8 +78,8 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 ### Epic 1 · Konto & adgang
 | ID | Krav | Prio |
 |---|---|---|
-| A-1 | Magic link-login (Supabase Auth) via e-mail; ingen passwords | P0 |
-| A-2 | Signup kræver bekræftelse af 18+ (Vinteds egen aldersgrænse); under 18 afvises venligt | P0 |
+| A-1 | ~~Magic link-login~~ **Traditionelt login: e-mail + adgangskode** (ejer-beslutning 2026-08-16). Signup auto-bekræftes (ingen verifikationsmail — ejer-ordre "ingen 2fa med mail"). Glemt-kode-flow parkeret (S39). Magic link er udfaset | P0 |
+| A-2 | Signup kræver bekræftelse af 18+ (Vinteds egen aldersgrænse) på opret-fanen; under 18 afvises venligt | P0 |
 | A-3 | Konto-side: e-mail, kreditsaldo, købshistorik, slet konto | P0 |
 | A-4 | Slet konto = fuld sletning af alle billeder, items og persondata inden 24 t (GDPR) | P0 |
 | A-5 | Session-håndtering der overlever app-genstart på mobil | P0 |
@@ -121,7 +121,7 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | E-2 | Kreditpakker, top-up og abonnementer via Stripe Checkout; ALLE produkter og priser bor i `lib/config.ts` (pricing v3.0) — aldrig hårdkodet i kode eller docs; webhook → ledger | P0 |
 | E-3 | Ledger-model: hver bevægelse er en linje (signup/køb/levering/refund); saldo er summen; kredit trækkes i samme transaktion som leverancen markeres komplet | P0 |
 | E-4 | Idempotente webhooks og jobs: dubletter må aldrig koste dobbelt | P0 |
-| E-5 | Misbrugsværn: rate limits pr. bruger, globalt dagligt API-budgetloft med kill-switch, e-mailverifikation før gratis-kreditter | P0 |
+| E-5 | Misbrugsværn: rate limits pr. bruger, globalt dagligt API-budgetloft med kill-switch. (E-mailverifikation før gratis-kreditter er bortfaldet: gratis-tier er afskaffet, og signup auto-bekræftes — ejer-ordre 2026-08-16. Misbrugs-omkostningen er nu betalte kreditter, ikke gratis) | P0 |
 | E-6 | Kvitteringer via Stripe; moms korrekt konfigureret (dansk B2C) | P0 |
 ### Epic 6 · Marketing-site & Lær
 | ID | Krav | Prio |

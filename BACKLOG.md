@@ -58,6 +58,13 @@ Læs `STATUS.md` + `HANDOFF.md` før du tager en opgave.
     14-dages costvagt med mail til kontakt-adressen, og preview-flowet
     (3 gratis pr. konto, dagligt globalt budget).
 
+[ ] **S39 · Glemt adgangskode-flow** [KRÆVER MAIL — afventer Resend-domæne]
+    Traditionelt login (e-mail+adgangskode) er live, men reset-flowet er
+    parkeret (ejer-ordre "ingen 2fa med mail" nu). Byg når mail ønskes:
+    `resetPasswordForEmail` → /auth/callback veksler recovery-koden → en
+    "ny adgangskode"-side (`updateUser`). Login-siden har allerede en
+    kontakt-linje som midlertidig erstatning.
+
 [ ] **S34 · Transaktionsmails præcis én gang (idempotens)**
     I dag (S32) kan en sjælden Stripe-dublet-event gentage kvitterings-
     supplementet, og en manuel job-genkørsel (G-3) kan gentage leverancemailen.
