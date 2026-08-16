@@ -61,7 +61,7 @@ export const da = {
     emailLabel: "E-mail",
     saldoLabel: "Kreditsaldo",
     koebshistorik: "Købshistorik",
-    ingenKoeb: "Ingen køb endnu. Køb en pakke under Kreditter, når du er klar.",
+    ingenKoeb: "Ingen køb endnu. Vælg et abonnement under Kreditter, når du er klar.",
     koebLinje: (antal: number, dato: string) => `${antal} kreditter · ${dato}`,
     // S31 · dit faste hjem på visualiseringerne. Alle dine annoncer optages i
     // samme bolig, så profilen ligner ét sted — du kan vælge hvilket.
@@ -135,7 +135,8 @@ export const da = {
     uploader: "Uploader fotos …",
     fejlHelhedMangler: "Der mangler et helhedsfoto — det er det, Vinted kræver som billede 1.",
     fejlFelterMangler: "Udfyld mærke, størrelse, stand og kategori.",
-    fejlIngenKreditter: "Du har ingen kreditter tilbage. Køb en pakke under Kreditter.",
+    fejlIngenKreditter:
+      "Du har ingen kreditter tilbage. Fyld op eller vælg et abonnement under Kreditter.",
     fejlRateLimit: "Du har nået dagens grænse for nye annoncer. Prøv igen i morgen.",
     fejlUpload: "Et foto kunne ikke uploades. Tjek forbindelsen og prøv igen.",
   },
@@ -244,7 +245,7 @@ export const da = {
       "Du har brugt alle forsøg for denne del. Lav en ny annonce, hvis du vil videre.",
     fejlVisualisering:
       "Den nye visualisering ramte ikke kvalitetskravet, så vi leverer den ikke — og der er ikke trukket noget. Prøv et andet miljø.",
-    fejlSaldo: "Du mangler kreditter til en regenerering. Køb en pakke under Kreditter.",
+    fejlSaldo: "Du mangler kreditter til en regenerering. Fyld op under Kreditter.",
     fejlAlmen: "Noget gik galt undervejs. Der er ikke trukket noget — prøv igen.",
   },
   kreditter: {
@@ -271,6 +272,15 @@ export const da = {
     betalingIkkeKlar:
       "Betaling er ikke sat op endnu. Skriv til os, hvis du ser denne besked på det rigtige site.",
     kvittering: "Du får kvittering på mail fra Stripe.",
+    // Abonnement på kreditsiden (S36, ejer-ordre 2026-08-16: abonnement er
+    // standardvejen). Administration via Stripes kundeportal — nem opsigelse.
+    abonnementTitel: "Abonnement",
+    abonnementForklaring:
+      "Kvoten fyldes hver måned og bruges før dine øvrige kreditter.",
+    abonnementAdministrer: "Administrér abonnement",
+    abonnementAdministrerHjaelp:
+      "Skift kort, se fakturaer eller opsig — du bliver sendt til Stripe.",
+    abonnementIngen: "Vi fandt intet abonnement på din e-mail endnu.",
     // Udløb vises ærligt: den generelle regel + den konkrete næste dato
     udloebNote: "Kreditter gælder 12 måneder fra køb.",
     udloebNaeste: (antal: number, dato: string) =>
@@ -297,14 +307,22 @@ export const da = {
   },
   priserSide: {
     titel: "Priser",
-    lead: "Du køber kun det, du bruger — og jo mere du sælger, jo mindre koster hver annonce. Kreditter gælder 12 måneder.",
+    // Ejer-ordre 2026-08-16: abonnement er standardvejen; top-up kun når man
+    // er løbet tør. Leadet sælger abonnementet, ikke pakkerne.
+    lead: "Vælg et abonnement, der passer til dit flow. Kvoten fyldes hver måned — og løber du tør, fylder du bare op. Alle priser er med moms.",
     stempel: "1 kredit = 1 annonce",
     pakkerTitel: "Kreditpakker",
-    // Abonnementer (pricing v3.0) — vises på priser-siden; køb åbner senere
+    // Abonnementer (pricing v3.0, S36) — standardvejen; købes md./år
     abonnement: {
       titel: "Abonnementer",
-      lead: "Til sælgere med fast flow. Kvoten fyldes hver måned, og ubrugte annoncer følger med til næste måned.",
-      stempel: "Åbner snart",
+      lead: "Kvoten fyldes hver måned, og ubrugte annoncer følger med til næste måned.",
+      stempel: "Uden binding",
+      periodeMd: "Månedligt",
+      periodeAar: "Årligt",
+      periodeAarNote: "pr. år — to måneder sparet",
+      vaelgPeriode: "Betalingsperiode",
+      koebKnap: (navn: string) => `Vælg ${navn}`,
+      opsigelse: "Ingen binding — opsig når som helst.",
       navne: { plus: "Plus", pro: "Pro" } as Record<string, string>,
       prMd: "pr. måned",
       prisPrAar: (pris: number) => `eller ${pris} kr. pr. år — to måneder sparet`,
@@ -335,7 +353,7 @@ export const da = {
       },
       {
         overskrift: "Kreditter gælder 12 måneder",
-        tekst: "Køb en pakke i dag, brug den henover året. Udløbsdatoen står altid på din kreditside — intet forsvinder, uden at du kan se hvornår.",
+        tekst: "Ubrugt månedskvote følger med til næste måned, og en top-up gælder et år fra køb. Udløbsdatoen står altid på din kreditside — intet forsvinder, uden at du kan se hvornår.",
       },
       {
         overskrift: "Priser er med moms",
@@ -361,12 +379,16 @@ export const da = {
         svar: "Du kan regenerere en enkelt del — ny visualisering i et andet miljø eller en frisk tekst — for en halv kredit pr. del. Der trækkes kun, hvis den lykkes.",
       },
       {
+        spoergsmaal: "Skal jeg have et abonnement?",
+        svar: "Det er standardvejen: Plus til de fleste, Pro til højt flow — begge uden binding. Løber du tør midt i en måned, fylder du op med en lille top-up fra din kreditside.",
+      },
+      {
         spoergsmaal: "Skal jeg have en adgangskode?",
-        svar: "Nej. Du logger ind med et link, vi sender til din e-mail. Ingen adgangskode at glemme eller lække.",
+        svar: "Ja. Du opretter dig med din e-mail og en adgangskode på mindst 8 tegn — og kan gå i gang med det samme.",
       },
     ],
-    ctaTitel: "Køb en pakke og gå i gang",
-    ctaKnap: "Opret dig og køb kreditter",
+    ctaTitel: "Vælg et abonnement og gå i gang",
+    ctaKnap: "Opret dig og vælg abonnement",
   },
   landing: {
     // v6 (ejer-beslutning 2026-08-15): forsiden fører med B2B — UGC-annoncer,

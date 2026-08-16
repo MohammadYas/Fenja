@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { JsonLd } from "@/components/json-ld";
-import { kreditter, site } from "@/lib/config";
+import { abonnementer, kreditter, site } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { vinted } from "@/lib/copy/vinted";
 import { hentGuides } from "@/lib/guides";
@@ -44,11 +44,15 @@ describe("JSON-LD: forside (web-app + how-to)", () => {
   const app = iGraf(graf, "WebApplication")!;
   const howto = iGraf(graf, "HowTo")!;
 
-  it("web-app bærer de rigtige kreditpriser i DKK (ingen opdigtede tal)", () => {
+  it("web-app bærer de rigtige abonnementspriser i DKK (ingen opdigtede tal)", () => {
     const offers = app.offers as { price: string; priceCurrency: string }[];
-    expect(offers).toHaveLength(kreditter.pakker.length);
+    // Ét tilbud pr. tier og periode (md. + år)
+    expect(offers).toHaveLength(abonnementer.tiers.length * 2);
     expect(offers.map((o) => o.price)).toEqual(
-      kreditter.pakker.map((p) => String(p.prisDkk)),
+      abonnementer.tiers.flatMap((t) => [
+        String(t.prisDkkPrMd),
+        String(t.prisDkkPrAar),
+      ]),
     );
     expect(offers.every((o) => o.priceCurrency === "DKK")).toBe(true);
   });
@@ -87,10 +91,10 @@ describe("JSON-LD: guide (artikel + brødkrummer)", () => {
 describe("JSON-LD: priser (produkt + tilbud)", () => {
   const graf = priserGraf() as Record<string, unknown>;
 
-  it("er et produkt med ét tilbud pr. pakke, i DKK", () => {
+  it("er et produkt med ét tilbud pr. tier og periode, i DKK", () => {
     expect(graf["@type"]).toBe("Product");
     const offers = graf.offers as { price: string; priceCurrency: string }[];
-    expect(offers).toHaveLength(kreditter.pakker.length);
+    expect(offers).toHaveLength(abonnementer.tiers.length * 2);
     expect(offers.every((o) => o.priceCurrency === "DKK")).toBe(true);
   });
 });
@@ -115,10 +119,17 @@ describe("llms.txt: findbarhed for sprogmodeller", () => {
   });
 
   it("lister de faktiske priser og lover ikke gratis annoncer", () => {
-    for (const p of kreditter.pakker) {
-      expect(txt).toContain(`${p.antal} annoncer: ${p.prisDkk} kr.`);
+    // Abonnementet er standardvejen (ejer-ordre 2026-08-16)
+    for (const t of abonnementer.tiers) {
+      expect(txt).toContain(
+        `${t.annoncerPrMd} annoncer/md. — ${t.prisDkkPrMd} kr./md. eller ${t.prisDkkPrAar} kr./år`,
+      );
     }
-    expect(txt).toContain("Ingen gratis annoncer");
+    expect(txt).toContain(
+      `Top-up (kun ved tom saldo): ${kreditter.topUp.antal} annoncer for ${kreditter.topUp.prisDkk} kr.`,
+    );
+    expect(txt).toContain("Uden binding");
+    expect(txt).not.toContain("gratis annoncer");
   });
 
   it("peger på nøglesider og alle guides med base-URL", () => {

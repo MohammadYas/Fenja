@@ -70,7 +70,7 @@ export const vinted = {
   cta: {
     titel: "Prøv med det næste stykke tøj, du vil sælge",
     kreditNote:
-      "Du skal bruge kreditter for at lave en annonce. Køb dem, når du er klar. Intet abonnement.",
+      "Du skal bruge kreditter for at lave en annonce. Vælg et abonnement, når du er klar — uden binding, opsig når som helst.",
     knap: "Opret dig og kom i gang",
   },
 } as const;

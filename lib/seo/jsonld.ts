@@ -3,7 +3,7 @@
 // er afledt af den faktiske config + copy (SELJA_DOMAIN, priser, guides, trin)
 // — aldrig opdigtede tal, ratings eller reviews (manifest §2.1.6).
 
-import { kreditter, site } from "@/lib/config";
+import { abonnementer, site } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { vinted } from "@/lib/copy/vinted";
 import type { Guide } from "@/lib/guides";
@@ -57,14 +57,8 @@ function webApplicationNode(): Json {
     inLanguage: "da-DK",
     description: vinted.meta.beskrivelse,
     provider: { "@id": ORG_ID },
-    // Rigtige kreditpriser (dansk B2C, DKK) — ingen gratis-tier
-    offers: kreditter.pakker.map((p) => ({
-      "@type": "Offer",
-      name: da.kreditter.pakkeNavn(p.antal),
-      price: String(p.prisDkk),
-      priceCurrency: "DKK",
-      category: "Kreditpakke",
-    })),
+    // Rigtige abonnementspriser (dansk B2C, DKK) — abonnement er standardvejen
+    offers: abonnementOffers(),
   };
 }
 
@@ -130,21 +124,39 @@ export function guideGraf(guide: Guide): Json {
   };
 }
 
-/** Priser: kreditpakkerne som ét produkt med et tilbud pr. pakke. */
+// Abonnementerne som tilbud (md. + år pr. tier) — afledt af config + copy
+function abonnementOffers(): Json[] {
+  return abonnementer.tiers.flatMap((tier) => {
+    const navn = da.priserSide.abonnement.navne[tier.id];
+    return [
+      {
+        "@type": "Offer",
+        name: `${NAVN} ${navn} — ${da.priserSide.abonnement.periodeMd.toLowerCase()}`,
+        price: String(tier.prisDkkPrMd),
+        priceCurrency: "DKK",
+        availability: "https://schema.org/InStock",
+        url: `${BASE}/priser`,
+      },
+      {
+        "@type": "Offer",
+        name: `${NAVN} ${navn} — ${da.priserSide.abonnement.periodeAar.toLowerCase()}`,
+        price: String(tier.prisDkkPrAar),
+        priceCurrency: "DKK",
+        availability: "https://schema.org/InStock",
+        url: `${BASE}/priser`,
+      },
+    ];
+  });
+}
+
+/** Priser: abonnementerne som ét produkt med et tilbud pr. tier og periode. */
 export function priserGraf(): Json {
   return {
     "@context": SCHEMA,
     "@type": "Product",
-    name: `${NAVN} — kreditter`,
+    name: `${NAVN} — abonnement`,
     description: da.priserSide.lead,
     brand: { "@id": ORG_ID },
-    offers: kreditter.pakker.map((p) => ({
-      "@type": "Offer",
-      name: da.kreditter.pakkeNavn(p.antal),
-      price: String(p.prisDkk),
-      priceCurrency: "DKK",
-      availability: "https://schema.org/InStock",
-      url: `${BASE}/priser`,
-    })),
+    offers: abonnementOffers(),
   };
 }

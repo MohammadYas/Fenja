@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { da } from "@/lib/copy/da";
-import { kreditter } from "@/lib/config";
+import { AbonnementValg } from "@/components/abonnement-valg";
 import { JsonLd } from "@/components/json-ld";
 import { Stempel } from "@/components/ui/stempel";
 import { Reveal } from "@/components/reveal";
@@ -34,35 +34,22 @@ export default function PriserSide() {
         </Reveal>
       </section>
 
-      {/* Pakkerne: gran-blok med redaktionelle prisrækker — samme motiv som landing */}
-      <section className="bg-gran text-kalk" aria-label={da.priserSide.pakkerTitel}>
+      {/* Abonnementerne (S36, ejer-ordre 2026-08-16: standardvejen): gran-blok
+          med redaktionelle prisrækker + md./år-skifte. Pakkerne er ude af
+          UI'et — top-up bor på kreditsiden og vises kun ved tom saldo. */}
+      <section className="bg-gran text-kalk" aria-label={da.priserSide.abonnement.titel}>
         <div className="mx-auto max-w-5xl px-4 py-16">
           <Reveal>
             <h2 className="font-mono text-detalje font-bold tracking-wide text-hoer">
-              {da.priserSide.pakkerTitel}
+              {da.priserSide.abonnement.titel}
             </h2>
+            <p className="mt-3 max-w-laesbar text-kalk/80">
+              {da.priserSide.abonnement.lead}
+            </p>
           </Reveal>
-          <div className="mt-6 max-w-2xl border-t border-kalk/20">
-            {kreditter.pakker.map((pakke, i) => (
-              <Reveal key={pakke.id} forsinkelseTrin={i}>
-                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-kalk/20 py-5">
-                  <p className="font-display text-titel font-semibold">
-                    {da.kreditter.pakkeAntal(pakke.antal)}
-                  </p>
-                  <div className="text-right">
-                    <p className="font-mono text-hero font-bold leading-none">
-                      {da.kreditter.pakkePris(pakke.prisDkk)}
-                    </p>
-                    <p className="mt-1 font-mono text-detalje text-hoer">
-                      {da.kreditter.prisPrStk(
-                        (pakke.prisDkk / pakke.antal).toFixed(2).replace(".", ","),
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <Reveal forsinkelseTrin={1}>
+            <AbonnementValg koebAktiv={false} tone="gran" className="mt-8" />
+          </Reveal>
         </div>
       </section>
 

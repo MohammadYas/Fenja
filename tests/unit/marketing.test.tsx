@@ -31,7 +31,8 @@ describe("forsidens forventningsafstemning", () => {
     const html = renderToStaticMarkup(<Forside />);
 
     expect(html).toContain("Du skal bruge kreditter for at lave en annonce.");
-    expect(html).toContain("Intet abonnement.");
+    // Ejer-ordre 2026-08-16: abonnementet er standardvejen — uden binding
+    expect(html).toContain("uden binding, opsig når som helst");
     expect(html).not.toMatch(/1 kredit\s*=\s*1 færdig annonce/i);
     expect(html).not.toContain("Opret dig og lav din første annonce");
   });

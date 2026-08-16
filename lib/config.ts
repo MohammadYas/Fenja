@@ -26,10 +26,11 @@ export const kreditter = {
   ],
   // Ankeret på /priser — den pakke vi anbefaler (ærlig anbefaling, intet pres)
   anbefaletPakkeId: "saelger",
-  // Top-up: impulskøbet — vises KUN for indloggede på kreditsiden når saldoen
-  // er lav (aldrig på offentlig /priser).
+  // Top-up: impulskøbet — vises KUN for indloggede på kreditsiden når man er
+  // løbet tør (aldrig på offentlig /priser). Ejer-ordre 2026-08-16: abonnement
+  // er standardvejen; top-up først når saldoen ikke rækker til én hel annonce.
   topUp: { id: "fyld-op", antal: 10, prisDkk: 69 },
-  topUpVedSaldoHoejst: 5,
+  topUpVedSaldoHoejst: 0.5,
   // Alle købte kreditter (pakker, top-up og abonnementskvoter) gælder 12
   // måneder fra købsdatoen; udløbne kreditter bortfalder i saldo-beregningen.
   udloebMdr: 12,

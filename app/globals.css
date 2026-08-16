@@ -185,5 +185,23 @@
       opacity: 1;
       transform: none;
     }
+
+    /* Pris-rul (S36): når md./år-skiftet genmonterer pristallet, ruller det
+       nye tal ind nedefra — 300 ms ease-out, kun transform/opacity. Uden
+       scripting eller med reduceret bevægelse vises tallet bare. */
+    .pris-rul {
+      animation: pris-rul theme("transitionDuration.reveal")
+        theme("transitionTimingFunction.DEFAULT");
+    }
+    @keyframes pris-rul {
+      from {
+        opacity: 0;
+        transform: translateY(0.35em);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
   }
 }

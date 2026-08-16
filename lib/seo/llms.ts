@@ -4,7 +4,7 @@
 // så filen aldrig kan komme til at love noget produktet ikke gør (fx gratis
 // annoncer). Serveres på /llms.txt af app/llms.txt/route.ts.
 
-import { kreditter, site } from "@/lib/config";
+import { abonnementer, kreditter, site } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { vinted } from "@/lib/copy/vinted";
 import { hentGuides } from "@/lib/guides";
@@ -17,9 +17,13 @@ export function byggLlmsTxt(): string {
   const vintedBrug = vinted.brugPaaVinted.punkter
     .map((punkt) => `- ${punkt}`)
     .join("\n");
-  const priser = kreditter.pakker
-    .map((p) => `- ${p.antal} annoncer: ${p.prisDkk} kr.`)
-    .join("\n");
+  const priser = [
+    ...abonnementer.tiers.map(
+      (t) =>
+        `- ${da.priserSide.abonnement.navne[t.id]}: ${t.annoncerPrMd} annoncer/md. — ${t.prisDkkPrMd} kr./md. eller ${t.prisDkkPrAar} kr./år`,
+    ),
+    `- Top-up (kun ved tom saldo): ${kreditter.topUp.antal} annoncer for ${kreditter.topUp.prisDkk} kr.`,
+  ].join("\n");
   const guides = hentGuides()
     .map((g) => `- [${g.titel}](${base}/laer/${g.slug}): ${g.beskrivelse}`)
     .join("\n");
@@ -37,7 +41,7 @@ ${trin}
 ${vintedBrug}
 
 ## Priser
-Kreditmodel — 1 kredit = 1 færdig annonce. Ingen gratis annoncer; købte kreditter gælder 12 måneder fra køb.
+Abonnement er standardvejen — 1 kredit = 1 færdig annonce, kvoten fyldes hver måned, ubrugt kvote følger med. Uden binding. Løber man tør, findes en lille top-up. Kreditter gælder 12 måneder fra køb. Alle priser er med moms.
 ${priser}
 
 ## Ærlighed og compliance
