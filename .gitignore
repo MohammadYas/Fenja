@@ -39,3 +39,6 @@ next-env.d.ts
 
 # gate 1-fotos og -resultater (ejerens egne billeder, aldrig committes)
 /data/gate1/
+
+# impeccable live session state (runtime token/pids, aldrig committes)
+/.impeccable/live/
