@@ -30,21 +30,31 @@ export const da = {
         : `${formaterKreditTal(antal)} annoncer tilbage`,
   },
   logInd: {
-    titel: "Opret dig eller log ind",
-    forklaring:
-      "Skriv din e-mail, så sender vi et link, der logger dig ind. Er du ny, opretter linket samtidig din konto uden adgangskode. Når du er logget ind, kan du købe kreditter og lave din annonce.",
+    titel: "Log ind eller opret dig",
+    loginFane: "Log ind",
+    signupFane: "Opret konto",
+    forklaringLogin: "Skriv din e-mail og adgangskode.",
+    forklaringSignup:
+      "Vælg en e-mail og en adgangskode på mindst 8 tegn. Din konto oprettes med det samme — du kan gå direkte i gang.",
     emailLabel: "E-mail",
+    adgangskodeLabel: "Adgangskode",
+    adgangskodeHjaelp: "Mindst 8 tegn.",
     alderSpoergsmaal: "Er du 18 år eller ældre?",
     alderJa: "Ja, jeg er 18 år eller ældre",
     alderNej: "Nej, jeg er under 18",
     alderHjaelp: "Vinted kræver, at sælgere er myndige — det gør vi også.",
-    sendLink: "Send mig et link",
-    linkSendt: (email: string) =>
-      `Vi har sendt et link til ${email}. Åbn mailen på denne telefon og tryk på linket.`,
+    logIndKnap: "Log ind",
+    opretKnap: "Opret konto",
+    // Glemt-kode-flow kræver mail og er parkeret (S39) — indtil da: kontakt.
+    glemtKode: "Glemt din adgangskode? Skriv til os, så hjælper vi dig i gang igen.",
     under18:
       "Selja er for sælgere på 18 år eller derover, fordi Vinted kræver det. Du er velkommen tilbage, når du er fyldt 18.",
     alderPaakraevet: "Bekræft at du er 18 år eller ældre for at fortsætte.",
-    fejl: "Linket kunne ikke sendes. Tjek at e-mailen er rigtig, og prøv igen.",
+    fejlLogin: "Forkert e-mail eller adgangskode. Prøv igen.",
+    fejlSignup:
+      "Kontoen kunne ikke oprettes. Måske findes e-mailen allerede — prøv at logge ind i stedet.",
+    fejlKortKode: "Adgangskoden skal være mindst 8 tegn.",
+    fejlGenerel: "Noget gik galt. Tjek forbindelsen og prøv igen.",
   },
   konto: {
     titel: "Konto",

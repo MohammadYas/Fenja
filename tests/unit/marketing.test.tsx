@@ -9,6 +9,8 @@ const navigation = vi.hoisted(() => ({ sti: "/" }));
 
 vi.mock("next/navigation", () => ({
   usePathname: () => navigation.sti,
+  useRouter: () => ({ replace: () => {}, refresh: () => {}, push: () => {} }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 function ankerFor(html: string, href: string): string {
@@ -42,10 +44,14 @@ describe("forsidens forventningsafstemning", () => {
     );
   });
 
-  it("forklarer på login-siden hvad der sker efter login", () => {
+  it("tilbyder både log ind og opret konto med adgangskode", () => {
     const html = renderToStaticMarkup(<LogInd />);
 
-    expect(html).toMatch(/logget ind[^.]*købe kreditter[^.]*lave din annonce/i);
+    // Traditionelt login (A-1 overstyret): e-mail + adgangskode, ikke magic link
+    expect(html).toMatch(/type="password"/);
+    expect(html).toContain("Log ind");
+    expect(html).toContain("Opret konto");
+    expect(html).not.toMatch(/magic|send mig et link/i);
   });
 
   it("giver billedrækken en synlig overskrift med produktkontekst", () => {
