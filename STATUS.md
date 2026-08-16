@@ -29,11 +29,26 @@ Sidst opdateret: 2026-08-16 af Claude Code (cloud session)
   eksempel-items) — nu guardet, så den keyless demo virker. Delvis kvittering
   på S26's "responsivt ned til 320 px"; Lighthouse-målingen udestår stadig.
 - **Supabase er sat op og migreret** (2026-08-16, via Composio):
-  projekt `cpqsmtaledmjzirfeztp` (eu-west-1), alle 5 migrations kørt,
-  7 tabeller + `credit_balances`-view, RLS aktiv, `item-photos`-bucket
-  oprettet. URL + anon + service_role-nøgle står i `.env.local`
-  (gitignoreret). Dashboard:
+  projekt `cpqsmtaledmjzirfeztp` (eu-west-1), **alle 8 migrations kørt**
+  (preset_stats, home_anchor og welcomed_at kørt 16/8 eftermiddag efter
+  merge), 8 tabeller + `credit_balances`-view, RLS aktiv,
+  `item-photos`-bucket oprettet. Dashboard:
   https://supabase.com/dashboard/project/cpqsmtaledmjzirfeztp
+- **`.env.local` MANGLER** (konstateret 2026-08-16 eftermiddag — filen fra
+  formiddagssessionen findes ikke på denne maskine). Appen kører derfor
+  demo-mode lokalt. Genskab fra `.env.example`: URL er
+  https://cpqsmtaledmjzirfeztp.supabase.co; anon + service_role hentes i
+  dashboardet (Settings → API). Composio kunne ikke hente nøglerne
+  (permission-klassifikator blokerede reveal).
+- **Forside-justeringer (2026-08-16 eftermiddag, ejer-ordrer):**
+  hero-mærkatet "Selja til Vinted" og "Skitseret eksempel"-noten er FJERNET
+  ("skriger AI"). Billedserie v4 genereret med gemini-3-pro-image (samme
+  v3-prompts, se docs/marketing-billeder.md). /log-ind hedder nu "Opret dig
+  eller log ind" og forklarer at linket også opretter konto (critique-P1).
+  AA-fix på mono-mærkater (tekst/60→70), px-2 på nav-links, aria-oprydning.
+  Fuldt critique-snapshot i `.impeccable/critique/` (24/32, dual-agent).
+  Ejer-ordrer bekræftet i dag: INGEN mærkater på billederne endnu, INGEN
+  priser/pris-signal på forsiden.
 - **Næste opgave: S12** (ende-til-ende mod rigtige providers). Kræver
   FAL_KEY + ANTHROPIC_API_KEY i `.env.local` — se BACKLOG.
 

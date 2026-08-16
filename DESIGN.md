@@ -49,15 +49,22 @@ display-trin.
 - Sektionsrytme: py-20/py-24 på desktop, py-14 mobil; hairline mellem sektioner.
 - App: uændret max-w-md mobilskal; topbar-delelinje er nu hairline, ikke søm.
 
-## 5. Forsidens informationsarkitektur (ejer-beslutning 2026-08-15)
+## 5. Forsidens informationsarkitektur (Vinted-first, ejer-beslutning 2026-08-15/16)
 
-1. Hero: **til virksomheder** — UGC-annoncer, annoncebilleder og hjemmesider.
-   Primær CTA: skriv til os (mailto fra lib/config.ts).
-2. Ydelser som redaktionelle rækker (nummereret liste, ikke ikon-grid).
-3. **Vinted-appen** som sektion: before/after-panelet (signatur-elementet,
-   HANDOFF §2.2.3) + tre trin + CTA til log-ind.
-4. Ærlighed/compliance som sidens ene mørke bånd (slank udgave).
-5. Slut-CTA (begge målgrupper).
+Forsiden ER Vinted-landingen — B2B-studioet er parkeret på /studio (noindex,
+kun footer-link). Rækkefølgen:
+
+1. Hero: rubrik + lead + CTA til log-ind, med **before/after-panelet**
+   (signatur-elementet, HANDOFF §2.2.3) i den brede kolonne. Ingen
+   mono-mærkat over rubrikken og ingen "skitseret eksempel"-note under
+   panelet (ejer-ordre 2026-08-16: fjernet — "skriger AI").
+2. Billedserie: 4 stykker fra serien i statisk grid, uden synlig mærkat
+   (midlertidig ejer-ordre, se STATUS/S25).
+3. Sådan virker det: 3 trin som nummererede redaktionelle rækker (nav-anker).
+4. Det får du: leverancen som sidens ene mørke bånd (midlertidig erstatning
+   for Ærligheds-blokken, ejer-ordre 2026-08-15).
+5. Lær-teaser: 3 guides + vej til alle.
+6. Slut-CTA (kun sælgere; studioets vej bor i footeren).
 **Ingen priser på forsiden** — kreditpriser bor på /priser (nås via footer og app).
 
 ## 6. Interaktion

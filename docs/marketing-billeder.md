@@ -1,8 +1,9 @@
 # Marketing-billeder — prompts & principper
 
-Prompterne bag billedserie v3 på forsiden (`public/eksempler/`), så serien kan
-genskabes eller udvides konsistent. Genereret med gpt-image-1 (1024×1536,
-quality high) og konverteret til 900×1350 webp via sharp.
+Prompterne bag billedserien på forsiden (`public/eksempler/`), så serien kan
+genskabes eller udvides konsistent. v4 (2026-08-16) er genereret med
+gemini-3-pro-image (2:3, 2K) og konverteret til 900×1350 webp via ffmpeg;
+motiverne og realisme-blokken er uændrede fra v3 (dengang gpt-image-1).
 
 **Provenance:** alle billeder er AI-genererede (ejer-ordre 2026-08-15; ingen
 synlig mærkat MIDLERTIDIGT — se STATUS/S25). Ingen genkendelige ansigter (C-6):

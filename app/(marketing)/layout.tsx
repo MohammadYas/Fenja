@@ -25,17 +25,17 @@ export default function MarketingLayout({
           >
             {da.site.navn}
           </Link>
-          <div className="flex items-center gap-4 text-detalje">
+          <div className="flex items-center gap-2 text-detalje">
             <Link
               href="/#saadan"
-              className="soem-link hidden min-h-touch items-center font-medium sm:inline-flex"
+              className="soem-link hidden min-h-touch items-center px-2 font-medium sm:inline-flex"
             >
               {da.nav.saadanVirkerDet}
             </Link>
-            <Link href="/laer" className="soem-link inline-flex min-h-touch items-center font-medium">
+            <Link href="/laer" className="soem-link inline-flex min-h-touch items-center px-2 font-medium">
               {da.nav.laer}
             </Link>
-            <Link href="/priser" className="soem-link inline-flex min-h-touch items-center font-medium">
+            <Link href="/priser" className="soem-link inline-flex min-h-touch items-center px-2 font-medium">
               {da.nav.priser}
             </Link>
             <Link href="/log-ind" className="knap-link px-4">

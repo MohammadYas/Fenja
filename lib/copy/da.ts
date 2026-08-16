@@ -30,9 +30,9 @@ export const da = {
         : `${formaterKreditTal(antal)} annoncer tilbage`,
   },
   logInd: {
-    titel: "Log ind",
+    titel: "Opret dig eller log ind",
     forklaring:
-      "Skriv din e-mail, så sender vi et link, der logger dig ind. Ingen adgangskode.",
+      "Skriv din e-mail, så sender vi et link, der logger dig ind. Er du ny, opretter linket samtidig din konto — ingen adgangskode.",
     emailLabel: "E-mail",
     alderSpoergsmaal: "Er du 18 år eller ældre?",
     alderJa: "Ja, jeg er 18 år eller ældre",

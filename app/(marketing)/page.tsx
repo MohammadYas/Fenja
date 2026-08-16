@@ -35,10 +35,7 @@ export default function Forside() {
       <section className="border-b border-kant">
         <div className="mx-auto max-w-6xl px-4 py-16 md:py-24 lg:grid lg:grid-cols-[1fr_1.2fr] lg:items-center lg:gap-14">
           <div className="indgang">
-            <p className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
-              {vinted.hero.maerkat}
-            </p>
-            <h1 className="mt-3 max-w-2xl font-display text-plakat font-bold">
+            <h1 className="max-w-2xl font-display text-plakat font-bold">
               {vinted.hero.rubrik}
             </h1>
             <p className="mt-6 max-w-laesbar text-lead text-tekst/80">
@@ -58,7 +55,7 @@ export default function Forside() {
 
       {/* Visualiserings-eksempler: fire stykker fra serien (ejer-ordre: ingen
           synlig mærkat — midlertidigt; ægte output efter S12/S25, se STATUS) */}
-      <section className="border-b border-kant" aria-label={da.landing.appenMaerkat}>
+      <section className="border-b border-kant" aria-label={vinted.billedserieAria}>
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             {da.landing.billedserie.slice(0, 4).map((billede, i) => (
@@ -79,7 +76,7 @@ export default function Forside() {
       {/* Sådan virker det: 3 trin som rolige rækker — nav-ankeret peger her */}
       <section id="saadan" className="border-b border-kant" aria-label={vinted.saadan.titel}>
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <h2 className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
+          <h2 className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/70">
             {vinted.saadan.titel}
           </h2>
           <ol className="mt-2">
@@ -139,7 +136,7 @@ export default function Forside() {
             {guides.map((guide, i) => (
               <Reveal key={guide.slug} forsinkelseTrin={i}>
                 <Link href={`/laer/${guide.slug}`} className="group block border-t border-kant pt-4">
-                  <span className="font-mono text-detalje text-tekst/50">
+                  <span aria-hidden="true" className="select-none font-mono text-detalje text-tekst/50">
                     {String(guide.raekkefoelge).padStart(2, "0")}
                   </span>
                   <span className="soem-link mt-1 block font-display text-lead font-semibold group-hover:text-gran">

@@ -9,7 +9,6 @@ export const vinted = {
       "Tag 2–4 mobilfotos af dit tøj. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted.",
   },
   hero: {
-    maerkat: "Selja til Vinted",
     rubrik: "Din annonce. Færdig på 2 minutter.",
     tekst:
       "Tag 2–4 fotos med telefonen. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — du kopierer bare ind på Vinted.",
@@ -31,8 +30,9 @@ export const vinted = {
       ],
       pris: "Prisforslag: 120–160 kr.",
     },
-    note: "Skitseret eksempel — ægte før/efter kommer, når appen er i drift.",
   },
+  // Usynlig sektions-label til billedserien (a11y) — ingen synlig mærkat (ejer-ordre)
+  billedserieAria: "Eksempelbilleder",
   saadan: {
     titel: "Sådan virker det",
     trin: [

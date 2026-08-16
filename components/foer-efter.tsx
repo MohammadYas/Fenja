@@ -9,7 +9,7 @@ export function FoerEfter() {
     <figure>
       <div className="grid overflow-hidden rounded-bloed border border-kant sm:grid-cols-[1fr_auto_1.2fr]">
         <div className="bg-flade p-5">
-          <span className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/60">
+          <span className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/70">
             {vinted.foerEfter.foer.label}
           </span>
           <p className="mt-3 font-mono text-detalje lowercase leading-snug text-tekst/80">
@@ -43,9 +43,6 @@ export function FoerEfter() {
           </p>
         </div>
       </div>
-      <figcaption className="mt-3 text-detalje text-tekst/70">
-        {vinted.foerEfter.note}
-      </figcaption>
     </figure>
   );
 }
