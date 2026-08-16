@@ -41,7 +41,7 @@ blandet lys, rod i kanten af billedet, skæv beskæring.
 | `skjorte-doer.webp` | A quick listing photo: a light-blue striped cotton shirt on a mismatched wooden hanger, hung on a white wardrobe door with a slightly loose handle, photographed from a casual standing angle with the phone, soft uneven daylight from the side, a bit of the bedroom visible at the edge of the frame. |
 | `flatlay-seng.webp` | A quick top-down phone photo on a bed with slightly wrinkled white linen bedding: a folded rust-brown merino sweater and a pair of vintage straight-leg jeans laid out by hand, not perfectly straight, natural window light from the left with a soft shadow of the photographer's arm barely visible at the frame edge. |
 | `denim-detalje.webp` | A close-up phone photo of vintage denim on a kitchen table: waistband, button and belt loops with visible weave texture and the edge of the inner care label, slightly off-centre framing, natural daylight from a window, faint crumbs or dust specks on the table surface. |
-| `gade-look.webp` | A quick phone photo taken by a friend on a quiet Copenhagen side street: a person photographed from the chin down wearing a camel wool coat over a grey knit and dark jeans, hands in pockets, a parked bicycle and worn brick townhouses behind, flat overcast light, slightly imperfect framing. |
+| `gade-look.webp` | Casual mirror selfie for a secondhand clothing listing, in an ordinary Scandinavian entryway: a person wearing a camel wool coat open over a grey knit and dark jeans photographs themselves in a slim full-length mirror by the front door, phone held vertically in front of the face so the phone completely covers the entire face — the face is hidden behind the phone, NOT blurred, NOT cropped, simply covered by the phone. The whole coat is clearly visible and centered. Shoes by the door and a jacket on a wall hook at the edge of the frame, pale wood floor, flat ordinary daylight from a nearby window, slightly tilted amateur angle. NO posing, NOT atmospheric — an ordinary photo that shows the garment for sale. |
 
 OG-billedet (`app/opengraph-image.png`) er `spejl-strik` + `skjorte-doer`
 side om side i 1200×630.
@@ -50,7 +50,8 @@ side om side i 1200×630.
 
 1. Aldrig genkendelige ansigter. **Ejer-krav 2026-08-16: er der mennesker på,
    skal det være spejl-selfie med telefonen foran ansigtet — ALDRIG sløring,
-   ALDRIG hoved-beskæring.** (Tøj-uden-menneske-motiver er undtaget.) Serien
+   ALDRIG hoved-beskæring, og ALDRIG "taget af en ven".** (Tøj-uden-menneske-
+   motiver er undtaget; flatlay/close-up med sælgerens egen hånd er ok.) Serien
    skal ligne salgsannoncer, ikke photoshoots — ingen positur, ingen stemning.
 2. Altid den fælles realisme-blok efter motivet.
 3. Samme "hjem"-følelse på tværs af serien — genbrug detaljer (egetræsgulv,
