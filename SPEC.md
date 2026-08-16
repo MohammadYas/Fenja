@@ -1,4 +1,10 @@
 # Selja · Teknisk kravspecifikation & MVP-plan — v0.2
+> **Rettelser efter v0.2 (2026-08-16, oprydning):** gratis-tier er afskaffet
+> (FR-7 rettet; ejer-beslutning 2026-08-15). Alle priser bor i `lib/config.ts`
+> (pricing v3.0) — tallene i §10/§12 er historiske regneeksempler. Guides er
+> TS-data, ikke markdown (FR-11 rettet). UI bruger egne tokens fra DESIGN.md,
+> ikke shadcn (§11 rettet). Datamodellens sandhed er `supabase/migrations/`
+> (fx findes `users.credits` ikke — saldo er summen af `credit_ledger`).
 **Produkt:** Selja — hjælper Vinted-sælgere med at sælge mere: upload mobilfotos af dit tøj → få rensede salgsbilleder, en nordisk AI-outfit-visualisering af det konkrete stykke tøj, og en færdig annoncetekst. Plus strategier og sourcing-viden, der gør salg på Vinted til en reel indtægt.
 *(Navn: Selja — oldnordisk "at sælge". Kort, nordisk, internationalt udtaleligt. Tjek selja.ai / getselja.com, virk.dk og EUIPO før commit.)*
 **Ejer:** Dig (solo, vibecoder, remote) · **Dato:** 14. august 2026 · **Version 0.2**
@@ -39,11 +45,11 @@
 | FR-4 | AI-mærkning: synligt "AI-visualisering"-badge indlejret i hjørnet af alle genererede billeder + metadata. Kan ikke slås fra (EU AI-forordningen art. 50, i kraft 2/8-2026) | P0 |
 | FR-5 | Annoncetekst: Claude genererer titel, beskrivelse (mærke/størrelse/stand/materiale fra felter + label-foto), søgeord og prisforslag. Fejl fra brugerens felter SKAL indgå i beskrivelsen | P0 |
 | FR-6 | Compliance-rækkefølge: output præsenteres altid som: ægte fotos først (med instruks "brug dette som billede 1 på Vinted"), AI-billeder efter. In-app tekst forklarer Vinteds regler kort | P0 |
-| FR-7 | Kreditsystem: 3 gratis annoncer ved signup; derefter kreditpakker (fx 10 annoncer = 29 kr., 30 = 69 kr.) via Stripe Checkout; kreditter trækkes kun ved leveret resultat | P0 |
+| FR-7 | Kreditsystem: INGEN gratis annoncer (ejer-beslutning 2026-08-15; S27 overvejer alternativ). Kreditpakker/top-up/abonnementer via Stripe Checkout — produkter og priser bor i `lib/config.ts` (pricing v3.0); kreditter trækkes kun ved leveret resultat | P0 |
 | FR-8 | Konto & bibliotek: magic link-login, alle items gemt med status (kladde/aktiv/solgt), gen-download | P0 |
 | FR-9 | Copy-paste-flow: ét-tryks kopiering af titel, beskrivelse og billeddownload i Vinted-venlig rækkefølge (ingen Vinted-API findes — flowet skal føles som "næsten automatisk") | P0 |
 | FR-10 | Omkostningsmåler + budgetloft pr. bruger og globalt (misbrugsværn) | P0 |
-| FR-11 | "Lær"-sektion: 5–8 korte guides (sourcing: genbrug, kilosalg, loppemarked, dødsbo; prissætning; Vinted Pro-grænsen; fototeknik). Statisk markdown-indhold, let at udvide | P1 |
+| FR-11 | "Lær"-sektion: 5–8 korte guides (sourcing: genbrug, kilosalg, loppemarked, dødsbo; prissætning; Vinted Pro-grænsen; fototeknik). TS-data i `lib/guides-indhold.ts` (ejer-beslutning — ikke markdown), let at udvide | P1 |
 | FR-12 | Nordiske stil-presets: 3–5 valgbare æstetikker (minimal studio, københavnsk gade, hyggelig stue, natur) — samme tøj, forskellig setting | P1 |
 | FR-13 | Delbart resultat: auto-genereret before/after-billede optimeret til TikTok-slideshows (viral loop: brugernes resultater er din marketing) | P1 |
 | FR-14 | Statistik: solgt-markering, samlet salgsværdi ("du har solgt for X kr. med Selja") — retention + socialt bevis | P1 |
@@ -113,7 +119,7 @@ Hvert preset = fast promptskabelon med blokke: (1) reference-instruks ("personen
 Pr. komplet annonce: bg-rens ~0,05–0,15 kr. × 3 fotos + on-model 2 genereringer (inkl. retry-buffer) ~0,3–1 kr. + troskabs-tjek ~0,05 kr. + Claude-tekst < 0,2 kr. ≈ **0,7–1,7 kr. total** → M4 (≤ 2 kr.) holder. Kreditpakke 10 annoncer = 29 kr. → direkte cost ~7–17 kr. → bruttomargin 40–75 % på LAVESTE pakke, bedre på større. Gratis-tier (3 annoncer) koster dig ~2–5 kr. pr. signup — billig akkvisition, men FR-10's globale loft beskytter mod misbrug. Faste omkostninger: uændret under 500 kr./md.
 ---
 ## 11. Tech stack
-Uændret fra v0.1 og bekræftet: Next.js + TypeScript på **Netlify** (langvarige jobs i Trigger.dev, ikke Netlify Functions) · **Supabase via CLI** (migrations i git, genererede typer, lokal dev med `supabase start`) · Trigger.dev · fal.ai bag `ImageProvider` · Claude API (tekst — API-forbrug er separat fra dit Claude Max-abonnement, men < 0,2 kr./annonce) · Stripe · Resend · Tailwind + shadcn/ui · sharp til badge/eksport. Railway/ffmpeg/ElevenLabs: først i fase B.
+Uændret fra v0.1 og bekræftet: Next.js + TypeScript på **Netlify** (langvarige jobs i Trigger.dev, ikke Netlify Functions) · **Supabase via CLI** (migrations i git, genererede typer, lokal dev med `supabase start`) · Trigger.dev · fal.ai bag `ImageProvider` (Gemini tilføjes som alternativ provider bag samme interface; fal forbliver failover) · Claude API (tekst — API-forbrug er separat fra dit Claude Max-abonnement, men < 0,2 kr./annonce) · Stripe · Resend · Tailwind + egne tokens fra DESIGN.md (shadcn droppet) · sharp til badge/eksport. Railway/ffmpeg/ElevenLabs: først i fase B.
 ---
 ## 12. 30-dages plan med gates
 **Uge 1 — Billedpipelinen (ingen UI).** Dag 1–3: on-model-eksperimentet — 20 stykker rigtigt tøj (lån/brug din egen garderobe) gennem referencestyret generering; mål troskab. **Gate G1 (dag 3): ≥ 70 % troskab opnåeligt med mindst ét preset — ellers omdefineres MVP til rens + tekst uden on-model (stadig et produkt!).** Dag 4–7: bg-rens, troskabs-tjek, tekstgenerering, badge — hele kæden fra terminalen. **Gate G2 (dag 7): 1 komplet annonce end-to-end på ≤ 2 min.**

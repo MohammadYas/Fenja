@@ -1,4 +1,9 @@
-# SELJA · HANDOFF.md — Projektbibel v1.1
+# SELJA · HANDOFF.md — Projektbibel v1.2
+> Ændringslog v1.2 (2026-08-16, oprydning): ejer-overstyringer foldet ind hvor
+> reglerne står (gratis-tier afskaffet i E-1, priser flyttet til config i E-2,
+> guides som TS-data i F-2, midlertidig AI-billedserie i §2.1.7-note), §7's
+> backlog-kopi erstattet af henvisning til BACKLOG.md. STATUS.md holder KUN
+> øjebliksbilledet — varige regler bor her.
 > **Dette dokument er lov.** Alle — mennesker og AI-agenter (Claude Code cloud sessions) — læser dette dokument OG `STATUS.md` før én linje kode skrives. Ved konflikt mellem dette dokument og en sessions egen idé vinder dokumentet. Ændringer til dokumentet sker kun via PR med begrundelse.
 >
 > Repo-rod skal indeholde: `HANDOFF.md` (denne fil) · `SPEC.md` (selja-spec v0.2, den tekniske spec) · `STATUS.md` (levende log) · `BACKLOG.md` (opgaver) · `DESIGN.md` (designbeslutninger, oprettes af design-sessionen)
@@ -29,7 +34,7 @@ Dette er et P0-krav på linje med funktionalitet. Selja skal ligne et produkt by
 4. "AI-powered" / "drevet af AI" som salgsargument. Vi sælger resultatet (solgt tøj, bedre billeder, sparet tid) — aldrig teknologien. Ordet "AI" optræder på sitet kun hvor det er lovpligtigt eller ærligt nødvendigt (badge på visualiseringer, vilkår, forklaring af hvordan visualiseringen laves)
 5. Tre-kolonners feature-grid med generiske streg-ikoner; "How it works" med 1-2-3-cirkler som eneste struktur
 6. Falske testimonials, falske "as seen in"-logoer, opdigtede tal, countdown-timers, fake scarcity
-7. AI-genererede personer/stockbilleder som marketing-materiale. Marketing-billeder er ÆGTE produkt-output: rigtige before/after af rigtigt tøj
+7. AI-genererede personer/stockbilleder som marketing-materiale. Marketing-billeder er ÆGTE produkt-output: rigtige before/after af rigtigt tøj. *(Midlertidig ejer-undtagelse indtil S12/S25: forsidens billedserie er AI-genereret efter reglerne i `docs/marketing-billeder.md` — spejl-selfies, aldrig "taget af en ven", p.t. uden synlig mærkat (ejer-ordre, deadline Gate 4). Udskiftes med ægte output efter første rigtige kørsel.)*
 8. Udefineret skabelon-look: rå shadcn/Tailwind-defaults uden egne tokens; Inter som hele identiteten
 9. Disse tre "AI-default-æstetikker" (de er blevet genkendelige AI-tegn): (a) cremet baggrund + kontrastserif + terracotta-accent, (b) næsten-sort + én syregrøn/vermillion accent, (c) avis-layout med hairlines og nul border-radius
 10. Overflødige animationer, parallax-cirkus, scroll-hijacking, AI-chatbot-widget i hjørnet
@@ -112,8 +117,8 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 ### Epic 5 · Kreditter & betaling
 | ID | Krav | Prio |
 |---|---|---|
-| E-1 | 3 gratis annoncer ved signup; saldo altid synlig | P0 |
-| E-2 | Kreditpakker via Stripe Checkout (startpriser: 10 = 29 kr., 30 = 69 kr. — kan justeres i config); webhook → ledger | P0 |
+| E-1 | ~~3 gratis annoncer ved signup~~ **Ingen gratis annoncer** (ejer-beslutning 2026-08-15, misbrugsværn; `gratisVedSignup: 0`, signup-grant er no-op). Alternativ overvejes i S27 — byg intet før ejeren vælger. Saldo altid synlig | P0 |
+| E-2 | Kreditpakker, top-up og abonnementer via Stripe Checkout; ALLE produkter og priser bor i `lib/config.ts` (pricing v3.0) — aldrig hårdkodet i kode eller docs; webhook → ledger | P0 |
 | E-3 | Ledger-model: hver bevægelse er en linje (signup/køb/levering/refund); saldo er summen; kredit trækkes i samme transaktion som leverancen markeres komplet | P0 |
 | E-4 | Idempotente webhooks og jobs: dubletter må aldrig koste dobbelt | P0 |
 | E-5 | Misbrugsværn: rate limits pr. bruger, globalt dagligt API-budgetloft med kill-switch, e-mailverifikation før gratis-kreditter | P0 |
@@ -122,7 +127,7 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | ID | Krav | Prio |
 |---|---|---|
 | F-1 | Landing page efter designmanifestet: ægte before/after som hero, priser, hvordan-det-virker i ægte skærmbilleder, vilkår/privatliv | P0 |
-| F-2 | "Lær"-sektion: 5–8 guides som markdown (sourcing: genbrug/kilosalg/loppemarked/dødsbo; prissætning; fototeknik; Vinteds regler; hvornår Vinted Pro). Indhold må ALDRIG opfordre til kommercielt salg på privat konto | P1 |
+| F-2 | "Lær"-sektion: 5–8 guides som TS-data i `lib/guides-indhold.ts` (ejer-beslutning — IKKE markdown). Emner: sourcing (genbrug/kilosalg/loppemarked/dødsbo), prissætning, fototeknik, Vinteds regler, hvornår Vinted Pro. Indhold må ALDRIG opfordre til kommercielt salg på privat konto | P1 |
 | F-3 | SEO-basics: metadata, OG-billeder (ægte output), sitemap, semantisk HTML, dansk lang-tag | P1 |
 | F-4 | Delbart before/after-billede pr. item, formateret til TikTok-slideshow (brugerens valg, aldrig automatisk deling) | P1 |
 ### Epic 7 · Drift & observability
@@ -186,51 +191,19 @@ Sidst opdateret: <dato> af <session/menneske>
 ```
 ---
 ## 6. Ejerens hjemme-checkliste (det eneste, der IKKE kan gøres fra mobilen)
-Når du er hjemme (~1 time første gang):
-1. `supabase init` er allerede i repoet fra session 1 — kør `supabase start` lokalt, verificér migrations med `supabase db reset`
-2. Opret Supabase-projekt i skyen → `supabase link` → `supabase db push`
-3. Opret Netlify-site koblet til repoet; sæt env-variabler fra `.env.example` (Supabase URL/anon, service key KUN som server-env, fal-nøgle, Anthropic-nøgle, Stripe test-nøgler, Trigger.dev, Resend)
-4. Opret fal.ai-konto + nøgle; kør `scripts/gate1-fidelity-test.ts` med 20 fotos af tøj fra din egen garderobe → skriv resultatet i `STATUS.md` (Gate 1!)
-5. Stripe: opret produkt/priser i testmode; sæt webhook mod Netlify-URL
+1. ✅ FÆRDIG (2026-08-16, via Composio): Supabase-cloudprojekt `cpqsmtaledmjzirfeztp` (eu-west-1) oprettet og migreret; RLS + storage-bucket på plads
+2. `.env.local` skal genskabes fra `.env.example` (nøgler i Supabase-dashboardet → Settings → API) — filen findes ikke på maskinen p.t.
+3. Opret Netlify-site koblet til repoet; sæt env-variabler fra `.env.example` (Supabase URL/anon, service key KUN som server-env, fal-nøgle, Anthropic-nøgle, GEMINI_API_KEY, Stripe test-nøgler, Trigger.dev, Resend)
+4. Opret fal.ai-konto + nøgle; kør `scripts/gate1-fidelity-test.ts` med 20 fotos af tøj fra din egen garderobe → skriv resultatet i `STATUS.md` (Gate 1 = S12!)
+5. Stripe: opret produkt/priser i testmode (id'er fra `lib/config.ts` pricing v3.0); sæt webhook mod Netlify-URL
 6. Trigger.dev-projekt + Resend-domæneverifikation
-7. Registrér domæne (tjek selja.ai/getselja.com/selja.studio + virk.dk/EUIPO for navnet)
-8. Push evt. lokale ændringer — herefter kan ALT igen køre fra mobilen via cloud sessions
-Indtil da: alle sessions arbejder mod mocks og lokal Supabase-config. Intet i backloggen før session 12 kræver rigtige nøgler.
+7. Registrér domæne (tjek selja.ai/getselja.com/selja.studio + virk.dk/EUIPO) — indtil da bruges `SELJA_DOMAIN`-placeholderen i `lib/config.ts`
+Indtil da: sessions arbejder mod mocks. Kun S12 kræver rigtige nøgler.
 ---
-## 7. BACKLOG.md — startindhold (kopiér ind som fil, sessions arbejder oppefra)
-```
-# BACKLOG — fase A
-## Fundament
-[ ] S1  Scaffold: Next.js App Router + TS strict + Tailwind + mappestruktur fra HANDOFF §3,
-        netlify.toml, supabase init + første migration (users, items, item_photos,
-        generations, presets, credit_ledger, guides — se SPEC §7), .env.example,
-        CI (lint+typecheck+test), STATUS.md + denne BACKLOG committet
-[ ] S2  Design-session: følg HANDOFF §2 → DESIGN.md med tokens + begrundelser,
-        implementér /lib/design/tokens.ts + basis-komponenter (knap, felt, kort,
-        badge) SOM ENESTE OUTPUT — ingen sider endnu
-[ ] S3  Provider-lag: ImageProvider-interface + fal-implementering + mock med
-        fixtures; VideoProvider-interface (tom impl.); unit tests mod mock
-[ ] S4  Pipeline-kerne: cleanup.ts, onmodel.ts (preset v1), fidelity.ts,
-        listing-text.ts (Claude, D-1/D-2-validering), badge.ts (sharp) —
-        alt testet mod mocks
-[ ] S5  Trigger.dev-job: item-pipeline med parallelle trin, idempotens,
-        delvis leverance (B-6), omkostningslog (G-1)
-[ ] S6  Kreditter: ledger.ts med transaktionel trækning/refund (E-3/E-4) + tests
-## App
-[ ] S7  Auth + konto: magic link, 18+-gate, konto-side, slet konto (A-1..A-5)
-[ ] S8  Nyt item-flow: guidet upload m. roller, komprimering, metadatafelter,
-        "Lav min annonce" med progress (B-1..B-4)
-[ ] S9  Resultatside i compliance-rækkefølge + kopiér-flow + checkliste (B-5)
-[ ] S10 Bibliotek + solgt-markering (B-7)
-[ ] S11 Stripe Checkout + webhooks + saldo-UI (E-1/E-2/E-6) — testmode, mock i CI
-## Launch
-[ ] S12 [KRÆVER NØGLER — efter §6] Ende-til-ende mod rigtige providers; kalibrér
-        troskabs-tærskel; Gate 2-måling (≤ 2 min)
-[ ] S13 Landing page + vilkår/privatliv efter DESIGN.md (F-1) — hero er ægte output fra S12
-[ ] S14 Lær-sektion, 5 guides (F-2) + SEO-basics (F-3)
-[ ] S15 Misbrugsværn + admin-omkostningsside (E-5, G-1) + Sentry (G-2)
-[ ] S16 Preset 2+3, delbart before/after (C-5, F-4), polering fra egen brugstest
-```
+## 7. Backlog
+Opgaverne bor i `BACKLOG.md` — den er sandheden, altid ajour, tages oppefra.
+(Startindholdet der før stod her, er udført; fase A S1–S16 er færdig — se
+BACKLOG.md's kvitteringsliste.)
 ---
 ## 8. Kvalitetsgates før offentlig lancering
 Alle skal være grønne: Gate 1 troskab ≥ 70 % (ellers: on-model slås fra, MVP = rens+tekst) · Gate 2 komplet annonce ≤ 2 min · compliance-testene grønne (badge, rækkefølge, fejl-i-tekst kan ikke omgås) · Lighthouse mobil ≥ 90 på marketing-sider · én person uden instruktion gennemfører flowet på egen telefon · slop-gennemgang af HELE sitet mod §2.1-listen · vilkår + privatliv + moms på plads · budgetloft og kill-switch testet.
