@@ -1,5 +1,12 @@
 // Central konfiguration — justérbare forretningsværdier samlet ét sted.
 
+// Sidens offentlige base-URL. Bruges hvor der ikke findes en request-origin
+// (Trigger.dev-jobs, transaktionsmails) til at bygge absolutte links. Samme
+// kilde og fallback som app/robots.ts og sitemap'et.
+export const site = {
+  baseUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://fenja.studio",
+} as const;
+
 export const kreditter = {
   // E-1 slået fra (ejer-beslutning 2026-08-15): gratis annoncer inviterer
   // misbrug via nye konti/devices — alle annoncer kræver købte kreditter.

@@ -3,7 +3,14 @@
 // og er testet mod mocks; jobbet kobler kun rigtige afhængigheder på.
 
 import { task } from "@trigger.dev/sdk";
+import { site } from "@/lib/config";
 import { SupabaseLedgerDb } from "@/lib/credits/supabase";
+import {
+  bedstMuligt,
+  sendAnnonceKlar,
+  sendKreditRefunderet,
+} from "@/lib/emails/notifikationer";
+import { hentEmailAfsender } from "@/lib/emails/send";
 import { koerItemPipeline, koerRegenerering, type RegenDel } from "@/lib/pipeline/run";
 import {
   SupabasePipelineDb,
@@ -34,6 +41,29 @@ export const itemPipeline = task({
       payload.itemId,
       payload.presetId,
     );
+
+    // S32: leverancemail — "annonce klar" ved fuld leverance, "kredit sat
+    // tilbage" ved delvis (B-6). Best-effort: en fejlet mail må aldrig vælte
+    // jobbet eller udløse en genkørsel (og dermed dobbeltmail).
+    await bedstMuligt(async () => {
+      const { data } = await klient
+        .from("items")
+        .select("profiles(email)")
+        .eq("id", payload.itemId)
+        .single();
+      const profil = Array.isArray(data?.profiles) ? data.profiles[0] : data?.profiles;
+      const til = (profil as { email?: string } | null | undefined)?.email;
+      if (!til) return;
+      const itemTitel = resultat.tekst.titel;
+      const itemUrl = `${site.baseUrl}/items/${payload.itemId}`;
+      const afsender = hentEmailAfsender();
+      if (resultat.refunderet) {
+        await sendKreditRefunderet(afsender, { til, itemTitel, itemUrl });
+      } else {
+        await sendAnnonceKlar(afsender, { til, itemTitel, itemUrl });
+      }
+    });
+
     return {
       itemId: payload.itemId,
       leveret: true,

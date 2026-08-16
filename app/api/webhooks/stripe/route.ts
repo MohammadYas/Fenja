@@ -1,7 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import Stripe from "stripe";
 import { haandterStripeEvent, type StripeCheckoutEvent } from "@/lib/betaling/webhook";
+import { kreditter, site } from "@/lib/config";
 import { SupabaseLedgerDb } from "@/lib/credits/supabase";
+import { hentEmailAfsender } from "@/lib/emails/send";
+import { bedstMuligt, sendKvittering } from "@/lib/emails/notifikationer";
 import { opretServiceKlient } from "@/lib/supabase/service";
 
 // Stripe-webhook (E-2): signatur verificeres altid; kreditering er idempotent
@@ -30,8 +33,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ fejl: "ugyldig signatur" }, { status: 400 });
   }
 
-  const ledger = new SupabaseLedgerDb(opretServiceKlient());
+  const service = opretServiceKlient();
+  const ledger = new SupabaseLedgerDb(service);
   const udfald = await haandterStripeEvent(ledger, event as StripeCheckoutEvent);
+
+  // S32: kvitterings-supplement (Stripe sender selve kvitteringen). Best-effort:
+  // ruten svarer 200 uanset mailen, så Stripe ikke gentager pga. den. Bemærk:
+  // haandterStripeEvent returnerer haandteret=true også for en dublet-event
+  // (krediteringen er no-op), så en sjælden ægte Stripe-dublet kan gentage
+  // supplement-mailen. Ufarligt (kun et supplement), men fuld én-gang kræver at
+  // tilfoej_kreditters "nyindsat"-signal føres op — se BACKLOG S34.
+  if (udfald.haandteret) {
+    await bedstMuligt(async () => {
+      const { data: profil } = await service
+        .from("profiles")
+        .select("email")
+        .eq("id", udfald.userId)
+        .maybeSingle();
+      const pakke = kreditter.pakker.find((p) => p.antal === udfald.antal);
+      const til = profil?.email as string | undefined;
+      if (!til || !pakke) return;
+      await sendKvittering(hentEmailAfsender(), {
+        til,
+        antal: udfald.antal,
+        prisDkk: pakke.prisDkk,
+        saldoUrl: `${site.baseUrl}/kreditter`,
+      });
+    });
+  }
 
   return NextResponse.json(udfald);
 }

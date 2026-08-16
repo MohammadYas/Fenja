@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
+import { site } from "@/lib/config";
 import { hentGuides } from "@/lib/guides";
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://fenja.studio";
+const BASE = site.baseUrl;
 
 // SEO-basics (F-3): sitemap over de offentlige sider.
 export default function sitemap(): MetadataRoute.Sitemap {

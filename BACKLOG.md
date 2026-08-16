@@ -28,14 +28,18 @@ Læs `STATUS.md` + `HANDOFF.md` før du tager en opgave.
     Nu: ingen gratis annoncer. Alternativ på bordet: kør pipelinen gratis, men
     lever sløret/vandmærket resultat, betal for at låse op.
 
-[ ] **S32 · Kobl transaktionsmails på flowet**
-    `emails/` + `lib/emails/send.ts` er bygget og testet, men intet kalder dem
-    endnu. Kræver RESEND_API_KEY + domæneverifikation (HANDOFF §6).
-
 [ ] **S33 · Fase B: implementér VideoProvider mod fal**
     `lib/video/` har det fulde interface, mock og prompt-compiler. Ved
     implementering: slet S3-stubben `lib/providers/video.ts` og flyt dens
     imports over.
+
+[ ] **S34 · Transaktionsmails præcis én gang (idempotens)**
+    I dag (S32) kan en sjælden Stripe-dublet-event gentage kvitterings-
+    supplementet, og en manuel job-genkørsel (G-3) kan gentage leverancemailen.
+    Før `tilfoej_kreditters` `v_indsat`-signal op gennem `LedgerDb`/
+    `registrerKoeb`/`haandterStripeEvent`, og gat leverancemailen på en
+    `notified_at` på item/generation — så hver mail sendes præcis én gang.
+    Lav berøring af pengevejen → egen opgave, egen PR.
 
 ## Færdigt (fase A er komplet og grøn)
 
@@ -43,7 +47,8 @@ Fundament S1–S6 · App S7–S11, S18 (regenerér enkeltdele), B-9 (batch) ·
 Launch S13 (landing), S14 (Lær + SEO), S15 (misbrugsværn + admin), S16
 (presets 2+3, delbart before/after), S28 (Vinted-first-integration), S29
 (session-notater konsolideret), S30 (kategori-skabeloner + hjem-ankre),
-S31 (hjem som brugervalg under Konto + sammensat prompt_version, FR-15) ·
+S31 (hjem som brugervalg under Konto + sammensat prompt_version, FR-15),
+S32 (transaktionsmails koblet på auth/webhook/pipeline, best-effort) ·
 L1 (Lighthouse keyless-måling), L2 (gate1-script) ·
 Markedsanalyse M1 (Vinted-scripts) + M2 (markedspriser i prisforslaget) ·
 Design V6 "Klar & nordisk" → Vinted-first (2026-08-16).

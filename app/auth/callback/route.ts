@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { tilfoejSignupKreditter } from "@/lib/credits/ledger";
+import { hentEmailAfsender } from "@/lib/emails/send";
+import { bedstMuligt, sendVelkomst } from "@/lib/emails/notifikationer";
 import { SupabaseLedgerDb } from "@/lib/credits/supabase";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
@@ -30,6 +32,28 @@ export async function GET(request: NextRequest) {
       .eq("id", data.user.id);
   }
   await tilfoejSignupKreditter(new SupabaseLedgerDb(service), data.user.id);
+
+  // S32: velkomstmail én gang pr. bruger (welcomed_at-guard). Kører best-effort
+  // efter login er sikret — en fejlet mail må aldrig blokere adgangen.
+  await bedstMuligt(async () => {
+    const bruger = data.user;
+    if (!bruger.email) return;
+    const { data: profil } = await service
+      .from("profiles")
+      .select("welcomed_at")
+      .eq("id", bruger.id)
+      .maybeSingle();
+    if (!profil || (profil.welcomed_at as string | null) != null) return;
+    await sendVelkomst(hentEmailAfsender(), {
+      til: bruger.email,
+      startUrl: new URL("/nyt-item", url.origin).toString(),
+    });
+    // Sæt først EFTER en bekræftet afsendelse — fejler mailen, prøves den igen
+    await service
+      .from("profiles")
+      .update({ welcomed_at: new Date().toISOString() })
+      .eq("id", bruger.id);
+  });
 
   return NextResponse.redirect(new URL(videre, url.origin));
 }

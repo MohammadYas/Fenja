@@ -12,7 +12,7 @@ Sidst opdateret: 2026-08-16 af Claude Code (cloud session)
   falder overalt tilbage til det deterministiske hjem. Samtidig bærer
   `generations.prompt_version` nu et sammensat tag — `preset@v skabelon@v
   hjem@v` — så pass-rate kan slices pr. version af hver dimension (FR-15).
-- **Hele fase A er bygget og grøn:** 213 tests, lint + typecheck rene.
+- **Hele fase A er bygget og grøn:** 219 tests, lint + typecheck rene.
 - **Mobilgennemgang (samme branch):** alle sider kørt i Chromium ved 320/375/
   430 px — nul vandret overløb nogen steder. Rettede touch-mål der var under
   44 px: marketing-nav/footer + tilbage-links brugte `min-h-touch content-center`
@@ -90,8 +90,15 @@ I appen er samme princip kodet i `lib/pipeline/skabeloner.ts`:
   hairlines, én mørk blok pr. side. Se DESIGN.md.
 
 ## Kendte huller
-- Transaktionsmails (`emails/`) er bygget og testet, men **intet kalder dem
-  endnu** (S32).
+- Transaktionsmails er nu **koblet på flowet** (S32, samme branch): velkomst
+  ved første login (idempotent via `profiles.welcomed_at`), kvitterings-
+  supplement fra Stripe-webhooken, og "annonce klar" / "kredit sat tilbage"
+  fra item-pipelinen. Alt kører best-effort (en fejlet mail vælter aldrig
+  login/betaling/leverance) og keyless-sikkert (mock uden `RESEND_API_KEY`).
+  Selve afsendelsen kræver stadig `RESEND_API_KEY` + domæneverifikation
+  (HANDOFF §6). Magic-link-mailen sender Supabase Auth fortsat selv.
+  Kendt hjørne: en sjælden Stripe-dublet eller manuel job-genkørsel kan
+  gentage en mail (kreditter dobbeltkøres ALDRIG) — fuld én-gang er S34.
 - Fase B (`lib/video/`) har interface + mock + prompt-compiler, men ingen
   rigtig provider-implementering (S33). S3-stubben `lib/providers/video.ts`
   lever stadig ved siden af og skal slettes ved implementering.
