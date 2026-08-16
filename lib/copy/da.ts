@@ -390,6 +390,25 @@ export const da = {
     ctaTitel: "Vælg et abonnement og gå i gang",
     ctaKnap: "Opret dig og vælg abonnement",
   },
+  // Eksperimentelle forside-features (lib/eksperimenter.ts) — ærlige tal fra
+  // markedshøsten, aldrig opdigtede. Slås fra centralt.
+  eksperimenter: {
+    stempel: "Nyt",
+    titel: "Populært på Vinted lige nu",
+    lead: (dato: string) =>
+      `Fra vores markedshøst ${dato}: hvad der er flest aktive annoncer af — og hvad det typisk går for.`,
+    antalAnnoncer: (antal: number) => `${antal} aktive annoncer`,
+    median: (kr: number) => `median ${kr} kr.`,
+    bedsteFundTitel: "Giver mest ved gensalg",
+    bedsteFundLead:
+      "Søgningerne med den højeste medianpris i høsten — værd at holde øje med i genbrugen.",
+    prisTjekTitel: "Tjek prisen",
+    prisTjekLead: "Vælg en søgning og se, hvad den går for.",
+    prisTjekLabel: "Søgning",
+    prisTjekInterval: (p25: number, p75: number) => `Typisk ${p25}–${p75} kr.`,
+    prisTjekKilde: (antal: number, dato: string) =>
+      `Baseret på ${antal} aktive annoncer · høstet ${dato}`,
+  },
   landing: {
     // v6 (ejer-beslutning 2026-08-15): forsiden fører med B2B — UGC-annoncer,
     // annoncebilleder og hjemmesider. Appen har egen sektion. Ingen priser her.

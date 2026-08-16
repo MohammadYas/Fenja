@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FoerEfter } from "@/components/foer-efter";
 import { JsonLd } from "@/components/json-ld";
+import { PopulaertSektion } from "@/components/eksperimenter/populaert-sektion";
 import { Reveal } from "@/components/reveal";
 import { da } from "@/lib/copy/da";
 import { vinted } from "@/lib/copy/vinted";
@@ -171,6 +172,10 @@ export default function Forside() {
           </p>
         </div>
       </section>
+
+      {/* EKSPERIMENT (lib/eksperimenter.ts): markedstal fra høsten — hele
+          sektionen kan slås fra med ét flag eller env EKSPERIMENTER_FRA */}
+      <PopulaertSektion />
 
       {/* Slut-CTA: taler kun til sælgere — vejen til studioet bor i footeren */}
       <section>
