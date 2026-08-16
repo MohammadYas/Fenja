@@ -55,8 +55,8 @@ const skabeloner = [
 describe("mail-skabeloner renderer til mail-kompatibel HTML", () => {
   it.each(skabeloner)(
     "$navn renderer uden fejl med indhold og links",
-    ({ emne, element, skalIndeholde }) => {
-      const html = renderMailHtml(emne, element);
+    async ({ emne, element, skalIndeholde }) => {
+      const html = await renderMailHtml(emne, element);
       expect(html.startsWith("<!doctype html>")).toBe(true);
       expect(html).toContain(`<title>${emne}</title>`);
       for (const tekst of skalIndeholde) expect(html).toContain(tekst);
@@ -65,16 +65,16 @@ describe("mail-skabeloner renderer til mail-kompatibel HTML", () => {
 
   it.each(skabeloner)(
     "$navn bruger tabeller og inline styles — ingen klasser",
-    ({ emne, element }) => {
-      const html = renderMailHtml(emne, element);
+    async ({ emne, element }) => {
+      const html = await renderMailHtml(emne, element);
       expect(html).toContain('<table role="presentation"');
       expect(html).toContain('style="');
       expect(html).not.toContain('class="'); // Tailwind-klasser virker ikke i mails
     },
   );
 
-  it.each(skabeloner)("$navn har footer og preheader", ({ emne, element }) => {
-    const html = renderMailHtml(emne, element);
+  it.each(skabeloner)("$navn har footer og preheader", async ({ emne, element }) => {
+    const html = await renderMailHtml(emne, element);
     expect(html).toContain(emails.faelles.footer);
     expect(html).toContain(emails.faelles.footerHvorfor);
   });

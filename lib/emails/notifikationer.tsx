@@ -25,7 +25,7 @@ export async function bedstMuligt(handling: () => Promise<unknown>): Promise<voi
   }
 }
 
-export function sendVelkomst(
+export async function sendVelkomst(
   afsender: EmailAfsender,
   args: { til: string; startUrl: string },
 ): Promise<EmailKvittering> {
@@ -33,11 +33,11 @@ export function sendVelkomst(
   return afsender.send({
     til: args.til,
     emne,
-    html: renderMailHtml(emne, <VelkomstMail startUrl={args.startUrl} />),
+    html: await renderMailHtml(emne, <VelkomstMail startUrl={args.startUrl} />),
   });
 }
 
-export function sendKvittering(
+export async function sendKvittering(
   afsender: EmailAfsender,
   args: { til: string; antal: number; prisDkk: number; saldoUrl: string },
 ): Promise<EmailKvittering> {
@@ -45,14 +45,14 @@ export function sendKvittering(
   return afsender.send({
     til: args.til,
     emne,
-    html: renderMailHtml(
+    html: await renderMailHtml(
       emne,
       <KvitteringMail antal={args.antal} prisDkk={args.prisDkk} saldoUrl={args.saldoUrl} />,
     ),
   });
 }
 
-export function sendAnnonceKlar(
+export async function sendAnnonceKlar(
   afsender: EmailAfsender,
   args: { til: string; itemTitel: string; itemUrl: string },
 ): Promise<EmailKvittering> {
@@ -60,14 +60,14 @@ export function sendAnnonceKlar(
   return afsender.send({
     til: args.til,
     emne,
-    html: renderMailHtml(
+    html: await renderMailHtml(
       emne,
       <AnnonceKlarMail itemTitel={args.itemTitel} itemUrl={args.itemUrl} />,
     ),
   });
 }
 
-export function sendKreditRefunderet(
+export async function sendKreditRefunderet(
   afsender: EmailAfsender,
   args: { til: string; itemTitel: string; itemUrl: string },
 ): Promise<EmailKvittering> {
@@ -75,7 +75,7 @@ export function sendKreditRefunderet(
   return afsender.send({
     til: args.til,
     emne,
-    html: renderMailHtml(
+    html: await renderMailHtml(
       emne,
       <KreditRefunderetMail itemTitel={args.itemTitel} itemUrl={args.itemUrl} />,
     ),
