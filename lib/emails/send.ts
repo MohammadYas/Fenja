@@ -1,7 +1,8 @@
 // Tynd afsender-abstraktion over Resend — samme mønster som lib/providers:
 // interface + mock, så alt kan testes uden nøgle (NFR-5), og rigtig
-// implementering først når RESEND_API_KEY findes. INTET i appen kalder send()
-// endnu — kobling til auth/pipeline/webhooks er en senere integrationsopgave.
+// implementering først når RESEND_API_KEY findes. Kaldes fra auth
+// (velkomst), pipelinen (annonce klar / kredit tilbage) og Stripe-webhooken
+// (kvitteringssupplement) via lib/emails/notifikationer.tsx (S32).
 
 export type EmailBesked = {
   til: string;

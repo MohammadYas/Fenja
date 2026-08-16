@@ -21,11 +21,13 @@ export default async function Konto() {
         .select("balance")
         .eq("user_id", user!.id)
         .maybeSingle(),
+      // Både engangskøb og abonnementskvoter — abonnement er standardvejen
+      // (ejer-ordre 2026-08-16), og en abonnent skal kunne se sin historik
       supabase
         .from("credit_ledger")
-        .select("delta, ts")
+        .select("delta, ts, reason")
         .eq("user_id", user!.id)
-        .eq("reason", "purchase")
+        .in("reason", ["purchase", "subscription"])
         .order("ts", { ascending: false }),
       supabase
         .from("profiles")
@@ -82,18 +84,42 @@ export default async function Konto() {
       <h2 className="mt-8 text-titel font-medium">{da.konto.koebshistorik}</h2>
       {koeb && koeb.length > 0 ? (
         <ul className="mt-3 flex flex-col gap-2">
-          {koeb.map((k: { delta: unknown; ts: unknown }, i: number) => (
-            <li key={i} className="font-mono text-detalje">
-              {da.konto.koebLinje(
-                k.delta as number,
-                new Date(k.ts as string).toLocaleDateString("da-DK"),
-              )}
-            </li>
-          ))}
+          {koeb.map((k: { delta: unknown; ts: unknown; reason: unknown }, i: number) => {
+            const linje =
+              k.reason === "subscription"
+                ? da.konto.abonnementLinje
+                : da.konto.koebLinje;
+            return (
+              <li key={i} className="font-mono text-detalje">
+                {linje(
+                  Number(k.delta),
+                  new Date(k.ts as string).toLocaleDateString("da-DK"),
+                )}
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <p className="mt-3 max-w-laesbar text-tekst/80">{da.konto.ingenKoeb}</p>
       )}
+
+      {/* Indsigt + dataportabilitet (GDPR art. 15/20) — selvbetjent, ingen mail nødvendig */}
+      <Card className="mt-8">
+        <h2 className="text-titel font-medium">{da.konto.data.titel}</h2>
+        <p className="mt-2 max-w-laesbar text-detalje text-tekst/80">
+          {da.konto.data.forklaring}
+        </p>
+        <p className="mt-2 max-w-laesbar text-detalje text-tekst/70">
+          {da.konto.data.billedlinkNote}
+        </p>
+        <a
+          href="/api/konto/eksport"
+          download
+          className="knap-link mt-4"
+        >
+          {da.konto.data.hent}
+        </a>
+      </Card>
 
       <div className="soem-vandret mt-10" aria-hidden="true" />
       <SletKonto />

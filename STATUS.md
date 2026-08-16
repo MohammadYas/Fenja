@@ -1,7 +1,36 @@
 # STATUS
-Sidst opdateret: 2026-08-16 (aften) af Claude Code (Stripe/abonnement-session)
+Sidst opdateret: 2026-08-16 (sen aften) af Claude Code (GDPR-kode-audit)
 
-## Denne session (16/8 aften) — Stripe live + abonnement-pivot
+## Denne session (16/8 sen aften) — GDPR-audit af KODEN + finpudsning
+Forrige runde læste teksterne; denne gik gennem koden og spurgte: passer
+politikken på det, vi faktisk gør? Fuld rapport i `docs/gdpr-audit-2026-08-16.md`.
+- **Sletningen holdt ikke sit eget løfte** (alvorligst): `storage.list()` giver
+  100 rækker ad gangen, og slette-ruten listede uden paginering — en sælger med
+  over 100 annoncer ville få billeder efterladt efter en "fuld sletning".
+  Rettet i `lib/konto/slet.ts` (paginering + sletning i portioner). Fejler
+  storage-oprydningen nu, slettes auth-brugeren ikke først, så billeder ikke
+  bliver forældreløse.
+- **Indsigt + dataportabilitet er nu selvbetjening** (art. 15/20): Konto →
+  "Hent mine data" → `/api/konto/eksport`. JSON med konto, alle annoncer
+  (fejlbeskrivelse, prisforslag, genereringer) og hele kredithistorikken +
+  billedlinks der udløber efter en time. Interne omkostningstal er holdt ude.
+- **Politikken navngiver nu alle otte databehandlere** (Netlify, Trigger.dev og
+  Anthropic manglede) og lover kun rettigheder, appen faktisk har.
+- **Nye compliance-dokumenter:** `docs/databehandlere.md` (P1+P2, klar til at
+  ejeren sætter DPA-dato/link ind), `docs/fortegnelse-art30.md` (P3, udfyldt ud
+  fra koden — mangler juridisk navn/CVR), `docs/brud-beredskab.md` (P4).
+- **Fejl fundet undervejs:** købshistorikken på Konto filtrerede kun på
+  `reason = purchase`, så abonnementskvoter — nu standardvejen — slet ikke blev
+  vist. Rettet.
+- Finpuds: `/suppliers` med i middlewarens beskyttede stier, forældet kommentar
+  i `lib/emails/send.ts`, stavefejl i admin-siden.
+- **315 tests grønne**, lint + typecheck + build rene.
+- **Til dig, når du er tilbage:** (1) sæt DPA-dato/link ind i
+  `docs/databehandlere.md` — det er det eneste reelle Datatilsyn-hul tilbage;
+  (2) prøv "Hent mine data" én gang som rigtig indlogget bruger — udtrækket er
+  kun testet mod mocks og demo-tilstand, ikke mod den rigtige database.
+
+## Forrige session (16/8 aften) — Stripe live + abonnement-pivot
 - **EJER-ORDRE (mid-session, gælder alt): abonnement er STANDARDVEJEN for
   køb; top-up må KUN kunne købes, når man er løbet tør** (saldo ≤ 0,5 —
   `topUpVedSaldoHoejst` i lib/config.ts). Kreditpakkerne (Prøv/Sælger/Bunke)
@@ -29,8 +58,8 @@ Sidst opdateret: 2026-08-16 (aften) af Claude Code (Stripe/abonnement-session)
 - **GDPR:** privatliv + vilkår opdateret (dataansvarlig, retsgrundlag,
   opbevaring/bogføringslov, tredjelande, cookies, abonnementsvilkår med
   fortrydelse/fornyelse/prisvarsel). **Audit: docs/gdpr-audit-2026-08-16.md**
-  — konklusion: lav-til-moderat risiko; lukkeliste P1-P4 (DPA-dokumentation,
-  tredjelands-verifikation, art. 30-fortegnelse, brud-beredskab).
+  — P3 og P4 er skrevet i sen aften-sessionen; P1+P2 (DPA'er og
+  tredjelandsgrundlag) mangler stadig ejerens dokumentation.
 - feat/nyt-item-varetype-maerkesoegning (varetype-katalog + mærkesøgning)
   merget til main og slettet (ejer-regel: kun main).
 
@@ -145,5 +174,9 @@ I appen er princippet kodet i `lib/pipeline/skabeloner.ts`:
   provider (S33). S3-stubben `lib/providers/video.ts` slettes ved implementering.
 - Lighthouse (L1) målt før Vinted-first — genmåles (S26).
 - Gate 1 (troskab ≥ 70 %) er **umålt** — S12.
+- Dataudtrækket (`/api/konto/eksport`) er testet mod mocks og demo-tilstand;
+  det mangler ét smoke-test som rigtig indlogget bruger (S40).
+- P1+P2 i GDPR-auditen (DPA'er + tredjelandsgrundlag pr. leverandør) kan kun
+  ejeren lukke — skabelonen står klar i `docs/databehandlere.md`.
 - Migrationsfilerne `preset_stats_provider` + `kredit_kilder` er nu kørt mod
   cloud-databasen (denne session), så migrationer og DB er i sync igen.

@@ -9,6 +9,7 @@ const BESKYTTEDE_PRAEFIKSER = [
   "/nyt-item",
   "/kreditter",
   "/konto",
+  "/suppliers",
   "/admin",
 ];
 

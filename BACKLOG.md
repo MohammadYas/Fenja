@@ -65,6 +65,19 @@ Læs `STATUS.md` + `HANDOFF.md` før du tager en opgave.
     "ny adgangskode"-side (`updateUser`). Login-siden har allerede en
     kontakt-linje som midlertidig erstatning.
 
+[ ] **S40 · Smoke-test dataudtrækket mod den rigtige database** [5 min]
+    `/api/konto/eksport` (GDPR art. 15/20) er kun kørt mod mocks og
+    demo-tilstand. Log ind som rigtig bruger med mindst én leveret annonce,
+    tryk "Hent mine data" under Konto, og tjek at annoncer, fotolinks og
+    kreditbevægelser er med. Går PostgREST-embedden `generations(...)` på
+    items imod, er det her det viser sig.
+
+[ ] **S41 · Luk P1+P2 i GDPR-auditen** [KRÆVER EJEREN — dashboards og PDF'er]
+    Accepter/hent databehandleraftale hos alle otte leverandører og verificér
+    tredjelandsgrundlaget pr. leverandør. Skabelon med tabel og felter står i
+    `docs/databehandlere.md`; fal.ai er den usikre (hold Gemini primær, hvis
+    grundlaget er uklart). Det er det sidste reelle Datatilsyn-hul.
+
 [ ] **S34 · Transaktionsmails præcis én gang (idempotens)**
     I dag (S32) kan en sjælden Stripe-dublet-event gentage kvitterings-
     supplementet, og en manuel job-genkørsel (G-3) kan gentage leverancemailen.
@@ -80,7 +93,9 @@ Launch S13 (landing), S14 (Lær + SEO), S15 (misbrugsværn + admin), S16
 (presets 2+3, delbart before/after), S28 (Vinted-first-integration), S29
 (session-notater konsolideret), S30 (kategori-skabeloner + hjem-ankre),
 S31 (hjem som brugervalg under Konto + sammensat prompt_version, FR-15),
-S32 (transaktionsmails koblet på auth/webhook/pipeline, best-effort) ·
+S32 (transaktionsmails koblet på auth/webhook/pipeline, best-effort),
+GDPR-kode-audit (selvbetjent dataudtræk art. 15/20, pagineret sletning,
+navngivne databehandlere, art. 30-fortegnelse + brud-beredskab) ·
 L1 (Lighthouse keyless-måling), L2 (gate1-script) ·
 Markedsanalyse M1 (Vinted-scripts) + M2 (markedspriser i prisforslaget) ·
 Design V6 "Klar & nordisk" → Vinted-first (2026-08-16).

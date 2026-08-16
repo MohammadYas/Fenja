@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { sletBrugerensFiler, type StorageOprydning } from "@/lib/konto/slet";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
 
@@ -45,20 +46,20 @@ export async function POST() {
   // Abonnement stoppes før data, så der ikke trækkes penge efter sletningen
   if (user.email) await opsigAbonnementer(user.email);
 
-  // Storage først: list og slet alle filer under brugerens mappe
-  const filer: string[] = [];
-  const { data: mapper } = await service.storage.from(BUCKET).list(user.id);
-  for (const mappe of mapper ?? []) {
-    const { data: indhold } = await service.storage
-      .from(BUCKET)
-      .list(`${user.id}/${mappe.name}`);
-    for (const fil of indhold ?? []) {
-      filer.push(`${user.id}/${mappe.name}/${fil.name}`);
-    }
-    if (mappe.id) filer.push(`${user.id}/${mappe.name}`);
-  }
-  if (filer.length > 0) {
-    await service.storage.from(BUCKET).remove(filer);
+  // Storage først: ALLE filer under brugerens mappe, pagineret — en sælger med
+  // over 100 annoncer må ikke få billeder efterladt efter en "fuld sletning"
+  try {
+    await sletBrugerensFiler(
+      service.storage.from(BUCKET) as unknown as StorageOprydning,
+      user.id,
+    );
+  } catch (fejl) {
+    // Fejler storage, må auth-brugeren IKKE slettes: så ville billederne blive
+    // forældreløse i bucket'en uden nogen til at rydde op
+    return NextResponse.json(
+      { fejl: fejl instanceof Error ? fejl.message : "sletning fejlede" },
+      { status: 500 },
+    );
   }
 
   // Sletter auth-brugeren; databasen rydder resten via on delete cascade

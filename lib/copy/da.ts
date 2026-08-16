@@ -63,6 +63,8 @@ export const da = {
     koebshistorik: "Købshistorik",
     ingenKoeb: "Ingen køb endnu. Vælg et abonnement under Kreditter, når du er klar.",
     koebLinje: (antal: number, dato: string) => `${antal} kreditter · ${dato}`,
+    abonnementLinje: (antal: number, dato: string) =>
+      `${antal} kreditter fra abonnement · ${dato}`,
     // S31 · dit faste hjem på visualiseringerne. Alle dine annoncer optages i
     // samme bolig, så profilen ligner ét sted — du kan vælge hvilket.
     hjem: {
@@ -82,6 +84,25 @@ export const da = {
         "odense-villa": "Villa med have",
         "aalborg-nybyg": "Nyt byggeri",
       } as Record<string, string>,
+    },
+    // GDPR art. 15 + 20: indsigt og dataportabilitet som selvbetjening.
+    // Teksterne i omEksporten lægges ind i selve filen, så den kan forstås
+    // uden at have appen ved hånden (art. 12).
+    data: {
+      titel: "Dine data",
+      forklaring:
+        "Hent alt, vi har registreret om dig: din konto, dine annoncer med billedlinks og hele din kredithistorik. Filen er JSON — den kan læses som tekst og indlæses i andre programmer.",
+      hent: "Hent mine data",
+      billedlinkNote:
+        "Billedlinkene i filen virker i én time. Gem billederne med det samme, hvis du vil beholde dem.",
+      omEksporten: [
+        "Dette er dine data fra Selja.",
+        "Filen er lavet, fordi du selv bad om den under Konto. Den indeholder din konto, dine annoncer og din kredithistorik.",
+        "Billedlinkene er midlertidige og virker i én time fra det tidspunkt, der står i feltet 'eksporteret'.",
+        "Bilag for dine køb ligger hos Stripe og i vores regnskab, fordi bogføringsloven kræver 5 års opbevaring — de er derfor ikke med her.",
+        "Spørgsmål til dine data: visual.studio.tuturials@gmail.com",
+      ],
+      fejl: "Udtrækket kunne ikke laves. Prøv igen, eller skriv til os hvis det fortsætter.",
     },
     sletKonto: "Slet min konto",
     sletForklaring:
@@ -633,10 +654,19 @@ export const da = {
         ],
       },
       {
-        overskrift: "Hvor det ligger",
+        overskrift: "Hvem behandler data for os",
         tekst: [
-          "Data ligger hos vores databehandlere: Supabase (database og billeder i EU, privat lager med signerede links), Stripe (betaling), Resend (mails) samt de billed- og tekstmodeller, der laver din leverance. Billeder sendes kun til modellerne for at lave netop din annonce — aldrig til træning.",
-          "Nogle af modellerne (fx Google og fal) behandler data i USA. Overførslen sker efter EU's godkendte rammer (EU-U.S. Data Privacy Framework eller standardkontraktbestemmelser).",
+          "Supabase: database og billeder, hostet i EU (Irland), privat lager med midlertidige links.",
+          "Netlify: drift af selve siden. Trigger.dev: kører de tunge genereringsjobs — de får kun id'et på din annonce, aldrig dine billeder.",
+          "Stripe: betaling, abonnement og kvitteringer. Resend: de mails, vi sender dig.",
+          "Google (Gemini) og fal.ai: billedmodellerne, der renser dine fotos og laver visualiseringen. Anthropic (Claude): modellen, der skriver annonceteksten.",
+          "Dine billeder sendes kun til modellerne for at lave netop din annonce — aldrig til træning, aldrig til andre kunder.",
+        ],
+      },
+      {
+        overskrift: "Overførsel til USA",
+        tekst: [
+          "Nogle af leverandørerne behandler data i USA. Overførslen sker efter EU's godkendte rammer (EU-U.S. Data Privacy Framework eller standardkontraktbestemmelser), og vi holder en liste over grundlaget pr. leverandør, som du kan bede om at se.",
         ],
       },
       {
@@ -654,7 +684,9 @@ export const da = {
       {
         overskrift: "Dine rettigheder",
         tekst: [
-          "Du kan få indsigt i, rette, flytte eller slette dine data og gøre indsigelse mod behandlingen. Sletning klarer du selv under Konto. Vil du klage, kan du kontakte Datatilsynet (datatilsynet.dk) — men skriv gerne til os først, så løser vi det nok hurtigere.",
+          "Du kan få indsigt i, rette, flytte eller slette dine data og gøre indsigelse mod behandlingen.",
+          "Indsigt og flytning klarer du selv: under Konto kan du hente alle dine data som en fil, der kan læses af både dig og andre programmer. Sletning klarer du også selv samme sted.",
+          "Vil du have noget rettet, eller har du et spørgsmål, så skriv til os — vi svarer inden for en måned, som loven kræver. Er du ikke tilfreds, kan du klage til Datatilsynet (datatilsynet.dk).",
         ],
       },
     ],

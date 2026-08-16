@@ -17,11 +17,11 @@ export default async function Admin() {
   if (!adminEmail || user?.email !== adminEmail) notFound();
 
   const service = opretServiceKlient();
-  const sygDageSiden = new Date(Date.now() - 7 * 86_400_000).toISOString();
+  const syvDageSiden = new Date(Date.now() - 7 * 86_400_000).toISOString();
   const { data } = await service
     .from("generations")
     .select("kind, status, cost_dkk, created_at, items(user_id)")
-    .gte("created_at", sygDageSiden)
+    .gte("created_at", syvDageSiden)
     .order("created_at", { ascending: false });
 
   type Raekke = {
