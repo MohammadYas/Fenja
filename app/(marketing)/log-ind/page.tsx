@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -8,7 +8,7 @@ import { da } from "@/lib/copy/da";
 
 type Fane = "login" | "signup";
 
-export default function LogInd() {
+function LogIndIndhold() {
   const router = useRouter();
   const params = useSearchParams();
   const videre = params.get("videre") ?? "/oversigt";
@@ -205,5 +205,19 @@ export default function LogInd() {
         <p className="mt-6 text-detalje text-tekst/60">{da.logInd.glemtKode}</p>
       ) : null}
     </main>
+  );
+}
+
+export default function LogInd() {
+  return (
+    <Suspense
+      fallback={
+        <main className="mx-auto max-w-md px-4 py-16">
+          <h1 className="font-display text-kaempe font-bold">{da.logInd.titel}</h1>
+        </main>
+      }
+    >
+      <LogIndIndhold />
+    </Suspense>
   );
 }
