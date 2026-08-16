@@ -124,6 +124,9 @@ function opretDemoKlient() {
       signOut: async () => ({ error: null }),
     },
     from: (tabel: string) => demoQuery(tabel),
+    // rpc-kald (fx beregn_kredit_status på kreditsiden) svarer tomt i demo —
+    // siderne skal selv tåle et tomt svar
+    rpc: async () => ({ data: null, error: null }),
   };
 }
 

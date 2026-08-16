@@ -224,6 +224,14 @@ export const da = {
       "1 kredit = 1 færdig annonce. Kreditter trækkes først, når annoncen er leveret — fejler visualiseringen, får du kreditten tilbage.",
     saldoNu: (antal: number) => `Du har ${formaterKreditTal(antal)} tilbage.`,
     pakkeNavn: (antal: number) => `Selja · ${antal} annoncer`,
+    // Pakkenavne (pricing v3.0) — id'erne fra lib/config.ts
+    pakkeNavne: {
+      proev: "Prøv",
+      saelger: "Sælger",
+      bunke: "Bunke",
+      "fyld-op": "Fyld op",
+    } as Record<string, string>,
+    anbefalet: "Anbefalet",
     pakkeLinje: (antal: number, pris: number) => `${antal} annoncer · ${pris} kr.`,
     pakkeAntal: (antal: number) => `${antal} annoncer`,
     pakkePris: (pris: number) => `${pris} kr.`,
@@ -234,6 +242,18 @@ export const da = {
     betalingIkkeKlar:
       "Betaling er ikke sat op endnu. Skriv til os, hvis du ser denne besked på det rigtige site.",
     kvittering: "Du får kvittering på mail fra Stripe.",
+    // Udløb vises ærligt: den generelle regel + den konkrete næste dato
+    udloebNote: "Kreditter gælder 12 måneder fra køb.",
+    udloebNaeste: (antal: number, dato: string) =>
+      antal === 1
+        ? `1 af dine annoncer udløber ${dato}.`
+        : `${formaterKreditTal(antal)} af dine annoncer udløber ${dato}.`,
+    // Top-up-kortet — vises kun når saldoen er lav. Konkret, intet pres.
+    topUp: {
+      titel: "Fyld op",
+      linje: (antal: number, pris: number) => `${antal} annoncer mere · ${pris} kr.`,
+      forklaring: "Din saldo er lav. Samme kreditter som pakkerne — uden binding.",
+    },
   },
   fejlsider: {
     ikkeFundetKode: "404",
@@ -248,9 +268,32 @@ export const da = {
   },
   priserSide: {
     titel: "Priser",
-    lead: "Du køber kun det, du bruger — ingen abonnement, intet der udløber.",
-    stempel: "Ingen abonnement",
+    lead: "Du køber kun det, du bruger — og jo mere du sælger, jo mindre koster hver annonce. Kreditter gælder 12 måneder.",
+    stempel: "1 kredit = 1 annonce",
     pakkerTitel: "Kreditpakker",
+    // Abonnementer (pricing v3.0) — vises på priser-siden; køb åbner senere
+    abonnement: {
+      titel: "Abonnementer",
+      lead: "Til sælgere med fast flow. Kvoten fyldes hver måned, og ubrugte annoncer følger med til næste måned.",
+      stempel: "Åbner snart",
+      navne: { plus: "Plus", pro: "Pro" } as Record<string, string>,
+      prMd: "pr. måned",
+      prisPrAar: (pris: number) => `eller ${pris} kr. pr. år — to måneder sparet`,
+      annoncerPrMd: (antal: number) => `${antal} annoncer hver måned`,
+      lavestePris: "Lavest pris pr. annonce",
+      faellesTitel: "Med i begge",
+      faelles: ["Salgsstatistik", "Prioriteret kø — dine annoncer laves først"],
+      funktioner: {
+        plus: [
+          "Favorit-overvågning: op til 25 favoritter med dagligt overblik på mail og prisanbefaling",
+        ],
+        pro: [
+          "Favorit-overvågning uden loft, opdateret løbende, med dynamisk prisanbefaling",
+          "Besked når lignende annoncer ændrer pris",
+          "Ret prisen på flere annoncer ad gangen",
+        ],
+      } as Record<string, readonly string[]>,
+    },
     saadanTitel: "Sådan virker kreditter",
     punkter: [
       {
@@ -262,8 +305,8 @@ export const da = {
         tekst: "Kreditten trækkes, når annoncen er klar. Fejler visualiseringen, leverer vi resten og sætter kreditten tilbage automatisk.",
       },
       {
-        overskrift: "Kreditter udløber ikke",
-        tekst: "Køb en pakke i dag, brug den til foråret. Saldoen står, til du bruger den.",
+        overskrift: "Kreditter gælder 12 måneder",
+        tekst: "Køb en pakke i dag, brug den henover året. Udløbsdatoen står altid på din kreditside — intet forsvinder, uden at du kan se hvornår.",
       },
       {
         overskrift: "Priser er med moms",
@@ -466,7 +509,7 @@ export const da = {
         overskrift: "Kreditter og betaling",
         tekst: [
           "1 kredit svarer til 1 leveret annonce. Kreditter trækkes først, når leverancen er færdig. Fejler visualiseringen, leverer vi resten og sætter kreditten for visualiseringen tilbage automatisk.",
-          "Betaling sker via Stripe, som også sender din kvittering. Priserne er i danske kroner og inklusive moms. Købte kreditter udløber ikke.",
+          "Betaling sker via Stripe, som også sender din kvittering. Priserne er i danske kroner og inklusive moms. Købte kreditter gælder 12 måneder fra købsdatoen — udløbsdatoen vises på din kreditside.",
         ],
       },
       {

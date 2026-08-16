@@ -1,5 +1,5 @@
 # STATUS
-Sidst opdateret: 2026-08-16 af Claude Code (cloud session)
+Sidst opdateret: 2026-08-16 af Claude Code (pricing v3-session)
 
 ## Sådan står projektet
 - **Gemini-provider + Gate 1-trekamp (branch `feat/gemini-provider`, afventer
@@ -14,6 +14,32 @@ Sidst opdateret: 2026-08-16 af Claude Code (cloud session)
   (additiv migration `20260816100000`, IKKE kørt mod databasen endnu — default
   'fal' bevarer eksisterende rækker/kald). Rigtige kald kun bag `--live` +
   `GEMINI_API_KEY` (ny i `.env.example`).
+- **Pricing v3.0 er landet** (ejer-beslutning 2026-08-16, pushet direkte til
+  main efter ny ejer-procedure): pakker Prøv 5/49, Sælger 15/89 (anbefalet),
+  Bunke 40/169; top-up "Fyld op" 10/69 (kun kreditsiden ved saldo ≤ 5);
+  abonnementer Plus 59/md. (12 annoncer, rollover) og Pro 119/md. (30) med
+  årspriser 590/1190 — alt i `lib/config.ts` (+ aiCostWatch 3 kr./14 dage mod
+  kontakt-mailen og preview-config 3 gratis/0,60 kr./50 kr. dagligt — KUN
+  config, ingen flows). Kredit-kilde-dimension i ledgeren (migration
+  `20260816110000_kredit_kilder.sql`, ADDITIV, IKKE kørt mod databasen —
+  omdøbt fra ...100000 pga. versionssammenfald med preset_stats_provider):
+  hver kreditering bærer kilde (subscription/topup/pack) + 12 mdr. udløb;
+  saldo beregnes ved kronologisk genafspilning, så udløbne kreditter
+  bortfalder automatisk. Forbrugsrækkefølge: subscription → topup → pack
+  (ældste først). Stripe: checkout håndterer top-up + abonnementer (testmode-
+  pris-pladsholdere i config/env), webhook giver månedskvote pr. betalt
+  faktura, idempotent (NFR-10 overalt). Kreditsiden viser top-up-kort ved lav
+  saldo + ærlig udløbsdato. Al "kreditter udløber ikke"-copy er rettet til
+  12 mdr. (priser-siden, vilkår, mails, llms.txt).
+  **FLAG til ejeren:** (1) Ejer-briefen var tvetydig om pack-rækkefølgen
+  ("ældste sidst" ét sted, "ældste først" et andet) — ÆLDSTE FØRST (FIFO) er
+  implementeret, da de udløber først; sig til hvis det skal omgøres.
+  (2) Rollover-loft på abonnementskvoten (maks. 2× månedskvoten) er et
+  FORSLAG, ikke ejer-besluttet — `abonnementer.rolloverLoftFaktor`.
+  (3) /priser viser endnu IKKE abonnementer/pakkenavne (skåret på ejer-ordre,
+  se BACKLOG S36); siden viser de nye pakkepriser korrekt via config.
+  (4) Årsabonnement giver p.t. kun kvote ved betaling (én faktura/år) — de
+  øvrige 11 måneder kræver et scheduled job (S37).
 - **Én branch: `main`.** Alt arbejde er konsolideret dertil (ejer-ordre
   2026-08-16) — de 12 gamle feature-/claude-branches er merget og slettet
   både lokalt og på GitHub. Der er ingen åbne PRs.

@@ -35,7 +35,7 @@ ${trin}
 ${faarDu}
 
 ## Priser
-Kreditmodel — 1 kredit = 1 færdig annonce. Ingen gratis annoncer; kreditterne udløber ikke.
+Kreditmodel — 1 kredit = 1 færdig annonce. Ingen gratis annoncer; købte kreditter gælder 12 måneder fra køb.
 ${priser}
 
 ## Ærlighed og compliance

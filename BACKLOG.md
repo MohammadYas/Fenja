@@ -33,6 +33,31 @@ Læs `STATUS.md` + `HANDOFF.md` før du tager en opgave.
     implementering: slet S3-stubben `lib/providers/video.ts` og flyt dens
     imports over.
 
+[ ] **S35 · Favorit-overvågning (Plus/Pro)**
+    Feature-flags pr. tier findes i `lib/config.ts` (`abonnementer.tiers[]
+    .favoritOvervaagning`): Plus 25 favoritter/dagligt mail-overblik/statisk
+    prisanbefaling; Pro uden loft/realtid/dynamisk + konkurrent-varsler +
+    batch-prisredigering. Selve featuren (Vinted-URL-overvågning,
+    notifikationer, batch-redigering) er IKKE bygget.
+
+[ ] **S36 · /priser: abonnements-sektion + pakkenavne**
+    Vis Plus/Pro (md./år, annoncer/md., pr.-annonce-pris, funktioner) og
+    pakkenavne med "Anbefalet"-mærkat på Sælger — copy findes allerede i
+    `da.priserSide.abonnement` + `da.kreditter.pakkeNavne`. Overvej også
+    abonnements-checkout-UI (API-ruten understøtter det allerede) og
+    abonnementspriser i JSON-LD/llms.txt. Skåret fra pricing v3-leverancen
+    på ejer-ordre.
+
+[ ] **S37 · Årsabonnement: månedskvoter mellem fakturaer**
+    invoice.paid giver kun kvote ved betaling — ét årskøb skal stadig give
+    12 månedlige kvoter. Kræver scheduled job (Trigger.dev) der granter
+    idempotent pr. abonnement+måned.
+
+[ ] **S38 · aiCostWatch-alarm + preview-tilstand**
+    Config findes (`aiCostWatch`, `preview` i lib/config.ts). Byg: rullende
+    14-dages costvagt med mail til kontakt-adressen, og preview-flowet
+    (3 gratis pr. konto, dagligt globalt budget).
+
 [ ] **S34 · Transaktionsmails præcis én gang (idempotens)**
     I dag (S32) kan en sjælden Stripe-dublet-event gentage kvitterings-
     supplementet, og en manuel job-genkørsel (G-3) kan gentage leverancemailen.
