@@ -32,7 +32,7 @@ export const da = {
   logInd: {
     titel: "Opret dig eller log ind",
     forklaring:
-      "Skriv din e-mail, så sender vi et link, der logger dig ind. Er du ny, opretter linket samtidig din konto — ingen adgangskode.",
+      "Skriv din e-mail, så sender vi et link, der logger dig ind. Er du ny, opretter linket samtidig din konto uden adgangskode. Når du er logget ind, kan du købe kreditter og lave din annonce.",
     emailLabel: "E-mail",
     alderSpoergsmaal: "Er du 18 år eller ældre?",
     alderJa: "Ja, jeg er 18 år eller ældre",

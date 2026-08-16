@@ -14,7 +14,9 @@ export function byggLlmsTxt(): string {
   const trin = vinted.saadan.trin
     .map((t, i) => `${i + 1}. ${t.titel}: ${t.tekst}`)
     .join("\n");
-  const faarDu = vinted.leverance.punkter.map((p) => `- ${p}`).join("\n");
+  const vintedBrug = vinted.brugPaaVinted.punkter
+    .map((punkt) => `- ${punkt}`)
+    .join("\n");
   const priser = kreditter.pakker
     .map((p) => `- ${p.antal} annoncer: ${p.prisDkk} kr.`)
     .join("\n");
@@ -31,8 +33,8 @@ ${da.site.navn} er en dansk, mobil-først web-app til private Vinted-sælgere. M
 ## Sådan virker det
 ${trin}
 
-## Det får du
-${faarDu}
+## ${vinted.brugPaaVinted.titel}
+${vintedBrug}
 
 ## Priser
 Kreditmodel — 1 kredit = 1 færdig annonce. Ingen gratis annoncer; kreditterne udløber ikke.

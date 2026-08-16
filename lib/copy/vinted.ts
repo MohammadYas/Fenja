@@ -4,14 +4,16 @@
 
 export const vinted = {
   meta: {
-    titel: "Selja til Vinted — færdig annonce på 2 minutter",
+    titel: "Selja til Vinted: færdig annonce på cirka 2 minutter",
     beskrivelse:
-      "Tag 2–4 mobilfotos af dit tøj. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — klar til at sætte ind på Vinted.",
+      "Tag 2–4 mobilfotos af dit tøj. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag. Klar til at sætte ind på Vinted.",
   },
   hero: {
-    rubrik: "Din annonce. Færdig på 2 minutter.",
+    rubrik: "Din annonce. Færdig på cirka 2 minutter.",
     tekst:
-      "Tag 2–4 fotos med telefonen. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — du kopierer bare ind på Vinted.",
+      "Tag 2–4 fotos med telefonen. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag. Du kopierer bare ind på Vinted.",
+    tidsnote:
+      "Selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
     knap: "Lav min annonce",
   },
   foerEfter: {
@@ -21,7 +23,7 @@ export const vinted = {
       pris: "100 kr. eller byd",
     },
     efter: {
-      label: "Efter — med Selja",
+      label: "Efter · med Selja",
       titel: "Mørkeblå uldstrik · str. M",
       punkter: [
         "Rensede fotos, klar til Vinted",
@@ -31,19 +33,20 @@ export const vinted = {
       pris: "Prisforslag: 120–160 kr.",
     },
   },
-  // Usynlig sektions-label til billedserien (a11y) — ingen synlig mærkat (ejer-ordre)
-  billedserieAria: "Eksempelbilleder",
+  billedserie: {
+    titel: "Tøjet vist båret",
+  },
   saadan: {
     titel: "Sådan virker det",
     trin: [
       {
         titel: "Fotografér",
-        tekst: "Helhed, bagside, label og fejl. Dagslys er nok — resten klarer Selja.",
+        tekst: "Helhed, bagside, label og fejl. Dagslys er nok. Resten klarer Selja.",
       },
       {
         titel: "Selja arbejder",
         tekst:
-          "Cirka 90 sekunder: rensede billeder, tøjet vist båret og en tekst, der lyder som dig — ikke som en reklame.",
+          "Cirka 90 sekunder: rensede billeder, tøjet vist båret og en tekst, der lyder som dig, ikke som en reklame.",
       },
       {
         titel: "Ind på Vinted",
@@ -51,23 +54,23 @@ export const vinted = {
       },
     ],
   },
-  // Midlertidig erstatning for Ærlighed-blokken (ejer-ordre 2026-08-15:
-  // fjernet, sættes ind et andet sted senere) — leverancen som mørkt bånd.
-  leverance: {
-    titel: "Det får du",
+  brugPaaVinted: {
+    titel: "Sådan bruger du resultatet",
     punkter: [
-      "Rensede salgsfotos i Vinted-format — dine egne billeder, bare skarpere.",
-      "Tøjet vist båret, så køberen kan se det på — ikke kun på bøjlen.",
-      "Titel, beskrivelse og prisforslag, der lyder som dig — klar til at sætte ind.",
+      "Brug dit rensede helhedsfoto som billede 1.",
+      "Læg billederne med tøjet båret længere nede som supplement.",
+      "Gennemgå tekst og prisforslag, og læg selv annoncen op. Selja får ikke adgang til din Vinted-konto.",
     ],
   },
   laerTeaser: {
     titel: "Bliv skarpere til at sælge",
-    tekst: "Korte guides om priser, fotos og sourcing — gratis, også uden konto.",
+    tekst: "Korte guides om priser, fotos og sourcing. Gratis, også uden konto.",
     alleGuides: "Alle guides",
   },
   cta: {
     titel: "Prøv med det næste stykke tøj, du vil sælge",
-    knap: "Opret dig og lav din første annonce",
+    kreditNote:
+      "Du skal bruge kreditter for at lave en annonce. Køb dem, når du er klar. Intet abonnement.",
+    knap: "Opret dig og kom i gang",
   },
 } as const;

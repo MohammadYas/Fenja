@@ -57,18 +57,24 @@ kun footer-link). Rækkefølgen:
 1. Hero: rubrik + lead + CTA til log-ind, med **before/after-panelet**
    (signatur-elementet, HANDOFF §2.2.3) i den brede kolonne. Ingen
    mono-mærkat over rubrikken og ingen "skitseret eksempel"-note under
-   panelet (ejer-ordre 2026-08-16: fjernet — "skriger AI").
-2. Billedserie: 4 stykker fra serien i statisk grid, uden synlig mærkat
-   (midlertidig ejer-ordre, se STATUS/S25).
+   panelet (ejer-ordre 2026-08-16: fjernet — "skriger AI"). Tidsløftet gælder
+   selve annoncen, når brugeren er logget ind og har kreditter.
+2. **Tøjet vist båret:** 4 stykker fra serien i statisk grid under en synlig
+   produktoverskrift. Ingen AI-/ærlighedsmærkat i denne runde; ejeren laver den
+   endelige mærkning før udgivelse (se STATUS).
 3. Sådan virker det: 3 trin som nummererede redaktionelle rækker (nav-anker).
-4. Det får du: leverancen som sidens ene mørke bånd (midlertidig erstatning
-   for Ærligheds-blokken, ejer-ordre 2026-08-15).
+4. **Sådan bruger du resultatet:** sidens ene mørke bånd forklarer billede 1,
+   supplerende billeder og at brugeren selv lægger annoncen på Vinted.
 5. Lær-teaser: 3 guides + vej til alle.
-6. Slut-CTA (kun sælgere; studioets vej bor i footeren).
-**Ingen priser på forsiden** — kreditpriser bor på /priser (nås via footer og app).
+6. Slut-CTA med neutral kreditvarsling (kun sælgere; studioets vej bor i
+   footeren).
+**Ingen kronepriser eller fast kreditforhold på forsiden.** Den siger kun, at
+kreditter kræves, købes når brugeren er klar og ikke er et abonnement.
 
 ## 6. Interaktion
 
 Uændret fra V5: flade knapper der mørkner på hover, kort-kant der mørkner,
 150/300 ms ease-out, scroll-reveal bag scripting+reduced-motion-gates, fokusring
-2 px koks. Ingen nye animationer i v6.
+2 px koks. Marketingnavigationen markerer den aktuelle side; "Sådan virker
+det" forkortes visuelt til "Sådan" på mobil, men bevarer sit fulde tilgængelige
+navn. Ingen nye animationer i v6.

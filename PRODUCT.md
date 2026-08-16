@@ -52,15 +52,17 @@ fast "hjem", så alle deres annoncer ligner samme bolig
   non-production.
 - Kreditmodel uden gratis-tier (gratisVedSignup: 0, misbrugsværn); saldo er
   summen af credit_ledger; al skrivning via idempotent tilfoej_kreditter.
+  Den nuværende 1:1-økonomi er midlertidig; en model med flere kreditter og
+  taktiske valg designes senere. Forsiden nævner derfor ikke et fast forhold.
 - **Vinted-first er permanent produktsandhed** (ejer-bekræftet 2026-08-16):
   produktet ER Vinted-appen. B2B-studioet ligger parkeret på /studio
   (noindex, ikke i nav) — det er ikke produktets fremtid.
 - Manifestet (HANDOFF §2) + SPEC er "lov", men STATUS.md's
   beslutnings-sektion registrerer ejerens overstyringer og læses først.
 - Åbne produktbeslutninger (må ikke afgøres i design): S27-alternativ til
-  gratis-tier (sløret/vandmærket gratis-kørsel); "sleek" AI-mærkat på
-  genererede billeder (deadline Gate 4); kontakt.email er midlertidigt
-  ejerens gmail til domænet er registreret.
+  gratis-tier (sløret/vandmærket gratis-kørsel); taktisk kreditmodel; "sleek"
+  AI-mærkat på genererede billeder (deadline Gate 4); kontakt.email er
+  midlertidigt ejerens gmail til domænet er registreret.
 
 ## Brand Commitments
 
@@ -73,8 +75,8 @@ og er ejer-godkendt efter fire forkastede retninger — bindende incumbent.
 
 - Billedserien public/eksempler/*.webp er AI-genereret (gpt-image-2,
   2026-08-16; prompts i docs/marketing-billeder.md) — det er visualiseringer,
-  IKKE rigtige kundeeksempler. Forsiden siger selv "Skitseret eksempel —
-  ægte før/efter kommer, når appen er i drift".
+  IKKE rigtige kundeeksempler. Synlig mærkning er midlertidigt fjernet efter
+  ejerordre; ejeren laver den endelige løsning før udgivelse.
 - Ingen rigtige testimonials, kundetal eller før/efter-cases endnu —
   fremtidigt arbejde må ikke fabrikere dem.
 - Lær-guides er ægte indhold i lib/guides-indhold.ts (TS-data, ikke markdown).

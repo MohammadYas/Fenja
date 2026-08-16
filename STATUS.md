@@ -45,16 +45,19 @@ Sidst opdateret: 2026-08-16 af Claude Code (cloud session)
   ("skriger AI"). Billedserie v4 genereret med gemini-3-pro-image (samme
   v3-prompts, se docs/marketing-billeder.md). /log-ind hedder nu "Opret dig
   eller log ind" og forklarer at linket også opretter konto (critique-P1).
-  AA-fix på mono-mærkater (tekst/60→70), px-2 på nav-links, aria-oprydning.
+  AA-fix på mono-mærkater (tekst/60→70), 44 px nav-links, aktiv navtilstand,
+  mobillink til "Sådan" og aria-oprydning.
   Fuldt critique-snapshot i `.impeccable/critique/` (24/32, dual-agent).
-  Ejer-ordrer bekræftet i dag: INGEN mærkater på billederne endnu, INGEN
-  priser/pris-signal på forsiden.
+  Ejer-ordrer bekræftet i dag: INGEN mærkater på billederne endnu og INGEN
+  kronepriser eller fast kreditforhold på forsiden. Forsiden varsler neutralt,
+  at kreditter kræves; den taktiske kreditmodel kommer i en senere runde.
 - **Næste opgave: S12** (ende-til-ende mod rigtige providers). Kræver
   FAL_KEY + ANTHROPIC_API_KEY i `.env.local` — se BACKLOG.
 
 ## Produktet udadtil (ejer-beslutning 2026-08-15/16)
 Selja er **ét produkt udadtil: Vinted-appen.** Forsiden er Vinted-landingen
-(før/efter-hero, billedserie, 3 trin, "Det får du", Lær-teaser, sælger-CTA).
+(før/efter-hero, "Tøjet vist båret", 3 trin, Vinted-brug, Lær-teaser,
+sælger-CTA med neutral kreditvarsling).
 B2B-studioet er **parkeret uændret på `/studio`**: ikke i nav, ikke i sitemap,
 `noindex`, kun et diskret footer-link. B2B-indholdet er ikke slettet, og
 løfteformuleringerne er urørte (omskrivning afventer ejer).
@@ -74,12 +77,16 @@ Log ind.
   (ejerens prompts er på vej).
 - **S27 gratis-tier:** nu ingen gratis annoncer. Alternativ på bordet: gratis
   kørsel med sløret/vandmærket resultat, betal for at låse op. Byg intet endnu.
+- **Taktisk kreditmodel:** nuværende drift er fortsat 1 kredit pr. annonce og
+  ½ kredit pr. regenerering. En model med flere kreditter og taktiske valg
+  designes senere; forsidecopy må derfor ikke låse det nuværende forhold.
 - **Mærkning af genererede billeder:** synlig AI-mærkat er MIDLERTIDIGT fjernet
   fra forsidens billeder (ejer-ordre) — imod manifest §2.1.7. Ejeren finder en
   "sleek" løsning; deadline Gate 4. Alt-tekster er neutrale. Provenance: alle
   billeder i `public/eksempler/` er AI-genererede (gpt-image-2, 2026-08-16).
-- **Ærligheds-blokken** er midlertidigt taget af forsiden og erstattet af
-  "Det får du" — ejeren genplacerer teksten et andet sted senere.
+- **Ærligheds-blokken** er midlertidigt taget af forsiden. Det mørke bånd
+  forklarer nu praktisk Vinted-brug; ejeren genplacerer ærlighedsteksten og
+  laver den endelige billedmærkning i en særskilt runde før udgivelse.
 - **`.claude/skills/`** (105 filer) ligger committet i repoet fra en tidligere
   session. Hører formentlig ikke til projektet, men er ikke slettet — ejerens
   beslutning.

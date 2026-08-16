@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { JsonLd } from "@/components/json-ld";
+import { MarketingNav } from "@/components/marketing-nav";
 import { SpringLink } from "@/components/spring-link";
 import { da } from "@/lib/copy/da";
 import { basisGraf } from "@/lib/seo/jsonld";
@@ -15,34 +16,7 @@ export default function MarketingLayout({
       <JsonLd data={basisGraf()} />
       <SpringLink />
       <header>
-        <nav
-          aria-label="Hovednavigation"
-          className="mx-auto flex min-h-touch max-w-5xl items-center justify-between gap-4 px-4 py-1"
-        >
-          <Link
-            href="/"
-            className="soem-link inline-flex min-h-touch items-center font-display text-lead font-bold"
-          >
-            {da.site.navn}
-          </Link>
-          <div className="flex items-center gap-2 text-detalje">
-            <Link
-              href="/#saadan"
-              className="soem-link hidden min-h-touch items-center px-2 font-medium sm:inline-flex"
-            >
-              {da.nav.saadanVirkerDet}
-            </Link>
-            <Link href="/laer" className="soem-link inline-flex min-h-touch items-center px-2 font-medium">
-              {da.nav.laer}
-            </Link>
-            <Link href="/priser" className="soem-link inline-flex min-h-touch items-center px-2 font-medium">
-              {da.nav.priser}
-            </Link>
-            <Link href="/log-ind" className="knap-link px-4">
-              {da.nav.logInd}
-            </Link>
-          </div>
-        </nav>
+        <MarketingNav />
         <div className="soem-vandret" aria-hidden="true" />
       </header>
       <div className="flex-1" id="indhold">{children}</div>

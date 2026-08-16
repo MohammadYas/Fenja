@@ -41,6 +41,9 @@ export default function Forside() {
             <p className="mt-6 max-w-laesbar text-lead text-tekst/80">
               {vinted.hero.tekst}
             </p>
+            <p className="mt-4 max-w-laesbar text-detalje text-tekst/70">
+              {vinted.hero.tidsnote}
+            </p>
             <Link href="/log-ind" className="knap-link mt-8">
               {vinted.hero.knap}
             </Link>
@@ -53,11 +56,17 @@ export default function Forside() {
         </div>
       </section>
 
-      {/* Visualiserings-eksempler: fire stykker fra serien (ejer-ordre: ingen
-          synlig mærkat — midlertidigt; ægte output efter S12/S25, se STATUS) */}
-      <section className="border-b border-kant" aria-label={vinted.billedserieAria}>
+      {/* Fire billeder fra serien med produktkontekst. Mærkning tilføjes først
+          i ejerens særskilte udgivelsesrunde (se STATUS). */}
+      <section className="border-b border-kant" aria-labelledby="billedserie-titel">
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <h2
+            id="billedserie-titel"
+            className="font-display text-display font-bold"
+          >
+            {vinted.billedserie.titel}
+          </h2>
+          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
             {da.landing.billedserie.slice(0, 4).map((billede, i) => (
               <Reveal key={billede.src} forsinkelseTrin={i}>
                 <Image
@@ -76,10 +85,10 @@ export default function Forside() {
       {/* Sådan virker det: 3 trin som rolige rækker — nav-ankeret peger her */}
       <section id="saadan" className="border-b border-kant" aria-label={vinted.saadan.titel}>
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <h2 className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/70">
+          <h2 className="font-display text-display font-bold">
             {vinted.saadan.titel}
           </h2>
-          <ol className="mt-2">
+          <ol className="mt-6">
             {vinted.saadan.trin.map((trin, i) => (
               <li
                 key={trin.titel}
@@ -89,7 +98,7 @@ export default function Forside() {
                   <div className="grid gap-1 md:grid-cols-[3rem_16rem_1fr] md:gap-6">
                     <span
                       aria-hidden="true"
-                      className="select-none font-mono text-basis text-tekst/50"
+                      className="select-none font-mono text-basis text-tekst/70"
                     >
                       {String(i + 1).padStart(2, "0")}
                     </span>
@@ -103,40 +112,46 @@ export default function Forside() {
         </div>
       </section>
 
-      {/* Leverancen — sidens ene mørke bånd (midlertidig erstatning for
-          Ærligheds-blokken, ejer-ordre 2026-08-15) */}
-      <section className="bg-koks text-kalk" aria-label={vinted.leverance.titel}>
+      {/* Praktisk Vinted-brug i sidens ene mørke bånd. */}
+      <section
+        className="bg-koks text-kalk"
+        aria-labelledby="vinted-brug-titel"
+      >
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-16">
           <Reveal>
-            <h2 className="font-display text-display font-semibold">
-              {vinted.leverance.titel}
+            <h2 id="vinted-brug-titel" className="font-display text-display font-bold">
+              {vinted.brugPaaVinted.titel}
             </h2>
           </Reveal>
           <ul className="mt-6 flex max-w-2xl flex-col gap-4">
-            {vinted.leverance.punkter.map((punkt, i) => (
-              <Reveal key={punkt} forsinkelseTrin={i}>
-                <li className="flex gap-3 text-kalk/85">
-                  <span aria-hidden="true" className="text-kalk/50">
-                    —
-                  </span>
-                  {punkt}
-                </li>
-              </Reveal>
+            {vinted.brugPaaVinted.punkter.map((punkt, i) => (
+              <li key={punkt}>
+                <Reveal forsinkelseTrin={i}>
+                  <div className="flex gap-3 text-kalk/85">
+                    <span aria-hidden="true" className="font-mono text-detalje text-hoer">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    {punkt}
+                  </div>
+                </Reveal>
+              </li>
             ))}
           </ul>
         </div>
       </section>
 
       {/* Lær-teaser: tre guides + vej til dem alle */}
-      <section className="border-b border-kant" aria-label={vinted.laerTeaser.titel}>
+      <section className="border-b border-kant" aria-labelledby="laer-titel">
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <h2 className="font-display text-kaempe font-bold">{vinted.laerTeaser.titel}</h2>
+          <h2 id="laer-titel" className="font-display text-display font-bold">
+            {vinted.laerTeaser.titel}
+          </h2>
           <p className="mt-3 max-w-laesbar text-tekst/80">{vinted.laerTeaser.tekst}</p>
           <div className="mt-6 grid gap-x-10 gap-y-6 md:grid-cols-3">
             {guides.map((guide, i) => (
               <Reveal key={guide.slug} forsinkelseTrin={i}>
                 <Link href={`/laer/${guide.slug}`} className="group block border-t border-kant pt-4">
-                  <span aria-hidden="true" className="select-none font-mono text-detalje text-tekst/50">
+                  <span aria-hidden="true" className="select-none font-mono text-detalje text-tekst/70">
                     {String(guide.raekkefoelge).padStart(2, "0")}
                   </span>
                   <span className="soem-link mt-1 block font-display text-lead font-semibold group-hover:text-gran">
@@ -164,6 +179,9 @@ export default function Forside() {
             <h2 className="max-w-2xl font-display text-kaempe font-bold">
               {vinted.cta.titel}
             </h2>
+            <p className="mt-4 max-w-laesbar text-tekst/80">
+              {vinted.cta.kreditNote}
+            </p>
             <Link href="/log-ind" className="knap-link mt-7">
               {vinted.cta.knap}
             </Link>
