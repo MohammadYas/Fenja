@@ -2,6 +2,18 @@
 Sidst opdateret: 2026-08-16 af Claude Code (cloud session)
 
 ## Sådan står projektet
+- **Gemini-provider + Gate 1-trekamp (branch `feat/gemini-provider`, afventer
+  ejerens merge):** Google er nu tredje `ImageProvider`
+  (`lib/providers/gemini.ts`, REST via fetch — ingen ny dependency). Model-id'er
+  og cost-skøn bor i config (`billedProvidere` i `lib/config.ts`): final =
+  gemini-3-pro-image-preview (Nano Banana Pro), preview = gemini-2.5-flash-image
+  (Nano Banana); providervalg pr. formål aktiveres med én linje, fal er fortsat
+  failover. Gate 1-scriptet kører nu alle 3 providers × presets og viser
+  pass-rate + målt cost pr. billede side om side (eksempel:
+  `docs/gate1-eksempel-rapport.md`). `preset_stats` fik provider-dimension
+  (additiv migration `20260816100000`, IKKE kørt mod databasen endnu — default
+  'fal' bevarer eksisterende rækker/kald). Rigtige kald kun bag `--live` +
+  `GEMINI_API_KEY` (ny i `.env.example`).
 - **Én branch: `main`.** Alt arbejde er konsolideret dertil (ejer-ordre
   2026-08-16) — de 12 gamle feature-/claude-branches er merget og slettet
   både lokalt og på GitHub. Der er ingen åbne PRs.

@@ -18,6 +18,7 @@ export type {
 } from "./stats";
 export {
   MockPresetStatsStore,
+  STANDARD_STATS_PROVIDER,
   SupabasePresetStatsStore,
   passRate,
 } from "./stats";

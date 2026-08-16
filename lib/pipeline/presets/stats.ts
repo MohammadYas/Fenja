@@ -1,15 +1,22 @@
-// Pass-rate-statistik pr. preset-version (C-5/FR-15): hver troskabs-vurdering
-// registreres som en kørsel, og preset_stats holder aggregatet (runs, passes,
-// avg_fidelity). Bag interface med mock, så Gate 1-scriptet og tests kører
+// Pass-rate-statistik pr. (preset-version, provider) (C-5/FR-15): hver
+// troskabs-vurdering registreres som en kørsel, og preset_stats holder
+// aggregatet (runs, passes, avg_fidelity). Bag interface med mock, så Gate 1-scriptet og tests kører
 // uden nøgler (C-7-princippet). Supabase-varianten kaldes kun fra server/
 // scripts med service-nøgle — skrive-vejen i DB er en security definer-funktion
 // med tilbagekaldt execute for klient-roller (se preset_stats-migrationen).
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+// Provider-dimensionen (Gate 1-trekampen): pass-rate måles pr.
+// (preset, version, provider). Udeladt provider = 'fal' — bagudkompatibelt
+// med eksisterende kald og rækker.
+export const STANDARD_STATS_PROVIDER = "fal";
+
 export type PresetKoersel = {
   presetId: string;
   version: number;
+  /** Billedprovideren bag kørslen; udeladt = 'fal' */
+  provider?: string;
   /** Bestod troskabs-tjekket (score ≥ tærsklen, C-3/K1)? */
   bestaaet: boolean;
   fidelityScore: number;
@@ -18,6 +25,7 @@ export type PresetKoersel = {
 export type PresetStatRaekke = {
   presetId: string;
   version: number;
+  provider: string;
   runs: number;
   passes: number;
   /** Gennemsnitlig troskabs-score (3 decimaler); null før første kørsel */
@@ -46,10 +54,12 @@ export class MockPresetStatsStore implements PresetStatsStore {
   private raekker = new Map<string, PresetStatRaekke>();
 
   async registrerKoersel(koersel: PresetKoersel): Promise<void> {
-    const noegle = `${koersel.presetId}@v${koersel.version}`;
+    const provider = koersel.provider ?? STANDARD_STATS_PROVIDER;
+    const noegle = `${koersel.presetId}@v${koersel.version}#${provider}`;
     const raekke = this.raekker.get(noegle) ?? {
       presetId: koersel.presetId,
       version: koersel.version,
+      provider,
       runs: 0,
       passes: 0,
       avgFidelity: null,
@@ -67,10 +77,11 @@ export class MockPresetStatsStore implements PresetStatsStore {
   }
 
   async hentStatistik(): Promise<PresetStatRaekke[]> {
-    return [...this.raekker.values()].sort((a, b) =>
-      a.presetId === b.presetId
-        ? a.version - b.version
-        : a.presetId.localeCompare(b.presetId),
+    return [...this.raekker.values()].sort(
+      (a, b) =>
+        a.presetId.localeCompare(b.presetId) ||
+        a.version - b.version ||
+        a.provider.localeCompare(b.provider),
     );
   }
 }
@@ -84,6 +95,7 @@ export class SupabasePresetStatsStore implements PresetStatsStore {
       p_version: koersel.version,
       p_bestaaet: koersel.bestaaet,
       p_fidelity: koersel.fidelityScore,
+      p_provider: koersel.provider ?? STANDARD_STATS_PROVIDER,
     });
     if (error) {
       throw new Error(`Kunne ikke registrere preset-kørsel: ${error.message}`);
@@ -93,15 +105,17 @@ export class SupabasePresetStatsStore implements PresetStatsStore {
   async hentStatistik(): Promise<PresetStatRaekke[]> {
     const { data, error } = await this.klient
       .from("preset_stats")
-      .select("preset_id, version, runs, passes, avg_fidelity")
+      .select("preset_id, version, provider, runs, passes, avg_fidelity")
       .order("preset_id")
-      .order("version");
+      .order("version")
+      .order("provider");
     if (error) {
       throw new Error(`Kunne ikke hente preset-statistik: ${error.message}`);
     }
     return (data ?? []).map((r) => ({
       presetId: r.preset_id as string,
       version: r.version as number,
+      provider: r.provider as string,
       runs: r.runs as number,
       passes: r.passes as number,
       avgFidelity:
