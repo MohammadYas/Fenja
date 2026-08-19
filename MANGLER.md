@@ -35,11 +35,10 @@ Kritisk vej øverst — tages oppefra.
 - [ ] Gate 2 måles samtidig: komplet annonce ≤ 2 min.
 
 ## 4. Billeder + prompts (det ejeren huskede)
-- [ ] **Ejerens prompts til forside-kataloget** — 2 modtaget 19/8 (P1 soveværelse,
-      P2 entre — `docs/katalog-prompts.md` med justerbare hår-variabler).
-      Mangler stadig: kjole, jakke, bukser/overdel som hovedmotiv, taske,
-      mande-variant, bøjle/flatlay/close-up, stue- og gade-sted, FØR-billede —
-      fuld liste i docs/katalog-prompts.md.
+- [x] **Katalog-prompts KOMPLETTE 19/8** — alle 13 i `docs/katalog-prompts.md`
+      (P1+P2 fra ejeren; P3–P13 skrevet af Claude: kjole, bukser, overdel,
+      taske, mand ×3, bøjle, flatlay, close-up, stue, opgang, FØR-billede).
+      Justerbare {hår}-variabler. NÆSTE: generér serien med gemini-3-pro-image.
 - [ ] **S25:** udskift `public/eksempler/*` med ægte output fra første rigtige
       kørsel (efter Gate 1).
 - [ ] **AI-mærkat:** synlig mærkning er midlertidigt fjernet fra forsiden —
