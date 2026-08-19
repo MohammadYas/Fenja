@@ -23,7 +23,10 @@ const REALISME =
   "than composed. Slightly uneven exposure with one corner a touch " +
   "underexposed; any window in frame is partly blown out with clipped " +
   "highlights. A very slight handheld motion softness — the photo is NOT " +
-  "tack-sharp anywhere; focus is only roughly on the garment. Visible fine " +
+  "tack-sharp anywhere. DEEP focus like a phone's main camera: the background " +
+  "and the room are almost exactly as sharp as the garment — absolutely NO " +
+  "depth-of-field blur, NO bokeh, NO portrait mode; everything from the " +
+  "garment to the back wall reads clearly. Visible fine " +
   "sensor noise and subtle JPEG compression artifacts across flat surfaces, " +
   "mild lens vignetting in the corners, a faint chromatic aberration fringe " +
   "at high-contrast edges, and a slight overall colour cast the phone failed " +
@@ -43,7 +46,8 @@ const UNDGAA_FAELLES =
   "focus everywhere, editorial or lookbook styling, product-photography or " +
   "catalog look, centred balanced composition, oversaturated colours, " +
   "hyperreal crispness, beauty retouching, plastic skin, extra or deformed " +
-  "fingers, warped anatomy, distorted phone, wrong mirror reflection, ANY " +
+  "fingers, warped anatomy, distorted phone, wrong mirror reflection, blurred " +
+  "background, bokeh, portrait mode, shallow depth of field, ANY " +
   "readable or pseudo-readable text anywhere in the image, ANY visible brand " +
   "label or care label or neck label (no label visible at all), logos, " +
   "watermark, people (unless the motif requires one hand), floating garments, " +
