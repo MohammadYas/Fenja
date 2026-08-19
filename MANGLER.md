@@ -35,8 +35,11 @@ Kritisk vej øverst — tages oppefra.
 - [ ] Gate 2 måles samtidig: komplet annonce ≤ 2 min.
 
 ## 4. Billeder + prompts (det ejeren huskede)
-- [ ] **Ejerens prompts til forside-kataloget** — Gemini-billeder til kataloget
-      venter på ejerens prompts (STATUS "Åbne ejer-beslutninger").
+- [ ] **Ejerens prompts til forside-kataloget** — 2 modtaget 19/8 (P1 soveværelse,
+      P2 entre — `docs/katalog-prompts.md` med justerbare hår-variabler).
+      Mangler stadig: kjole, jakke, bukser/overdel som hovedmotiv, taske,
+      mande-variant, bøjle/flatlay/close-up, stue- og gade-sted, FØR-billede —
+      fuld liste i docs/katalog-prompts.md.
 - [ ] **S25:** udskift `public/eksempler/*` med ægte output fra første rigtige
       kørsel (efter Gate 1).
 - [ ] **AI-mærkat:** synlig mærkning er midlertidigt fjernet fra forsiden —
