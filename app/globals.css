@@ -204,4 +204,67 @@
       }
     }
   }
+
+  /* Annonce-strømmen (ejer-ordre 2026-08-19): to modsat drivende rækker af
+     katalogbilleder. Basis-tilstanden er en statisk, side-scrollbar række
+     (virker uden JS og med reduceret bevægelse — dubletterne er skjult);
+     kun med scripting + fuld bevægelse driver sporet i en sømløs løkke. */
+  .stroem {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .stroem::-webkit-scrollbar {
+    display: none;
+  }
+  .stroem-spor {
+    display: flex;
+    width: max-content;
+  }
+  .stroem-kort {
+    width: 11rem;
+    aspect-ratio: 2 / 3;
+    flex-shrink: 0;
+    /* Margin i stedet for gap: sporet består af to identiske halvdele, og
+       translateX(-50%) er kun sømløs når hver halvdel har samme bredde */
+    margin-right: theme("spacing.4");
+  }
+  .stroem-dublet {
+    display: none;
+  }
+
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+    .stroem {
+      overflow-x: hidden;
+      mask-image: linear-gradient(
+        to right,
+        transparent,
+        black 6%,
+        black 94%,
+        transparent
+      );
+    }
+    .stroem-dublet {
+      display: block;
+    }
+    .stroem-spor {
+      animation: stroem-drift 90s linear infinite;
+    }
+    .stroem[data-retning="hoejre"] .stroem-spor {
+      animation-direction: reverse;
+      animation-duration: 110s;
+    }
+    .stroem:hover .stroem-spor,
+    .stroem:focus-within .stroem-spor {
+      animation-play-state: paused;
+    }
+    @keyframes stroem-drift {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        /* Sporet indeholder to identiske halvdele — én halvdel = sømløs løkke */
+        transform: translateX(-50%);
+      }
+    }
+  }
 }

@@ -2,6 +2,15 @@
 Sidst opdateret: 2026-08-19 af Claude Code (publish-overblik)
 
 ## Denne session (19/8) — hvad mangler før publish
+- **EJER-OVERSTYRING (19/8, DESIGN §6):** forsiden skal være ANIMATIONSRIG
+  med hele katalogserien — "derudover ingen nye animationer" er ophævet for
+  annonce-strømmen. Bygget: `components/billedstroem.tsx` + `.stroem-*` i
+  globals.css — to modsat drivende rækker (32 billeder, FØR-billedet udeladt),
+  90/110 s løkke, pause på hover/focus, maskerede kanter. Uden scripting eller
+  med reduced-motion: statiske side-scrollbare rækker (dubletter skjult).
+  Forsidens sektion 2 er nu strømmen (før: 4-billeders grid); billederne bor i
+  `public/eksempler/katalog/*.webp` (33 stk., 3,6 MB, konverteret fra v3-PNG)
+  med neutral alt-tekst i `lib/copy/katalog-billeder.ts`. 315 tests grønne.
 - **Katalog-billedserie v3 GENERERET:** 33 billeder i `public/eksempler/
   katalog-v3/` (12 person-motiver + 20 produktvinkler + FØR-billede).
   Prompts: `scripts/katalog-prompts-data.ts` (engelsk), generator:

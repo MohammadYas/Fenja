@@ -1,10 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
+import { Billedstroem } from "@/components/billedstroem";
 import { FoerEfter } from "@/components/foer-efter";
 import { JsonLd } from "@/components/json-ld";
 import { PopulaertSektion } from "@/components/eksperimenter/populaert-sektion";
 import { Reveal } from "@/components/reveal";
-import { da } from "@/lib/copy/da";
 import { vinted } from "@/lib/copy/vinted";
 import { hentGuides } from "@/lib/guides";
 import { forsideGraf } from "@/lib/seo/jsonld";
@@ -57,28 +56,22 @@ export default function Forside() {
         </div>
       </section>
 
-      {/* Fire billeder fra serien med produktkontekst. Mærkning tilføjes først
-          i ejerens særskilte udgivelsesrunde (se STATUS). */}
+      {/* Annonce-strømmen: hele katalogserien som to drivende rækker (ejer-
+          ordre 2026-08-19: animationsrig forside med mange flere billeder).
+          Mærkning tilføjes først i ejerens særskilte udgivelsesrunde (se
+          STATUS). Strømmen er fuldbredde; overskriften bliver i gridet. */}
       <section className="border-b border-kant" aria-labelledby="billedserie-titel">
-        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <h2
-            id="billedserie-titel"
-            className="font-display text-display font-bold"
-          >
-            {vinted.billedserie.titel}
-          </h2>
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {da.landing.billedserie.slice(0, 4).map((billede, i) => (
-              <Reveal key={billede.src} forsinkelseTrin={i}>
-                <Image
-                  src={billede.src}
-                  alt={billede.alt}
-                  width={900}
-                  height={1350}
-                  className="w-full rounded-bloed border border-kant object-cover"
-                />
-              </Reveal>
-            ))}
+        <div className="py-14 md:py-20">
+          <div className="mx-auto max-w-6xl px-4">
+            <h2
+              id="billedserie-titel"
+              className="font-display text-display font-bold"
+            >
+              {vinted.billedserie.titel}
+            </h2>
+          </div>
+          <div className="mt-8">
+            <Billedstroem />
           </div>
         </div>
       </section>
