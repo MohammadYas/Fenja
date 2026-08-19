@@ -2,6 +2,17 @@
 Sidst opdateret: 2026-08-19 af Claude Code (publish-overblik)
 
 ## Denne session (19/8) — hvad mangler før publish
+- **Katalog-billedserie v3 GENERERET:** 33 billeder i `public/eksempler/
+  katalog-v3/` (12 person-motiver + 20 produktvinkler + FØR-billede).
+  Prompts: `scripts/katalog-prompts-data.ts` (engelsk), generator:
+  `scripts/generer-katalog.ts` (--antal N, tæller credits præcist).
+  **Credit-forbrug i alt 19/8: 48 billeder** (16 test/iteration + 32 serie).
+  Iterationslæring: dansk prompt → "for AI"; + ejerens ChatGPT-detektor
+  flaggede bøjlekrog/label/perfektion → håndholdt blødhed, JPEG-artefakter,
+  vignettering, dyb telefon-skarphed (ingen bokeh), forbud mod pseudo-tekst.
+  Ejer godkendte v3-testen. PNG'erne er IKKE committet (25+ MB) — konvertér
+  til 900×1350 webp (v4-flowet i marketing-billeder.md) før brug på forsiden.
+  Gemini-nøglen blev delt i chat 19/8 → SKAL roteres; ligger ikke i filer.
 - **MANGLER.md oprettet** (repo-rod): kritisk vej før publish, tages oppefra.
 - Ejer-beslutninger 19/8: Resend er på vej; Netlify = bare koble GitHub-repoet
   (Claude-flag i MANGLER.md §2: env-vars skal stadig sættes i Netlify, ellers
