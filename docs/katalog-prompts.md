@@ -1,5 +1,13 @@
 # Katalog-prompts — ejerens prompt-bibliotek (2026-08-19)
 
+> **KØREKLAR UDGAVE:** de prompts der faktisk genereres med, ligger på
+> ENGELSK i `scripts/katalog-prompts-data.ts` (ejer-feedback 19/8: dansk
+> kørsel "ser for ai ud" → engelsk + hårdere amatør-cues, jf. v3→v4-læringen).
+> Denne fil er den danske kilde/spec. Generér med
+> `npx tsx scripts/generer-katalog.ts --alle --antal N` (1 billede = 1 credit;
+> scriptet rapporterer præcist antal). Ud over P1–P13 findes 20
+> PRODUKTVINKLER (5 tøjdele × gulv/stativ/bagside/detalje) i data-filen.
+
 Ejerens prompts til forside-kataloget/marketing-serien (Gemini,
 gemini-3-pro-image, 2:3). Modtaget 2026-08-19: **2 unikke prompts** (P1+P2).
 Bruges til KATALOG-billeder — aldrig i app-pipelinen (C-2: appens prompts
