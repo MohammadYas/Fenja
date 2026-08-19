@@ -16,27 +16,38 @@ export type KatalogPrompt = {
 const REALISME =
   " Photo style: a completely authentic casual smartphone photo taken quickly " +
   "for a secondhand clothing listing on Vinted — NOT a professional photoshoot, " +
-  "NOT editorial, NOT a lookbook, NOT staged. Shot on an ordinary mid-range " +
-  "phone: slightly imperfect framing with a small accidental tilt, slightly " +
-  "uneven exposure, natural mixed light with realistic soft shadows, mild " +
-  "sensor noise in darker areas, faint smartphone HDR flatness, white balance " +
-  "very slightly off. Believable lived-in Scandinavian home with small everyday " +
-  "details and slight clutter at the frame edges (a charger cable, a door " +
-  "frame, a radiator, a laundry basket edge — subtle). Realistic fabric " +
-  "texture with natural wrinkles, creases from storage and folds. The result " +
-  "must be indistinguishable from a real photo a private seller took at home " +
-  "with their phone in thirty seconds — mundane, unremarkable, a bit boring, " +
-  "not beautiful, not curated. Muted natural colours, no text, no watermark, " +
-  "no logo, no recognizable face anywhere. Vertical 2:3 composition.";
+  "NOT editorial, NOT a lookbook, NOT staged. Shot handheld on an ordinary " +
+  "two-year-old mid-range phone: framing is noticeably careless — the subject " +
+  "is a bit off-centre with slightly too much empty space on one side, the " +
+  "camera is tilted one or two degrees, and the crop feels accidental rather " +
+  "than composed. Slightly uneven exposure with one corner a touch " +
+  "underexposed; any window in frame is partly blown out with clipped " +
+  "highlights. A very slight handheld motion softness — the photo is NOT " +
+  "tack-sharp anywhere; focus is only roughly on the garment. Visible fine " +
+  "sensor noise and subtle JPEG compression artifacts across flat surfaces, " +
+  "mild lens vignetting in the corners, a faint chromatic aberration fringe " +
+  "at high-contrast edges, and a slight overall colour cast the phone failed " +
+  "to correct. Natural mixed light with soft, slightly muddy shadows — " +
+  "ordinary flat indoor light, never golden or cinematic. Believable lived-in " +
+  "Scandinavian home with everyday mess at the frame edges (a charger cable, " +
+  "a door frame, a radiator, a laundry basket, a stray sock — subtle, not " +
+  "arranged). Realistic fabric with natural wrinkles and creases from " +
+  "storage. The result must be indistinguishable from a boring real photo a " +
+  "private seller snapped at home in ten seconds without thinking about " +
+  "composition — mundane, flat, unremarkable, slightly disappointing. Muted, " +
+  "slightly dull natural colours. Vertical 2:3 composition.";
 
 const UNDGAA_FAELLES =
   " Avoid: AI look, CGI, 3D render, illustration, perfect studio lighting, " +
-  "perfectly even light, perfect symmetry, perfectly smooth fabric, editorial " +
-  "or lookbook styling, product-photography look, oversaturated colours, " +
+  "perfectly even light, perfect symmetry, perfectly smooth fabric, tack-sharp " +
+  "focus everywhere, editorial or lookbook styling, product-photography or " +
+  "catalog look, centred balanced composition, oversaturated colours, " +
   "hyperreal crispness, beauty retouching, plastic skin, extra or deformed " +
-  "fingers, warped anatomy, distorted phone, wrong mirror reflection, " +
-  "readable text or logos, watermark, people (unless the motif requires one " +
-  "hand), floating garments, shop or showroom look.";
+  "fingers, warped anatomy, distorted phone, wrong mirror reflection, ANY " +
+  "readable or pseudo-readable text anywhere in the image, ANY visible brand " +
+  "label or care label or neck label (no label visible at all), logos, " +
+  "watermark, people (unless the motif requires one hand), floating garments, " +
+  "shop or showroom look, staged styling.";
 
 // ---------------------------------------------------------------------------
 // Tøjdele til produktvinklerne — én pr. kategori, matcher person-prompterne
@@ -237,7 +248,7 @@ const PERSON_PROMPTS: KatalogPrompt[] = [
   {
     id: "p10-boejle-skjorte",
     titel: "P10 · Bøjle — lyseblå skjorte på klædeskabsdør",
-    prompt: `A quick phone photo for a secondhand listing, no people. A light blue cotton shirt hangs on a mismatched wooden hanger hooked over the edge of a white wardrobe door in a bright Scandinavian bedroom. The shirt is the only focus: classic collar, button-through front with small pale buttons, one chest pocket, long sleeves hanging naturally down the sides. The cotton has clearly visible weave texture and natural light creases — worn-and-washed, absolutely not advertising-smooth, with a slightly rumpled hem. The shirt hangs a little askew on the hanger, hung up in a hurry by a person. The door is white with an ordinary handle and a faint natural wear mark around the handle. Photographed at a slightly skew casual standing angle; the shirt fills roughly 60-70% of the frame height with air around it; at the frame edges a corner of a bed with crumpled linen bedding, a door frame and a strip of oak floor. Soft uneven daylight from a window to the side — one side of the shirt slightly brighter than the other, soft natural shadows behind it on the door, no flash.` +
+    prompt: `A quick phone photo for a secondhand listing, no people. A light blue cotton shirt hangs on a mismatched wooden hanger over the edge of a white wardrobe door in a bright Scandinavian bedroom — the hanger's metal hook is hidden behind the top edge of the door, so only the wooden shoulders of the hanger are visible. The shirt is seen from the FRONT — the buttoned front facing the camera. The shirt is the only focus: classic collar with NO neck label visible, button-through front with small pale buttons, one chest pocket, long sleeves hanging naturally down the sides. The cotton has clearly visible weave texture and natural light creases — worn-and-washed, absolutely not advertising-smooth, with a slightly rumpled hem. The shirt hangs a little askew on the hanger, hung up in a hurry by a person. The door is white with an ordinary handle and a faint natural wear mark around the handle. Photographed at a slightly skew casual standing angle from a bit too far away, the shirt off-centre with too much door visible on one side; at the frame edges a corner of a bed with crumpled linen bedding, a door frame and a strip of oak floor. Soft uneven daylight from a window to the side — one side of the shirt slightly brighter than the other, soft natural shadows behind it on the door, no flash.` +
       REALISME +
       UNDGAA_FAELLES +
       " Also avoid: hands, perfectly symmetric hanging, a steamer-ad look, a shop hanger with a logo, a fake backdrop, a deformed collar, wrong buttons.",
