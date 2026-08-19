@@ -8,9 +8,10 @@ Kritisk vej øverst — tages oppefra.
 - [ ] **Stripe webhook-endpoint** — oprettes i Stripe mod deployet URL →
       `/api/webhooks/stripe`. Kræver at sitet er deployet først.
 - [ ] **Provider-nøgler (AI-motoren — uden dem kører alt på mock):**
-      - `FAL_KEY` — fal.ai: billedrens + tøjet-vist-båret (failover)
-      - `GEMINI_API_KEY` — primær billedgenerering (final + preview)
-      - `ANTHROPIC_API_KEY` — Claude skriver titel/beskrivelse/prisforslag
+      - `GEMINI_API_KEY` — AL billedgenerering (final + preview) + vision
+        (troskabs-tjek, label-aflæsning). Ejer 19/8: fal droppet, Gemini eneste.
+      - `DEEPSEEK_API_KEY` — DeepSeek skriver titel/beskrivelse/prisforslag
+        med avanceret prompt. Ejer 19/8: erstattede Claude.
 - [ ] **RESEND_API_KEY + domæneverifikation** — PÅ VEJ (ejer). Låser op:
       transaktionsmails (S32) + glemt adgangskode (S39).
 

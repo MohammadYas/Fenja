@@ -99,10 +99,10 @@ export const kontakt = {
   email: "visual.studio.tuturials@gmail.com",
 } as const;
 
-// Billedprovider pr. formål — Gate 1-trekampens vinder aktiveres her med ÉN
-// linje, uden kodeændring. fal fjernes ALDRIG: den er failover (opgave-krav).
-// Gemini-model-id'er og cost-skøn bor her som config — providerne hårdkoder
-// aldrig modeller. Cost-skøn kalibreres i S12 mod faktiske priser (G-1/NFR-11).
+// Billedprovider pr. formål. EJER-BESLUTNING 2026-08-19: kun Gemini — fal
+// bruges ikke (koden ligger stadig i lib/providers/fal.ts, men er ude af
+// valg og failover). Gemini-model-id'er og cost-skøn bor her som config —
+// providerne hårdkoder aldrig modeller. Cost-skøn kalibreres i S12 (G-1/NFR-11).
 export type BilledProviderNavn = "fal" | "gemini";
 export type BilledFormaal = "preview" | "final";
 
@@ -111,8 +111,8 @@ export const billedProvidere: {
   gemini: Record<BilledFormaal, { model: string; costDkk: number }>;
 } = {
   valg: {
-    preview: "fal",
-    final: "fal",
+    preview: "gemini",
+    final: "gemini",
   },
   gemini: {
     preview: { model: "gemini-2.5-flash-image", costDkk: 0.28 }, // Nano Banana

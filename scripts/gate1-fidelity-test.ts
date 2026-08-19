@@ -1,15 +1,15 @@
-// Gate 1 (SPEC §12, HANDOFF §6.4): troskabs-eksperimentet som TREKAMP. Hvert
-// tøjfoto i den angivne mappe køres gennem ALLE billedproviders — fal
-// (Seedream), Nano Banana Pro (gemini final) og Nano Banana (gemini preview)
-// — × alle 3 presets × 2 reference-styrker. Troskabs-scores skrives til
-// preset_stats med provider-dimension via PresetStatsStore, og rapporten viser
-// pass-rate OG målt cost pr. billede side om side pr. provider. Manuel scoring
-// pr. billede er stadig dommen (Gate 1: ≥ 70 % troskab for mindst ét preset).
+// Gate 1 (SPEC §12, HANDOFF §6.4): troskabs-eksperimentet. Ejer-beslutning
+// 2026-08-19: kun Gemini — TVEKAMP mellem Nano Banana Pro (gemini final) og
+// Nano Banana (gemini preview), × alle presets × 2 reference-styrker.
+// Troskabs-scores skrives til preset_stats med provider-dimension via
+// PresetStatsStore, og rapporten viser pass-rate OG målt cost pr. billede
+// side om side pr. provider. Manuel scoring pr. billede er stadig dommen
+// (Gate 1: ≥ 70 % troskab for mindst ét preset).
 //
 // Kørsel uden nøgler (mock-providers, deterministiske scores):
 //   npx tsx scripts/gate1-fidelity-test.ts <mappe-med-toejfotos>
-// Mod rigtige providers — KUN ejeren, kræver FAL_KEY + GEMINI_API_KEY +
-// ANTHROPIC_API_KEY (og Supabase-env hvis stats skal i databasen):
+// Mod rigtige providers — KUN ejeren, kræver GEMINI_API_KEY +
+// DEEPSEEK_API_KEY (og Supabase-env hvis stats skal i databasen):
 //   npx tsx scripts/gate1-fidelity-test.ts <mappe-med-toejfotos> --live
 // Valgfrit: --ud <sti.html> (default: <mappe>/gate1-rapport.html)
 
@@ -38,11 +38,7 @@ const MIME: Record<string, string> = {
   ".webp": "image/webp",
 };
 
-// fal's on-model-skøn (samme tal som i lib/providers/fal.ts) — bruges kun til
-// at spejle costen i mock-tilstand; live måles den faktiske costDkk pr. kald.
-const FAL_ONMODEL_COST_DKK = 0.45;
-
-/** En deltager i trekampen; id er provider-dimensionen i preset_stats */
+/** En deltager i tvekampen; id er provider-dimensionen i preset_stats */
 type Deltager = {
   id: string;
   navn: string;
@@ -97,11 +93,6 @@ async function opretDeltagere(live: boolean): Promise<Deltager[]> {
     // Mock spejler hver providers cost-skøn, så cost-kolonnen er meningsfuld
     return [
       {
-        id: "fal",
-        navn: "fal (Seedream)",
-        image: new MockImageProvider({ onModelCostDkk: FAL_ONMODEL_COST_DKK }),
-      },
-      {
         id: "gemini-final",
         navn: `Nano Banana Pro (${gemini.final.model})`,
         image: new MockImageProvider({ onModelCostDkk: gemini.final.costDkk }),
@@ -113,10 +104,8 @@ async function opretDeltagere(live: boolean): Promise<Deltager[]> {
       },
     ];
   }
-  const { FalImageProvider } = await import("../lib/providers/fal");
   const { GeminiImageProvider } = await import("../lib/providers/gemini");
   return [
-    { id: "fal", navn: "fal (Seedream)", image: new FalImageProvider() },
     {
       id: "gemini-final",
       navn: `Nano Banana Pro (${gemini.final.model})`,
@@ -137,8 +126,8 @@ async function opretTekstProvider(
     // Én mock-tekstprovider pr. kørsel, så scoren er deterministisk pr. kombination
     return (noegle) => new MockTextProvider({ troskabsScore: mockScore(noegle) });
   }
-  const { AnthropicTextProvider } = await import("../lib/providers/anthropic");
-  const tekst = new AnthropicTextProvider();
+  const { DeepSeekTextProvider } = await import("../lib/providers/deepseek");
+  const tekst = new DeepSeekTextProvider();
   return () => tekst;
 }
 
@@ -285,7 +274,7 @@ function bygRapport(args: {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gate 1 · troskabs-trekamp</title>
+<title>Gate 1 · troskabs-tvekamp</title>
 <style>
   body { font-family: system-ui, sans-serif; margin: 2rem; color: #212523; background: #f1f3f2; }
   h1 { font-size: 1.5rem; } h3 { margin: 0 0 .5rem; }
@@ -315,7 +304,7 @@ function bygRapport(args: {
 </style>
 </head>
 <body>
-<h1>Gate 1 · troskabs-trekamp</h1>
+<h1>Gate 1 · troskabs-tvekamp</h1>
 <p class="meta">Mappe: <code>${escapeHtml(args.mappe)}</code> · tilstand: <strong>${
     args.live ? "live" : "mock"
   }</strong> · ${args.fotos.length} fotos × ${args.deltagere.length} providers × ${
@@ -411,7 +400,7 @@ async function main(): Promise<void> {
   const koersler: Koersel[] = [];
 
   console.log(
-    `Gate 1-trekamp: ${fotos.length} fotos × ${deltagere.length} providers × ${
+    `Gate 1-tvekamp: ${fotos.length} fotos × ${deltagere.length} providers × ${
       PRESETS.length
     } presets × ${vaegte.length} vægte (${live ? "LIVE" : "mock"})`,
   );

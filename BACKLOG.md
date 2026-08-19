@@ -4,7 +4,7 @@ Læs `STATUS.md` + `HANDOFF.md` før du tager en opgave.
 
 ## Åbent — næste op
 
-[ ] **S12 · Ende-til-ende mod rigtige providers** [KRÆVER FAL_KEY + ANTHROPIC_API_KEY]
+[ ] **S12 · Ende-til-ende mod rigtige providers** [KRÆVER GEMINI_API_KEY + DEEPSEEK_API_KEY]
     Kør hele pipelinen mod virkelige providers på ~20 egne tøjfotos:
     `npx tsx scripts/gate1-fidelity-test.ts <mappe> --live`, bedøm rapporten
     manuelt, skriv pass-raten i STATUS. Kalibrér `pipeline.troskabsTaerskel`

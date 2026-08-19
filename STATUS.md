@@ -6,6 +6,15 @@ Sidst opdateret: 2026-08-19 af Claude Code (publish-overblik)
 - Ejer-beslutninger 19/8: Resend er på vej; Netlify = bare koble GitHub-repoet
   (Claude-flag i MANGLER.md §2: env-vars skal stadig sættes i Netlify, ellers
   demo-mode); resten af listen udskydes ("laver vi senere").
+- **EJER-BESLUTNING 19/8: kun Gemini til billeder (fal droppet, også som
+  failover) og DeepSeek til annoncetekst med avanceret prompt (Claude ude).**
+  Implementeret: `lib/providers/deepseek.ts` (system-prompt med persona +
+  ufravigelige stilregler; JSON-kontrakt uændret), `billedProvidere.valg` =
+  gemini/gemini, `erMockTilstand` kræver nu GEMINI_API_KEY + DEEPSEEK_API_KEY.
+  DeepSeeks API kan ikke se billeder → vision (troskab K1 + label D-3) kører
+  mod Gemini flash (`GEMINI_VISION_MODEL`, default gemini-2.5-flash). Gate 1-
+  scriptet er nu TVEKAMP (gemini final vs preview). `fal.ts` + `anthropic.ts`
+  ligger stadig på disk, men intet refererer dem (nem fortrydelse).
 
 ## Forrige session (16/8 sen aften) — GDPR-audit af KODEN + finpudsning
 Forrige runde læste teksterne; denne gik gennem koden og spurgte: passer
