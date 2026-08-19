@@ -1,7 +1,13 @@
 # STATUS
-Sidst opdateret: 2026-08-16 (sen aften) af Claude Code (GDPR-kode-audit)
+Sidst opdateret: 2026-08-19 af Claude Code (publish-overblik)
 
-## Denne session (16/8 sen aften) — GDPR-audit af KODEN + finpudsning
+## Denne session (19/8) — hvad mangler før publish
+- **MANGLER.md oprettet** (repo-rod): kritisk vej før publish, tages oppefra.
+- Ejer-beslutninger 19/8: Resend er på vej; Netlify = bare koble GitHub-repoet
+  (Claude-flag i MANGLER.md §2: env-vars skal stadig sættes i Netlify, ellers
+  demo-mode); resten af listen udskydes ("laver vi senere").
+
+## Forrige session (16/8 sen aften) — GDPR-audit af KODEN + finpudsning
 Forrige runde læste teksterne; denne gik gennem koden og spurgte: passer
 politikken på det, vi faktisk gør? Fuld rapport i `docs/gdpr-audit-2026-08-16.md`.
 - **Sletningen holdt ikke sit eget løfte** (alvorligst): `storage.list()` giver
