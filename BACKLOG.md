@@ -4,6 +4,15 @@ Læs `STATUS.md` + `HANDOFF.md` før du tager en opgave.
 
 ## Åbent — næste op
 
+[ ] **S40 · Kør klage-migrationen + klik klage-flowet igennem**
+    `supabase/migrations/20260820010000_klager.sql` mod cloud-DB (kun ejeren,
+    HANDOFF §6). Test derefter: klage fra resultatside → admin godkend →
+    kredit retur på saldoen. Wizard (/nyt-item) og log ud klikkes igennem
+    samtidig — de er kun verificeret via tests.
+
+[ ] **S41 · Konverterings-plan for forsiden ("sælg drømmen")** [AFVENTER EJER]
+    Planen er leveret i chatten 20/8 — ejer vælger, hvad der bygges.
+
 [ ] **S12 · Ende-til-ende mod rigtige providers** [KRÆVER GEMINI_API_KEY + DEEPSEEK_API_KEY]
     Kør hele pipelinen mod virkelige providers på ~20 egne tøjfotos:
     `npx tsx scripts/gate1-fidelity-test.ts <mappe> --live`, bedøm rapporten

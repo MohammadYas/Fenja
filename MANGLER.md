@@ -1,6 +1,19 @@
 # MANGLER FØR PUBLISH
-Sidst opdateret: 2026-08-19. Ejer-prioritering: Resend er på vej; "resten laver vi senere".
-Kritisk vej øverst — tages oppefra.
+Sidst opdateret: 2026-08-20 (morgen). Ejer-prioritering: Resend er på vej;
+"resten laver vi senere". Kritisk vej øverst — tages oppefra.
+
+## 0. Nyt siden 19/8
+- [ ] **Kør migration `20260820010000_klager.sql` mod cloud-DB'en** (klage/
+      kredit retur-flowet virker først derefter). Kun ejeren deployer (§6) —
+      eller giv Claude ordre til at køre den via Composio.
+- [ ] **Konverterings-planen ("sælg drømmen")**: leveret som plan i chatten
+      20/8 — afventer ejerens go før forsiden ændres.
+- [ ] **"Fra vores brugere"-undertekst** på anmeldelses-billedet: afvist som
+      fabrikeret proof (ingen brugere endnu). Genbesøg når ægte bruger-
+      anmeldelser findes; linjen bor i lib/copy/vinted.ts.
+- [x] Billedserie komplet (48 → 73 credits), forside animationsrig, gratis
+      prisberegner-værktøj, nyt-item-wizard, klage-flow (kode), top-up kun
+      for abonnenter, log ud på Konto.
 
 ## 1. Nøgler (blokerer alt rigtigt)
 - [ ] **STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET** — hentes i Stripe-dashboardet

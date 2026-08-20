@@ -1,5 +1,51 @@
 # STATUS
-Sidst opdateret: 2026-08-19 af Claude Code (publish-overblik)
+Sidst opdateret: 2026-08-20 (morgen) af Claude Code (12-ordrers maratonrunde)
+
+## Denne session (20/8 morgen) — tolv ejer-ordrer, alt leveret
+Fuld handoff. Alt er committet og pushet til main; **323 tests, lint +
+typecheck grønne.** Credit-total for hele billedarbejdet: **73.**
+
+**Forsiden:**
+- Kvoterne hedder **"12/30 færdige looks hver måned"** — IKKE "fotosæt"
+  (ejer: 1 kredit = 1 billede, "sæt" lovede for meget). llms.txt følger med.
+- **Før/efter-panelet:** vælger med 4 par (Strik/Kjole/Jeans/Cardigan);
+  jeans-parrets EFTER er nu en MAND (p19, ejer-ordre); billederne vises i
+  fuldt 2:3-format, så HELE tøjet ses (ejer-ordre).
+- **Anmeldelses-billedet** har undertekst. Ejeren bad om "det er fra vores
+  brugere" — **IKKE skrevet** (ingen brugere findes; fabrikeret proof =
+  vildledende markedsføring). Ærlig linje i stedet; skift i
+  lib/copy/vinted.ts (anmeldelser.undertekst) når ægte anmeldelser findes.
+- **"Tøjet vist båret"**: kontinuerligt glidende rAF-marquee (trin-skift
+  hakkede) med note **"Alle billeder i serien er genereret med Selja"**
+  (ejer-ordre — dobbelt som AI-mærkning). Alle rullere kører KONSTANT:
+  ingen hover-pause, ingen reduced-motion-gate (ejer-ordrer; DESIGN §6).
+- **Gratis-værktøjet ("Hvad går dit tøj for på Vinted?")** er kraftigt
+  udvidet: prisberegner (kategori × mærke-niveau × stand, kalibreret mod
+  høstens medianer med test), pris-slider med zone-feedback, søgbar
+  titel-generator med kopiér-knap, salgsplan (startpris + nedsættelses-
+  tidslinje + gebyr-fakta), kategori-salgstips, foto-tjekliste (spejler
+  appens 4 roller) og mørkt Selja-slutkort som CTA (ejer: skal ende i Selja).
+
+**Appen:**
+- **Nyt item er en 4-trins wizard** (ejer-ordre): 1 vælg tøjdel (12 kort,
+  tap går videre; "Andet" giver fritekst) · 2 fotos · 3 detaljer · 4 tjek
+  og send. Fremdriftssegmenter, Næste låst til trinnet er komplet.
+- **Klage/kredit retur** (fra natrunden): resultatside → admin godkend/
+  afvis, idempotent refusion. **Migration 20260820010000_klager.sql er
+  IKKE kørt mod cloud endnu** — skal køres før featuren virker live.
+- **Top-up er KUN for abonnenter** (ejer-ordre): Stripe-tjek i checkout-API
+  (403 ellers) + kortet skjules på kreditsiden uden aktivt abonnement
+  (lib/betaling/abonnement.ts).
+- **Kreditsiden tæller i kreditter** (ikke "annoncer"); "1 kredit = 1
+  billede" er den nye forklaring (ejer-definition).
+- **Log ud-knap på Konto** + POST /api/auth/log-ud (ejer-ordre).
+
+**Afventer ejerens go (ordre 16):** aggressiv konverterings-/"sælg
+drømmen"-plan for forsiden er leveret som PLAN i chatten — intet ændret.
+
+**Kendte forbehold:** wizard + klage-UI er verificeret via tests/typecheck,
+ikke klikket igennem mod rigtig DB (login kræves); Stripe-nøgler mangler
+stadig, så top-up/abonnement-tjek kan først ende-til-ende-testes efter §6.
 
 ## Denne session (19/8–20/8 nat) — hvad mangler før publish
 - **Natkørsel 20/8, runde 2 (otte ejer-ordrer mens ejeren halvsov):**

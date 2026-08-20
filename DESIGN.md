@@ -82,7 +82,17 @@ Uændret fra V5: flade knapper der mørkner på hover, kort-kant der mørkner,
 150/300 ms ease-out, scroll-reveal bag scripting+reduced-motion-gates, fokusring
 2 px koks. Marketingnavigationen markerer den aktuelle side; "Sådan virker
 det" forkortes visuelt til "Sådan" på mobil, men bevarer sit fulde tilgængelige
-navn. Autoriserede mikro-animationer (S36, ejer-ønske 2026-08-16 om et mere
-levende købs-flow): md./år-skiftets glidende tommel (150 ms ease-out) og
-"pris-rul" (nyt pristal ruller ind nedefra, 300 ms — globals.css), begge kun
-bag scripting+reduced-motion-gates. Derudover ingen nye animationer.
+navn. Autoriserede mikro-animationer (S36, ejer-ønske 2026-08-16): md./år-
+skiftets glidende tommel (150 ms ease-out) og "pris-rul" (300 ms, globals.css).
+
+**EJER-OVERSTYRING 2026-08-20 (animationsrig forside):** to permanent kørende
+billed-marquees — annonce-strømmen (to modsatrettede rækker, bunden af
+forsiden) og "Tøjet vist båret"-sliden (én række, sektion 2). Begge er
+requestAnimationFrame-drevne transforms (components/billedstroem.tsx og
+billed-slides.tsx): CSS-animationer kan tvangs-klampes under forced reduced
+motion, og native smooth-scroll droppes off-screen. **De kører ALTID — ingen
+reduced-motion-gate og ingen hover-pause (ejer-ordrer 20/8).**
+IntersectionObserver pauser kun off-screen. Nye interaktions-mønstre samme
+dag: chip-radiogrupper (gran ved valg — før/efter-vælgeren, prisberegneren,
+wizard-trin 1) og wizard-fremdrift som fire tynde segmenter, der fyldes med
+gran.
