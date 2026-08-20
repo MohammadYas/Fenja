@@ -141,11 +141,42 @@ export function vaelgSkabelon(kategori: string | null | undefined): KategoriSkab
 // modulets ankre; valget pr. item er deterministisk, så retries er stabile.
 
 const PERSON_ANKRE = [
-  "an adult with short dark hair and a neutral appearance",
-  "an adult with light hair tied up and a neutral appearance",
-  "an adult with shoulder-length black curly hair and a deep skin tone",
-  "an adult with greying hair and a neutral appearance",
+  "an attractive adult in their early twenties with short dark hair and a slim, natural build",
+  "an attractive adult in their early twenties with light hair worn loose and a slim, natural build",
+  "an attractive adult in their early twenties with shoulder-length black curly hair, a deep skin tone and a slim, natural build",
+  "an attractive adult in their mid-twenties with light brown hair and a slim, natural build",
 ] as const;
+
+/**
+ * Positur og krop (ejer-ordre 20/8: "personen skal være bygget som hende der
+ * — cute og flot krop uden at være for generalisering"). Ordlyden er ejerens
+ * egen, dokumenteret virksomme formulering fra forside-serien
+ * (scripts/katalog-prompts-data.ts): slank, naturlig, afslappet — ALDRIG
+ * posering eller overdrevne proportioner.
+ */
+const KROP_OG_POSITUR =
+  "Appearance follows the seller's own catalogue style: a good-looking adult " +
+  "with a clear Scandinavian look — healthy clear skin, well-groomed hair, a " +
+  "slim natural build with realistic proportions. Attractive but believable: " +
+  "never an exaggerated hourglass figure, never a fitness or model pose, never " +
+  "airbrushed or retouched — this is a real person photographed at home, not a " +
+  "professional model in a campaign. The posture is relaxed and slightly " +
+  "asymmetric with the weight on one leg and one hip a little to the side, the " +
+  "free arm hanging loosely with the hand resting against a thigh or tucked " +
+  "casually into a front pocket. The person is standing casually, not posing.";
+
+/**
+ * Underdelen når referencetøjet er en overdel (ejer-ordre 20/8: "underdele
+ * skal være mere skandinaviske og pæne"). Destilleret af de tre bukser i
+ * forside-serien: enkle, matte jeans i hvid/creme, lys blågrå eller mørk navy.
+ */
+const SKANDINAVISK_BUNDDEL =
+  "the person wears simple, well-fitting Scandinavian everyday jeans in plain " +
+  "cream-white, pale washed blue-grey or dark navy denim: straight or slim fit " +
+  "but never skinny, low-to-mid rise, matte structured denim with a visible " +
+  "waistband, belt loops and front pockets, no belt, and natural creases at the " +
+  "hips and knees. The jeans are plain and quiet so the reference garment stays " +
+  "the focus — no prints, no rips, no logos, no shorts, no leggings, no bare legs";
 
 // ---------------------------------------------------------------------------
 // Hjem-ankre: ét fast hjem pr. sælger (deterministisk af user-id).
@@ -312,7 +343,8 @@ const FAELLES_NEGATIV =
 // (ejer-rapport 20/8: "det ene billede ligner at den floater").
 const ONMODEL_NEGATIV =
   " Also avoid: face retouching; deformed or extra fingers; duplicated limbs; " +
-  "warped anatomy; plastic-looking skin; a garment on a hanger or held up in " +
+  "warped anatomy; plastic-looking skin; an exaggerated hourglass figure; a " +
+  "fitness or model pose; high heels; a garment on a hanger or held up in " +
   "front of the body; an empty garment not worn by the person; visible hangers, " +
   "clips or props.";
 
@@ -354,9 +386,12 @@ export function bygPersonAnker(args: {
   if (args.koen !== "mand" && args.koen !== "kvinde") {
     return vaelgPersonAnkerEngelsk(args.itemId);
   }
-  const krop = args.koen === "mand" ? "an adult man" : "an adult woman";
+  const krop =
+    args.koen === "mand"
+      ? "an attractive adult Scandinavian man in his early twenties with a slim, naturally athletic build and clear, well-groomed features"
+      : "an attractive adult Scandinavian woman in her early twenties with a slim, natural build and clear, well-groomed features";
   const haar = args.haarFarve ? HAAR_ENGELSK[args.haarFarve] : undefined;
-  return `${krop}${haar ? ` with ${haar} hair` : ""} with a neutral appearance`;
+  return `${krop}${haar ? ` and ${haar} hair worn naturally` : ""}`;
 }
 
 /**
@@ -413,7 +448,11 @@ return [
   "How much skin shows is decided ENTIRELY by the garment itself: show it exactly as it is, and never lengthen, extend or cover it up. If the reference garment is a crop top, a short top or has a deep or open neckline, the bare midriff, waist or neckline MUST be visible exactly as the garment leaves it. Only when the reference garment does not cover the torso at all (for example trousers or a skirt) does the person wear a simple, plain, neutral-colored top with it — the person is never shirtless and never in underwear.",
   // Ejer-rapport 20/8: en top blev vist som en kort kjole på bare ben. Det
   // sælger et andet produkt, end sælgeren har.
-  "The reference garment keeps its exact type and length: a top stays a top and NEVER becomes a dress or tunic; its hem ends exactly where it ends in the reference image. Whatever the reference garment does not cover, the person wears plain, simple, neutral-colored clothing for — an upper-body garment is always worn with plain neutral trousers, jeans or a skirt, never with bare legs and never with underwear showing.",
+  "The reference garment keeps its exact type and length: a top stays a top and NEVER becomes a dress or tunic; its hem ends exactly where it ends in the reference image.",
+  // Ejer-ordre 20/8: underdelen skal være skandinavisk og pæn — samme stil som
+  // forside-serien, aldrig bare ben.
+  `Whatever the reference garment does not cover, the person is dressed for in a quiet, tasteful way: if the reference garment is an upper-body garment, ${SKANDINAVISK_BUNDDEL}.`,
+  KROP_OG_POSITUR,
   `Framing: ${framing}.`,
   skabelon.regel,
   `Location: ${sted}.`,

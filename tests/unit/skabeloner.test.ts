@@ -119,7 +119,82 @@ describe("kategori-skabeloner (ejer-princip 2026-08-15)", () => {
       visning: hentVisningsType("spejl"),
     });
     expect(prompt).toContain("a top stays a top and NEVER becomes a dress");
-    expect(prompt).toContain("never with bare legs");
+    expect(prompt).toContain("no bare legs");
+  });
+
+  // Ejer-ordre 20/8: personen og underdelen skal følge forside-seriens stil.
+  it("personen er slank og naturlig med afslappet positur — aldrig posering", () => {
+    const prompt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "Top & bluse",
+      koen: "kvinde",
+      haarFarve: "brunt",
+      visning: hentVisningsType("spejl"),
+    });
+    expect(prompt).toContain("attractive adult Scandinavian woman in her early twenties");
+    expect(prompt).toContain("brown hair worn naturally");
+    expect(prompt).toContain("standing casually, not posing");
+    expect(prompt).toContain("never an exaggerated hourglass figure");
+    expect(prompt).toContain("never a fitness or model pose");
+  });
+
+  it("manden er ligeledes en attraktiv skandinavisk voksen", () => {
+    const prompt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "Striktrøje",
+      koen: "mand",
+      haarFarve: "sort",
+      visning: hentVisningsType("spejl"),
+    });
+    expect(prompt).toContain("attractive adult Scandinavian man in his early twenties");
+    expect(prompt).toContain("black hair worn naturally");
+  });
+
+  // C-6 gælder uændret: aldrig en genkendelig eller virkelig person, og
+  // personen er ALTID voksen.
+  it("personen er altid voksen og aldrig genkendelig", () => {
+    for (const koen of [null, "mand", "kvinde"]) {
+      const prompt = bygOnModelPromptMedSkabelon({
+        preset,
+        itemId: "item-1",
+        userId: "bruger-a",
+        kategori: "Striktrøje",
+        koen,
+        visning: hentVisningsType("spejl"),
+      });
+      expect(prompt, String(koen)).toContain("adult");
+      expect(prompt, String(koen)).toContain("never a recognizable or real person");
+      expect(prompt, String(koen)).toContain("the face is always hidden");
+    }
+  });
+
+  it("underdelen er skandinaviske, rolige jeans når referencetøjet er en overdel", () => {
+    const prompt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "Striktrøje",
+      visning: hentVisningsType("spejl"),
+    });
+    expect(prompt).toContain("Scandinavian everyday jeans");
+    expect(prompt).toContain("straight or slim fit but never skinny");
+    expect(prompt).toContain("so the reference garment stays the focus");
+  });
+
+  it("krops- og positurblokken hører KUN til on-model, ikke produktvisninger", () => {
+    const produkt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "Striktrøje",
+      visning: hentVisningsType("gulv"),
+    });
+    expect(produkt).not.toContain("standing casually, not posing");
+    expect(produkt).not.toContain("Scandinavian everyday jeans");
   });
 
   // Ejer-ordre 20/8 (senere samme dag): en croptop SKAL vise mave — ellers
