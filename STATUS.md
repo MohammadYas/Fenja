@@ -15,9 +15,17 @@ Ejeren sov; ordre: fiks alt, test e2e, angrib omsætningsdræbere.
    størrelse" undtaget; og mangler kun titel-elementer, repareres titlen
    mekanisk i stedet for at vælte leverancen.
 
-**E2E-test:** kørt med seedet engangs-testbruger (ALDRIG ejerens konto —
-ejerens password i chatten SKAL roteres!) mod rigtige providers og cloud-DB;
-testdata ryddet op. Resultat står i chatten/nedenfor.
+**E2E-test — FULDT GRØN (første gang nogensinde):** kørt med seedet engangs-
+testbruger (ALDRIG ejerens konto — ejerens password i chatten SKAL roteres!)
+mod rigtige providers og cloud-DB; testdata ryddet op. Resultat: 1 billede
+genereret + troskab bestået, DeepSeek-titel "Carhartt WIP bukser sort EU 48
+W32", prisforslag 250–350 kr., 1 kredit trukket, ingen refusion, leveret_at
+sat. Total provider-cost 1,95 kr. To yderligere root causes fundet undervejs:
+(4) vision-modellen gemini-2.5-flash er NEDLAGT af Google (404) → default nu
+gemini-3.6-flash; (5) referencen til billedprovideren var en storage-STI →
+fetch kastede i begge forsøg (nu data-URL via storage-laget). Dertil:
+tekstvalideringen forstår Vinted-størrelsesformater + mekanisk titel-
+reparation i stedet for væltet leverance.
 
 **Nye features (ejer-ordrer):** genererings-frames med lysstrøg pr. valgt
 billede på "på vej"-siden; trin-listen byttet (01 tekst, 02 billeder);
