@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { vinted } from "@/lib/config";
-import { STANDE } from "@/lib/prisberegner";
+import { da } from "@/lib/copy/da";
 import {
   VINTED_FARVER,
   stoerrelsesGrupperFor,
 } from "@/lib/data/vinted-kriterier";
+import { GENERISK_SKABELON_ID, vaelgSkabelon } from "@/lib/pipeline/skabeloner";
+import { STANDE } from "@/lib/prisberegner";
 
 // Ejer-ordre 2026-08-20: stand, størrelse og farve skal matche Vinteds egne
 // lister 1:1 (aflæst fra vinted.dk) — annoncen sættes ind uden oversættelse.
@@ -52,5 +54,22 @@ describe("Vinted-kriterier 1:1", () => {
   it("ukendt tøjdel giver fritekst (null)", () => {
     expect(stoerrelsesGrupperFor("Andet")).toBeNull();
     expect(stoerrelsesGrupperFor("Vinyl-lp")).toBeNull();
+  });
+
+  // Ejer-ordre 20/8: der manglede en top-kategori — en festtop havde intet
+  // andet valg end "Andet", som giver fritekst og den generiske skabelon.
+  it("top & bluse er en rigtig tøjdel med kvinde- og herrestørrelser", () => {
+    expect(da.nytItem.dele).toContain("Top & bluse");
+    const grupper = stoerrelsesGrupperFor("Top & bluse")!;
+    expect(grupper.map((g) => g.navn)).toEqual(["Kvinder", "Mænd"]);
+  });
+
+  it("hver tøjdel i wizarden rammer en rigtig skabelon — ikke den generiske", () => {
+    const udenFritekst = da.nytItem.dele.filter((d) => d !== "Andet");
+    for (const del of udenFritekst) {
+      expect(vaelgSkabelon(del).id, `${del} faldt til generisk`).not.toBe(
+        GENERISK_SKABELON_ID,
+      );
+    }
   });
 });

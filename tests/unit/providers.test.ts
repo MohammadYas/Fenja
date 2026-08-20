@@ -21,7 +21,25 @@ describe("troskabs-spørgsmålet pr. visningsslags", () => {
     const spoergsmaal = troskabsSpoergsmaal("produkt");
     expect(spoergsmaal).toContain("MED VILJE ingen person");
     expect(spoergsmaal).toContain("ALDRIG trække scoren ned");
-    expect(spoergsmaal).not.toContain("ALTID 0");
+  });
+
+  // Ejer-rapport 20/8: tjekket gav 1,00 til alt — også en top vist som kjole
+  // og et billede hvor tøjet svævede.
+  it("on-model dumper hvis tøjets type eller længde er ændret", () => {
+    const spoergsmaal = troskabsSpoergsmaal("onmodel");
+    expect(spoergsmaal).toContain("LÆNGDE");
+    expect(spoergsmaal).toContain("aldrig bare ben");
+  });
+
+  it("produkt dumper hvis tøjet svæver", () => {
+    expect(troskabsSpoergsmaal("produkt")).toContain("Svæver tøjet frit i luften");
+  });
+
+  it("begge spørgsmål kræver at hele skalaen bruges", () => {
+    for (const slags of ["onmodel", "produkt"] as const) {
+      expect(troskabsSpoergsmaal(slags)).toContain("Vær STRENG");
+      expect(troskabsSpoergsmaal(slags)).toContain("giv den lavere score");
+    }
   });
 
   it("begge spørgsmål beder om samme JSON-format", () => {

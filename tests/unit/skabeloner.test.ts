@@ -79,6 +79,49 @@ describe("kategori-skabeloner (ejer-princip 2026-08-15)", () => {
     expect(prompt).toContain("never in underwear");
   });
 
+  // Ejer-rapport 20/8: produkt-billedet "lignede at den floater". Framingen
+  // krævede bøjle/gulv, mens den fælles negativ-liste forbød præcis det.
+  it("produkt-visninger forbyder IKKE bøjle — og kræver at tøjet hviler på noget", () => {
+    for (const id of ["stativ", "gulv", "detalje"] as const) {
+      const prompt = bygOnModelPromptMedSkabelon({
+        preset,
+        itemId: "item-1",
+        userId: "bruger-a",
+        kategori: "Top & bluse",
+        visning: hentVisningsType(id),
+      });
+      expect(prompt, id).not.toContain("visible hangers, clips or props");
+      expect(prompt, id).not.toContain("an empty garment not worn by the person");
+      expect(prompt, id).toContain("Never let the garment float or hover in mid-air");
+      expect(prompt, id).toContain("never show a person or any body part");
+    }
+  });
+
+  it("on-model beholder bøjle-forbuddet (tøjet skal bæres)", () => {
+    const prompt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "Top & bluse",
+      visning: hentVisningsType("spejl"),
+    });
+    expect(prompt).toContain("visible hangers, clips or props");
+    expect(prompt).toContain("an empty garment not worn by the person");
+  });
+
+  // Ejer-rapport 20/8: en top blev vist som kort kjole på bare ben.
+  it("en top forbliver en top, og bare ben er forbudt", () => {
+    const prompt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "Top & bluse",
+      visning: hentVisningsType("spejl"),
+    });
+    expect(prompt).toContain("a top stays a top and NEVER becomes a dress");
+    expect(prompt).toContain("never with bare legs");
+  });
+
   // Ejer-ordre 20/8 (senere samme dag): en croptop SKAL vise mave — ellers
   // sælger annoncen et andet stykke tøj end det, sælgeren har.
   it("tøjet bestemmer huden: croptop må vise mave, og tøjet dækkes aldrig til", () => {

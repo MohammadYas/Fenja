@@ -124,6 +124,8 @@ export function stoerrelsesGrupperFor(
     return [{ navn: "Taske", stoerrelser: ["Én størrelse"] }];
   }
   if (
+    k.includes("top") ||
+    k.includes("bluse") ||
     k.includes("t-shirt") ||
     k.includes("strik") ||
     k.includes("hoodie") ||

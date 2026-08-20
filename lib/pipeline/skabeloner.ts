@@ -301,13 +301,29 @@ const PRODUKT_REFERENCE_INSTRUKS =
   "precisely; invent, remove or 'improve' nothing, and keep visible wear and " +
   "flaws where they are. No person appears in the image.";
 
-const NEGATIV_LISTE =
-  "Avoid: any text, logos or watermarks beyond the garment's own; face " +
-  "retouching; changing the garment's fit; extra accessories; deformed or extra " +
-  "fingers; duplicated limbs; warped anatomy; plastic-looking skin; CGI " +
-  "appearance; artificial-looking backgrounds; studio lighting; a garment on a " +
-  "hanger or held up in front of the body; an empty garment not worn by the " +
-  "person; visible hangers, clips or props.";
+// Fælles forbud der gælder BEGGE slags visninger.
+const FAELLES_NEGATIV =
+  "Avoid: any text, logos or watermarks beyond the garment's own; changing the " +
+  "garment's fit, length or cut; extra accessories; CGI appearance; " +
+  "artificial-looking backgrounds; studio lighting.";
+
+// Kun on-model: bøjle-forbuddet gav floatende spøgelsestøj, da det blev sendt
+// med til produkt-visningerne, hvis framing netop KRÆVER bøjle eller gulv
+// (ejer-rapport 20/8: "det ene billede ligner at den floater").
+const ONMODEL_NEGATIV =
+  " Also avoid: face retouching; deformed or extra fingers; duplicated limbs; " +
+  "warped anatomy; plastic-looking skin; a garment on a hanger or held up in " +
+  "front of the body; an empty garment not worn by the person; visible hangers, " +
+  "clips or props.";
+
+// Kun produkt: her ER tøjet tomt og ubåret — det skal ligge/hænge SOLIDT et
+// sted, aldrig svæve frit i luften.
+const PRODUKT_NEGATIV =
+  " The garment is empty and unworn — that is correct and intended. But it must " +
+  "rest physically on something real: flat on the floor or bed, or hanging on a " +
+  "hanger that is clearly visible and supported. Never let the garment float or " +
+  "hover in mid-air, never fill it out with an invisible body or ghost " +
+  "mannequin, and never show a person or any body part.";
 
 /** Deterministisk visning pr. item, så retries er stabile */
 export function vaelgVisning(skabelon: KategoriSkabelon, itemId: string): string {
@@ -376,7 +392,7 @@ export function bygOnModelPromptMedSkabelon(args: {
       `Location: ${sted}.`,
       skabelon.fokus,
       FOTOSTIL,
-      NEGATIV_LISTE,
+      FAELLES_NEGATIV + PRODUKT_NEGATIV,
     ].join(" ");
   }
 
@@ -395,12 +411,15 @@ return [
   // neutrale top gælder KUN, når referencetøjet slet ikke dækker overkroppen
   // (fx et par bukser) — så er alternativet en bar overkrop.
   "How much skin shows is decided ENTIRELY by the garment itself: show it exactly as it is, and never lengthen, extend or cover it up. If the reference garment is a crop top, a short top or has a deep or open neckline, the bare midriff, waist or neckline MUST be visible exactly as the garment leaves it. Only when the reference garment does not cover the torso at all (for example trousers or a skirt) does the person wear a simple, plain, neutral-colored top with it — the person is never shirtless and never in underwear.",
+  // Ejer-rapport 20/8: en top blev vist som en kort kjole på bare ben. Det
+  // sælger et andet produkt, end sælgeren har.
+  "The reference garment keeps its exact type and length: a top stays a top and NEVER becomes a dress or tunic; its hem ends exactly where it ends in the reference image. Whatever the reference garment does not cover, the person wears plain, simple, neutral-colored clothing for — an upper-body garment is always worn with plain neutral trousers, jeans or a skirt, never with bare legs and never with underwear showing.",
   `Framing: ${framing}.`,
   skabelon.regel,
   `Location: ${sted}.`,
   skabelon.fokus,
   FOTOSTIL,
-  NEGATIV_LISTE,
+  FAELLES_NEGATIV + ONMODEL_NEGATIV,
 ]
   .filter((del): del is string => Boolean(del))
   .join(" ");

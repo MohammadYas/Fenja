@@ -148,6 +148,7 @@ export const da = {
       "Jeans",
       "Bukser",
       "Shorts",
+      "Top & bluse",
       "T-shirt",
       "Striktrøje",
       "Hoodie & sweatshirt",
@@ -271,6 +272,8 @@ export const da = {
     fejlKoenMangler: "Vælg om personen på billederne skal være mand eller kvinde.",
     fejlMigration:
       "Profil-felterne findes ikke i databasen endnu (migration 20260820110000). Kør den, og prøv igen.",
+    fejlIkkeGemt:
+      "Valget nåede ikke frem til din profil. Prøv igen — bliver det ved, så sig til.",
     // Banner på oversigten indtil valget er truffet
     bannerTekst:
       "Vælg hvem der skal vise tøjet frem på dine billeder — så ligner personen dig fra første annonce.",

@@ -53,7 +53,13 @@ function parseJson<T>(tekst: string): T {
   return JSON.parse(match[0]) as T;
 }
 
-const SVAR_FORMAT = `Svar KUN med JSON: {"score": number mellem 0 og 1, "begrundelse": string på dansk}`;
+// Ejer-rapport 20/8: tjekket gav 1,00 til ALT — også en top gengivet som kort
+// kjole. Skalaen skal bruges, og tvivl skal trække ned, ellers er tjekket pynt.
+const SVAR_FORMAT =
+  `Vær STRENG og brug hele skalaen: 1.0 kun når du ikke kan pege på ét eneste ` +
+  `afvigende træk, 0.6-0.8 ved små afvigelser, under 0.5 ved tydelige. Er du i ` +
+  `tvivl, giv den lavere score. ` +
+  `Svar KUN med JSON: {"score": number mellem 0 og 1, "begrundelse": string på dansk}`;
 
 /**
  * Troskabs-spørgsmålet afhænger af visningens slags (ejer-rapport 20/8: kun 1
@@ -64,9 +70,9 @@ const SVAR_FORMAT = `Svar KUN med JSON: {"score": number mellem 0 og 1, "begrund
  */
 export function troskabsSpoergsmaal(slags: "onmodel" | "produkt"): string {
   if (slags === "produkt") {
-    return `Billede 1 er et ægte foto af et stykke tøj. Billede 2 er en genereret produktvisning af det SAMME stykke tøj — lagt frem, hængt på bøjle eller som nærbillede. Der er MED VILJE ingen person i billede 2; det er korrekt og må ALDRIG trække scoren ned. Vurdér kun ÉT: viser billede 2 præcis det samme stykke tøj — samme print/grafik, samme farve, samme snit og længde — og er synligt slid/fejl bevaret? ${SVAR_FORMAT}`;
+    return `Billede 1 er et ægte foto af et stykke tøj. Billede 2 er en genereret produktvisning af det SAMME stykke tøj — lagt frem, hængt på bøjle eller som nærbillede. Der er MED VILJE ingen person i billede 2; det er korrekt og må ALDRIG trække scoren ned. Vurdér to ting: (1) Er det præcis samme stykke tøj — samme type, samme længde, samme print/grafik, samme farve og snit, og er synligt slid/fejl bevaret? (2) Hviler tøjet fysisk på noget virkeligt — fladt på gulv/seng eller på en synlig bøjle? Svæver tøjet frit i luften, er det formet af en usynlig krop, eller ligner det en spøgelsesmannequin, er scoren ALTID under 0.3. ${SVAR_FORMAT}`;
   }
-  return `Billede 1 er et ægte foto af et stykke tøj. Billede 2 er en genereret visualisering af en person, der BÆRER tøjet. Vurdér to ting: (1) Viser billede 2 PRÆCIS det samme stykke tøj — samme print/grafik, samme farve, samme snit og længde, og er synligt slid/fejl bevaret? (2) Bæres tøjet NATURLIGT på kroppen med arme/ben inde i det? Hænger tøjet på en bøjle, holdes det frem foran kroppen, eller svæver det tomt, er scoren ALTID 0 uanset hvor godt tøjet matcher. ${SVAR_FORMAT}`;
+  return `Billede 1 er et ægte foto af et stykke tøj. Billede 2 er en genereret visualisering af en person, der BÆRER tøjet. Vurdér tre ting: (1) Er det PRÆCIS samme stykke tøj — samme print/grafik, samme farve, samme snit, og er synligt slid/fejl bevaret? (2) Er tøjets TYPE og LÆNGDE uændret? En top må ALDRIG være blevet til en kjole eller tunika, og kanten skal slutte samme sted som i billede 1 — er typen eller længden ændret, er scoren ALTID under 0.3. (3) Bæres tøjet NATURLIGT på kroppen med arme/ben inde i det, og er personen ellers fornuftigt påklædt (en overdel bæres med bukser eller nederdel, aldrig bare ben eller undertøj)? Hænger tøjet på en bøjle, holdes det frem foran kroppen, eller svæver det tomt, er scoren ALTID 0 uanset hvor godt tøjet matcher. ${SVAR_FORMAT}`;
 }
 
 /** Reference-billeder til Gemini-vision — data-URLs pakkes ud, http-URLs hentes */

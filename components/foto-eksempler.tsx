@@ -31,6 +31,8 @@ function snitFor(kategori?: string): Snit {
   if (k.includes("taske")) return "taske";
   if (k.includes("jakke") || k.includes("frakke")) return "jakke";
   if (
+    k.includes("top") ||
+    k.includes("bluse") ||
     k.includes("t-shirt") ||
     k.includes("strik") ||
     k.includes("hoodie") ||

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { da } from "@/lib/copy/da";
@@ -16,6 +17,7 @@ type KoenVaelgerProps = {
 type Tilstand = "lukket" | "vaelger" | "bekraefter";
 
 export function KoenVaelger({ koen, haarFarve }: KoenVaelgerProps) {
+  const router = useRouter();
   const [gemtKoen, setGemtKoen] = useState(koen);
   const [gemtHaar, setGemtHaar] = useState(haarFarve);
   const [tilstand, setTilstand] = useState<Tilstand>("lukket");
@@ -59,16 +61,23 @@ export function KoenVaelger({ koen, haarFarve }: KoenVaelgerProps) {
           haarFarve: valgHaar === "" ? null : valgHaar,
         }),
       });
-      const data = (await svar.json().catch(() => ({}))) as { fejl?: string };
+      const data = (await svar.json().catch(() => ({}))) as {
+        fejl?: string;
+        koen?: string;
+        haarFarve?: string | null;
+      };
       if (!svar.ok) {
         setFejl(data.fejl ?? da.konto.koen.fejl);
         setTilstand("vaelger");
         return;
       }
-      setGemtKoen(valgKoen);
-      setGemtHaar(valgHaar === "" ? null : valgHaar);
+      // Vis det serveren FAKTISK gemte — ikke det vi håbede på (ejer-rapport
+      // 20/8: der stod "Gemt", men profilen var uændret)
+      setGemtKoen(data.koen ?? valgKoen);
+      setGemtHaar(data.haarFarve ?? null);
       setTilstand("lukket");
       setGemt(true);
+      router.refresh();
     } catch {
       setFejl(da.konto.koen.fejl);
       setTilstand("vaelger");

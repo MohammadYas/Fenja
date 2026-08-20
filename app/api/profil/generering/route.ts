@@ -24,10 +24,14 @@ export async function POST(request: NextRequest) {
     : null;
 
   const service = opretServiceKlient();
-  const { error } = await service
+  // .select() gør gemningen VERIFICERBAR: en update uden matchende række giver
+  // hverken fejl eller rækker, og UI'et sagde derfor "Gemt" uden at noget var
+  // gemt (ejer-rapport 20/8: "havde endda valgt kvinde" — profilen stod på mand)
+  const { data, error } = await service
     .from("profiles")
     .update({ koen: krop.koen, haar_farve: haar })
-    .eq("id", user.id);
+    .eq("id", user.id)
+    .select("koen, haar_farve");
   if (error) {
     // Migration 20260820110000 ikke kørt endnu — sig det ærligt
     return NextResponse.json(
@@ -35,5 +39,9 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
-  return NextResponse.json({ ok: true });
+  const gemt = data?.[0];
+  if (!gemt || gemt.koen !== krop.koen) {
+    return NextResponse.json({ fejl: da.onboarding.fejlIkkeGemt }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true, koen: gemt.koen, haarFarve: gemt.haar_farve });
 }
