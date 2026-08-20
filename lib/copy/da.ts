@@ -143,8 +143,9 @@ export const da = {
     // Ejer-ordre 20/8 (senere): farve, størrelse og stand følger Vinteds
     // egne lister 1:1, så annoncen kan sættes direkte ind.
     farveLabel: "Farve",
-    farveVaelg: "Vælg farve",
-    farveHjaelp: "Vinteds farveliste — vælg den, der ligger tættest.",
+    farveHjaelp: "Vælg op til 2 af Vinteds farver.",
+    farveVisAlle: "Vis alle farver",
+    farveVisFaerre: "Vis færre farver",
     labelTekstLabel: "Fra vaskemærket",
     labelTekstHjaelp:
       "Skriv materiale og evt. vask, fx \"100 % uld, vask ved 30°\". Valgfrit.",
@@ -152,6 +153,11 @@ export const da = {
     opsummeringHjaelp:
       "Et hurtigt kig, før Selja går i gang — kreditten trækkes først, når annoncen er leveret.",
     fotoTitel: "Fotos",
+    // Ejer-ordre 20/8: det skal være TYDELIGT at kun helhedsfotoet kræves
+    fotoTitelHjaelp:
+      "Kun helhedsfotoet skal med. Bagsiden er valgfri og kan gøre annoncen bedre.",
+    fotoSkalMed: "Skal med",
+    fotoValgfrit: "Valgfrit",
     roller: {
       full: {
         navn: "Helhed",

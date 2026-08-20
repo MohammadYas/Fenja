@@ -60,8 +60,10 @@ kun footer-link). Rækkefølgen:
    panelet (ejer-ordre 2026-08-16: fjernet — "skriger AI"). Tidsløftet gælder
    selve annoncen, når brugeren er logget ind og har kreditter.
 2. **Tøjet vist båret:** 4 stykker fra serien i statisk grid under en synlig
-   produktoverskrift. Ingen AI-/ærlighedsmærkat i denne runde; ejeren laver den
-   endelige mærkning før udgivelse (se STATUS).
+   produktoverskrift. AI-mærkning (2026-08-20, MANGLER §4): sleek — stille
+   tekstnoter ("… genereret med Selja") ved før/efter-panelet, billedserien
+   og bund-strømmen; ingen badges på billederne. Ærligheds-blokken er
+   genplaceret som rolig stribe efter det mørke bånd.
 3. Sådan virker det: 3 trin som nummererede redaktionelle rækker (nav-anker).
 4. **Sådan bruger du resultatet:** sidens ene mørke bånd forklarer billede 1,
    supplerende billeder og at brugeren selv lægger annoncen på Vinted.

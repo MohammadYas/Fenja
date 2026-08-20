@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { vinted } from "@/lib/config";
 import { da } from "@/lib/copy/da";
-import { VINTED_FARVER, stoerrelsesGrupperFor } from "@/lib/data/vinted-kriterier";
+import { FarveVaelger } from "@/components/farve-vaelger";
+import { stoerrelsesGrupperFor } from "@/lib/data/vinted-kriterier";
 import { komprimerFoto } from "@/lib/upload/compress";
 
 type Rolle = "full" | "back" | "label" | "defect";
@@ -36,7 +37,7 @@ export default function NytItem() {
   const [stand, setStand] = useState("");
   const [kategori, setKategori] = useState("");
   const [fejlTekst, setFejlTekst] = useState("");
-  const [farve, setFarve] = useState("");
+  const [farver, setFarver] = useState<string[]>([]);
   const [labelTekst, setLabelTekst] = useState("");
   const [koebspris, setKoebspris] = useState("");
   const [fejl, setFejl] = useState<string | null>(null);
@@ -131,7 +132,7 @@ export default function NytItem() {
           stand,
           kategori,
           fejlBeskrivelse: fejlTekst || undefined,
-          farve: farve || undefined,
+          farve: farver.length > 0 ? farver.join(", ") : undefined,
           labelTekst: labelTekst || undefined,
           koebsprisDkk: koebspris ? Number(koebspris) : undefined,
           fotos: uploads,
@@ -206,6 +207,10 @@ export default function NytItem() {
         {trin === 2 ? (
         <section aria-label={da.nytItem.fotoTitel}>
           <SektionsMarkoer nr={2} titel={da.nytItem.fotoTitel} />
+          {/* Ejer-ordre 20/8: tydeligt at kun helhedsfotoet kræves */}
+          <p className="mt-2 max-w-laesbar text-detalje text-tekst/70">
+            {da.nytItem.fotoTitelHjaelp}
+          </p>
           <div className="mt-4 flex flex-col gap-4">
             {FOTO_ROLLER.map((rolle) => {
               const info = da.nytItem.roller[rolle];
@@ -228,9 +233,19 @@ export default function NytItem() {
                     <EksempelBagside kategori={kategori} />
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium">
+                    <p className="flex flex-wrap items-center gap-2 font-medium">
                       {info.navn}
-                      {info.paakraevet ? " *" : ""}
+                      <span
+                        className={`rounded-stram px-1.5 py-0.5 font-mono text-detalje ${
+                          info.paakraevet
+                            ? "bg-gran text-kalk"
+                            : "bg-flade text-tekst/60"
+                        }`}
+                      >
+                        {info.paakraevet
+                          ? da.nytItem.fotoSkalMed
+                          : da.nytItem.fotoValgfrit}
+                      </span>
                     </p>
                     <p className="text-detalje text-tekst/70">{info.hjaelp}</p>
                   </div>
@@ -335,25 +350,7 @@ export default function NytItem() {
               onChange={(e) => setKategori(e.target.value || "Andet")}
             />
           ) : null}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="farve" className="text-basis font-medium">
-              {da.nytItem.farveLabel}
-            </label>
-            <select
-              id="farve"
-              value={farve}
-              onChange={(e) => setFarve(e.target.value)}
-              className="min-h-touch rounded-bloed border border-kant bg-baggrund px-3 text-basis"
-            >
-              <option value="">{da.nytItem.farveVaelg}</option>
-              {VINTED_FARVER.map((f) => (
-                <option key={f.navn} value={f.navn}>
-                  {f.navn}
-                </option>
-              ))}
-            </select>
-            <p className="text-detalje text-tekst/70">{da.nytItem.farveHjaelp}</p>
-          </div>
+          <FarveVaelger valgte={farver} onChange={setFarver} />
           <Field
             label={da.nytItem.labelTekstLabel}
             hjaelp={da.nytItem.labelTekstHjaelp}

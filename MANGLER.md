@@ -54,9 +54,12 @@ Sidst opdateret: 2026-08-20 (morgen). Ejer-prioritering: Resend er på vej;
       Justerbare {hår}-variabler. NÆSTE: generér serien med gemini-3-pro-image.
 - [ ] **S25:** udskift `public/eksempler/*` med ægte output fra første rigtige
       kørsel (efter Gate 1).
-- [ ] **AI-mærkat:** synlig mærkning er midlertidigt fjernet fra forsiden —
-      "sleek" løsning SKAL på plads inden lancering (EU AI-forordning art. 50).
-- [ ] **Ærligheds-blokken** genplaceres på forsiden før udgivelse.
+- [x] **AI-mærkat (20/8):** sleek løsning på plads — stille noter ved
+      før/efter-panelet ("Eksempel: alle billeder er genereret med Selja."),
+      billedserien og bund-strømmen. Ingen badges. (Art. 50-kravet dækket
+      for forsiden; appens genererede billeder har fortsat deres badge.)
+- [x] **Ærligheds-blokken (20/8)** genplaceret som rolig stribe efter det
+      mørke bånd (omskrevet til Selja-æraen, uden gratis-tier).
 
 ## 5. Launch-gates (HANDOFF §8 — S26)
 - [ ] Lighthouse mobil ≥ 90 genmåles (L1 målt før Vinted-first-forsiden)
