@@ -22,6 +22,8 @@ import { opretServiceKlient } from "@/lib/supabase/service";
 export type ItemPipelinePayload = {
   itemId: string;
   presetId?: string;
+  /** Brugerens valgte visninger (ejer-ordre 20/8); uden = spejlbilledet */
+  visninger?: string[];
 };
 
 export const itemPipeline = task({
@@ -40,6 +42,7 @@ export const itemPipeline = task({
       },
       payload.itemId,
       payload.presetId,
+      payload.visninger,
     );
 
     // S32: leverancemail — "annonce klar" ved fuld leverance, "kredit sat

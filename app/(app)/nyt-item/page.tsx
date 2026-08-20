@@ -11,6 +11,12 @@ import { vinted } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { FarveVaelger } from "@/components/farve-vaelger";
 import { stoerrelsesGrupperFor } from "@/lib/data/vinted-kriterier";
+import {
+  STANDARD_VISNING_ID,
+  VISNINGS_TYPER,
+  eksempelBillede,
+  type VisningsTypeId,
+} from "@/lib/pipeline/visninger";
 import { komprimerFoto } from "@/lib/upload/compress";
 
 type Rolle = "full" | "back" | "label" | "defect";
@@ -22,10 +28,10 @@ const FOTO_ROLLER: Rolle[] = ["full", "back"];
 
 type FotoTilstand = { blob: Blob; forhaandsvisning: string };
 
-// Wizard-trin (ejer-ordre 2026-08-20: flere sider, tøjdel først — overskueligt
-// og brugervenligt): 1 vælg del · 2 fotos · 3 detaljer · 4 tjek og send.
-type Trin = 1 | 2 | 3 | 4;
-const SIDSTE_TRIN: Trin = 4;
+// Wizard-trin (ejer-ordrer 2026-08-20): 1 vælg del · 2 fotos · 3 detaljer ·
+// 4 vælg billeder (med eksempler — INGEN auto-generering) · 5 tjek og send.
+type Trin = 1 | 2 | 3 | 4 | 5;
+const SIDSTE_TRIN: Trin = 5;
 
 export default function NytItem() {
   const router = useRouter();
@@ -40,6 +46,9 @@ export default function NytItem() {
   const [farver, setFarver] = useState<string[]>([]);
   const [labelTekst, setLabelTekst] = useState("");
   const [koebspris, setKoebspris] = useState("");
+  const [visninger, setVisninger] = useState<VisningsTypeId[]>([
+    STANDARD_VISNING_ID,
+  ]);
   const [fejl, setFejl] = useState<string | null>(null);
   const [travl, setTravl] = useState(false);
   const kladdeId = useRef<string>(crypto.randomUUID());
@@ -64,7 +73,14 @@ export default function NytItem() {
     1: kategori.trim().length > 0,
     2: Boolean(fotos.full),
     3: Boolean(maerke.trim() && stoerrelse.trim() && stand),
-    4: true,
+    4: visninger.length > 0,
+    5: true,
+  };
+
+  const skiftVisning = (id: VisningsTypeId) => {
+    setVisninger((v) =>
+      v.includes(id) ? v.filter((x) => x !== id) : [...v, id],
+    );
   };
 
   async function vaelgFoto(rolle: Rolle, fil: File | undefined) {
@@ -114,6 +130,10 @@ export default function NytItem() {
       setFejl(da.nytItem.fejlFelterMangler);
       return;
     }
+    if (visninger.length === 0) {
+      setFejl(da.nytItem.fejlVisningMangler);
+      return;
+    }
 
     setTravl(true);
     try {
@@ -135,6 +155,7 @@ export default function NytItem() {
           farve: farver.length > 0 ? farver.join(", ") : undefined,
           labelTekst: labelTekst || undefined,
           koebsprisDkk: koebspris ? Number(koebspris) : undefined,
+          visninger,
           fotos: uploads,
         }),
       });
@@ -164,7 +185,7 @@ export default function NytItem() {
           {da.nytItem.trinAf(trin, SIDSTE_TRIN)}
         </p>
         <div className="mt-2 flex gap-1.5" aria-hidden="true">
-          {[1, 2, 3, 4].map((n) => (
+          {[1, 2, 3, 4, 5].map((n) => (
             <span
               key={n}
               className={`h-1 flex-1 rounded-stram transition-colors duration-300 ease-out ${
@@ -375,10 +396,68 @@ export default function NytItem() {
         </section>
         ) : null}
 
-        {/* Trin 4 · Tjek og send */}
+        {/* Trin 4 · Vælg billeder (ejer-ordre 20/8): INGEN auto-generering —
+            brugeren vælger selv visningerne, med eksempler og tydelig pris */}
         {trin === 4 ? (
+          <section aria-label={da.nytItem.visningTitel}>
+            <SektionsMarkoer nr={4} titel={da.nytItem.visningTitel} />
+            <p className="mt-2 max-w-laesbar text-detalje text-tekst/70">
+              {da.nytItem.visningHjaelp}
+            </p>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              {VISNINGS_TYPER.map((type) => {
+                const aktiv = visninger.includes(type.id);
+                return (
+                  <button
+                    key={type.id}
+                    type="button"
+                    aria-pressed={aktiv}
+                    onClick={() => skiftVisning(type.id)}
+                    className={`kort-klik overflow-hidden p-0 text-left transition-colors duration-150 ease-out ${
+                      aktiv ? "border-gran" : ""
+                    }`}
+                  >
+                    <div className="relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={eksempelBillede(type.id, kategori)}
+                        alt={da.nytItem.visningEksempelAlt(type.navn)}
+                        className="aspect-[4/5] w-full object-cover"
+                        loading="lazy"
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={`absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border text-detalje font-bold ${
+                          aktiv
+                            ? "border-gran bg-gran text-kalk"
+                            : "border-kant bg-baggrund/90 text-tekst/40"
+                        }`}
+                      >
+                        ✓
+                      </span>
+                    </div>
+                    <div className="p-3">
+                      <p className={`font-medium ${aktiv ? "text-gran" : ""}`}>
+                        {type.navn}
+                      </p>
+                      <p className="mt-0.5 text-detalje text-tekst/70">
+                        {type.beskrivelse}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-4 font-mono text-detalje font-bold text-tekst/80">
+              {da.nytItem.visningAntal(visninger.length)}
+            </p>
+          </section>
+        ) : null}
+
+        {/* Trin 5 · Tjek og send — genereringen starter FØRST ved klik her */}
+        {trin === 5 ? (
           <section aria-label={da.nytItem.opsummeringTitel}>
-            <SektionsMarkoer nr={4} titel={da.nytItem.opsummeringTitel} />
+            <SektionsMarkoer nr={5} titel={da.nytItem.opsummeringTitel} />
             <p className="mt-2 max-w-laesbar text-detalje text-tekst/70">
               {da.nytItem.opsummeringHjaelp}
             </p>
@@ -392,6 +471,12 @@ export default function NytItem() {
                   [
                     da.nytItem.fotoTitel,
                     `${Object.keys(fotos).length} af ${FOTO_ROLLER.length}`,
+                  ],
+                  [
+                    da.nytItem.visningLabel,
+                    VISNINGS_TYPER.filter((t) => visninger.includes(t.id))
+                      .map((t) => t.navn)
+                      .join(", "),
                   ],
                   [da.nytItem.fejlLabel, fejlTekst || "—"],
                 ] as const
@@ -443,13 +528,19 @@ export default function NytItem() {
               {da.nytItem.naeste}
             </Button>
           ) : (
-            <Button
-              type="submit"
-              travl={travl}
-              className="ml-auto w-full py-4 font-display text-titel font-semibold sm:w-auto sm:px-8"
-            >
-              {travl ? da.nytItem.uploader : da.nytItem.lavAnnonce}
-            </Button>
+            <div className="ml-auto flex w-full flex-col items-stretch gap-1.5 sm:w-auto sm:items-end">
+              <Button
+                type="submit"
+                travl={travl}
+                className="w-full py-4 font-display text-titel font-semibold sm:w-auto sm:px-8"
+              >
+                {travl ? da.nytItem.uploader : da.nytItem.lavAnnonce}
+              </Button>
+              {/* Prisen står lige ved knappen — intet trækkes før leverance */}
+              <span className="text-center font-mono text-detalje text-tekst/70 sm:text-right">
+                {da.nytItem.visningAntal(visninger.length)}
+              </span>
+            </div>
           )}
         </div>
       </form>

@@ -6,6 +6,7 @@
 import { misbrugsvaern } from "@/lib/config";
 import {
   refunderOnModel,
+  traekEkstraVisning,
   traekLevering,
   traekRegenerering,
   type LedgerDb,
@@ -20,6 +21,11 @@ import { findMarkedsinterval } from "./markedspriser";
 import { genererOnModelMedTroskab } from "./onmodel";
 import { STANDARD_PRESET_ID, hentPreset } from "./presets";
 import { byggPromptVersion } from "./skabeloner";
+import {
+  STANDARD_VISNING_ID,
+  hentVisningsType,
+  type VisningsType,
+} from "./visninger";
 
 export class BudgetloftFejl extends Error {
   constructor() {
@@ -29,7 +35,14 @@ export class BudgetloftFejl extends Error {
 
 export type PipelineResultat = {
   rensede: RensetFoto[];
+  /** Første vellykkede visning — bevaret for eksisterende kald */
   visualisering: { sti: string; fidelityScore: number } | null;
+  /** Alle valgte visninger med udfald (ejer-ordre 20/8: brugeren vælger selv) */
+  visualiseringer: {
+    visningId: string;
+    sti: string;
+    fidelityScore: number;
+  }[];
   tekst: AnnonceTekst;
   totalCostDkk: number;
   saldoEfter: number;
@@ -80,15 +93,17 @@ async function visualiseringsTrin(
   item: ItemTilPipeline,
   referenceUrl: string,
   presetId: string,
+  visning?: VisningsType,
 ): Promise<{ sti: string; fidelityScore: number; costDkk: number } | null> {
   const preset = hentPreset(presetId);
-  // Sammensat version (FR-15/S31): preset + skabelon + hjem, bygget af samme
-  // deterministiske valg som prompten — så pass-rate kan slices pr. version.
+  // Sammensat version (FR-15/S31): preset + skabelon + hjem (+ valgt visning),
+  // bygget af samme deterministiske valg som prompten.
   const promptVersion = byggPromptVersion({
     preset,
     kategori: item.kategori,
     userId: item.userId,
     hjemAnker: item.hjemAnker,
+    visning,
   });
   const genId = await deps.db.startGenerering(item.id, "onmodel", presetId);
   const udfald = await genererOnModelMedTroskab({
@@ -100,6 +115,7 @@ async function visualiseringsTrin(
     userId: item.userId,
     kategori: item.kategori,
     hjemAnker: item.hjemAnker,
+    visning,
   });
 
   if (!udfald.billede) {
@@ -258,6 +274,8 @@ export async function koerItemPipeline(
   deps: PipelineAfhaengigheder,
   itemId: string,
   presetId: string = STANDARD_PRESET_ID,
+  /** Brugerens valgte visninger (ejer-ordre 20/8); uden valg = spejlbilledet */
+  visningIds?: readonly string[],
 ): Promise<PipelineResultat> {
   // Kill-switch: globalt dagligt budgetloft (E-5)
   const dagensForbrug = await deps.db.dagensOmkostningerDkk();
@@ -266,6 +284,14 @@ export async function koerItemPipeline(
   }
 
   const item = await deps.db.hentItem(itemId);
+  const visninger = (
+    visningIds?.length ? visningIds : [STANDARD_VISNING_ID]
+  )
+    .map(hentVisningsType)
+    .filter((v): v is VisningsType => v !== undefined);
+  if (visninger.length === 0) {
+    visninger.push(hentVisningsType(STANDARD_VISNING_ID)!);
+  }
 
   // Trin 1: rens (alle fotos parallelt)
   const rensede = await rensTrin(deps, item);
@@ -274,31 +300,58 @@ export async function koerItemPipeline(
       (f) => item.fotos.find((i) => i.id === f.fotoId)?.rolle === "full",
     ) ?? rensede[0]!;
 
-  // Trin 2+3 parallelt: visualisering og annoncetekst (NFR-3)
-  const [visualisering, tekst] = await Promise.all([
-    visualiseringsTrin(deps, item, helhed.rensetUrl, presetId),
+  // Trin 2+3 parallelt: alle valgte visninger og annonceteksten (NFR-3)
+  const [tekst, ...visningsUdfald] = await Promise.all([
     tekstTrin(deps, item),
+    ...visninger.map((visning) =>
+      visualiseringsTrin(deps, item, helhed.rensetUrl, presetId, visning).then(
+        (resultat) => ({ visning, resultat }),
+      ),
+    ),
   ]);
+  type Vellykket = {
+    visning: VisningsType;
+    resultat: { sti: string; fidelityScore: number; costDkk: number };
+  };
+  const vellykkede = visningsUdfald.filter(
+    (u): u is Vellykket => u.resultat !== null,
+  );
 
-  // Leverance: kredit trækkes i samme flow som item markeres leveret (E-3).
-  // Fejler visualiseringen, leveres rens + tekst, og kreditten refunderes (B-6).
+  // Leverance: basiskreditten dækker rens + tekst + FØRSTE billede (E-3).
+  // Hvert ekstra vellykket billede koster 1 kredit (ejer: 1 kredit = 1 billede)
+  // og trækkes kun ved succes. Lykkes INGEN billeder, refunderes basiskreditten
+  // og rens + tekst leveres alligevel (B-6).
   await deps.db.markerLeveret(item.id);
   let saldo = await traekLevering(deps.ledger, item.userId, item.id);
-  const refunderet = visualisering === null;
+  const refunderet = vellykkede.length === 0;
   if (refunderet) {
     saldo = await refunderOnModel(deps.ledger, item.userId, item.id);
+  }
+  for (const ekstra of vellykkede.slice(1)) {
+    saldo = await traekEkstraVisning(
+      deps.ledger,
+      item.userId,
+      item.id,
+      ekstra.visning.id,
+    );
   }
 
   const totalCost =
     rensede.reduce((sum, f) => sum + f.costDkk, 0) +
-    (visualisering?.costDkk ?? 0) +
+    visningsUdfald.reduce((sum, u) => sum + (u.resultat?.costDkk ?? 0), 0) +
     tekst.costDkk;
 
+  const foerste = vellykkede[0]?.resultat ?? null;
   return {
     rensede,
-    visualisering: visualisering
-      ? { sti: visualisering.sti, fidelityScore: visualisering.fidelityScore }
+    visualisering: foerste
+      ? { sti: foerste.sti, fidelityScore: foerste.fidelityScore }
       : null,
+    visualiseringer: vellykkede.map((u) => ({
+      visningId: u.visning.id,
+      sti: u.resultat.sti,
+      fidelityScore: u.resultat.fidelityScore,
+    })),
     tekst,
     totalCostDkk: totalCost,
     saldoEfter: saldo,

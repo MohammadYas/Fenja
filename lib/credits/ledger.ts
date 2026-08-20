@@ -62,6 +62,9 @@ export const noegler = {
   // så Stripes gentagne leveringsforsøg aldrig giver dobbelt kvote
   abonnement: (fakturaRef: string) => `abo:${fakturaRef}`,
   levering: (itemId: string) => `levering:${itemId}`,
+  // Ejer-ordre 20/8: 1 kredit pr. billede — hver EKSTRA valgt visning ud over
+  // den første trækkes for sig, idempotent pr. (item, visningstype)
+  visning: (itemId: string, visningId: string) => `visning:${itemId}:${visningId}`,
   refundOnModel: (itemId: string) => `refund-onmodel:${itemId}`,
   // B-8: nøglen er requestId (mintet af API-routen), så genkørsler af samme
   // regenerering aldrig koster dobbelt
@@ -204,6 +207,24 @@ export async function refunderKlage(
     delta: kreditter.prisPrAnnonce,
     reason: "refund",
     idempotencyKey: noegler.klage(klageId),
+  });
+  if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
+  return resultat.saldo;
+}
+
+/** Ejer-ordre 20/8: træk for en vellykket EKSTRA visning (billede 2+) —
+ *  1 kredit pr. billede, kun ved succes, idempotent pr. (item, visningstype) */
+export async function traekEkstraVisning(
+  db: LedgerDb,
+  userId: string,
+  itemId: string,
+  visningId: string,
+): Promise<number> {
+  const resultat = await db.tilfoejKreditter({
+    userId,
+    delta: -kreditter.prisPrAnnonce,
+    reason: "delivery",
+    idempotencyKey: noegler.visning(itemId, visningId),
   });
   if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
   return resultat.saldo;

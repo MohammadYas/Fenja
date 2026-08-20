@@ -21,6 +21,7 @@
 // Alt er deterministisk (ingen Math.random/Date.now) — retries er stabile.
 
 import type { Preset } from "./presets";
+import type { VisningsType } from "./visninger";
 
 export type KategoriSkabelon = {
   id: string;
@@ -283,6 +284,13 @@ const FOTOSTIL =
   "natural wrinkles. Indistinguishable from a real photo a private seller took " +
   "at home with their phone.";
 
+// Produkt-visninger (uden person): samme troskabskrav, formuleret om tøjet selv
+const PRODUKT_REFERENCE_INSTRUKS =
+  "The image shows EXACTLY the garment from the reference image — preserve its " +
+  "print, graphics, colour, material, cut, length and every visible detail " +
+  "precisely; invent, remove or 'improve' nothing, and keep visible wear and " +
+  "flaws where they are. No person appears in the image.";
+
 const NEGATIV_LISTE =
   "Avoid: any text, logos or watermarks beyond the garment's own; face " +
   "retouching; changing the garment's fit; extra accessories; deformed or extra " +
@@ -312,16 +320,38 @@ export function bygOnModelPromptMedSkabelon(args: {
   kategori?: string | null;
   /** Sælgerens selvvalgte hjem-id (S31); ukendt/tomt → det deterministiske */
   hjemAnker?: string | null;
+  /** Brugerens valgte visningstype (ejer-ordre 20/8); uden = deterministisk framing */
+  visning?: VisningsType;
 }): string {
   const skabelon = vaelgSkabelon(args.kategori);
   const sted = args.userId
     ? hentHjemSted(vaelgHjemMedValg(args.userId, args.hjemAnker), args.preset)
     : args.preset.setting;
 
+  // Produkt-visninger (gulv/bøjle/nærbillede): ingen person i billedet —
+  // reference-troskaben og fotostilen er de samme som on-model (C-2 gælder)
+  if (args.visning && args.visning.slags === "produkt") {
+    return [
+      PRODUKT_REFERENCE_INSTRUKS,
+      `Framing: ${args.visning.framing}.`,
+      `Location: ${sted}.`,
+      skabelon.fokus,
+      FOTOSTIL,
+      NEGATIV_LISTE,
+    ].join(" ");
+  }
+
+  // On-model: brugerens spejl-valg tager skabelonens spejl-framing (indeks 0 —
+  // alle skabeloner har spejlbilledet først); uden valg roteres deterministisk
+  const framing =
+    args.visning?.slags === "onmodel"
+      ? skabelon.visninger[0]!
+      : vaelgVisning(skabelon, args.itemId);
+
   return [
     REFERENCE_INSTRUKS,
     `The person is ${vaelgPersonAnkerEngelsk(args.itemId)} — an anonymous person, never a recognizable or real person; the face is always hidden by the phone or cropped out of frame.`,
-    `Framing: ${vaelgVisning(skabelon, args.itemId)}.`,
+    `Framing: ${framing}.`,
     `Location: ${sted}.`,
     skabelon.fokus,
     FOTOSTIL,
@@ -342,6 +372,7 @@ export function byggPromptVersion(args: {
   kategori?: string | null;
   userId?: string;
   hjemAnker?: string | null;
+  visning?: VisningsType;
 }): string {
   const tags = [
     `${args.preset.id}@v${args.preset.version}`,
@@ -349,6 +380,9 @@ export function byggPromptVersion(args: {
   ];
   if (args.userId) {
     tags.push(hjemVersionsTag(vaelgHjemMedValg(args.userId, args.hjemAnker)));
+  }
+  if (args.visning) {
+    tags.push(`${args.visning.id}@v${args.visning.version}`);
   }
   return tags.join(" ");
 }

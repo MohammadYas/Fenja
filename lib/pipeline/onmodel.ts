@@ -8,6 +8,7 @@ import type { TextProvider } from "@/lib/providers/text";
 import { tjekTroskab } from "./fidelity";
 import { hentPreset } from "./presets";
 import { bygOnModelPromptMedSkabelon } from "./skabeloner";
+import type { VisningsType } from "./visninger";
 
 export type OnModelUdfald = {
   /** null når troskaben ikke kunne opnås — rens + tekst leveres alligevel */
@@ -35,6 +36,8 @@ export async function genererOnModelMedTroskab(args: {
   kategori?: string | null;
   /** Sælgerens selvvalgte hjem-id (S31); ukendt/tomt → det deterministiske */
   hjemAnker?: string | null;
+  /** Brugerens valgte visningstype (ejer-ordre 20/8) */
+  visning?: VisningsType;
 }): Promise<OnModelUdfald> {
   const preset = hentPreset(args.presetId);
   const prompt = bygOnModelPromptMedSkabelon({
@@ -43,6 +46,7 @@ export async function genererOnModelMedTroskab(args: {
     userId: args.userId,
     kategori: args.kategori,
     hjemAnker: args.hjemAnker,
+    visning: args.visning,
   });
   const vaegte = [cfg.normalReferenceVaegt, cfg.strammereReferenceVaegt];
 

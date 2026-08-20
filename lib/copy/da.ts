@@ -202,6 +202,19 @@ export const da = {
       "Du har ingen kreditter tilbage. Fyld op eller vælg et abonnement under Kreditter.",
     fejlRateLimit: "Du har nået dagens grænse for nye annoncer. Prøv igen i morgen.",
     fejlUpload: "Et foto kunne ikke uploades. Tjek forbindelsen og prøv igen.",
+    // Ejer-ordre 20/8: brugeren vælger selv hvilke billeder der genereres —
+    // med eksempler, tydelig pris og en eksplicit opret-knap (ingen auto-start)
+    visningTitel: "Hvilke billeder skal laves?",
+    visningHjaelp:
+      "Vælg et eller flere. 1 kredit pr. billede, og kreditten trækkes først, når billedet er leveret. Eksemplerne viser stilen; dit eget tøj og foto styrer resultatet.",
+    visningEksempelAlt: (navn: string) =>
+      `Eksempel på "${navn}" — genereret med Selja`,
+    visningAntal: (n: number) =>
+      n === 1 ? "1 billede · 1 kredit" : `${n} billeder · ${n} kreditter`,
+    visningLabel: "Billeder",
+    fejlVisningMangler: "Vælg mindst ét billede.",
+    fejlForFaaKreditter: (n: number) =>
+      `Du skal bruge ${n} kreditter til ${n} billeder. Fyld op, eller vælg færre billeder.`,
   },
   resultat: {
     titelArbejder: "Din annonce er på vej",
@@ -210,10 +223,14 @@ export const da = {
       "Du behøver ikke vente her. Annoncen bliver færdig i baggrunden, og du finder den på oversigten.",
     batchKnap: "Fotografér det næste imens",
     trin: {
-      cleanup: "Renser billeder",
-      onmodel: "Laver visualisering",
+      cleanup: "Renser dine fotos",
+      onmodel: "Laver de valgte billeder",
       text: "Skriver annoncetekst",
     },
+    // Ejer-ordre 20/8: tydeligere fremdrift på "på vej"-siden
+    procentFaerdig: (p: number) => `${p} % færdig`,
+    trinBilledTaeller: (faerdige: number, alle: number) =>
+      `${faerdige} af ${alle}`,
     trinVenter: "venter",
     trinIGang: "i gang",
     trinFaerdig: "færdig",

@@ -98,13 +98,14 @@ export default async function ItemSide({
 
   const fotos = item.item_photos as FotoRaekke[];
   const generings = item.generations as GenereringRaekke[];
-  // Nyeste først: en regenerering (B-8) skal vinde over originalen
-  const visualiseringSti =
-    [...generings]
-      .sort((a, b) => b.created_at.localeCompare(a.created_at))
-      .find((g) => g.kind === "onmodel" && g.status === "succeeded")
-      ?.output_url ?? null;
-  const visualiseringFejlede = !visualiseringSti;
+  // Ejer-ordre 20/8: brugeren vælger flere visninger — vis ALLE vellykkede
+  // billeder, nyeste først (en regenerering lægger sig forrest)
+  const visualiseringStier = [...generings]
+    .sort((a, b) => b.created_at.localeCompare(a.created_at))
+    .filter((g) => g.kind === "onmodel" && g.status === "succeeded")
+    .map((g) => g.output_url)
+    .filter((url): url is string => url !== null);
+  const visualiseringFejlede = visualiseringStier.length === 0;
 
   const rensedeMedUrl = (
     await Promise.all(
@@ -116,7 +117,9 @@ export default async function ItemSide({
         })),
     )
   ).filter((f) => f.visUrl);
-  const visualiseringUrl = await signeretUrl(visualiseringSti);
+  const visualiseringUrls = (
+    await Promise.all(visualiseringStier.map(signeretUrl))
+  ).filter((url): url is string => url !== null);
 
   return (
     <main className="py-6">
@@ -175,23 +178,28 @@ export default async function ItemSide({
             <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
               {da.resultat.visualiseringForklaring}
             </p>
-            <figure className="mt-3 max-w-xs">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={visualiseringUrl!}
-                alt={`Visualisering: tøjet båret af en genereret person. ${da.resultat.visualiseringBadge}`}
-                className="w-full rounded-bloed border border-kant"
-              />
-              <figcaption className="mt-1">
-                <a
-                  href={visualiseringUrl!}
-                  download
-                  className="text-detalje text-primaer underline underline-offset-4"
-                >
-                  {da.resultat.downloadFoto}
-                </a>
-              </figcaption>
-            </figure>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              {visualiseringUrls.map((url, i) => (
+                <figure key={url}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt={`Visualisering ${i + 1}: genereret billede af tøjet. ${da.resultat.visualiseringBadge}`}
+                    className="w-full rounded-bloed border border-kant"
+                    loading={i > 1 ? "lazy" : undefined}
+                  />
+                  <figcaption className="mt-1">
+                    <a
+                      href={url}
+                      download
+                      className="text-detalje text-primaer underline underline-offset-4"
+                    >
+                      {da.resultat.downloadFoto}
+                    </a>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </>
         )}
       </section>

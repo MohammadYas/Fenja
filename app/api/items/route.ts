@@ -8,6 +8,7 @@ import {
   SupabasePipelineDb,
   SupabasePipelineStorage,
 } from "@/lib/pipeline/supabase-db";
+import { normaliserVisningsvalg } from "@/lib/pipeline/visninger";
 import { hentImageProvider, hentTextProvider } from "@/lib/providers";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
@@ -24,6 +25,8 @@ type NytItemKrop = {
   labelTekst?: string;
   farve?: string;
   presetId?: string;
+  /** Ejer-ordre 20/8: brugeren vælger selv hvilke billeder der genereres */
+  visninger?: string[];
   fotos: { rolle: string; sti: string }[];
 };
 
@@ -76,11 +79,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ fejl: da.nytItem.fejlRateLimit }, { status: 429 });
   }
 
+  // Visningsvalg (ejer-ordre 20/8): 1 kredit pr. billede; mindst ét kræves
+  const visninger = normaliserVisningsvalg(krop.visninger ?? ["spejl"]);
+  if (visninger.length === 0) {
+    return NextResponse.json({ fejl: da.nytItem.fejlVisningMangler }, { status: 400 });
+  }
+
   // Saldo-tjek før start — kreditter trækkes først ved leverance (E-3)
   const ledger = new SupabaseLedgerDb(service);
   const saldo = await ledger.hentSaldo(user.id);
-  if (saldo < 1) {
-    return NextResponse.json({ fejl: da.nytItem.fejlIngenKreditter }, { status: 402 });
+  if (saldo < visninger.length) {
+    return NextResponse.json(
+      {
+        fejl:
+          visninger.length > 1
+            ? da.nytItem.fejlForFaaKreditter(visninger.length)
+            : da.nytItem.fejlIngenKreditter,
+      },
+      { status: 402 },
+    );
   }
 
   const basisItem = {
@@ -126,17 +143,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ fejl: fotoFejl.message }, { status: 500 });
   }
 
-  await startPipeline(item.id as string, presetId);
+  await startPipeline(item.id as string, presetId, visninger.map((v) => v.id));
 
   return NextResponse.json({ itemId: item.id });
 }
 
 // Med Trigger.dev-nøgle køres jobbet dér (G-3); uden nøgle (lokal dev/mock)
 // køres pipelinen i baggrunden i processen — mock-providers er hurtige.
-async function startPipeline(itemId: string, presetId: string): Promise<void> {
+async function startPipeline(
+  itemId: string,
+  presetId: string,
+  visninger: string[],
+): Promise<void> {
   if (process.env.TRIGGER_SECRET_KEY) {
     const { tasks } = await import("@trigger.dev/sdk");
-    await tasks.trigger("item-pipeline", { itemId, presetId });
+    await tasks.trigger("item-pipeline", { itemId, presetId, visninger });
     return;
   }
   const service = opretServiceKlient();
@@ -150,6 +171,7 @@ async function startPipeline(itemId: string, presetId: string): Promise<void> {
     },
     itemId,
     presetId,
+    visninger,
   ).catch((fejl) => {
     console.error(`Pipeline fejlede for item ${itemId}:`, fejl);
   });
