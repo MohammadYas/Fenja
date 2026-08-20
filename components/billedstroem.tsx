@@ -24,18 +24,7 @@ function Raekke({
     const spor = sporRef.current;
     if (!spor) return;
 
-    let pauset = false;
-    const pause = () => {
-      pauset = true;
-    };
-    const genoptag = () => {
-      pauset = false;
-    };
-    spor.addEventListener("pointerenter", pause);
-    spor.addEventListener("pointerleave", genoptag);
-    spor.addEventListener("focusin", pause);
-    spor.addEventListener("focusout", genoptag);
-
+    // Ejer-ordre 2026-08-20: ingen pause ved hover — strømmen kører konstant
     const FART_PX_PR_SEK = retning === "venstre" ? 28 : 22;
     let position = 0;
     let sidst = performance.now();
@@ -45,7 +34,7 @@ function Raekke({
       const dt = (nu - sidst) / 1000;
       sidst = nu;
       const halv = spor.scrollWidth / 2;
-      if (halv > 0 && !pauset && !document.hidden) {
+      if (halv > 0 && !document.hidden) {
         position = (position + FART_PX_PR_SEK * dt) % halv;
         const x = retning === "venstre" ? -position : position - halv;
         spor.style.transform = `translateX(${x}px)`;
@@ -54,13 +43,7 @@ function Raekke({
     };
     raf = requestAnimationFrame(trin);
 
-    return () => {
-      cancelAnimationFrame(raf);
-      spor.removeEventListener("pointerenter", pause);
-      spor.removeEventListener("pointerleave", genoptag);
-      spor.removeEventListener("focusin", pause);
-      spor.removeEventListener("focusout", genoptag);
-    };
+    return () => cancelAnimationFrame(raf);
   }, [retning]);
 
   return (

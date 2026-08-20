@@ -24,10 +24,11 @@ export const da = {
     konto: "Konto",
     logInd: "Log ind",
     logUd: "Log ud",
+    // Ejer-ordre 2026-08-20: tælleordet er kreditter, ikke annoncer
     saldo: (antal: number) =>
       antal === 1
-        ? "1 annonce tilbage"
-        : `${formaterKreditTal(antal)} annoncer tilbage`,
+        ? "1 kredit tilbage"
+        : `${formaterKreditTal(antal)} kreditter tilbage`,
   },
   logInd: {
     titel: "Log ind eller opret dig",
@@ -118,6 +119,29 @@ export const da = {
     titel: "Nyt item",
     forklaring:
       "Tag 2–4 fotos, udfyld 4 felter, og få en færdig annonce på cirka 2 minutter.",
+    // Wizard (ejer-ordre 2026-08-20: flere sider, tøjdel vælges først)
+    trinAf: (n: number, total: number) => `Trin ${n} af ${total}`,
+    tilbage: "Tilbage",
+    naeste: "Næste",
+    delTitel: "Hvad sælger du?",
+    delHjaelp: "Vælg typen — så rammer billeder og tekst rigtigt fra start.",
+    dele: [
+      "Jeans",
+      "Bukser",
+      "Shorts",
+      "T-shirt",
+      "Striktrøje",
+      "Hoodie & sweatshirt",
+      "Skjorte",
+      "Kjole",
+      "Nederdel",
+      "Jakke & frakke",
+      "Taske",
+      "Andet",
+    ],
+    opsummeringTitel: "Tjek og send",
+    opsummeringHjaelp:
+      "Et hurtigt kig, før Selja går i gang — kreditten trækkes først, når annoncen er leveret.",
     fotoTitel: "Fotos",
     roller: {
       full: {
@@ -271,10 +295,11 @@ export const da = {
   },
   kreditter: {
     titel: "Kreditter",
+    // Ejer-ordre 2026-08-20: tælleordet er kreditter (1 kredit = 1 billede)
     forklaring:
-      "1 kredit = 1 færdig annonce. Kreditter trækkes først, når annoncen er leveret — fejler visualiseringen, får du kreditten tilbage.",
+      "1 kredit = 1 billede. Kreditter trækkes først, når annoncen er leveret — fejler visualiseringen, får du kreditten tilbage.",
     saldoNu: (antal: number) => `Du har ${formaterKreditTal(antal)} tilbage.`,
-    pakkeNavn: (antal: number) => `Selja · ${antal} annoncer`,
+    pakkeNavn: (antal: number) => `Selja · ${antal} kreditter`,
     // Pakkenavne (pricing v3.0) — id'erne fra lib/config.ts
     pakkeNavne: {
       proev: "Prøv",
@@ -283,10 +308,10 @@ export const da = {
       "fyld-op": "Fyld op",
     } as Record<string, string>,
     anbefalet: "Anbefalet",
-    pakkeLinje: (antal: number, pris: number) => `${antal} annoncer · ${pris} kr.`,
-    pakkeAntal: (antal: number) => `${antal} annoncer`,
+    pakkeLinje: (antal: number, pris: number) => `${antal} kreditter · ${pris} kr.`,
+    pakkeAntal: (antal: number) => `${antal} kreditter`,
     pakkePris: (pris: number) => `${pris} kr.`,
-    prisPrStk: (kr: string) => `${kr} kr. pr. annonce`,
+    prisPrStk: (kr: string) => `${kr} kr. pr. kredit`,
     koeb: "Køb",
     koebSucces: "Betalingen gik igennem. Kreditterne står på din saldo om et øjeblik.",
     koebAfbrudt: "Betalingen blev afbrudt. Der er ikke trukket noget.",
@@ -306,13 +331,17 @@ export const da = {
     udloebNote: "Kreditter gælder 12 måneder fra køb.",
     udloebNaeste: (antal: number, dato: string) =>
       antal === 1
-        ? `1 af dine annoncer udløber ${dato}.`
-        : `${formaterKreditTal(antal)} af dine annoncer udløber ${dato}.`,
+        ? `1 af dine kreditter udløber ${dato}.`
+        : `${formaterKreditTal(antal)} af dine kreditter udløber ${dato}.`,
     // Top-up-kortet — vises kun når saldoen er lav. Konkret, intet pres.
     topUp: {
       titel: "Fyld op",
-      linje: (antal: number, pris: number) => `${antal} annoncer mere · ${pris} kr.`,
-      forklaring: "Din saldo er lav. Samme kreditter som pakkerne — uden binding.",
+      linje: (antal: number, pris: number) => `${antal} kreditter mere · ${pris} kr.`,
+      forklaring:
+        "Din kvote er brugt. Fyld op med det samme — din månedskvote kommer stadig som normalt.",
+      // Ejer-ordre 2026-08-20: top-up er kun for abonnenter
+      kunAbonnenter:
+        "Fyld op er for abonnenter. Vælg et abonnement, så er du i gang.",
     },
   },
   fejlsider: {
@@ -331,14 +360,15 @@ export const da = {
     // Ejer-ordre 2026-08-16: abonnement er standardvejen; top-up kun når man
     // er løbet tør. Leadet sælger abonnementet, ikke pakkerne.
     lead: "Vælg et abonnement, der passer til dit flow. Kvoten fyldes hver måned — og løber du tør, fylder du bare op. Alle priser er med moms.",
-    stempel: "1 kredit = 1 annonce",
+    stempel: "1 kredit = 1 billede",
     pakkerTitel: "Kreditpakker",
     // Abonnementer (pricing v3.0, S36) — standardvejen; købes md./år
     abonnement: {
       titel: "Abonnementer",
-      // Ejer-ordre 2026-08-20: kvoten omtales som fotosæt (billeder), ikke
-      // annoncer — indpakket så det frister ("færdige fotosæt").
-      lead: "Kvoten fyldes hver måned, og ubrugte fotosæt følger med til næste måned.",
+      // Ejer-ordre 2026-08-20: kvoten omtales som billeder, ikke annoncer —
+      // men indpakket ("looks"). IKKE "fotosæt": 1 kredit = 1 billede, så
+      // "sæt" ville love for meget (ejer-korrektion).
+      lead: "Kvoten fyldes hver måned, og ubrugte looks følger med til næste måned.",
       stempel: "Uden binding",
       periodeMd: "Månedligt",
       periodeAar: "Årligt",
@@ -349,8 +379,8 @@ export const da = {
       navne: { plus: "Plus", pro: "Pro" } as Record<string, string>,
       prMd: "pr. måned",
       prisPrAar: (pris: number) => `eller ${pris} kr. pr. år — to måneder sparet`,
-      annoncerPrMd: (antal: number) => `${antal} færdige fotosæt hver måned`,
-      lavestePris: "Lavest pris pr. fotosæt",
+      annoncerPrMd: (antal: number) => `${antal} færdige looks hver måned`,
+      lavestePris: "Lavest pris pr. look",
       faellesTitel: "Med i begge",
       faelles: ["Salgsstatistik", "Prioriteret kø — dine annoncer laves først"],
       funktioner: {
@@ -367,8 +397,8 @@ export const da = {
     saadanTitel: "Sådan virker kreditter",
     punkter: [
       {
-        overskrift: "1 kredit = 1 færdig annonce",
-        tekst: "Rensede billeder, mærket visualisering og annoncetekst — alt sammen for én kredit.",
+        overskrift: "1 kredit = 1 billede",
+        tekst: "Renset foto, mærket visualisering og annoncetekst — alt sammen for én kredit.",
       },
       {
         overskrift: "Du betaler først ved levering",
@@ -444,6 +474,50 @@ export const da = {
     ctaNote: "Gode billeder og en ærlig tekst er det, der flytter prisen.",
     cta: "Gør din annonce klar på 2 minutter",
     presetNote: "Tryk på en søgning og se beregnerens bud mod den ægte median.",
+    // Pris-slider: prøv din egen pris mod markedslejet
+    sliderLabel: "Prøv din egen pris",
+    sliderVaerdi: (kr: number) => `${kr} kr.`,
+    zoner: {
+      hurtig: "Skarpt sat — her sælger den typisk hurtigst.",
+      balance: "God balance mellem pris og ventetid.",
+      taalmodig: "Fair pris — men regn med at vente lidt længere.",
+      over: "Over markedslejet — kræver perfekte billeder og det rigtige match.",
+    } as Record<string, string>,
+    // Titel-generator: gratis smagsprøve på søgbare titler
+    titelTitel: "Få en søgbar titel",
+    titelLead:
+      "Vinted-søgningen finder kun det, der står i titlen. Skriv mærket, og få en titel der bliver fundet.",
+    titelMaerke: "Mærke",
+    titelMaerkePladsholder: "fx Ganni",
+    titelFarve: "Farve (valgfri)",
+    titelFarvePladsholder: "fx grøn",
+    titelStoerrelse: "Størrelse (valgfri)",
+    titelStoerrelsePladsholder: "fx S eller W28",
+    titelKopier: "Kopiér titlen",
+    // Kategori-tips
+    tipsTitel: "Sælg den hurtigere",
+    // Salgsplan: anbefalet startpris + nedsættelses-tidslinje
+    planTitel: "Din salgsplan",
+    planStart: (kr: number) =>
+      `Start på ${kr} kr. — det er nemmere at sætte ned end op.`,
+    planUge2: (kr: number) => `Ikke solgt efter en uge? Sæt den til ${kr} kr.`,
+    planUge3: (kr: number) =>
+      `Stadig ikke solgt? ${kr} kr. rammer de hurtige købere.`,
+    planGebyr:
+      "Vinted tager intet gebyr fra sælgere — du får hele beløbet udbetalt.",
+    // Foto-tjekliste (spejler appens fire foto-roller)
+    tjekTitel: "Klar til at fotografere?",
+    tjekPunkter: [
+      "Helheden — hele varen i dagslys",
+      "Bagsiden",
+      "Label med størrelse og materiale",
+      "Fejl og slid, tæt på",
+    ],
+    tjekKlar: "Du har alt, Selja skal bruge.",
+    // Slut-henvisning til Selja (ejer-ordre: værktøjet skal ende i Selja)
+    seljaTitel: "Lad Selja gøre resten",
+    seljaTekst:
+      "Upload dine 2–4 fotos — Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag. Klar til Vinted på cirka 2 minutter.",
   },
   landing: {
     // v6 (ejer-beslutning 2026-08-15): forsiden fører med B2B — UGC-annoncer,

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { vinted } from "@/lib/copy/vinted";
 
 // Anmeldelses-billedet i heroen (EJER-ORDRE 2026-08-20: skal være et BILLEDE,
 // klippet som screenshots — ikke en kodet komponent). Genskabt 1:1 fra
@@ -17,6 +18,9 @@ export function Anmeldelser() {
         sizes="(min-width: 1024px) 640px, 100vw"
         className="w-full rounded-bloed border border-kant"
       />
+      <figcaption className="mt-2 text-detalje text-tekst/70">
+        {vinted.anmeldelser.undertekst}
+      </figcaption>
     </figure>
   );
 }

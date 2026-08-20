@@ -87,6 +87,67 @@ export function beregnPris(
   };
 }
 
+/** Zone-feedback til pris-slideren: hvor ligger brugerens pris ift. lejet? */
+export type PrisZone = "hurtig" | "balance" | "taalmodig" | "over";
+
+export function prisZone(prisDkk: number, estimat: PrisEstimat): PrisZone {
+  if (prisDkk < estimat.fraDkk) return "hurtig";
+  if (prisDkk <= estimat.medianDkk) return "balance";
+  if (prisDkk <= estimat.tilDkk) return "taalmodig";
+  return "over";
+}
+
+/** Søgbar Vinted-titel: mærke + type + evt. farve + evt. størrelse (C-krav:
+ *  titler skal være søgbare — samme regel som appens annonce-titler) */
+export function bygTitel(input: {
+  kategori: Kategori;
+  maerke: string;
+  farve?: string;
+  stoerrelse?: string;
+}): string {
+  const type = KATEGORIER.find((k) => k.id === input.kategori)?.navn ?? "";
+  const dele = [
+    `${input.maerke.trim()} ${type.toLowerCase()}`.trim(),
+    input.farve?.trim() || null,
+    input.stoerrelse?.trim() ? `str. ${input.stoerrelse.trim()}` : null,
+  ].filter(Boolean);
+  return dele.join(" · ");
+}
+
+/** Kategori-specifikke salgstips — ærlige, konkrete, ingen løfter */
+export const SALGSTIPS: Record<Kategori, string[]> = {
+  striktroeje: [
+    "Fotografér strikken tæt, så masker og kvalitet kan ses",
+    "Mål brystvidden og skriv den i beskrivelsen",
+    "Nævn materialet fra vaskemærket — uld sælger bedre end 'strik'",
+  ],
+  kjole: [
+    "Vis kjolen båret eller på bøjle i fuld længde",
+    "Skriv længden i cm — 'midi' betyder noget forskelligt for alle",
+    "Nævn om stoffet er gennemsigtigt eller kræver underkjole",
+  ],
+  jeans: [
+    "Mål livvidde og indvendig benlængde i cm",
+    "Vis pasformen båret — det er den, der sælger jeans",
+    "Skriv W/L-størrelsen i titlen, det søger folk på",
+  ],
+  jakke: [
+    "Fotografér i dagslys — mørkt overtøj drukner indenfor",
+    "Vis lynlås, knapper og for tæt på",
+    "Skriv skulderbredden ved oversized snit",
+  ],
+  sneakers: [
+    "Vis slid på sål og hæl ærligt — det sparer retur-bøvl",
+    "Rens dem før fotografering; det kan være 100 kr. værd",
+    "Tag et billede af størrelsesmærket indvendigt",
+  ],
+  taske: [
+    "Vis hjørner og hank tæt på — det er dér, slid ses",
+    "Tag et billede af indersiden",
+    "Mål bredde × højde og skriv det i beskrivelsen",
+  ],
+};
+
 /** Høst-søgningerne som presets, så toplisterne kan udfylde beregneren */
 export const HOEST_PRESETS: Record<
   string,

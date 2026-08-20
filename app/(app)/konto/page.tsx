@@ -3,6 +3,7 @@ import { da } from "@/lib/copy/da";
 import { HJEM, hentHjem, vaelgHjem } from "@/lib/pipeline/skabeloner";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { HjemVaelger } from "./hjem-vaelger";
+import { LogUdKnap } from "./log-ud-knap";
 import { SletKonto } from "./slet-konto";
 
 export const metadata = { title: `${da.konto.titel} · ${da.site.navn}` };
@@ -68,6 +69,10 @@ export default async function Konto() {
             </dd>
           </div>
         </dl>
+        {/* Ejer-ordre 2026-08-20: log ud skal være nemt at finde på Konto */}
+        <div className="mt-4 border-t border-kant pt-4">
+          <LogUdKnap />
+        </div>
       </Card>
 
       <Card className="mt-6">

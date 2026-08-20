@@ -4,71 +4,82 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import type { KatalogBillede } from "@/lib/copy/katalog-billeder";
 
-// "Tøjet vist båret" som slides (ejer-ordre 2026-08-20): alle katalogbilleder
-// kører rundt i et loopende slideshow — ét kort ad gangen hvert par sekunder,
-// tilbage til start efter sidste. Native scroll-snap, så man også kan swipe/
-// scrolle selv; auto-kørslen pauser ved hover/fokus/berøring og respekterer
-// prefers-reduced-motion (så er den en almindelig manuel slider).
+// "Tøjet vist båret" som glidende slide (ejer-ordrer 2026-08-20): alle
+// katalogbilleder kører i én kontinuerlig, sømløs glidning — trin-skift
+// hakkede (ejer-feedback). Fremdriften er rAF-drevet transform (immun mod
+// forced reduced motion og Chromes drop af native smooth-scroll uden for
+// viewportet); IntersectionObserver holder pause off-screen. Sporet består
+// af to identiske halvdele → sømløs løkke. Pause ved hover/fokus/berøring.
 export function BilledSlides({ billeder }: { billeder: KatalogBillede[] }) {
-  const ref = useRef<HTMLUListElement>(null);
+  const sporRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
-    const spor = ref.current;
+    const spor = sporRef.current;
     if (!spor) return;
-    // EJER-ORDRE 2026-08-20: slidesene kører ALTID — også ved OS-niveau
-    // "reduceret bevægelse" (ejeren kunne ellers ikke se dem køre).
-    // Bevidst afvigelse fra reduced-motion-gaten; registreret i STATUS.
 
-    let pauset = false;
-    const saetPause = (vaerdi: boolean) => () => {
-      pauset = vaerdi;
-    };
-    spor.addEventListener("pointerenter", saetPause(true));
-    spor.addEventListener("pointerleave", saetPause(false));
-    spor.addEventListener("focusin", saetPause(true));
-    spor.addEventListener("focusout", saetPause(false));
-    spor.addEventListener("touchstart", saetPause(true), { passive: true });
-    spor.addEventListener("touchend", saetPause(false));
+    // Ejer-ordre 2026-08-20: ingen pause ved hover — sliden kører konstant
+    let synlig = true;
+    const observer = new IntersectionObserver((poster) => {
+      synlig = poster[0]?.isIntersecting ?? true;
+    });
+    observer.observe(spor);
 
-    const interval = window.setInterval(() => {
-      if (pauset || document.hidden) return;
-      const kort = spor.firstElementChild as HTMLElement | null;
-      if (!kort) return;
-      const trin = kort.offsetWidth + 16; // kortbredde + gap (spacing.4)
-      const vedEnden =
-        spor.scrollLeft + spor.clientWidth >= spor.scrollWidth - trin / 2;
-      if (vedEnden) {
-        spor.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        spor.scrollBy({ left: trin, behavior: "smooth" });
+    const FART_PX_PR_SEK = 34;
+    let position = 0;
+    let sidst = performance.now();
+    let raf = 0;
+    const trin = (nu: number) => {
+      const dt = (nu - sidst) / 1000;
+      sidst = nu;
+      const halv = spor.scrollWidth / 2;
+      if (halv > 0 && synlig && !document.hidden) {
+        position = (position + FART_PX_PR_SEK * dt) % halv;
+        spor.style.transform = `translateX(${-position}px)`;
       }
-    }, 3000);
+      raf = requestAnimationFrame(trin);
+    };
+    raf = requestAnimationFrame(trin);
 
-    return () => window.clearInterval(interval);
+    return () => {
+      cancelAnimationFrame(raf);
+      observer.disconnect();
+    };
   }, []);
 
   return (
-    <ul
-      ref={ref}
-      className="slides mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto"
-      aria-label="Billedserie — kører automatisk, hold musen over for at pause"
-    >
-      {billeder.map((billede, i) => (
-        <li
-          key={billede.src}
-          className="w-40 flex-shrink-0 snap-start sm:w-48 md:w-56"
-        >
-          <Image
-            src={billede.src}
-            alt={billede.alt}
-            width={900}
-            height={1350}
-            sizes="(min-width: 768px) 224px, 176px"
-            loading={i < 6 ? "eager" : "lazy"}
-            className="w-full rounded-bloed border border-kant object-cover"
-          />
-        </li>
-      ))}
-    </ul>
+    <div className="stroem mt-6" aria-label="Billedserie — kører automatisk">
+      <ul ref={sporRef} className="stroem-spor">
+        {billeder.map((billede, i) => (
+          <li key={billede.src} className="slides-kort">
+            <Image
+              src={billede.src}
+              alt={billede.alt}
+              width={900}
+              height={1350}
+              sizes="224px"
+              loading={i < 6 ? "eager" : "lazy"}
+              className="h-full w-full rounded-bloed border border-kant object-cover"
+            />
+          </li>
+        ))}
+        {billeder.map((billede) => (
+          <li
+            key={`${billede.src}-dublet`}
+            className="slides-kort"
+            aria-hidden="true"
+          >
+            <Image
+              src={billede.src}
+              alt=""
+              width={900}
+              height={1350}
+              sizes="224px"
+              loading="lazy"
+              className="h-full w-full rounded-bloed border border-kant object-cover"
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

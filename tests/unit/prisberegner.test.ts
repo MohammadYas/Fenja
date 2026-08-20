@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { beregnPris, HOEST_PRESETS } from "@/lib/prisberegner";
+import { beregnPris, bygTitel, HOEST_PRESETS, prisZone } from "@/lib/prisberegner";
 import { hentPopulaere } from "@/lib/eksperimenter";
 
 // Prisberegneren er kalibreret mod markedshøsten: estimatet for hver
@@ -17,6 +17,24 @@ describe("prisberegner", () => {
     const slidt = beregnPris("jeans", "budget", "slidt");
     const ny = beregnPris("jeans", "designer", "nyMedMaerke");
     expect(ny.medianDkk).toBeGreaterThan(slidt.medianDkk);
+  });
+
+  it("pris-zoner dækker hele skalaen i rækkefølge", () => {
+    const e = beregnPris("kjole", "premium", "god");
+    expect(prisZone(e.fraDkk - 5, e)).toBe("hurtig");
+    expect(prisZone(e.medianDkk, e)).toBe("balance");
+    expect(prisZone(e.tilDkk, e)).toBe("taalmodig");
+    expect(prisZone(e.tilDkk + 5, e)).toBe("over");
+  });
+
+  it("bygger søgbare titler med og uden valgfrie felter", () => {
+    expect(
+      bygTitel({ kategori: "kjole", maerke: "Ganni", farve: "grøn", stoerrelse: "S" }),
+    ).toBe("Ganni kjole · grøn · str. S");
+    expect(bygTitel({ kategori: "jeans", maerke: "Weekday" })).toBe("Weekday jeans");
+    expect(bygTitel({ kategori: "sneakers", maerke: " Nike ", farve: "" })).toBe(
+      "Nike sneakers",
+    );
   });
 
   it("er kalibreret mod høstens medianer (±40 %)", () => {

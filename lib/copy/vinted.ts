@@ -58,11 +58,12 @@ export const vinted = {
         navn: "Jeans",
         foerBillede: "/eksempler/katalog/p17-foer-jeans.webp",
         foerAlt: "Sjusket aftenfoto af blå jeans smidt på en seng",
-        foerTekst: "blå jeans w28, gode",
+        foerTekst: "blå jeans w32, gode",
         foerPris: "80 kr.",
-        efterBillede: "/eksempler/katalog/p5-walkin-jeans.webp",
-        efterAlt: "Spejlfoto i dagslys med de mellemblå jeans båret",
-        efterTitel: "Mellemblå straight-leg jeans · W28",
+        // Ejer-ordre 20/8: jeans-eksemplet er en mand (p19)
+        efterBillede: "/eksempler/katalog/p19-efter-jeans-mand.webp",
+        efterAlt: "Spejlfoto i dagslys hvor en mand viser de mellemblå jeans båret",
+        efterTitel: "Mellemblå straight-leg jeans · W32",
         efterPris: "Prisforslag: 100–150 kr.",
       },
       {
@@ -81,6 +82,9 @@ export const vinted = {
   },
   billedserie: {
     titel: "Tøjet vist båret",
+    // Ejer-ordre 2026-08-20: synlig note om at serien er genereret — det er
+    // samtidig den AI-mærkning, lanceringen kræver (manifest §2.1.7/art. 50)
+    note: "Alle billeder i serien er genereret med Selja.",
   },
   // Ejer-ordre 2026-08-20: anmeldelses-blok i heroen. Illustrative eksempler
   // på Vinted-sælgerprofiler — ingen navne, ingen Selja-påstand i teksten.
@@ -88,6 +92,12 @@ export const vinted = {
     label: "Anmeldelser på Vinted",
     medlemmer: "Medlemmer",
     automatiske: "Automatiske",
+    // Ejeren bad om "det er fra vores brugere" — IKKE skrevet: tallene er
+    // genererede eksempler, og der findes ingen brugere endnu (fabrikeret
+    // proof ville være vildledende markedsføring). Ærlig formulering indtil
+    // ægte bruger-anmeldelser findes; så kan linjen skiftes her.
+    undertekst:
+      "Sådan bedømmes sælgere på Vinted — gode billeder og ærlige annoncer er vejen til stjernerne.",
   },
   saadan: {
     titel: "Sådan virker det",

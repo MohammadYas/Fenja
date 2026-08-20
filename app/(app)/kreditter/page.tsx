@@ -48,7 +48,10 @@ export default async function Kreditter({
       }
     : null;
 
-  const visTopUp = saldo <= kreditter.topUpVedSaldoHoejst;
+  // Ejer-ordre 2026-08-20: top-up er KUN for abonnenter (og kun ved lav saldo)
+  const { harAktivtAbonnement } = await import("@/lib/betaling/abonnement");
+  const erAbonnent = user?.email ? await harAktivtAbonnement(user.email) : false;
+  const visTopUp = erAbonnent && saldo <= kreditter.topUpVedSaldoHoejst;
 
   return (
     <main className="py-6">

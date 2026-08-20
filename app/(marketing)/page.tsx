@@ -79,6 +79,9 @@ export default function Forside() {
           >
             {vinted.billedserie.titel}
           </h2>
+          <p className="mt-2 text-detalje text-tekst/70">
+            {vinted.billedserie.note}
+          </p>
           <BilledSlides billeder={katalogBilleder} />
         </div>
       </section>
