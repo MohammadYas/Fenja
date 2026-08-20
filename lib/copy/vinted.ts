@@ -17,7 +17,7 @@ export const vinted = {
     tidsnote:
       "Selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
     knap: "Lav min annonce",
-    friktion: "Uden binding · kreditten trækkes først, når annoncen er leveret",
+    friktion: "Uden binding · fejler et billede, får du kreditten tilbage automatisk",
   },
   // Drømme-regnestykket: ægte høst-medianer, tydeligt mærket regneeksempel
   skabRegner: {

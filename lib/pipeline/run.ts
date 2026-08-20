@@ -5,9 +5,7 @@
 
 import { misbrugsvaern } from "@/lib/config";
 import {
-  refunderOnModel,
-  traekEkstraVisning,
-  traekLevering,
+  refunderVisning,
   traekRegenerering,
   type LedgerDb,
 } from "@/lib/credits/ledger";
@@ -317,23 +315,23 @@ export async function koerItemPipeline(
     (u): u is Vellykket => u.resultat !== null,
   );
 
-  // Leverance: basiskreditten dækker rens + tekst + FØRSTE billede (E-3).
-  // Hvert ekstra vellykket billede koster 1 kredit (ejer: 1 kredit = 1 billede)
-  // og trækkes kun ved succes. Lykkes INGEN billeder, refunderes basiskreditten
-  // og rens + tekst leveres alligevel (B-6).
+  // Kredit-flow (ejer-ordre 20/8): kreditterne er allerede RESERVERET ved
+  // oprettelsen (1 pr. valgt visning, idempotent — se reserverVisninger i
+  // opret-API'et). Her refunderes hvert FEJLET billede automatisk, idempotent
+  // pr. (item, visning) — så en genkørsel aldrig refunderer dobbelt, og
+  // vellykkede billeder aldrig bliver gratis. Rens + tekst leveres altid (B-6).
   await deps.db.markerLeveret(item.id);
-  let saldo = await traekLevering(deps.ledger, item.userId, item.id);
+  let saldo = await deps.ledger.hentSaldo(item.userId);
   const refunderet = vellykkede.length === 0;
-  if (refunderet) {
-    saldo = await refunderOnModel(deps.ledger, item.userId, item.id);
-  }
-  for (const ekstra of vellykkede.slice(1)) {
-    saldo = await traekEkstraVisning(
-      deps.ledger,
-      item.userId,
-      item.id,
-      ekstra.visning.id,
-    );
+  for (const udfald of visningsUdfald) {
+    if (udfald.resultat === null) {
+      saldo = await refunderVisning(
+        deps.ledger,
+        item.userId,
+        item.id,
+        udfald.visning.id,
+      );
+    }
   }
 
   const totalCost =

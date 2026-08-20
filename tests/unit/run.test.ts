@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { kreditter, misbrugsvaern } from "@/lib/config";
-import { registrerKoeb } from "@/lib/credits/ledger";
+import { registrerKoeb, reserverVisninger } from "@/lib/credits/ledger";
 import { MemoryLedgerDb } from "@/lib/credits/memory";
 
 // Gratis-tier er slået fra (ejer-beslutning) — testene seeder saldo via køb
@@ -39,6 +39,8 @@ async function opsaetning(mock: {
 describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
   it("fuld leverance: rens + visualisering + tekst, kredit trukket", async () => {
     const { deps, db, ledger } = await opsaetning();
+    // Ejer-ordre 20/8: kreditten reserveres ved oprettelsen (som API'et gør)
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl"]);
     const resultat = await koerItemPipeline(deps, "item-1");
 
     expect(resultat.rensede).toHaveLength(2);
@@ -57,6 +59,7 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
 
   it("delvis leverance (B-6): fejlet visualisering → rens+tekst leveres, kredit refunderes", async () => {
     const { deps, db, ledger } = await opsaetning({ onModelFejler: true });
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl"]);
     const resultat = await koerItemPipeline(deps, "item-1");
 
     expect(resultat.visualisering).toBeNull();
@@ -76,6 +79,8 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
 
   it("genkørsel trækker ikke dobbelt (E-4/NFR-10)", async () => {
     const { deps, ledger } = await opsaetning();
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl"]);
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl"]); // idempotent
     await koerItemPipeline(deps, "item-1");
     await koerItemPipeline(deps, "item-1"); // retry af hele jobbet
     expect(await ledger.hentSaldo("user-1")).toBe(

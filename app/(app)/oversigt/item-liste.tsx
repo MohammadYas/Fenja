@@ -31,19 +31,31 @@ export type ItemTilListe = {
 function MiniFremdrift({ itemId, startetAt }: { itemId: string; startetAt: string }) {
   const router = useRouter();
   const start = new Date(startetAt).getTime();
+  const [forventet, setForventet] = useState<number | undefined>(undefined);
+  const [fejlet, setFejlet] = useState(false);
   const [procent, setProcent] = useState(() =>
     Math.min(97, Math.round(psykologiskAndel(start, Date.now()) * 100)),
   );
 
   useEffect(() => {
     const puls = setInterval(() => {
-      setProcent(Math.min(97, Math.round(psykologiskAndel(start, Date.now()) * 100)));
+      setProcent(
+        Math.min(97, Math.round(psykologiskAndel(start, Date.now(), forventet) * 100)),
+      );
     }, 1000);
     const poll = setInterval(async () => {
       try {
         const svar = await fetch(`/api/items/${itemId}/status`);
         if (!svar.ok) return;
-        const data = (await svar.json()) as { leveret: boolean };
+        const data = (await svar.json()) as {
+          leveret: boolean;
+          fejlet: boolean;
+          forventetSekunder?: number;
+        };
+        // Samme sandhed som annoncesiden (ejer-ordre 20/8): "Kør igen" dér
+        // må aldrig stå ved siden af 93 % her
+        setFejlet(data.fejlet);
+        if (data.forventetSekunder) setForventet(data.forventetSekunder);
         if (data.leveret) {
           clearInterval(poll);
           router.refresh();
@@ -56,7 +68,15 @@ function MiniFremdrift({ itemId, startetAt }: { itemId: string; startetAt: strin
       clearInterval(puls);
       clearInterval(poll);
     };
-  }, [itemId, start, router]);
+  }, [itemId, start, router, forventet]);
+
+  if (fejlet) {
+    return (
+      <p className="font-mono text-detalje font-medium text-tekst/70">
+        {da.oversigt.gikIStaa}
+      </p>
+    );
+  }
 
   return (
     <div className="flex items-center gap-2" aria-label={da.oversigt.paaVej}>

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { da } from "@/lib/copy/da";
-import { psykologiskAndel } from "@/lib/fremdrift";
+import { forventetSekunder, psykologiskAndel } from "@/lib/fremdrift";
 
 type TrinStatus = "venter" | "running" | "succeeded" | "failed";
 type Trin = { kind: string; status: string };
@@ -11,19 +11,19 @@ type StatusSvar = {
   leveret: boolean;
   fejlet: boolean;
   startetAt: string | null;
+  forventetSekunder: number;
+  billeder: string[];
   trin: Trin[];
 };
 
-const TRIN_ORDEN = ["cleanup", "onmodel", "text"] as const;
+// Kun de trin brugeren skal forholde sig til (ejer-ordre 20/8: "renser dine
+// fotos" er væk — det er en teknikalitet)
+const TRIN_ORDEN = ["onmodel", "text"] as const;
 
-// Progress med reelle trin (B-4), gjort bulletproof (ejer-ordrer 20/8):
-// - Baren er psykologisk (altid fremad, hurtig start) og er forankret i
-//   annoncens FAKTISKE starttid fra serveren — luk siden, sluk telefonen,
-//   kom tilbage: kurven står hvor den skal, aldrig tilbage på 33 %.
-// - Polling poller straks, og fejlede polls backer af (2,5 s → 15 s) uden
-//   nogensinde at give op — et netudfald på nogle sekunder mærkes ikke.
-// - Er kørslen fejlet eller hængende (fx server-genstart), vises en tydelig
-//   genstart-knap i stedet for evig venten.
+// Progress med reelle trin (B-4), bulletproof + ærlig om tempoet (ejer-ordrer
+// 20/8): kurven er forankret i serverens starttid og skaleret efter antal
+// billeder (2-3 min pr. billede); færdige billeder vises LØBENDE, så snart
+// de er klar; fejlede/hængende kørsler får en genstart-knap.
 export function Progress({
   itemId,
   startetAt: startetAtProp,
@@ -34,14 +34,18 @@ export function Progress({
 }) {
   const router = useRouter();
   const [trin, setTrin] = useState<Trin[]>([]);
+  const [billeder, setBilleder] = useState<string[]>([]);
   const [fejlet, setFejlet] = useState(false);
   const [genstarter, setGenstarter] = useState(false);
   const startetAt = useRef<number | null>(
     startetAtProp ? new Date(startetAtProp).getTime() : null,
   );
   const faldbackStart = useRef<number>(Date.now());
+  const forventet = useRef<number>(forventetSekunder(1));
   const [tidsAndel, setTidsAndel] = useState(() =>
-    startetAt.current ? psykologiskAndel(startetAt.current, Date.now()) : 0,
+    startetAt.current
+      ? psykologiskAndel(startetAt.current, Date.now(), forventet.current)
+      : 0,
   );
 
   // Tidskurven (lib/fremdrift.ts): beregnet ud fra serverens starttid, så et
@@ -49,7 +53,7 @@ export function Progress({
   useEffect(() => {
     const puls = setInterval(() => {
       const start = startetAt.current ?? faldbackStart.current;
-      setTidsAndel(psykologiskAndel(start, Date.now()));
+      setTidsAndel(psykologiskAndel(start, Date.now(), forventet.current));
     }, 400);
     return () => clearInterval(puls);
   }, []);
@@ -68,12 +72,15 @@ export function Progress({
         if (!aktiv) return;
         pauseMs = 2500; // succes: tilbage til normal kadence
         setTrin(data.trin);
+        setBilleder(data.billeder ?? []);
         setFejlet(data.fejlet);
+        if (data.forventetSekunder) forventet.current = data.forventetSekunder;
         if (data.startetAt) {
           startetAt.current = new Date(data.startetAt).getTime();
-          // Med det samme — baren skal stå rigtigt fra første svar, ikke
-          // vente på næste puls (ejer-ordre 20/8)
-          setTidsAndel(psykologiskAndel(startetAt.current, Date.now()));
+          // Med det samme — baren skal stå rigtigt fra første svar
+          setTidsAndel(
+            psykologiskAndel(startetAt.current, Date.now(), forventet.current),
+          );
         }
         if (data.leveret) {
           router.refresh();
@@ -124,8 +131,8 @@ export function Progress({
     failed: da.resultat.trinFejlet,
   };
 
-  // Reel andel: hvert hovedtrin vejer 1/3; billedtrinnet skalerer med hvor
-  // mange af de valgte billeder der er færdige.
+  // Reel andel over de viste trin; billedtrinnet skalerer med hvor mange af
+  // de valgte billeder der er færdige.
   const reelAndel =
     TRIN_ORDEN.reduce((sum, kind) => {
       const raekker = raekkerFor(kind);
@@ -138,23 +145,46 @@ export function Progress({
     }, 0) / TRIN_ORDEN.length;
   const procent = Math.min(97, Math.round(Math.max(tidsAndel, reelAndel) * 100));
 
+  const faerdigeBilledeVisning = billeder.length > 0 && (
+    <div className="mt-6">
+      <p className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
+        {da.resultat.faerdigeBilleder(billeder.length)}
+      </p>
+      <div className="mt-2 grid grid-cols-2 gap-3">
+        {billeder.map((url, i) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={url}
+            src={url}
+            alt={`Færdigt billede ${i + 1}`}
+            className="w-full rounded-bloed border border-kant"
+          />
+        ))}
+      </div>
+    </div>
+  );
+
   if (fejlet) {
     return (
-      <div className="mt-6 rounded-bloed border border-kant bg-flade p-5">
-        <p className="max-w-laesbar font-display text-lead font-semibold">
-          {da.resultat.genoptagTitel}
-        </p>
-        <p className="mt-2 max-w-laesbar text-tekst/80">
-          {da.resultat.genoptagTekst}
-        </p>
-        <button
-          type="button"
-          onClick={genstart}
-          disabled={genstarter}
-          className="mt-4 inline-flex min-h-touch items-center rounded-bloed border border-koks px-5 font-medium disabled:opacity-50"
-        >
-          {genstarter ? da.resultat.genoptagArbejder : da.resultat.genoptagKnap}
-        </button>
+      <div className="mt-6">
+        <div className="rounded-bloed border border-kant bg-flade p-5">
+          <p className="max-w-laesbar font-display text-lead font-semibold">
+            {da.resultat.genoptagTitel}
+          </p>
+          <p className="mt-2 max-w-laesbar text-tekst/80">
+            {da.resultat.genoptagTekst}
+          </p>
+          <button
+            type="button"
+            onClick={genstart}
+            disabled={genstarter}
+            className="mt-4 inline-flex min-h-touch items-center rounded-bloed border border-koks px-5 font-medium disabled:opacity-50"
+          >
+            {genstarter ? da.resultat.genoptagArbejder : da.resultat.genoptagKnap}
+          </button>
+        </div>
+        {/* Allerede færdige billeder er ikke tabt — vis dem stadig */}
+        {faerdigeBilledeVisning}
       </div>
     );
   }
@@ -178,6 +208,10 @@ export function Progress({
           style={{ width: `${procent}%` }}
         />
       </div>
+      {/* Ærlig forventning (ejer-ordre 20/8): 2-3 min pr. billede */}
+      <p className="mt-2 max-w-laesbar text-detalje text-tekst/70">
+        {da.resultat.tidsForventning}
+      </p>
       <ol className="mt-5 flex flex-col gap-3">
         {TRIN_ORDEN.map((kind, i) => {
           const status = statusFor(kind);
@@ -214,6 +248,8 @@ export function Progress({
           );
         })}
       </ol>
+      {/* Billede 1 vises så snart det er klar (ejer-ordre 20/8) */}
+      {faerdigeBilledeVisning}
     </div>
   );
 }

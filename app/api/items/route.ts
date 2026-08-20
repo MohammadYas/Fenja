@@ -1,6 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { misbrugsvaern, upload, vinted } from "@/lib/config";
 import { da } from "@/lib/copy/da";
+import {
+  UtilstraekkeligSaldoFejl,
+  reserverVisninger,
+} from "@/lib/credits/ledger";
 import { SupabaseLedgerDb } from "@/lib/credits/supabase";
 import { STANDARD_PRESET_ID, PRESETS } from "@/lib/pipeline/presets";
 import { startPipeline } from "@/lib/pipeline/start";
@@ -93,7 +97,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ fejl: da.nytItem.fejlVisningMangler }, { status: 400 });
   }
 
-  // Saldo-tjek før start — kreditter trækkes først ved leverance (E-3)
+  // Saldo-tjek før noget oprettes (ejer-ordre 20/8: kreditterne RESERVERES
+  // ved start — selve trækket sker lige efter item-oprettelsen)
   const ledger = new SupabaseLedgerDb(service);
   const saldo = await ledger.hentSaldo(user.id);
   if (saldo < visninger.length) {
@@ -162,6 +167,30 @@ export async function POST(request: NextRequest) {
   );
   if (fotoFejl) {
     return NextResponse.json({ fejl: fotoFejl.message }, { status: 500 });
+  }
+
+  // RESERVATION (ejer-ordre 20/8): 1 kredit pr. valgt billede trækkes NU —
+  // idempotent pr. (item, visning), så retries aldrig trækker dobbelt. Man
+  // kan ikke spamme genereringer og afbryde uden at have betalt; fejlede
+  // billeder refunderes automatisk af pipelinen.
+  try {
+    await reserverVisninger(
+      ledger,
+      user.id,
+      item.id as string,
+      visninger.map((v) => v.id),
+    );
+  } catch (fejl) {
+    if (fejl instanceof UtilstraekkeligSaldoFejl) {
+      // Saldoen ændrede sig undervejs — ryd op og afvis ærligt
+      await service.from("item_photos").delete().eq("item_id", item.id);
+      await service.from("items").delete().eq("id", item.id);
+      return NextResponse.json(
+        { fejl: da.nytItem.fejlIngenKreditter },
+        { status: 402 },
+      );
+    }
+    throw fejl;
   }
 
   await startPipeline(item.id as string, presetId, visninger.map((v) => v.id));

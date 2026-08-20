@@ -28,14 +28,18 @@ export async function POST(
   // RLS: brugeren kan kun se sit eget item
   const { data: item } = await supabase
     .from("items")
-    .select("id, leveret_at, generations(status, created_at)")
+    .select("id, leveret_at, generations(kind, status, created_at)")
     .eq("id", id)
     .maybeSingle();
   if (!item) return NextResponse.json({ fejl: "findes ikke" }, { status: 404 });
   if (item.leveret_at) return NextResponse.json({ leveret: true });
 
   // Kører en generering lige nu, genstarter vi ikke oveni
-  const generinger = item.generations as { status: string; created_at: string }[];
+  const generinger = item.generations as {
+    kind?: string;
+    status: string;
+    created_at: string;
+  }[];
   const koererStadig = generinger.some(
     (g) =>
       g.status === "running" &&
@@ -43,6 +47,16 @@ export async function POST(
   );
   if (koererStadig) {
     return NextResponse.json({ fejl: da.resultat.genoptagKoerer }, { status: 409 });
+  }
+
+  // Misbrugsværn (ejer-ordre 20/8): genstart må ikke kunne spamme provider-
+  // API'erne — maks 4 kørsler pr. annonce (hver kørsel skriver én cleanup-række)
+  const antalKoersler = generinger.filter((g) => g.kind === "cleanup").length;
+  if (antalKoersler >= 4) {
+    return NextResponse.json(
+      { fejl: da.resultat.genoptagForMange },
+      { status: 429 },
+    );
   }
 
   const service = opretServiceKlient();

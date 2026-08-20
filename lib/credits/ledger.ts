@@ -62,9 +62,12 @@ export const noegler = {
   // så Stripes gentagne leveringsforsøg aldrig giver dobbelt kvote
   abonnement: (fakturaRef: string) => `abo:${fakturaRef}`,
   levering: (itemId: string) => `levering:${itemId}`,
-  // Ejer-ordre 20/8: 1 kredit pr. billede — hver EKSTRA valgt visning ud over
-  // den første trækkes for sig, idempotent pr. (item, visningstype)
+  // Ejer-ordre 20/8: kreditterne RESERVERES når genereringen sættes i gang —
+  // 1 kredit pr. valgt visning, idempotent pr. (item, visningstype). Fejler
+  // et billede, refunderes præcis dét (refundVisning). Ingen gratis API-spam.
   visning: (itemId: string, visningId: string) => `visning:${itemId}:${visningId}`,
+  refundVisning: (itemId: string, visningId: string) =>
+    `refund-visning:${itemId}:${visningId}`,
   refundOnModel: (itemId: string) => `refund-onmodel:${itemId}`,
   // B-8: nøglen er requestId (mintet af API-routen), så genkørsler af samme
   // regenerering aldrig koster dobbelt
@@ -212,9 +215,32 @@ export async function refunderKlage(
   return resultat.saldo;
 }
 
-/** Ejer-ordre 20/8: træk for en vellykket EKSTRA visning (billede 2+) —
- *  1 kredit pr. billede, kun ved succes, idempotent pr. (item, visningstype) */
-export async function traekEkstraVisning(
+/** Ejer-ordre 20/8: RESERVÉR kreditterne når genereringen sættes i gang —
+ *  1 kredit pr. valgt visning, idempotent pr. (item, visningstype). Kaster
+ *  UtilstraekkeligSaldoFejl hvis saldoen ikke rækker (intet er så trukket
+ *  ud over de allerede idempotente linjer). */
+export async function reserverVisninger(
+  db: LedgerDb,
+  userId: string,
+  itemId: string,
+  visningIds: readonly string[],
+): Promise<number> {
+  let saldo = await db.hentSaldo(userId);
+  for (const visningId of visningIds) {
+    const resultat = await db.tilfoejKreditter({
+      userId,
+      delta: -kreditter.prisPrAnnonce,
+      reason: "delivery",
+      idempotencyKey: noegler.visning(itemId, visningId),
+    });
+    if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
+    saldo = resultat.saldo;
+  }
+  return saldo;
+}
+
+/** Automatisk refusion af ét fejlet billede — idempotent pr. (item, visning) */
+export async function refunderVisning(
   db: LedgerDb,
   userId: string,
   itemId: string,
@@ -222,9 +248,9 @@ export async function traekEkstraVisning(
 ): Promise<number> {
   const resultat = await db.tilfoejKreditter({
     userId,
-    delta: -kreditter.prisPrAnnonce,
-    reason: "delivery",
-    idempotencyKey: noegler.visning(itemId, visningId),
+    delta: kreditter.prisPrAnnonce,
+    reason: "refund",
+    idempotencyKey: noegler.refundVisning(itemId, visningId),
   });
   if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
   return resultat.saldo;

@@ -151,7 +151,7 @@ export const da = {
       "Skriv materiale og evt. vask, fx \"100 % uld, vask ved 30°\". Valgfrit.",
     opsummeringTitel: "Tjek og send",
     opsummeringHjaelp:
-      "Et hurtigt kig, før Selja går i gang — kreditten trækkes først, når annoncen er leveret.",
+      "Et hurtigt kig, før Selja går i gang — kreditterne trækkes, når du trykker, og fejlede billeder refunderes automatisk.",
     fotoTitel: "Fotos",
     // Ejer-ordre 20/8: det skal være TYDELIGT at kun helhedsfotoet kræves
     fotoTitelHjaelp:
@@ -217,7 +217,7 @@ export const da = {
     // med eksempler, tydelig pris og en eksplicit opret-knap (ingen auto-start)
     visningTitel: "Hvilke billeder skal laves?",
     visningHjaelp:
-      "Vælg et eller flere. 1 kredit pr. billede, og kreditten trækkes først, når billedet er leveret. Eksemplerne viser stilen; dit eget tøj og foto styrer resultatet.",
+      "Vælg et eller flere. 1 kredit pr. billede — trækkes når du sætter i gang, og fejlede billeder refunderes automatisk. Eksemplerne viser stilen; dit eget tøj og foto styrer resultatet.",
     visningEksempelAlt: (navn: string) =>
       `Eksempel på "${navn}" — genereret med Selja`,
     visningAntal: (n: number) =>
@@ -244,10 +244,17 @@ export const da = {
     // Bulletproof (ejer-ordre 20/8): hængende/fejlet kørsel kan genstartes
     genoptagTitel: "Det tog længere end det skulle",
     genoptagTekst:
-      "Noget drillede undervejs. Der er ikke trukket nogen kreditter — tryk, så kører vi den igen med de samme valg.",
+      "Noget drillede undervejs. Tryk, så kører vi den igen med de samme valg — det koster ikke ekstra, og fejlede billeder refunderes automatisk.",
     genoptagKnap: "Kør igen",
     genoptagArbejder: "Genstarter …",
     genoptagKoerer: "Annoncen arbejder stadig — vent et øjeblik.",
+    genoptagForMange:
+      "Annoncen er kørt for mange gange. Anmod om kredit retur på annoncesiden, så kigger vi på den.",
+    // Ejer-ordrer 20/8: ærlig forventning + færdige billeder løbende
+    tidsForventning:
+      "Regn med 2–3 minutter pr. billede. De færdige billeder dukker op herunder, så snart de er klar — du kan roligt lukke siden imens.",
+    faerdigeBilleder: (n: number) =>
+      n === 1 ? "1 billede er klar" : `${n} billeder er klar`,
     trinBilledTaeller: (faerdige: number, alle: number) =>
       `${faerdige} af ${alle}`,
     trinVenter: "venter",
@@ -352,7 +359,7 @@ export const da = {
     titel: "Kreditter",
     // Ejer-ordre 2026-08-20: tælleordet er kreditter (1 kredit = 1 billede)
     forklaring:
-      "1 kredit = 1 billede. Kreditter trækkes først, når annoncen er leveret — fejler visualiseringen, får du kreditten tilbage.",
+      "1 kredit = 1 billede. Kreditterne trækkes, når du sætter genereringen i gang — fejler et billede, får du kreditten tilbage automatisk.",
     saldoNu: (antal: number) => `Du har ${formaterKreditTal(antal)} tilbage.`,
     pakkeNavn: (antal: number) => `Selja · ${antal} kreditter`,
     // Pakkenavne (pricing v3.0) — id'erne fra lib/config.ts
@@ -746,7 +753,7 @@ export const da = {
       {
         overskrift: "Kreditter og betaling",
         tekst: [
-          "1 kredit svarer til 1 leveret annonce. Kreditter trækkes først, når leverancen er færdig. Fejler visualiseringen, leverer vi resten og sætter kreditten for visualiseringen tilbage automatisk.",
+          "1 kredit svarer til 1 genereret billede. Kreditterne trækkes, når genereringen sættes i gang. Fejler et billede, leverer vi resten og sætter kreditten for det fejlede billede tilbage automatisk.",
           "Betaling sker via Stripe, som også sender din kvittering. Priserne er i danske kroner og inklusive moms. Købte kreditter gælder 12 måneder fra købsdatoen — udløbsdatoen vises på din kreditside.",
         ],
       },

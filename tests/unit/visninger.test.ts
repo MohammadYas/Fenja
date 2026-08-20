@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { kreditter } from "@/lib/config";
-import { registrerKoeb } from "@/lib/credits/ledger";
+import { registrerKoeb, reserverVisninger } from "@/lib/credits/ledger";
 import { MemoryLedgerDb } from "@/lib/credits/memory";
 import { koerItemPipeline } from "@/lib/pipeline/run";
 import {
@@ -53,6 +53,8 @@ describe("visningsvalg (ejer-ordre 20/8)", () => {
 
   it("tre valgte visninger giver tre onmodel-generinger og tre kreditter", async () => {
     const { deps, db, ledger } = await opsaetning();
+    // Reservation ved oprettelsen (ejer-ordre 20/8) — som API'et gør
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl", "gulv", "stativ"]);
     const resultat = await koerItemPipeline(deps, "item-1", undefined, [
       "spejl",
       "gulv",
@@ -73,6 +75,8 @@ describe("visningsvalg (ejer-ordre 20/8)", () => {
 
   it("genkørsel med flere visninger trækker ikke dobbelt (E-4)", async () => {
     const { deps, ledger } = await opsaetning();
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl", "gulv"]);
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl", "gulv"]); // retry
     await koerItemPipeline(deps, "item-1", undefined, ["spejl", "gulv"]);
     await koerItemPipeline(deps, "item-1", undefined, ["spejl", "gulv"]);
     expect(await ledger.hentSaldo("user-1")).toBe(
@@ -80,8 +84,9 @@ describe("visningsvalg (ejer-ordre 20/8)", () => {
     );
   });
 
-  it("fejler alle billeder, refunderes basiskreditten og intet ekstra trækkes", async () => {
+  it("fejler alle billeder, refunderes hele reservationen automatisk", async () => {
     const { deps, ledger } = await opsaetning({ onModelFejler: true });
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl", "gulv"]);
     const resultat = await koerItemPipeline(deps, "item-1", undefined, [
       "spejl",
       "gulv",
@@ -93,6 +98,7 @@ describe("visningsvalg (ejer-ordre 20/8)", () => {
 
   it("uden valg køres præcis ét billede (bagudkompatibelt)", async () => {
     const { deps, db, ledger } = await opsaetning();
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl"]);
     await koerItemPipeline(deps, "item-1");
     expect(db.generings.filter((g) => g.kind === "onmodel")).toHaveLength(1);
     expect(await ledger.hentSaldo("user-1")).toBe(

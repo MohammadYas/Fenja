@@ -176,6 +176,14 @@ export class SupabasePipelineStorage implements PipelineStorage {
   constructor(private klient: SupabaseClient) {}
 
   async hentBillede(url: string): Promise<Buffer> {
+    // Gemini leverer billeder som data-URLs — decode direkte. (Roden til
+    // "Download fejlede for data:image/…" 20/8: data-URL'en blev behandlet
+    // som storage-sti, og hele pipelinen væltede.)
+    if (url.startsWith("data:")) {
+      const komma = url.indexOf(",");
+      if (komma < 0) throw new Error("Ugyldig data-URL fra provider");
+      return Buffer.from(url.slice(komma + 1), "base64");
+    }
     // Egne storage-stier hentes via bucket; eksterne URLs (provider-output) via fetch
     if (!url.startsWith("http")) {
       const { data, error } = await this.klient.storage.from(BUCKET).download(url);
