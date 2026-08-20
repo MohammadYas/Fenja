@@ -20,9 +20,9 @@ export function byggLlmsTxt(): string {
   const priser = [
     ...abonnementer.tiers.map(
       (t) =>
-        `- ${da.priserSide.abonnement.navne[t.id]}: ${t.annoncerPrMd} billeder/md. — ${t.prisDkkPrMd} kr./md. eller ${t.prisDkkPrAar} kr./år`,
+        `- ${da.priserSide.abonnement.navne[t.id]}: ${t.annoncerPrMd} looks/md. — ${t.prisDkkPrMd} kr./md. eller ${t.prisDkkPrAar} kr./år`,
     ),
-    `- Top-up (kun ved tom saldo): ${kreditter.topUp.antal} billeder for ${kreditter.topUp.prisDkk} kr.`,
+    `- Top-up (kun ved tom saldo): ${kreditter.topUp.antal} looks for ${kreditter.topUp.prisDkk} kr.`,
   ].join("\n");
   const guides = hentGuides()
     .map((g) => `- [${g.titel}](${base}/laer/${g.slug}): ${g.beskrivelse}`)
@@ -41,7 +41,7 @@ ${trin}
 ${vintedBrug}
 
 ## Priser
-Abonnement er standardvejen — 1 kredit = 1 billede, kvoten fyldes hver måned, ubrugt kvote følger med. Uden binding. Løber man tør, findes en lille top-up. Kreditter gælder 12 måneder fra køb. Alle priser er med moms.
+Abonnement er standardvejen — 1 kredit = 1 færdig annonce, kvoten fyldes hver måned, ubrugt kvote følger med. Uden binding. Løber man tør, findes en lille top-up. Kreditter gælder 12 måneder fra køb. Alle priser er med moms.
 ${priser}
 
 ## Ærlighed og compliance
