@@ -190,6 +190,21 @@ export default function Forside() {
         </div>
       </section>
 
+      {/* Ærligheds-blokken genplaceret (MANGLER §4): rolig stribe efter det
+          mørke bånd — forklarer billede 1-reglen og mærkningen */}
+      <section className="border-b border-kant" aria-label={vinted.aerlighed.titel}>
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+          <Reveal>
+            <h2 className="font-display text-titel font-bold">
+              {vinted.aerlighed.titel}
+            </h2>
+            <p className="mt-3 max-w-laesbar text-tekst/80">
+              {vinted.aerlighed.tekst}
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
       {/* Lær-teaser: tre guides + vej til dem alle */}
       <section className="border-b border-kant" aria-labelledby="laer-titel">
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
@@ -255,6 +270,10 @@ export default function Forside() {
       <section aria-label={vinted.billedserie.titel}>
         <div className="py-14 md:py-16">
           <Billedstroem raekker={katalogRaekker} />
+          {/* Sleek AI-mærkning af strømmen (MANGLER §4/art. 50) */}
+          <p className="mt-4 px-4 text-center text-detalje text-tekst/60">
+            {vinted.billedserie.note}
+          </p>
         </div>
       </section>
     </main>

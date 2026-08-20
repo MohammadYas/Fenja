@@ -38,6 +38,9 @@ export const vinted = {
     foerLabel: "Før",
     efterLabel: "Efter · med Selja",
     vaelgerLabel: "Vælg eksempel",
+    // Sleek AI-mærkning (MANGLER §4, EU AI-forordning art. 50): én stille
+    // linje under panelet — samme greb som billedseriens note
+    maerkat: "Eksempel: alle billeder er genereret med Selja.",
     punkter: [
       "Rensede fotos, klar til Vinted",
       "Tøjet vist båret",
@@ -113,6 +116,13 @@ export const vinted = {
     // ægte bruger-anmeldelser findes; så kan linjen skiftes her.
     undertekst:
       "Sådan bedømmes sælgere på Vinted — gode billeder og ærlige annoncer er vejen til stjernerne.",
+  },
+  // Ærligheds-blokken genplaceret (MANGLER §4; original fra 14/8 omskrevet
+  // til Selja-æraen: ingen gratis-tier, mærkningen er de stille noter)
+  aerlighed: {
+    titel: "Ærlighed er hele idéen",
+    tekst:
+      "Vinted kræver, at billede 1 er dit eget foto af varen, og sådan leverer Selja det. Billeder med tøjet vist båret er genererede visualiseringer og står altid mærket som det, og oplyste fejl kommer med i beskrivelsen. Det beskytter din konto og dine handler.",
   },
   saadan: {
     titel: "Sådan virker det",

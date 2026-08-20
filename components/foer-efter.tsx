@@ -101,6 +101,10 @@ export function FoerEfter() {
           </p>
         </div>
       </div>
+      {/* Sleek AI-mærkning (MANGLER §4/art. 50): stille linje, ingen badge */}
+      <figcaption className="mt-2 text-detalje text-tekst/60">
+        {copy.maerkat}
+      </figcaption>
     </figure>
   );
 }
