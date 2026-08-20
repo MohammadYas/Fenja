@@ -1,6 +1,44 @@
 # STATUS
 Sidst opdateret: 2026-08-20 (eftermiddag) af Claude Code
 
+## Denne session (20/8 aften, runde 6) — TRE root causes + omsætnings-audit
+Ejeren sov; ordre: fiks alt, test e2e, angrib omsætningsdræbere.
+
+**Root causes fundet i rækkefølge (hver skjulte den næste):**
+1. Gemini data-URLs behandlet som storage-stier → cleanup væltede (runde 5).
+2. `generations.preset_id` er uuid, preset-id'er er tekst → HVER onmodel-
+   generering væltede ("invalid input syntax for type uuid"). Fix: kolonnen
+   skrives ikke (læses aldrig; preset står i prompt_version).
+3. Tekstvalideringen krævede størrelsen ORDRET i titlen — umuligt med
+   Vinted-formater ("EU 48 | W32") → hver leverance væltede på tekst-trinnet.
+   Fix: én størrelses-komponent som helt ord er nok ("W32", "38"); "Én
+   størrelse" undtaget; og mangler kun titel-elementer, repareres titlen
+   mekanisk i stedet for at vælte leverancen.
+
+**E2E-test:** kørt med seedet engangs-testbruger (ALDRIG ejerens konto —
+ejerens password i chatten SKAL roteres!) mod rigtige providers og cloud-DB;
+testdata ryddet op. Resultat står i chatten/nedenfor.
+
+**Nye features (ejer-ordrer):** genererings-frames med lysstrøg pr. valgt
+billede på "på vej"-siden; trin-listen byttet (01 tekst, 02 billeder);
+admin-klager viser ALT (genererede billeder, brugerens fotos, felter, fejl);
+kreditfejl i wizarden linker direkte til køb.
+
+**OMSÆTNINGS-AUDIT (hvad der dræber salg — prioriteret):**
+1. ⛔ **STRIPE_SECRET_KEY + WEBHOOK_SECRET mangler** → intet køb kan
+   gennemføres overhovedet. Omsætning = 0 uanset alt andet. (Ejer, 5 min.)
+2. ⛔ **Webhook-endpoint** ikke oprettet (kræver deploy) → selv med nøgler
+   krediteres køb aldrig.
+3. ⚠️ **Årsabonnement giver kun kvote i måned 1** (S37 mangler) — sælg IKKE
+   årsplaner før jobbet findes, ellers refusioner/vrede kunder.
+4. ⚠️ **Netlify env-vars** glemmes → produktionen kører demo-mode (intet
+   login, intet køb). Tjekliste i MANGLER §2.
+5. ⚠️ **TRIGGER_SECRET_KEY** — uden den dør kørsler ved genstart (genoptag
+   redder, men købte billeder forsinkes = klager).
+6. ✅ Fixet i dag: alle tre pipeline-dræbere (ingen leverance = ingen
+   gentagne køb), kredit-reservation (intet API-tab), auto-refusion
+   (tillid), købslink ved kreditfejl (konvertering).
+
 ## Denne session (20/8 eftermiddag, runde 5) — ROOT CAUSE + kredit-reservation
 - **ROOT CAUSE på "stuck → Kør igen" FUNDET OG FIXET:** Gemini leverer
   billeder som data-URLs; `hentBillede` behandlede dem som storage-stier →

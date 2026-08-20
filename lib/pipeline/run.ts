@@ -86,6 +86,23 @@ async function rensTrin(
   }
 }
 
+/**
+ * Referencen til billedprovideren SKAL være noget den kan læse (data-URL) —
+ * det rensede foto ligger som privat storage-STI, og et fetch på en sti
+ * kastede i BEGGE onmodel-forsøg (femte root cause, 20/8: derfor 0 billeder
+ * selv efter model-fixene). Bytes hentes via storage-laget og pakkes én gang.
+ */
+async function referenceTilProvider(
+  deps: PipelineAfhaengigheder,
+  stiEllerUrl: string,
+): Promise<string> {
+  if (stiEllerUrl.startsWith("data:") || stiEllerUrl.startsWith("http")) {
+    return stiEllerUrl;
+  }
+  const buffer = await deps.storage.hentBillede(stiEllerUrl);
+  return `data:image/jpeg;base64,${buffer.toString("base64")}`;
+}
+
 async function visualiseringsTrin(
   deps: PipelineAfhaengigheder,
   item: ItemTilPipeline,
@@ -251,7 +268,7 @@ export async function koerRegenerering(
     const visualisering = await visualiseringsTrin(
       deps,
       item,
-      helhed.rensetUrl ?? helhed.url,
+      await referenceTilProvider(deps, helhed.rensetUrl ?? helhed.url),
       opts.presetId ?? STANDARD_PRESET_ID,
     );
     if (!visualisering) throw new RegenVisualiseringFejl();
@@ -298,11 +315,13 @@ export async function koerItemPipeline(
       (f) => item.fotos.find((i) => i.id === f.fotoId)?.rolle === "full",
     ) ?? rensede[0]!;
 
-  // Trin 2+3 parallelt: alle valgte visninger og annonceteksten (NFR-3)
+  // Trin 2+3 parallelt: alle valgte visninger og annonceteksten (NFR-3).
+  // Referencen pakkes som data-URL én gang og deles af alle visninger.
+  const reference = await referenceTilProvider(deps, helhed.rensetUrl);
   const [tekst, ...visningsUdfald] = await Promise.all([
     tekstTrin(deps, item),
     ...visninger.map((visning) =>
-      visualiseringsTrin(deps, item, helhed.rensetUrl, presetId, visning).then(
+      visualiseringsTrin(deps, item, reference, presetId, visning).then(
         (resultat) => ({ visning, resultat }),
       ),
     ),

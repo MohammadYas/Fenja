@@ -29,6 +29,8 @@ export type MockOpsaetning = {
   labelTekst?: string | null;
   /** Cost pr. on-model-billede — Gate 1-trekampen spejler providernes skøn i mock */
   onModelCostDkk?: number;
+  /** Udelad størrelsen i titlen — tester titel-reparationen (20/8) */
+  titelUdenStoerrelse?: boolean;
 };
 
 export class MockImageProvider implements ImageProvider {
@@ -69,7 +71,9 @@ export class MockTextProvider implements TextProvider {
       : "";
     const materialeDel = input.labelTekst ? ` Materiale: ${input.labelTekst}.` : "";
     return {
-      titel: `${input.maerke} ${input.kategori} str. ${input.stoerrelse}`,
+      titel: this.opsaetning.titelUdenStoerrelse
+        ? `${input.maerke} ${input.kategori}`
+        : `${input.maerke} ${input.kategori} str. ${input.stoerrelse}`,
       beskrivelse:
         `Fin ${input.kategori.toLowerCase()} fra ${input.maerke} i størrelse ${input.stoerrelse}. ` +
         `Stand: ${input.stand}.${fejlDel}${materialeDel} Sender gerne med det samme.`,

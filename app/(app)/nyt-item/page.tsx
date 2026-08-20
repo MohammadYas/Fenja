@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { EksempelBagside, EksempelHelhed } from "@/components/foto-eksempler";
@@ -615,9 +616,20 @@ export default function NytItem() {
         ) : null}
 
         {fejl ? (
-          <p role="alert" className="text-detalje text-fejl">
-            {fejl}
-          </p>
+          <div role="alert" className="flex flex-col gap-2">
+            <p className="text-detalje text-fejl">{fejl}</p>
+            {/* Salgs-vej (ejer-ordre 20/8: intet må dræbe omsætning): mangler
+                kreditter, er købet ét tryk væk — ikke en instruks i prosa */}
+            {fejl === da.nytItem.fejlIngenKreditter ||
+            fejl.includes("kreditter til") ? (
+              <Link
+                href="/kreditter"
+                className="soem-link inline-flex min-h-touch items-center self-start font-medium text-primaer"
+              >
+                {da.nytItem.koebKreditterKnap} →
+              </Link>
+            ) : null}
+          </div>
         ) : null}
 
         {/* Navigation: Tilbage + Næste / stor afsend-knap på sidste trin */}

@@ -156,4 +156,50 @@ describe("annoncetekst-validering (D-1/D-2/D-4)", () => {
     expect(mangler).toContain("titel mangler mærke");
     expect(mangler).toContain("titel mangler størrelse");
   });
+
+  // 20/8: Vinted-størrelsesformater ("M / 38 / 10", "EU 48 | W32") gengives
+  // aldrig ordret af en LLM — én komponent som helt ord er nok
+  it("størrelses-tjekket forstår Vinted-formater (D-1)", () => {
+    const tekst = {
+      titel: "Ganni Striktrøje str. 38",
+      beskrivelse: "Har et lille hul ved venstre søm.",
+      soegeord: [],
+      prisforslagDkk: { fra: 80, til: 120 },
+      prisBegrundelse: "x",
+      costDkk: 0,
+    };
+    expect(
+      validerAnnonceTekst(tekst, { ...tekstInput, stoerrelse: "M / 38 / 10" }),
+    ).toEqual([]);
+    expect(
+      validerAnnonceTekst(
+        { ...tekst, titel: "Carhartt bukser W32" },
+        { ...tekstInput, maerke: "Carhartt", stoerrelse: "EU 48 | W32" },
+      ),
+    ).toEqual([]);
+    // "Én størrelse" behøver ikke stå i titlen
+    expect(
+      validerAnnonceTekst(
+        { ...tekst, titel: "Ganni taske" },
+        { ...tekstInput, kategori: "Taske", stoerrelse: "Én størrelse" },
+      ),
+    ).toEqual([]);
+    // "10" som del af "100 % uld" tæller IKKE (helords-match)
+    expect(
+      validerAnnonceTekst(
+        { ...tekst, titel: "Ganni trøje 100 % uld" },
+        { ...tekstInput, stoerrelse: "M / 38 / 10" },
+      ),
+    ).toContain("titel mangler størrelse");
+  });
+
+  it("titel-mangler repareres mekanisk i stedet for at vælte leverancen", async () => {
+    // Mock der aldrig skriver størrelsen i titlen
+    const provider = new MockTextProvider({ titelUdenStoerrelse: true });
+    const tekst = await genererValideretAnnonceTekst(provider, {
+      ...tekstInput,
+      stoerrelse: "EU 48 | W32",
+    });
+    expect(tekst.titel).toContain("str. EU 48 | W32");
+  });
 });

@@ -19,7 +19,9 @@ const DEEPSEEK_API = "https://api.deepseek.com/chat/completions";
 const GEMINI_API = "https://generativelanguage.googleapis.com/v1beta";
 
 const TEKST_MODEL = process.env.DEEPSEEK_TEKST_MODEL ?? "deepseek-chat";
-const VISION_MODEL = process.env.GEMINI_VISION_MODEL ?? "gemini-2.5-flash";
+// gemini-2.5-flash er nedlagt for nye brugere (HTTP 404, fundet 20/8 —
+// troskabstjekket kasserede derfor ALLE billeder); 3.6-flash er afløseren
+const VISION_MODEL = process.env.GEMINI_VISION_MODEL ?? "gemini-3.6-flash";
 
 // Skøn i kr. pr. kald — kalibreres i S12 (NFR-11). DeepSeek er markant
 // billigere end Claude; Gemini flash-vision ligger på samme lave niveau.

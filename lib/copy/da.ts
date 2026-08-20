@@ -206,6 +206,7 @@ export const da = {
     fejlFelterMangler: "Udfyld mærke, størrelse, stand og kategori.",
     fejlIngenKreditter:
       "Du har ingen kreditter tilbage. Fyld op eller vælg et abonnement under Kreditter.",
+    koebKreditterKnap: "Vælg abonnement og fortsæt",
     fejlRateLimit: "Du har nået dagens grænse for nye annoncer. Prøv igen i morgen.",
     fejlUpload: "Et foto kunne ikke uploades. Tjek forbindelsen og prøv igen.",
     // Bulletproof kladde (ejer-ordre 20/8)

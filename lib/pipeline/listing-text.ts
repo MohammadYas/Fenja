@@ -21,6 +21,28 @@ export function fejlErNaevnt(beskrivelse: string, fejlBeskrivelse: string): bool
   return fundet.length >= Math.ceil(ord.length / 2);
 }
 
+/**
+ * D-1: størrelsen tæller som nævnt, når ÉN af Vinted-formatets komponenter
+ * står i titlen som helt ord — "M / 38 / 10" matcher "str. M" eller "38",
+ * "EU 48 | W32" matcher "W32". (Fundet 20/8: kravet om hele strengen ordret
+ * væltede ALLE rigtige tekst-kørsler med de nye Vinted-størrelser.)
+ * "Én størrelse" behøver ikke stå i titlen.
+ */
+export function stoerrelseErNaevnt(titel: string, stoerrelse: string): boolean {
+  const s = normalisér(stoerrelse);
+  if (!s || s === "én størrelse" || s === "en størrelse") return true;
+  const t = normalisér(titel);
+  if (t.includes(s)) return true;
+  return s
+    .split(/[/|]/)
+    .map((del) => del.trim())
+    .filter(Boolean)
+    .some((del) => {
+      const escaped = del.replace(/[.*+?^${}()[\]\\]/g, "\\$&");
+      return new RegExp(`(^|[^a-zæøå0-9])${escaped}($|[^a-zæøå0-9])`).test(t);
+    });
+}
+
 export function validerAnnonceTekst(
   tekst: AnnonceTekst,
   input: AnnonceTekstInput,
@@ -30,7 +52,7 @@ export function validerAnnonceTekst(
 
   // D-1: søgbar titel — mærke + størrelse skal indgå
   if (!titel.includes(normalisér(input.maerke))) mangler.push("titel mangler mærke");
-  if (!titel.includes(normalisér(input.stoerrelse)))
+  if (!stoerrelseErNaevnt(tekst.titel, input.stoerrelse))
     mangler.push("titel mangler størrelse");
 
   // D-2: oplyste fejl skal fremgå af beskrivelsen — håndhævet, ikke valgfrit
@@ -55,15 +77,31 @@ export async function genererValideretAnnonceTekst(
   input: AnnonceTekstInput,
 ): Promise<AnnonceTekst> {
   let sidsteMangler: string[] = [];
+  let sidsteTekst: AnnonceTekst | null = null;
   let cost = 0;
 
   for (let forsoeg = 0; forsoeg < MAKS_FORSOEG; forsoeg++) {
     const tekst = await provider.genererAnnonceTekst(input);
     cost += tekst.costDkk;
+    sidsteTekst = tekst;
     sidsteMangler = validerAnnonceTekst(tekst, input);
     if (sidsteMangler.length === 0) {
       return { ...tekst, costDkk: cost };
     }
+  }
+
+  // Robusthed (20/8): mangler KUN titel-elementer, repareres titlen mekanisk
+  // i stedet for at vælte hele leverancen — D-1 opfyldes bogstaveligt, og
+  // brugeren mister aldrig billeder + beskrivelse på en titel-detalje.
+  if (
+    sidsteTekst &&
+    sidsteMangler.every((m) => m.startsWith("titel mangler"))
+  ) {
+    const dele = [sidsteTekst.titel.trim()];
+    if (sidsteMangler.includes("titel mangler mærke")) dele.unshift(input.maerke);
+    if (sidsteMangler.includes("titel mangler størrelse"))
+      dele.push(`str. ${input.stoerrelse}`);
+    return { ...sidsteTekst, titel: dele.join(" · "), costDkk: cost };
   }
 
   throw new Error(
