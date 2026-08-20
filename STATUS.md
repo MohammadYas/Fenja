@@ -1,5 +1,35 @@
 # STATUS
-Sidst opdateret: 2026-08-20 (morgen) af Claude Code (12-ordrers maratonrunde)
+Sidst opdateret: 2026-08-20 (formiddag) af Claude Code — SESSION AFSLUTTET TRYGT
+
+## EJERENS GØR-DETTE-LISTE (før test virker fuldt)
+1. **Kør SQL i Supabase-dashboardet** (SQL Editor → New query):
+   indholdet af `supabase/migrations/20260820010000_klager.sql` og
+   `20260820020000_label_farve.sql`, plus kredit-granten (SQL står i
+   chatten/nedenfor) — Claude blev blokeret af permission-klassifikatoren
+   på både Composio-SQL og kredit-script, så ejeren skal køre det:
+   `select public.tilfoej_kreditter(u.id, 100, 'purchase',
+   'test-grant:mohammadyassin26:2026-08-20', null, null, null)
+   from auth.users u where u.email = 'mohammadyassin26@hotmail.com';`
+2. Provider-nøgler (Gemini + DeepSeek, ejer-leveret i chat) ligger i
+   `.env.local` — genstart dev-serveren, så kører pipelinen ÆGTE providers.
+   Ejeren roterer nøglerne senere (delt i chat).
+3. Stripe secret/webhook-nøgler mangler stadig (MANGLER.md §1).
+
+## Denne session (20/8 formiddag) — drømme-forside + wizard-økonomi
+- **Drømme-pivot bygget (ejer-godkendt plan):** hero "Dit klædeskab er
+  penge værd" + friktionslinje; skab-regner (antal × ægte høst-median,
+  mærket regneeksempel); sticky mobil-CTA efter 600 px scroll; mellem-CTA
+  efter billedserien; prisgevinst-linje i før/efter; beregner-CTA'en
+  bruger brugerens egen vare + tal.
+- **Wizard-fotos (ejer-ordre, sparer tokens):** maks 2 fotos (helhed +
+  anden vinkel). Label + farve SKRIVES i trin 3 (`items.label_text`/
+  `color`, migration 20260820020000) og går direkte i tekstgenereringen;
+  foto-aflæsning af label er kun fallback for gamle items. API'et falder
+  tilbage til insert uden de nye kolonner, og pipelinen henter dem
+  fejltolerant — alt virker altså både FØR og EFTER migrationen er kørt.
+- **Kreditsiden:** abonnementet øverst (ejer-ordre); saldo/forklaring
+  flyttet under; tælleordet er kreditter.
+- 323 tests, lint + typecheck grønne. Forsiden verificeret i browser.
 
 ## Denne session (20/8 morgen) — tolv ejer-ordrer, alt leveret
 Fuld handoff. Alt er committet og pushet til main; **323 tests, lint +
