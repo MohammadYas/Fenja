@@ -137,11 +137,20 @@ async function tekstTrin(
 ): Promise<AnnonceTekst> {
   const genId = await deps.db.startGenerering(item.id, "text");
   try {
-    // Label aflæses når muligt og flettes ind (D-3)
+    // Ejer-ordre 20/8: sælgeren SKRIVER label-info og farve — det er gratis
+    // og præcist. Foto-aflæsning (D-3) er kun fallback for gamle items med
+    // label-foto og ingen skrevet tekst.
+    const skrevet =
+      [
+        item.farve ? `Farve: ${item.farve}` : null,
+        item.labelTekst?.trim() || null,
+      ]
+        .filter(Boolean)
+        .join(" · ") || null;
     const labelFoto = item.fotos.find((f) => f.rolle === "label");
-    let labelTekst: string | null = null;
+    let labelTekst: string | null = skrevet;
     let labelCost = 0;
-    if (labelFoto) {
+    if (!labelTekst && labelFoto) {
       try {
         const label = await deps.text.aflaesLabel({ labelFotoUrl: labelFoto.url });
         labelTekst = label.tekst;

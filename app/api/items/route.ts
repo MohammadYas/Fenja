@@ -20,6 +20,9 @@ type NytItemKrop = {
   kategori: string;
   fejlBeskrivelse?: string;
   koebsprisDkk?: number;
+  // Ejer-ordre 20/8: label og farve skrives — AI læser ikke label-fotos
+  labelTekst?: string;
+  farve?: string;
   presetId?: string;
   fotos: { rolle: string; sti: string }[];
 };
@@ -80,20 +83,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ fejl: da.nytItem.fejlIngenKreditter }, { status: 402 });
   }
 
-  const { data: item, error: itemFejl } = await service
+  const basisItem = {
+    user_id: user.id,
+    brand: krop.maerke.trim(),
+    size: krop.stoerrelse.trim(),
+    condition: krop.stand,
+    category: krop.kategori.trim(),
+    defects_text: krop.fejlBeskrivelse?.trim() || null,
+    purchase_price_dkk: krop.koebsprisDkk ?? null,
+    status: "draft",
+  };
+  let { data: item, error: itemFejl } = await service
     .from("items")
     .insert({
-      user_id: user.id,
-      brand: krop.maerke.trim(),
-      size: krop.stoerrelse.trim(),
-      condition: krop.stand,
-      category: krop.kategori.trim(),
-      defects_text: krop.fejlBeskrivelse?.trim() || null,
-      purchase_price_dkk: krop.koebsprisDkk ?? null,
-      status: "draft",
+      ...basisItem,
+      label_text: krop.labelTekst?.trim() || null,
+      color: krop.farve?.trim() || null,
     })
     .select("id")
     .single();
+  if (itemFejl && /label_text|color|column/i.test(itemFejl.message)) {
+    // Migration 20260820020000 er ikke kørt endnu — opret uden de nye felter,
+    // så leverancen aldrig blokeres af manglende kolonner
+    ({ data: item, error: itemFejl } = await service
+      .from("items")
+      .insert(basisItem)
+      .select("id")
+      .single());
+  }
   if (itemFejl || !item) {
     return NextResponse.json({ fejl: itemFejl?.message ?? "oprettelse fejlede" }, { status: 500 });
   }

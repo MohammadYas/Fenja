@@ -94,6 +94,11 @@ export function FoerEfter() {
           <p className="mt-3 font-mono text-detalje font-bold text-pris">
             {par.efterPris}
           </p>
+          {/* Pris-gevinsten gjort synlig (konverterings-plan 20/8) — vores
+              egne eksempeltal, FØR-prisen står lige ved siden af */}
+          <p className="mt-1 font-mono text-detalje text-ravDyb">
+            {par.foerPris} → {par.efterPris.replace("Prisforslag: ", "")}
+          </p>
         </div>
       </div>
     </figure>

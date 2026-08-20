@@ -3,7 +3,21 @@ import { Anmeldelser } from "@/components/anmeldelser";
 import { BilledSlides } from "@/components/billed-slides";
 import { Billedstroem } from "@/components/billedstroem";
 import { FoerEfter } from "@/components/foer-efter";
+import { SkabRegner } from "@/components/skab-regner";
+import { StickyCta } from "@/components/sticky-cta";
+import { hentPopulaere, nyesteHoestDato } from "@/lib/eksperimenter";
 import { hentKatalogBilleder, hentKatalogRaekker } from "@/lib/katalog-server";
+
+// Konservativ midterpris til drømme-regnestykket: medianen af høstens
+// medianpriser, rundet ned til nærmeste 25 kr. (regneeksempel, aldrig løfte)
+function typiskMedianDkk(): number {
+  const medianer = hentPopulaere(100)
+    .map((m) => m.medianDkk)
+    .sort((a, b) => a - b);
+  if (medianer.length === 0) return 100;
+  const midt = medianer[Math.floor(medianer.length / 2)]!;
+  return Math.max(25, Math.floor(midt / 25) * 25);
+}
 import { JsonLd } from "@/components/json-ld";
 import { PopulaertSektion } from "@/components/eksperimenter/populaert-sektion";
 import { Reveal } from "@/components/reveal";
@@ -28,6 +42,8 @@ export const metadata = {
 
 export default function Forside() {
   const guides = hentGuides().slice(0, 3);
+  const hoestDato = nyesteHoestDato();
+  const regneMedian = typiskMedianDkk();
   // Katalogbillederne findes automatisk fra public/eksempler/katalog/ —
   // nye filer kommer med i både slides og strøm uden kodeændring (ejer-ordre)
   const katalogBilleder = hentKatalogBilleder();
@@ -54,6 +70,10 @@ export default function Forside() {
             <Link href="/log-ind" className="knap-link mt-8">
               {vinted.hero.knap}
             </Link>
+            {/* Friktionsdræber (konverterings-plan 20/8) */}
+            <p className="mt-2 text-detalje text-tekst/60">
+              {vinted.hero.friktion}
+            </p>
             {/* Anmeldelserne bor i venstre kolonne, så heroen balancerer
                 (ejer-ordre 2026-08-20: begge skal med, men siden var skæv) */}
             <div className="mt-10">
@@ -67,6 +87,23 @@ export default function Forside() {
           </div>
         </div>
       </section>
+
+      {/* Drømme-regnestykket (ejer-godkendt konverterings-plan 20/8):
+          skabets mulige værdi på ægte høst-medianer, mærket regneeksempel */}
+      {hoestDato ? (
+        <section className="border-b border-kant" aria-label={vinted.skabRegner.titel}>
+          <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+            <SkabRegner
+              medianDkk={regneMedian}
+              hoestDato={new Date(hoestDato).toLocaleDateString("da-DK", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            />
+          </div>
+        </section>
+      ) : null}
 
       {/* "Tøjet vist båret" som slides (ejer-ordre 2026-08-20): ALLE
           katalogbilleder kører rundt automatisk — også nye filer. Mærkning
@@ -83,6 +120,15 @@ export default function Forside() {
             {vinted.billedserie.note}
           </p>
           <BilledSlides billeder={katalogBilleder} />
+          {/* Mellem-CTA (konverterings-plan 20/8) */}
+          <p className="mt-6">
+            <Link
+              href="/log-ind"
+              className="soem-link inline-flex min-h-touch items-center font-medium text-primaer"
+            >
+              {vinted.mellemCta} →
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -193,9 +239,15 @@ export default function Forside() {
             <Link href="/log-ind" className="knap-link mt-7">
               {vinted.cta.knap}
             </Link>
+            <p className="mt-2 text-detalje text-tekst/60">
+              {vinted.hero.friktion}
+            </p>
           </Reveal>
         </div>
       </section>
+
+      {/* Sticky mobil-CTA (konverterings-plan 20/8) */}
+      <StickyCta />
 
       {/* Annonce-strømmen i bunden (ejer-ordre 2026-08-20: billederne skal
           køre i bunden, så hele serien kan ses): to modsat drivende rækker,

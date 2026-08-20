@@ -58,13 +58,6 @@ export default async function Kreditter({
       <h1 className="font-display text-kaempe font-bold">
         {da.kreditter.titel}
       </h1>
-      <p className="mt-3 max-w-laesbar text-tekst/80">{da.kreditter.forklaring}</p>
-      <p className="mt-2 font-mono">{da.kreditter.saldoNu(saldo)}</p>
-      {naesteUdloeb && naesteUdloeb.antal > 0 ? (
-        <p className="mt-1 text-detalje text-tekst/70">
-          {da.kreditter.udloebNaeste(naesteUdloeb.antal, formaterDato(naesteUdloeb.dato))}
-        </p>
-      ) : null}
 
       {/* Succes-tilstand som gran-blok (REDESIGN §2.2) */}
       {status === "succes" ? (
@@ -104,6 +97,18 @@ export default async function Kreditter({
         </p>
         <AbonnementValg koebAktiv tone="lys" className="mt-6" />
         <PortalKnap className="mt-6" />
+      </section>
+
+      {/* Saldo og forklaring — under abonnementet (ejer-ordre 20/8:
+          abonnementerne skal øverst; købsvejen før regnskabet) */}
+      <section className="mt-10 border-t border-kant pt-6" aria-label={da.kreditter.titel}>
+        <p className="max-w-laesbar text-tekst/80">{da.kreditter.forklaring}</p>
+        <p className="mt-2 font-mono">{da.kreditter.saldoNu(saldo)}</p>
+        {naesteUdloeb && naesteUdloeb.antal > 0 ? (
+          <p className="mt-1 text-detalje text-tekst/70">
+            {da.kreditter.udloebNaeste(naesteUdloeb.antal, formaterDato(naesteUdloeb.dato))}
+          </p>
+        ) : null}
       </section>
 
       <p className="mt-8 text-detalje text-tekst/70">{da.kreditter.udloebNote}</p>

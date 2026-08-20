@@ -328,12 +328,16 @@ export function Markedstjek({
           ) : null}
         </div>
 
-        {/* Slut-henvisning til Selja (ejer-ordre: værktøjet ender i Selja) */}
+        {/* Slut-henvisning til Selja (ejer-ordre: værktøjet ender i Selja).
+            CTA-teksten bruger brugerens egen vare og tal (plan pkt. 7). */}
         <div className="mt-5 rounded-bloed bg-koks p-4 text-kalk">
           <p className="font-display text-titel font-bold">{copy.seljaTitel}</p>
           <p className="mt-1 text-detalje text-kalk/85">{copy.seljaTekst}</p>
           <Link href="/log-ind" className="knap-link mt-3">
-            {copy.cta}
+            {copy.seljaDynamisk(
+              KATEGORIER.find((k) => k.id === kategori)?.navn ?? "vare",
+              estimat.medianDkk,
+            )}
           </Link>
         </div>
       </div>

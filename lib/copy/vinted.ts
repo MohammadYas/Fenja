@@ -8,14 +8,29 @@ export const vinted = {
     beskrivelse:
       "Tag 2–4 mobilfotos af dit tøj. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag. Klar til at sætte ind på Vinted.",
   },
+  // Ejer-godkendt drømme-pivot 2026-08-20: drømmen er MULIGHEDEN (skabet er
+  // penge værd) — aldrig et indtjeningsløfte. Funktionsløftet støtter under.
   hero: {
-    rubrik: "Din annonce. Færdig på cirka 2 minutter.",
+    rubrik: "Dit klædeskab er penge værd.",
     tekst:
-      "Tag 2–4 fotos med telefonen. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag. Du kopierer bare ind på Vinted.",
+      "Tøjet, der bare hænger dér, kan blive til penge. Tag 2–4 fotos, så renser Selja billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag. Du kopierer bare ind på Vinted.",
     tidsnote:
       "Selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
     knap: "Lav min annonce",
+    friktion: "Uden binding · kreditten trækkes først, når annoncen er leveret",
   },
+  // Drømme-regnestykket: ægte høst-medianer, tydeligt mærket regneeksempel
+  skabRegner: {
+    titel: "Hvad gemmer der sig i dit skab?",
+    lead: "Træk i slideren — hvor mange stykker tøj bruger du aldrig?",
+    antal: (n: number) => `${n} stykker tøj`,
+    resultat: (kr: number) => `op til ~${kr.toLocaleString("da-DK")} kr.`,
+    note: (median: number, dato: string) =>
+      `Regneeksempel — ikke et løfte. Typisk midterpris ${median} kr. pr. stykke fra vores markedshøst ${dato}.`,
+    knap: "Kom i gang nu",
+  },
+  mellemCta: "Lav min annonce",
+  stickyCta: "Lav min annonce",
   // Ejer-ordre 2026-08-20: flere valgbare før/efter-eksempler. Hvert par
   // viser SAMME stykke tøj (FØR = dårligt aftenfoto, EFTER = spejlselfie i
   // dagslys fra katalogserien).

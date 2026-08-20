@@ -37,6 +37,7 @@ export class SupabasePipelineDb implements PipelineDb {
       kategori: (item.category as string | null) ?? "",
       fejlBeskrivelse: item.defects_text as string | null,
       koebsprisDkk: item.purchase_price_dkk as number | null,
+      ...(await this.hentSkrevetLabel(itemId)),
       hjemAnker: (profil as { home_anchor: string | null } | null)?.home_anchor ?? null,
       fotos: await Promise.all(
         (
@@ -54,6 +55,24 @@ export class SupabasePipelineDb implements PipelineDb {
           rensetUrl: f.cleaned_url ? await this.tilUrl(f.cleaned_url) : null,
         })),
       ),
+    };
+  }
+
+  /** label_text/color kom til 20/8 (migration 20260820020000) — hentes
+   *  fejltolerant i egen forespørgsel, så pipelinen også kører mod en
+   *  database, hvor migrationen endnu ikke er kørt. */
+  private async hentSkrevetLabel(
+    itemId: string,
+  ): Promise<{ labelTekst: string | null; farve: string | null }> {
+    const { data, error } = await this.klient
+      .from("items")
+      .select("label_text, color")
+      .eq("id", itemId)
+      .maybeSingle();
+    if (error || !data) return { labelTekst: null, farve: null };
+    return {
+      labelTekst: (data.label_text as string | null) ?? null,
+      farve: (data.color as string | null) ?? null,
     };
   }
 

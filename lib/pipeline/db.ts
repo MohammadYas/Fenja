@@ -13,6 +13,9 @@ export type ItemTilPipeline = {
   kategori: string;
   fejlBeskrivelse: string | null;
   koebsprisDkk: number | null;
+  /** Skrevet af sælgeren (ejer-ordre 20/8: label læses ikke af AI længere) */
+  labelTekst?: string | null;
+  farve?: string | null;
   /** Sælgerens selvvalgte hjem-id (S31); null = det deterministiske hjem */
   hjemAnker: string | null;
   fotos: { id: string; rolle: FotoRolle; url: string; rensetUrl?: string | null }[];

@@ -139,6 +139,12 @@ export const da = {
       "Taske",
       "Andet",
     ],
+    // Ejer-ordre 20/8: label og farve skrives (AI læser ikke label-fotos)
+    farveLabel: "Farve",
+    farveHjaelp: "Fx mørkeblå, salviegrøn — hjælper titlen og søgningen.",
+    labelTekstLabel: "Fra vaskemærket",
+    labelTekstHjaelp:
+      "Skriv materiale og evt. vask, fx \"100 % uld, vask ved 30°\". Valgfrit.",
     opsummeringTitel: "Tjek og send",
     opsummeringHjaelp:
       "Et hurtigt kig, før Selja går i gang — kreditten trækkes først, når annoncen er leveret.",
@@ -518,6 +524,9 @@ export const da = {
     seljaTitel: "Lad Selja gøre resten",
     seljaTekst:
       "Upload dine 2–4 fotos — Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag. Klar til Vinted på cirka 2 minutter.",
+    // Dynamisk CTA (konverterings-plan 20/8): brugerens egen vare og tal
+    seljaDynamisk: (navn: string, kr: number) =>
+      `Din ${navn.toLowerCase()} kan gå for ~${kr} kr. — gør den klar nu`,
   },
   landing: {
     // v6 (ejer-beslutning 2026-08-15): forsiden fører med B2B — UGC-annoncer,

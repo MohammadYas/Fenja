@@ -2,12 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import {
-  EksempelBagside,
-  EksempelFejl,
-  EksempelHelhed,
-  EksempelLabel,
-} from "@/components/foto-eksempler";
+import { EksempelBagside, EksempelHelhed } from "@/components/foto-eksempler";
 import { SektionsMarkoer } from "@/components/sektions-markoer";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -18,11 +13,14 @@ import { komprimerFoto } from "@/lib/upload/compress";
 
 type Rolle = "full" | "back" | "label" | "defect";
 
-const EKSEMPLER: Record<Rolle, React.ReactNode> = {
+// Ejer-ordre 20/8: maks 2 fotos (helhed + anden vinkel) — label og fejl
+// SKRIVES i stedet for at fotograferes (AI skal ikke identificere; det
+// sparer et vision-kald pr. annonce og giver mere præcis tekst).
+const FOTO_ROLLER: Rolle[] = ["full", "back"];
+
+const EKSEMPLER: Partial<Record<Rolle, React.ReactNode>> = {
   full: <EksempelHelhed />,
   back: <EksempelBagside />,
-  label: <EksempelLabel />,
-  defect: <EksempelFejl />,
 };
 
 type FotoTilstand = { blob: Blob; forhaandsvisning: string };
@@ -42,6 +40,8 @@ export default function NytItem() {
   const [stand, setStand] = useState("");
   const [kategori, setKategori] = useState("");
   const [fejlTekst, setFejlTekst] = useState("");
+  const [farve, setFarve] = useState("");
+  const [labelTekst, setLabelTekst] = useState("");
   const [koebspris, setKoebspris] = useState("");
   const [fejl, setFejl] = useState<string | null>(null);
   const [travl, setTravl] = useState(false);
@@ -126,6 +126,8 @@ export default function NytItem() {
           stand,
           kategori,
           fejlBeskrivelse: fejlTekst || undefined,
+          farve: farve || undefined,
+          labelTekst: labelTekst || undefined,
           koebsprisDkk: koebspris ? Number(koebspris) : undefined,
           fotos: uploads,
         }),
@@ -203,7 +205,7 @@ export default function NytItem() {
         <section aria-label={da.nytItem.fotoTitel}>
           <SektionsMarkoer nr={2} titel={da.nytItem.fotoTitel} />
           <div className="mt-4 flex flex-col gap-4">
-            {(Object.keys(EKSEMPLER) as Rolle[]).map((rolle) => {
+            {FOTO_ROLLER.map((rolle) => {
               const info = da.nytItem.roller[rolle];
               const valgt = fotos[rolle];
               return (
@@ -301,6 +303,18 @@ export default function NytItem() {
             />
           ) : null}
           <Field
+            label={da.nytItem.farveLabel}
+            hjaelp={da.nytItem.farveHjaelp}
+            value={farve}
+            onChange={(e) => setFarve(e.target.value)}
+          />
+          <Field
+            label={da.nytItem.labelTekstLabel}
+            hjaelp={da.nytItem.labelTekstHjaelp}
+            value={labelTekst}
+            onChange={(e) => setLabelTekst(e.target.value)}
+          />
+          <Field
             label={da.nytItem.fejlLabel}
             hjaelp={da.nytItem.fejlHjaelp}
             value={fejlTekst}
@@ -334,7 +348,7 @@ export default function NytItem() {
                   [da.nytItem.standLabel, stand],
                   [
                     da.nytItem.fotoTitel,
-                    `${Object.keys(fotos).length} af 4`,
+                    `${Object.keys(fotos).length} af ${FOTO_ROLLER.length}`,
                   ],
                   [da.nytItem.fejlLabel, fejlTekst || "—"],
                 ] as const
