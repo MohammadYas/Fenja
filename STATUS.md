@@ -1,6 +1,15 @@
 # STATUS
 Sidst opdateret: 2026-08-20 (eftermiddag) af Claude Code
 
+## Denne session (20/8 eftermiddag, runde 4) — oversigt + falsk "gik i stå"
+- Oversigten: mini-fremdriftsbar m. procent (starttids-forankret kurve i
+  `lib/fremdrift.ts` — står øjeblikkeligt rigtigt) + miniature-foto pr. kort.
+- Progress på annoncesiden får starttiden server-side → korrekt fra første
+  paint. Varemærke-feltet siger tydeligt, at man bare kan skrive selv.
+- **Falsk "Det tog længere end det skulle" (ejer-rapport, kom lige før mål):**
+  hængende-grænsen var 3 min — rigtige provider-kørsler tager længere uden
+  nye generations-rækker. Hævet til 10 min i status- + genoptag-API.
+
 ## Denne session (20/8 eftermiddag, runde 3) — BULLETPROOF (ejer-ordre)
 Ordre: sluk telefonen, tab nettet, luk siden — intet må gå tabt, og intet må
 hænge for evigt. Leveret (336 tests, lint + typecheck grønne):
