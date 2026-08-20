@@ -24,10 +24,15 @@ export default async function NytItemLayout({
     if (user) {
       const { data: profil, error } = await supabase
         .from("profiles")
-        .select("koen")
+        .select("koen, age_confirmed")
         .eq("id", user.id)
         .maybeSingle();
-      manglerOnboarding = !error && profil != null && !profil.koen;
+      // Manglende 18+ tæller også: en Google-konto oprettet fra "log ind"-
+      // fanen når aldrig alders-spørgsmålet, og A-2 gælder uanset vejen ind.
+      manglerOnboarding =
+        !error &&
+        profil != null &&
+        (!profil.koen || profil.age_confirmed !== true);
     }
   } catch {
     manglerOnboarding = false;

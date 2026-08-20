@@ -15,7 +15,12 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ fejl: "ikke logget ind" }, { status: 401 });
 
-  const krop = (await request.json()) as { koen?: string; haarFarve?: string };
+  const krop = (await request.json()) as {
+    koen?: string;
+    haarFarve?: string;
+    /** 18+-bekræftelse for Google-konti, som aldrig blev spurgt (A-2) */
+    er18?: boolean;
+  };
   if (!KOEN.includes(krop.koen as (typeof KOEN)[number])) {
     return NextResponse.json({ fejl: "ugyldigt valg" }, { status: 400 });
   }
@@ -29,7 +34,12 @@ export async function POST(request: NextRequest) {
   // gemt (ejer-rapport 20/8: "havde endda valgt kvinde" — profilen stod på mand)
   const { data, error } = await service
     .from("profiles")
-    .update({ koen: krop.koen, haar_farve: haar })
+    .update({
+      koen: krop.koen,
+      haar_farve: haar,
+      // Sættes KUN til true — bekræftelsen kan aldrig trækkes tilbage her
+      ...(krop.er18 === true ? { age_confirmed: true } : {}),
+    })
     .eq("id", user.id)
     .select("koen, haar_farve");
   if (error) {
