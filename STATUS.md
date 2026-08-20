@@ -1,6 +1,25 @@
 # STATUS
 Sidst opdateret: 2026-08-20 (eftermiddag) af Claude Code
 
+## Denne session (20/8 eftermiddag, runde 5) — ROOT CAUSE + kredit-reservation
+- **ROOT CAUSE på "stuck → Kør igen" FUNDET OG FIXET:** Gemini leverer
+  billeder som data-URLs; `hentBillede` behandlede dem som storage-stier →
+  "Download fejlede for data:image/…" væltede HVER rigtige kørsel (set i
+  dev-loggen). Data-URLs decodes nu direkte (lib/pipeline/supabase-db.ts).
+  Rigtige leverancer bør nu gå igennem — ejeren tester.
+- **Færdige billeder vises løbende** på "på vej"-siden (billede 1 ses så
+  snart det er klar); "Renser dine fotos" ude af trin-listen; ærlig linje
+  "Regn med 2–3 minutter pr. billede"; kurven skaleret efter antal billeder
+  (150 s/billede). Oversigtens mini-bar følger samme fejlet-sandhed som
+  annoncesiden (aldrig "Kør igen" dér og 93 % her).
+- **KREDIT-RESERVATION (ejer-ordre):** kreditter trækkes NU ved start (1 pr.
+  valgt billede, idempotent pr. item×visning); pipelinen refunderer
+  automatisk hvert fejlet billede. Ingen gratis API-spam ved afbrudte
+  kørsler. Genoptag: maks 4 kørsler pr. annonce. Al copy omskrevet fra
+  "trækkes ved leverance" til "trækkes ved start + auto-refusion".
+  NB: et tidligere fejlet-og-refunderet billede, der lykkes ved genoptag,
+  er gratis for brugeren (bevidst valg — systemets fejl, brugerens ventetid).
+
 ## Denne session (20/8 eftermiddag, runde 4) — oversigt + falsk "gik i stå"
 - Oversigten: mini-fremdriftsbar m. procent (starttids-forankret kurve i
   `lib/fremdrift.ts` — står øjeblikkeligt rigtigt) + miniature-foto pr. kort.
