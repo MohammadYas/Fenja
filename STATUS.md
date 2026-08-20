@@ -32,6 +32,15 @@ billede på "på vej"-siden; trin-listen byttet (01 tekst, 02 billeder);
 admin-klager viser ALT (genererede billeder, brugerens fotos, felter, fejl);
 kreditfejl i wizarden linker direkte til køb.
 
+**Økonomi pr. annonce (ejer-ordre "skal give mening økonomisk"):** rens
+kørte unødigt på pro-modellen — nu flash-image (probe-verificeret):
+**1,95 → 1,28 kr. pr. annonce** (rens 0,28 + billede 0,95 + tekst/vision
+0,05). Ved 59 kr./md. for 12 billeder er marginen sund. DeepSeek kan IKKE
+være vision-model (API'et tager ikke billeder) — vision er i forvejen det
+billigste led (0,02 kr.). **Ejer-beslutning: alle envs lægges i Supabase
+via Composio senere** — til den tid: husk at env-vars stadig skal ind i
+hosting-platformens miljø ved deploy (koden læser process.env).
+
 **OMSÆTNINGS-AUDIT (hvad der dræber salg — prioriteret):**
 1. ⛔ **STRIPE_SECRET_KEY + WEBHOOK_SECRET mangler** → intet køb kan
    gennemføres overhovedet. Omsætning = 0 uanset alt andet. (Ejer, 5 min.)
