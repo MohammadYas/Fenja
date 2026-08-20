@@ -3,6 +3,7 @@ import { da } from "@/lib/copy/da";
 import { HJEM, hentHjem, vaelgHjem } from "@/lib/pipeline/skabeloner";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { HjemVaelger } from "./hjem-vaelger";
+import { KoenVaelger } from "./koen-vaelger";
 import { LogUdKnap } from "./log-ud-knap";
 import { SletKonto } from "./slet-konto";
 
@@ -32,7 +33,7 @@ export default async function Konto() {
         .order("ts", { ascending: false }),
       supabase
         .from("profiles")
-        .select("home_anchor")
+        .select("home_anchor, koen, haar_farve")
         .eq("id", user!.id)
         .maybeSingle(),
     ]);
@@ -73,6 +74,17 @@ export default async function Konto() {
         <div className="mt-4 border-t border-kant pt-4">
           <LogUdKnap />
         </div>
+      </Card>
+
+      <Card className="mt-6">
+        <h2 className="text-titel font-medium">{da.konto.koen.titel}</h2>
+        <p className="mt-2 max-w-laesbar text-detalje text-tekst/80">
+          {da.konto.koen.forklaring}
+        </p>
+        <KoenVaelger
+          koen={(profil?.koen as string | null | undefined) ?? null}
+          haarFarve={(profil?.haar_farve as string | null | undefined) ?? null}
+        />
       </Card>
 
       <Card className="mt-6">

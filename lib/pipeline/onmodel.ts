@@ -89,19 +89,20 @@ export async function genererOnModelMedTroskab(args: {
     // ALDRIG vælte leverancen: ét nyt forsøg efter kort pause, og fejler det
     // også, leveres billedet u-tjekket (bedre end at smide et betalt billede
     // væk pga. Googles nedetid). Score 0 markerer "ikke målt".
+    // Produkt-visninger (gulv/bøjle/nærbillede) skal bedømmes UDEN kravet om
+    // at tøjet bæres — ellers dumper de altid (ejer-rapport: kun 1 af 3)
+    const troskabsInput = {
+      aegteUrl: args.referenceUrl,
+      genereretUrl: genereret.url,
+      slags: args.visning?.slags ?? ("onmodel" as const),
+    };
     let troskab;
     try {
-      troskab = await tjekTroskab(args.text, {
-        aegteUrl: args.referenceUrl,
-        genereretUrl: genereret.url,
-      });
+      troskab = await tjekTroskab(args.text, troskabsInput);
     } catch {
       await new Promise((r) => setTimeout(r, 3000));
       try {
-        troskab = await tjekTroskab(args.text, {
-          aegteUrl: args.referenceUrl,
-          genereretUrl: genereret.url,
-        });
+        troskab = await tjekTroskab(args.text, troskabsInput);
       } catch {
         return {
           billede: {

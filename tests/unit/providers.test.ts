@@ -1,9 +1,36 @@
 import { describe, expect, it } from "vitest";
+import { troskabsSpoergsmaal } from "@/lib/providers/deepseek";
 import {
   MockImageProvider,
   MockTextProvider,
   MockVideoProvider,
 } from "@/lib/providers/mock";
+
+// Ejer-rapport 20/8: gulv- og bøjle-billederne blev ALTID kasseret, fordi
+// troskabs-spørgsmålet gav score 0 til tøj der ikke bæres — en regel der kun
+// giver mening for on-model-visninger.
+describe("troskabs-spørgsmålet pr. visningsslags", () => {
+  it("on-model kræver stadig at tøjet bæres (bøjle-reglen fra runde 9)", () => {
+    const spoergsmaal = troskabsSpoergsmaal("onmodel");
+    expect(spoergsmaal).toContain("BÆRER");
+    expect(spoergsmaal).toContain("bøjle");
+    expect(spoergsmaal).toContain("ALTID 0");
+  });
+
+  it("produkt-visninger straffes ALDRIG for at der ikke er en person", () => {
+    const spoergsmaal = troskabsSpoergsmaal("produkt");
+    expect(spoergsmaal).toContain("MED VILJE ingen person");
+    expect(spoergsmaal).toContain("ALDRIG trække scoren ned");
+    expect(spoergsmaal).not.toContain("ALTID 0");
+  });
+
+  it("begge spørgsmål beder om samme JSON-format", () => {
+    for (const slags of ["onmodel", "produkt"] as const) {
+      expect(troskabsSpoergsmaal(slags)).toContain(`"score"`);
+      expect(troskabsSpoergsmaal(slags)).toContain(`"begrundelse"`);
+    }
+  });
+});
 
 describe("MockImageProvider", () => {
   it("renser baggrund deterministisk med omkostning", async () => {

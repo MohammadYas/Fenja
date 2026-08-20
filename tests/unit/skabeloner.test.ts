@@ -64,7 +64,7 @@ describe("kategori-skabeloner (ejer-princip 2026-08-15)", () => {
       visning: hentVisningsType("spejl"),
     });
     expect(prompt).toContain("from the FRONT");
-    expect(prompt).toContain("torso is fully covered");
+    expect(prompt).toContain("neutral-colored top");
     expect(prompt).toContain("never shirtless");
   });
 
@@ -76,7 +76,23 @@ describe("kategori-skabeloner (ejer-princip 2026-08-15)", () => {
       kategori: "striktrøje",
     });
     expect(prompt).toContain("never shirtless");
-    expect(prompt).toContain("never with a bare midriff");
+    expect(prompt).toContain("never in underwear");
+  });
+
+  // Ejer-ordre 20/8 (senere samme dag): en croptop SKAL vise mave — ellers
+  // sælger annoncen et andet stykke tøj end det, sælgeren har.
+  it("tøjet bestemmer huden: croptop må vise mave, og tøjet dækkes aldrig til", () => {
+    const prompt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "top",
+    });
+    expect(prompt).toContain("crop top");
+    expect(prompt).toContain("MUST be visible exactly as the garment leaves it");
+    expect(prompt).toContain("never lengthen, extend or cover it up");
+    // Den gamle blankoregel om tildækket overkrop må ikke være tilbage
+    expect(prompt).not.toContain("torso is fully covered");
   });
 });
 

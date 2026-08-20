@@ -65,7 +65,7 @@ export const KATEGORI_SKABELONER: readonly KategoriSkabelon[] = [
       "a natural mid-step walking shot coming TOWARD the camera, framed from the waist down so the leg shape is visible",
     ],
     regel:
-      "Lower-body garment: the person ALWAYS wears a simple, plain, neutral-colored top so the torso is fully covered — never shirtless, never in underwear, never with a bare midriff. The main view is ALWAYS the FRONT; a back view may appear only as an extra angle, never as the main photo.",
+      "Lower-body garment: the reference garment covers only the legs, so the person wears a simple, plain, neutral-colored top with it — never shirtless, never in underwear. The main view is ALWAYS the FRONT; a back view may appear only as an extra angle, never as the main photo.",
     fokus:
       "Preserve the exact fit and leg shape, waistband, pockets, buttons, belt loops and stitching; show realistic creases and tension at the hips, knees and ankles.",
   },
@@ -390,10 +390,11 @@ const framing =
 return [
   REFERENCE_INSTRUKS,
   `The person is ${bygPersonAnker({ itemId: args.itemId, koen: args.koen, haarFarve: args.haarFarve })} — an anonymous person, never a recognizable or real person; the face is always hidden by the phone or cropped out of frame.`,
-  // Ejer-ordre 20/8: ALDRIG bar mave/overkrop — gælder ALLE kategorier.
-  // Overdelen er altid en simpel neutral top, medmindre tøjet fra referencen
-  // selv dækker overkroppen (fx en kjole eller jakke).
-  "The person always wears a simple, plain, neutral-colored top so the torso is fully covered — never shirtless, never in underwear, never with a bare midriff — unless the garment from the reference image itself covers the torso.",
+  // Ejer-ordre 20/8: TØJET bestemmer huden. En croptop SKAL vise mave — at
+  // dække den til ville vise et andet stykke tøj end det, der sælges. Den
+  // neutrale top gælder KUN, når referencetøjet slet ikke dækker overkroppen
+  // (fx et par bukser) — så er alternativet en bar overkrop.
+  "How much skin shows is decided ENTIRELY by the garment itself: show it exactly as it is, and never lengthen, extend or cover it up. If the reference garment is a crop top, a short top or has a deep or open neckline, the bare midriff, waist or neckline MUST be visible exactly as the garment leaves it. Only when the reference garment does not cover the torso at all (for example trousers or a skirt) does the person wear a simple, plain, neutral-colored top with it — the person is never shirtless and never in underwear.",
   `Framing: ${framing}.`,
   skabelon.regel,
   `Location: ${sted}.`,

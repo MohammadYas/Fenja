@@ -66,6 +66,25 @@ export const da = {
     koebLinje: (antal: number, dato: string) => `${antal} kreditter · ${dato}`,
     abonnementLinje: (antal: number, dato: string) =>
       `${antal} kreditter fra abonnement · ${dato}`,
+    // Ejer-ordre 2026-08-20: personen på billederne skal kunne ændres her —
+    // bag en knap og med en bekræftelse, så et fejlklik ikke skifter alle
+    // kommende billeder.
+    koen: {
+      titel: "Personen på dine billeder",
+      forklaring:
+        "Billederne genereres med en anonym person, der ligner dig. Ansigtet er altid skjult. Ændrer du valget, gælder det fra din næste annonce — færdige billeder er uændrede.",
+      nuvaerende: (koen: string, haar: string | null) =>
+        haar ? `Nu: ${koen} · ${haar} hår` : `Nu: ${koen}`,
+      ingenValgt: "Ikke valgt endnu",
+      aendreKnap: "Ændre køn",
+      gemKnap: "Gem ændring",
+      annuller: "Fortryd",
+      bekraeftTekst: (koen: string) =>
+        `Skift personen på dine billeder til ${koen.toLowerCase()}? Det gælder alle annoncer, du laver fremover.`,
+      bekraeftKnap: "Ja, skift køn",
+      gemt: "Gemt",
+      fejl: "Valget kunne ikke gemmes. Prøv igen.",
+    },
     // S31 · dit faste hjem på visualiseringerne. Alle dine annoncer optages i
     // samme bolig, så profilen ligner ét sted — du kan vælge hvilket.
     hjem: {

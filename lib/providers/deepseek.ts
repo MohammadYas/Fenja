@@ -53,6 +53,22 @@ function parseJson<T>(tekst: string): T {
   return JSON.parse(match[0]) as T;
 }
 
+const SVAR_FORMAT = `Svar KUN med JSON: {"score": number mellem 0 og 1, "begrundelse": string på dansk}`;
+
+/**
+ * Troskabs-spørgsmålet afhænger af visningens slags (ejer-rapport 20/8: kun 1
+ * af 3 billeder leveret). On-model-tjekket kræver at tøjet BÆRES — bøjle-reglen
+ * fra runde 9. Men gulv/bøjle/nærbillede er PRODUKT-visninger, som brugeren
+ * selv har bestilt UDEN person; på dem er "ingen person" det rigtige svar, og
+ * det gamle spørgsmål gav dem derfor altid score 0 og kasserede hvert billede.
+ */
+export function troskabsSpoergsmaal(slags: "onmodel" | "produkt"): string {
+  if (slags === "produkt") {
+    return `Billede 1 er et ægte foto af et stykke tøj. Billede 2 er en genereret produktvisning af det SAMME stykke tøj — lagt frem, hængt på bøjle eller som nærbillede. Der er MED VILJE ingen person i billede 2; det er korrekt og må ALDRIG trække scoren ned. Vurdér kun ÉT: viser billede 2 præcis det samme stykke tøj — samme print/grafik, samme farve, samme snit og længde — og er synligt slid/fejl bevaret? ${SVAR_FORMAT}`;
+  }
+  return `Billede 1 er et ægte foto af et stykke tøj. Billede 2 er en genereret visualisering af en person, der BÆRER tøjet. Vurdér to ting: (1) Viser billede 2 PRÆCIS det samme stykke tøj — samme print/grafik, samme farve, samme snit og længde, og er synligt slid/fejl bevaret? (2) Bæres tøjet NATURLIGT på kroppen med arme/ben inde i det? Hænger tøjet på en bøjle, holdes det frem foran kroppen, eller svæver det tomt, er scoren ALTID 0 uanset hvor godt tøjet matcher. ${SVAR_FORMAT}`;
+}
+
 /** Reference-billeder til Gemini-vision — data-URLs pakkes ud, http-URLs hentes */
 async function tilInlineData(
   url: string,
@@ -152,9 +168,7 @@ export class DeepSeekTextProvider implements TextProvider {
     const tekst = await this.geminiVision([
       { inlineData: await tilInlineData(input.aegteUrl) },
       { inlineData: await tilInlineData(input.genereretUrl) },
-      {
-        text: `Billede 1 er et ægte foto af et stykke tøj. Billede 2 er en genereret visualisering af en person, der BÆRER tøjet. Vurdér to ting: (1) Viser billede 2 PRÆCIS det samme stykke tøj — samme print/grafik, samme farve, samme snit og længde, og er synligt slid/fejl bevaret? (2) Bæres tøjet NATURLIGT på kroppen med arme/ben inde i det? Hænger tøjet på en bøjle, holdes det frem foran kroppen, eller svæver det tomt, er scoren ALTID 0 uanset hvor godt tøjet matcher. Svar KUN med JSON: {"score": number mellem 0 og 1, "begrundelse": string på dansk}`,
-      },
+      { text: troskabsSpoergsmaal(input.slags ?? "onmodel") },
     ]);
     const data = parseJson<{ score: number; begrundelse: string }>(tekst);
     return { score: data.score, begrundelse: data.begrundelse, costDkk: VISION_COST_DKK };

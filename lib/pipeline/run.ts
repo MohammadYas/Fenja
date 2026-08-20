@@ -362,45 +362,35 @@ export async function koerItemPipeline(
   // provider-kald ikke rammer API'et i præcis samme sekund (rate limits) —
   // svarerne lander stadig næsten samtidig.
   const reference = await referenceTilProvider(deps, helhed.rensetUrl);
-  const foersteBoelge = await Promise.all([
+
+  // Hver visning kører sin EGEN kæde: forsøg → (kun ved fejl) ét ekstra forsøg.
+  // Retryet lå før bag en fælles barriere, så alle billeder ventede på det
+  // langsomste, før nogen af dem måtte prøve igen (ejer-rapport 20/8: 94 s
+  // spildt ventetid). Nu er billederne uafhængige og lander næsten samtidig.
+  const levérVisning = async (visning: VisningsType, i: number) => {
+    await sov(i * 350);
+    const foerste = await visualiseringsTrin(deps, item, reference, presetId, visning);
+    if (foerste) return { visning, resultat: foerste };
+    // Ét ekstra forsøg med frisk generations-række: rate limits og
+    // enkeltstående provider-fejl må ikke koste brugeren et billede
+    await sov(300);
+    const andet = await visualiseringsTrin(deps, item, reference, presetId, visning);
+    return { visning, resultat: andet };
+  };
+
+  const udfald = await Promise.all([
     tekstTrin(deps, item).catch((fejl) => {
       console.error(`Teksttrin fejlede for ${item.id}:`, fejl);
       return null;
     }),
-    ...visninger.map((visning, i) =>
-      sov(i * 350).then(() =>
-        visualiseringsTrin(deps, item, reference, presetId, visning).then(
-          (resultat) => ({ visning, resultat }),
-        ),
-      ),
-    ),
+    ...visninger.map(levérVisning),
   ]);
-  const tekst = foersteBoelge[0] as AnnonceTekst | null;
-  let visningsUdfald = foersteBoelge.slice(1) as {
+  const tekst = udfald[0] as AnnonceTekst | null;
+  const visningsUdfald = udfald.slice(1) as {
     visning: VisningsType;
     resultat: { sti: string; fidelityScore: number; costDkk: number } | null;
   }[];
 
-  // Anden bølge (bulletproof, ejer-ordre 20/8): hvert fejlet billede får ét
-  // ekstra forsøg med frisk generations-række, før noget refunderes. Rate
-  // limits og enkeltstående provider-fejl skal ikke koste brugeren billeder
-  // (ejer-rapport: 2 af 3 leveret, selv efter backoff).
-  const fejlede = visningsUdfald.filter((u) => u.resultat === null);
-  if (fejlede.length > 0) {
-    const andenBoelge = await Promise.all(
-      fejlede.map((u) =>
-        sov(300).then(() =>
-          visualiseringsTrin(deps, item, reference, presetId, u.visning).then(
-            (resultat) => ({ visning: u.visning, resultat }),
-          ),
-        ),
-      ),
-    );
-    visningsUdfald = visningsUdfald.map((u) => {
-      const retry = andenBoelge.find((b) => b.visning.id === u.visning.id);
-      return retry?.resultat ? retry : u;
-    });
-  }
   type Vellykket = {
     visning: VisningsType;
     resultat: { sti: string; fidelityScore: number; costDkk: number };

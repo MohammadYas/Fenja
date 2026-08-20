@@ -1,5 +1,47 @@
 # STATUS
-Sidst opdateret: 2026-08-20 (natten, runde 11) af Claude Code
+Sidst opdateret: 2026-08-20 (natten, runde 12) af Claude Code
+
+## Denne session (20/8 nat, runde 12) — 7. root cause: produkt-visninger blev altid kasseret
+
+Ejer-rapport: "kun 1 af 3 billeder", "6 felter efter 50 %", "burde kunne gøres
+meget hurtigere", "kvindetøj på min mandeprofil". Diagnosticeret mod den
+rigtige kørsel i cloud-DB'en (item `e9b5ff7d`, 3 bestilte visninger).
+
+**7. ROOT CAUSE (kun 1 af 3):** troskabs-spørgsmålet i `lib/providers/deepseek.ts`
+var skrevet udelukkende til on-model og sagde: *"Hænger tøjet på en bøjle …
+er scoren ALTID 0"* (bøjle-fixet fra runde 9). Men `gulv` og `stativ` er
+PRODUKT-visninger, brugeren selv bestiller UDEN person — de fik derfor score 0
+hver gang og blev kasseret i begge forsøg. DB'en bekræfter: `spejl` succeeded
+(score 1), `gulv` + `stativ` failed 2×2 gange à 1,94 kr. **9,04 kr brændt for
+ét billede.** Fix: `TroskabsInput.slags` (`onmodel` | `produkt`) styrer nu
+spørgsmålet — produktvisninger bedømmes KUN på om tøjet matcher referencen, og
+"ingen person" må aldrig trække ned.
+
+**6 frames (ejer-rapport):** `antalFrames` i progress.tsx talte generations-
+rækker. Andet forsøg opretter en frisk række pr. fejlet billede → 3 bestilte
+billeder blev til 5-6 rammer, præcis når første bølge faldt (~50 %). Frames
+følger nu serverens `totalBilleder` og aldrig rækkerne.
+
+**Tempo:** de 3 billedkald kørte allerede parallelt, men retry-runden lå bag en
+fælles barriere — alle ventede på det langsomste billede, før nogen måtte prøve
+igen (målt: 94 s spildt). Hver visning har nu sin EGEN kæde (forsøg → retry),
+så billederne er uafhængige og lander næsten samtidig.
+
+**EJER-ORDRE — tøjet bestemmer huden:** den globale "torso is fully covered"-
+regel er væk. En croptop SKAL vise mave; tøjet må aldrig forlænges eller dækkes
+til, for så sælger annoncen et andet stykke tøj. Den neutrale top gælder KUN,
+når referencetøjet slet ikke dækker overkroppen (bukser/nederdel). Aldrig
+topløs, aldrig undertøj.
+
+**EJER-ORDRE — skift køn på Konto:** ny `KoenVaelger` på /konto bag en
+"Ændre køn"-knap med bekræftelsestrin ("Ja, skift køn"), køn + hårfarve,
+skriver til den eksisterende `/api/profil/generering`. Profilen var i øvrigt
+korrekt sat (`koen: mand`, `haar_farve: brunt`) — så mande-ankeret virkede;
+annoncen var kategoriseret "Andet", hvilket giver den GENERISKE skabelon i
+stedet for `overdel`.
+
+**Tests:** 362 grønne (5 nye). Lint + typecheck + build grønne.
+Playwright MCP tilføjet til Claude Code (lokal config).
 
 ## Denne session (20/8 nat, runde 11) — anden bølge, slet-knap, Smart Salgsplan
 Alt lokalt, committet men IKKE pushet (ejer-ordre står ved magt).

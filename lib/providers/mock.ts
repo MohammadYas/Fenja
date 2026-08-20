@@ -99,8 +99,12 @@ export class MockTextProvider implements TextProvider {
     };
   }
 
-  async vurderTroskab(_input: TroskabsInput): Promise<TroskabsResultat> {
+  /** Hver troskabs-forespørgsel — så tests kan se hvilken slags der blev sendt */
+  troskabsInput: TroskabsInput[] = [];
+
+  async vurderTroskab(input: TroskabsInput): Promise<TroskabsResultat> {
     this.kald.push("troskab");
+    this.troskabsInput.push(input);
     return {
       score: this.opsaetning.troskabsScore ?? 0.9,
       begrundelse: "mock: print, farve og snit matcher referencen",

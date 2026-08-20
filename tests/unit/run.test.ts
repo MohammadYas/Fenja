@@ -152,6 +152,25 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
     expect(onmodel?.promptVersion).toContain(hjemVersionsTag(valgtHjem));
   });
 
+  it("produkt-visninger bedømmes UDEN kravet om båret tøj (ejer-rapport 20/8: kun 1 af 3)", async () => {
+    const { deps, ledger } = await opsaetning();
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl", "gulv", "stativ"]);
+    const resultat = await koerItemPipeline(deps, "item-1", undefined, [
+      "spejl",
+      "gulv",
+      "stativ",
+    ]);
+
+    // Alle tre bestilte billeder leveres — gulv/bøjle må ikke dumpe på
+    // "tøjet bæres ikke", når brugeren selv har bestilt en produktvisning
+    expect(resultat.visualiseringer).toHaveLength(3);
+
+    const text = deps.text as MockTextProvider;
+    const slags = text.troskabsInput.map((i) => i.slags);
+    expect(slags).toContain("onmodel"); // spejl
+    expect(slags.filter((s) => s === "produkt")).toHaveLength(2); // gulv + stativ
+  });
+
   it("visualiseringen i storage er ren JPEG uden egen mærkning (ejer-beslutning 20/8)", async () => {
     const { deps } = await opsaetning();
     const resultat = await koerItemPipeline(deps, "item-1");

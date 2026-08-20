@@ -30,6 +30,12 @@ export type TroskabsInput = {
   aegteUrl: string;
   /** Genereret on-model-billede */
   genereretUrl: string;
+  /**
+   * Visningens slags. Produkt-visninger (gulv/bøjle/nærbillede) har MED VILJE
+   * ingen person — de må aldrig dumpe på "tøjet bæres ikke" (ejer-rapport 20/8:
+   * kun 1 af 3 billeder leveret, fordi bøjle-reglen slog dem ihjel).
+   */
+  slags?: "onmodel" | "produkt";
 };
 
 export type TroskabsResultat = {

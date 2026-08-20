@@ -145,14 +145,14 @@ export function Progress({
   maxProcent.current = Math.max(maxProcent.current, beregnet);
   const procent = maxProcent.current;
 
-  // Frames pr. bestilt billede (ejer-ordre 20/8): serveren kender totalen,
-  // så ALLE fire rammer står der fra første sekund — hver med sin egen
-  // genererings-effekt, som afløses af billedet, når det er klar
-  const antalFrames = Math.max(
-    totalBilleder,
-    raekkerFor("onmodel").length,
-    billeder.length,
-  );
+  // Frames pr. BESTILT billede (ejer-ordre 20/8): serveren kender totalen, så
+  // alle rammer står der fra første sekund. Antallet må ALDRIG følge
+  // generations-rækkerne: et fejlet billede får en frisk række ved retry, så
+  // 3 bestilte billeder blev til 5-6 rammer midtvejs (ejer-rapport 20/8).
+  const antalFrames =
+    totalBilleder > 0
+      ? Math.max(totalBilleder, billeder.length)
+      : Math.max(raekkerFor("onmodel").length, billeder.length);
   const faerdigeBilledeVisning = antalFrames > 0 && (
     <div className="mt-6">
       <p className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
