@@ -11,10 +11,10 @@ const sti = (navn: string) => `/eksempler/katalog/${navn}.webp`;
 
 // Rækkefølgen er kurateret: person-motiver og produktvinkler skiftevis,
 // så strømmen varierer i rytme. Delt i to rækker (modsat retning).
+// Ejer-ordre 2026-08-19: p1 (tanktop) er taget ud af strømmen; p3 fører an.
 export const katalogRaekkeA: KatalogBillede[] = [
-  { src: sti("p1-sovevaerelse-tanktop"), alt: "Spejlselfie i soveværelse: hvid tanktop, sort vest og lyse jeans" },
-  { src: sti("kjole-gulv"), alt: "Salviegrøn midi-kjole lagt frem på trægulv" },
   { src: sti("p3-entre-overshirt-mand"), alt: "Spejlselfie i entré: olivengrøn ulds-overshirt og mørke jeans" },
+  { src: sti("kjole-gulv"), alt: "Salviegrøn midi-kjole lagt frem på trægulv" },
   { src: sti("jeans-detalje"), alt: "Nærbillede af denimlinning med metalknap og syninger" },
   { src: sti("p4-sovevaerelse-kjole"), alt: "Spejlselfie i soveværelse: salviegrøn midi-kjole" },
   { src: sti("striktroeje-stativ"), alt: "Marineblå striktrøje på bøjle på tøjstativ" },

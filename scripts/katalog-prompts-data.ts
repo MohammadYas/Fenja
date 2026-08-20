@@ -50,8 +50,10 @@ const UNDGAA_FAELLES =
   "background, bokeh, portrait mode, shallow depth of field, ANY " +
   "readable or pseudo-readable text anywhere in the image, ANY visible brand " +
   "label or care label or neck label (no label visible at all), logos, " +
-  "watermark, people (unless the motif requires one hand), floating garments, " +
-  "shop or showroom look, staged styling.";
+  "watermark, people (unless the motif requires one hand), the photographer's " +
+  "hand or phone or reflection visible anywhere, a phone-shaped shadow, " +
+  "floating garments, damaged or frayed or stained fabric, double hangers, " +
+  "duplicated buttons or hardware, shop or showroom look, staged styling.";
 
 // ---------------------------------------------------------------------------
 // Tøjdele til produktvinklerne — én pr. kategori, matcher person-prompterne
@@ -101,7 +103,7 @@ const VISNINGER = [
     id: "gulv",
     titel: "På gulvet (top-down)",
     byg: (t: (typeof TOEJDELE)[number]) =>
-      `A quick top-down phone photo for a secondhand listing: ${t.beskrivelse} laid out by hand on an oak plank floor with visible grain. The garment is smoothed out roughly but keeps natural small wrinkles and sits slightly askew — laid out in a hurry, NOT shop-folded, NOT perfectly straight. At the frame edge a hint of everyday life: the edge of a rug, a skirting board, a radiator foot. Natural daylight from a window to one side gives a soft shadow gradient across the floor; the photographer's faint shadow just barely enters one corner.` +
+      `A quick top-down phone photo for a secondhand listing: ${t.beskrivelse} laid out by hand on an oak plank floor with visible grain. The garment is smoothed out roughly but keeps natural small wrinkles and sits slightly askew — laid out in a hurry, NOT shop-folded, NOT perfectly straight. At the frame edge a hint of everyday life: the edge of a rug, a skirting board, a radiator foot. Natural daylight from a window to one side gives a soft shadow gradient across the floor. The photographer is completely invisible: no hand, no phone, no reflection and no shadow of the photographer anywhere in the frame.` +
       REALISME +
       UNDGAA_FAELLES,
   },
@@ -112,7 +114,9 @@ const VISNINGER = [
       `A quick phone photo for a secondhand listing: ${t.beskrivelse} ${
         t.kategori === "taske"
           ? "hanging by its strap on the rail of a simple black metal clothes rack"
-          : "on a mismatched wooden hanger on a simple black metal clothes rack, hanging naturally with its own drape and slightly askew"
+          : t.kategori === "jeans"
+            ? "folded once over the wooden bar of a single mismatched wooden hanger on a simple black metal clothes rack, hanging the way people actually hang jeans"
+            : "on a single mismatched wooden hanger on a simple black metal clothes rack, hanging naturally with its own drape and slightly askew"
       } in an ordinary bedroom. Two or three other pieces of clothing in muted colours hang pushed to one side, slightly crowded, so the listed item stands clearly apart. White wall behind with a few small marks, pale wood floor, a laundry basket or a pair of worn sneakers at the base of the rack. Daylight from a window outside the frame, one side of the garment slightly brighter than the other.` +
       REALISME +
       UNDGAA_FAELLES,
@@ -133,7 +137,7 @@ const VISNINGER = [
     id: "detalje",
     titel: "Close-up detalje",
     byg: (t: (typeof TOEJDELE)[number]) =>
-      `A quick close-up phone photo for a secondhand listing: a tight detail shot of ${t.detalje} of ${t.beskrivelse}. The item lies on a wooden table with visible grain and a faint scratch, or on slightly wrinkled linen bedding. At most one ordinary adult hand with five correct fingers and plain short nails lifts the edge of the item naturally — no face, no body. Sharp focus on the detail, the background naturally a little softer without artificial bokeh. Daylight slightly from the side so the texture gets relief and micro-shadows; a couple of dust specks or crumbs on the surface.` +
+      `A quick close-up phone photo for a secondhand listing: a tight detail shot of ${t.detalje} of ${t.beskrivelse}. The item lies on a wooden table with visible grain and a faint scratch, or on slightly wrinkled linen bedding. At most one ordinary adult hand with five correct fingers and plain short nails lifts the edge of the item naturally — no face, no body. The garment's construction must be correct and undamaged: every button, seam and edge appears exactly once and intact — no duplicated buttons, no frayed or torn edges, the item is in good used condition. Sharp focus on the detail, the background naturally a little softer without artificial bokeh. Daylight slightly from the side so the texture gets relief and micro-shadows; a couple of dust specks or crumbs on the surface.` +
       REALISME +
       UNDGAA_FAELLES,
   },
@@ -224,7 +228,7 @@ const PERSON_PROMPTS: KatalogPrompt[] = [
   {
     id: "p7-entre-taske",
     titel: "P7 · Entre — sort skuldertaske (kvinde, torso)",
-    prompt: `Casual mirror photo for a secondhand listing, framed from the chin/shoulder down to mid-thigh — the bag is the absolute focus and sits at the centre of the image; the face is not visible (head cropped by the top edge or hidden behind the phone). A slim young adult woman stands in front of a floor-length mirror in a bright hallway photographing a bag worn over her shoulder. She has auburn/red-brown hair in soft waves, one lock falling over one shoulder. The bag: a black medium-sized shoulder/crossbody bag in lightly grained leather, hanging by an adjustable strap over one shoulder and resting against the hip. A simple flap, discreet gold hardware, clearly realistic leather grain with small natural signs of use. The bag's shape, its size relative to the body, the strap and the closure are fully visible — nothing hidden behind hands or clothing. The clothes are deliberately plain and secondary: a plain beige knit and dark jeans. One hand holds a cream smartphone with a plain case; the other rests lightly on the strap at the shoulder without covering the bag. She stands slightly angled so both the front and a little of the side/depth of the bag show; camera at chest height. The hallway: off-white walls, pale wood floor, wall hooks with a couple of jackets at the frame edge, a pair of shoes by the door, soft daylight from a glass door. Lived-in, not arranged. Soft diffuse daylight, natural soft reflections on the leather — not shiny plastic, no flash.` +
+    prompt: `Casual mirror photo for a secondhand listing, framed strictly from the SHOULDERS down to mid-thigh — the entire head and face are completely outside the top edge of the frame; no part of the face (no chin, no mouth, no nose) is visible. The bag is the absolute focus and sits at the centre of the image. A slim young adult woman stands in front of a floor-length mirror in a bright hallway photographing a bag worn over her shoulder. She has auburn/red-brown hair in soft waves, one lock falling over one shoulder. The bag: a black medium-sized shoulder/crossbody bag in lightly grained leather, hanging by an adjustable strap over one shoulder and resting against the hip. A simple flap, discreet gold hardware, clearly realistic leather grain with small natural signs of use. The bag's shape, its size relative to the body, the strap and the closure are fully visible — nothing hidden behind hands or clothing. The clothes are deliberately plain and secondary: a plain beige knit and dark jeans. One hand holds a cream smartphone with a plain case; the other rests lightly on the strap at the shoulder without covering the bag. She stands slightly angled so both the front and a little of the side/depth of the bag show; camera at chest height. The hallway: off-white walls, pale wood floor, wall hooks with a couple of jackets at the frame edge, a pair of shoes by the door, soft daylight from a glass door. Lived-in, not arranged. Soft diffuse daylight, natural soft reflections on the leather — not shiny plastic, no flash.` +
       REALISME +
       UNDGAA_FAELLES +
       " Also avoid: a visible face, inventing a strap or carrying style the bag does not have, hands covering the closure or hardware, flashy jewellery, patterned clothes, plastic-looking brand-new leather.",
@@ -260,7 +264,7 @@ const PERSON_PROMPTS: KatalogPrompt[] = [
   {
     id: "p11-flatlay-seng",
     titel: "P11 · Flatlay — strik + jeans på hørseng",
-    prompt: `A quick top-down phone photo for a secondhand listing, no people — only the photographer's very faint shadow barely entering one corner. On a bed with slightly crumpled sand/off-white linen bedding an outfit is laid out casually by hand: a rust/terracotta merino knit sweater folded in half, and a pair of classic medium-blue straight-leg jeans beside it at a slight angle. Laid out like a person did it with their hands — NOT perfectly parallel, NOT shop-folded. The sweater has clearly visible fine merino stitches, ribbed neck and cuffs, and natural soft bumps in the fabric. The jeans have a visible waistband with a metal button, belt loops, clear denim twill texture and natural creases at the knees; one leg lies slightly bent. In a corner a pair of folded wool socks — nothing stealing focus. The bedding keeps its natural creases and folds — lived-in, not smoothed out; a hint of the bed edge and a bedside table at the frame edge. Natural daylight from a window on the left with a soft visible shadow gradient across the bedding, no flash. Taken from directly above with the phone at arm's length, at a slightly skew angle — not perfectly perpendicular.` +
+    prompt: `A quick top-down phone photo for a secondhand listing, no people. The photographer is completely invisible: no hand, no phone, no reflection and no shadow of the photographer anywhere in the frame. On a bed with slightly crumpled sand/off-white linen bedding an outfit is laid out casually by hand: a rust/terracotta merino knit sweater folded in half, and a pair of classic medium-blue straight-leg jeans beside it at a slight angle. Laid out like a person did it with their hands — NOT perfectly parallel, NOT shop-folded. The sweater has clearly visible fine merino stitches, ribbed neck and cuffs, and natural soft bumps in the fabric. The jeans have a visible waistband with a metal button, belt loops, clear denim twill texture and natural creases at the knees; one leg lies slightly bent. In a corner a pair of folded wool socks — nothing stealing focus. The bedding keeps its natural creases and folds — lived-in, not smoothed out; a hint of the bed edge and a bedside table at the frame edge. Natural daylight from a window on the left with a soft visible shadow gradient across the bedding, no flash. Taken from directly above with the phone at arm's length, at a slightly skew angle — not perfectly perpendicular.` +
       REALISME +
       UNDGAA_FAELLES +
       " Also avoid: hands in frame, a perfectly symmetric shop flatlay, props like coffee or flowers arranged around the clothes, deformed proportions between sweater and jeans.",
