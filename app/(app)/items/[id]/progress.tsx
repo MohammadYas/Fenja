@@ -7,13 +7,16 @@ import { beregnProcent, forventetSekunder } from "@/lib/fremdrift";
 
 type TrinStatus = "venter" | "running" | "succeeded" | "failed";
 type Trin = { kind: string; status: string };
+type Billede = { visningId: string | null; url: string };
 type StatusSvar = {
   leveret: boolean;
   fejlet: boolean;
   startetAt: string | null;
   forventetSekunder: number;
   totalBilleder?: number;
-  billeder: string[];
+  /** Brugerens valgte rækkefølge — rammerne står i den */
+  visninger?: string[];
+  billeder: Billede[];
   trin: Trin[];
 };
 
@@ -35,7 +38,8 @@ export function Progress({
 }) {
   const router = useRouter();
   const [trin, setTrin] = useState<Trin[]>([]);
-  const [billeder, setBilleder] = useState<string[]>([]);
+  const [billeder, setBilleder] = useState<Billede[]>([]);
+  const [visninger, setVisninger] = useState<string[]>([]);
   const [totalBilleder, setTotalBilleder] = useState<number>(0);
   const [fejlet, setFejlet] = useState(false);
   const [genstarter, setGenstarter] = useState(false);
@@ -76,6 +80,7 @@ export function Progress({
             ? [...prev, ...(data.billeder ?? []).slice(prev.length)]
             : prev,
         );
+        if (data.visninger?.length) setVisninger(data.visninger);
         setFejlet(data.fejlet);
         if (data.forventetSekunder) forventet.current = data.forventetSekunder;
         if (data.totalBilleder) setTotalBilleder(data.totalBilleder);
@@ -153,6 +158,33 @@ export function Progress({
     totalBilleder > 0
       ? Math.max(totalBilleder, billeder.length)
       : Math.max(raekkerFor("onmodel").length, billeder.length);
+
+  // Hver ramme hører til ÉN bestilt visning og viser kun sit eget billede
+  // (ejer-rapport 20/8: undervejs landede billederne i tilfældige rammer og
+  // "rykkede på plads", når alle var færdige). Billeder uden kendt visning —
+  // eller uden valgliste — falder tilbage til færdig-rækkefølgen.
+  const brugtPaaVisning = new Set<string>();
+  const billedeForRamme = Array.from({ length: antalFrames }, (_, i) => {
+    const visningId = visninger[i];
+    if (visningId) {
+      const traef = billeder.find((b) => b.visningId === visningId);
+      if (traef) {
+        brugtPaaVisning.add(traef.url);
+        return traef.url;
+      }
+      return null;
+    }
+    return billeder[i]?.url ?? null;
+  });
+  // Et billede vi ikke kunne placere (ukendt visning) må ikke gå tabt —
+  // læg det i den første tomme ramme
+  for (const billede of billeder) {
+    if (brugtPaaVisning.has(billede.url)) continue;
+    if (billedeForRamme.includes(billede.url)) continue;
+    const ledig = billedeForRamme.indexOf(null);
+    if (ledig === -1) break;
+    billedeForRamme[ledig] = billede.url;
+  }
   const faerdigeBilledeVisning = antalFrames > 0 && (
     <div className="mt-6">
       <p className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
@@ -161,19 +193,19 @@ export function Progress({
           : da.resultat.billederPaaVej}
       </p>
       <div className="mt-2 grid grid-cols-2 gap-3">
-        {Array.from({ length: antalFrames }, (_, i) =>
-          billeder[i] ? (
+        {billedeForRamme.map((url, i) =>
+          url ? (
             // Klik = fuld størrelse (ejer-ordre 20/8: man skal kunne zoome)
             <a
               key={`billede-${i}`}
-              href={billeder[i]}
+              href={url}
               target="_blank"
               rel="noreferrer"
               title={da.resultat.aabnFuldStoerrelse}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={billeder[i]}
+                src={url}
                 alt={`Færdigt billede ${i + 1} — tryk for fuld størrelse`}
                 className="pris-rul w-full rounded-bloed border border-kant"
               />

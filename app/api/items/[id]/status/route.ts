@@ -1,7 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { forventetSekunder } from "@/lib/fremdrift";
+import { VISNINGS_TYPER } from "@/lib/pipeline/visninger";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
+
+const VISNINGS_IDER = new Set<string>(VISNINGS_TYPER.map((v) => v.id));
 
 // Progress-data til polling (B-4): reelle pipeline-trin fra generations-
 // rækkerne. Bulletproof (ejer-ordrer 20/8): svaret bærer starttiden (kurven
@@ -25,7 +28,7 @@ export async function GET(
   const { data: item } = await supabase
     .from("items")
     .select(
-      "id, status, leveret_at, created_at, visninger, generations(kind, status, output_url, created_at)",
+      "id, status, leveret_at, created_at, visninger, generations(kind, status, output_url, created_at, prompt_version)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -36,6 +39,7 @@ export async function GET(
     status: string;
     output_url: string | null;
     created_at: string;
+    prompt_version: string | null;
   }[];
   // Serverens sandhed om hvor mange billeder der ER bestilt (items.visninger) —
   // ellers ville framen-kontoen vokse løbende med generations-rækkerne, og
@@ -76,10 +80,20 @@ export async function GET(
           const { data } = await service.storage
             .from("item-photos")
             .createSignedUrl(g.output_url!, 600);
-          return data?.signedUrl ?? null;
+          if (!data?.signedUrl) return null;
+          // Hvilken visning billedet hører til (ejer-rapport 20/8: "den sætter
+          // de forkerte billeder ind" undervejs) — rammen skal vise SIN egen
+          // visning, ikke bare det der blev færdigt først. Visnings-tagget
+          // står i prompt_version som "<visningId>@vN" (FR-15).
+          const visningId =
+            (g.prompt_version ?? "")
+              .split(" ")
+              .map((tag) => tag.split("@")[0]!)
+              .find((id) => VISNINGS_IDER.has(id)) ?? null;
+          return { visningId, url: data.signedUrl };
         }),
     )
-  ).filter((url): url is string => url !== null);
+  ).filter((b): b is { visningId: string | null; url: string } => b !== null);
 
   const antalBilleder = Math.max(1, totalBilleder);
 
@@ -89,6 +103,8 @@ export async function GET(
     startetAt: item.created_at,
     forventetSekunder: forventetSekunder(antalBilleder),
     totalBilleder,
+    /** Brugerens valgte rækkefølge — rammerne står i den, ikke i færdig-orden */
+    visninger: Array.isArray(valgteVisninger) ? valgteVisninger : [],
     billeder,
     trin: generinger.map((g) => ({ kind: g.kind, status: g.status })),
   });
