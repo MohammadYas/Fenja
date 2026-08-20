@@ -33,12 +33,14 @@ export const MAERKE_TIERS: { id: MaerkeTier; navn: string; eksempler: string }[]
   { id: "designer", navn: "Designer", eksempler: "Acne, Baum, Won Hundred" },
 ];
 
+// Navnene følger Vinteds standskala 1:1 (ejer-ordre 2026-08-20); id'erne og
+// kalibreringen er uændrede — de fem niveauer svarer semantisk til Vinteds
 export const STANDE: { id: Stand; navn: string }[] = [
-  { id: "nyMedMaerke", navn: "Ny med prismærke" },
-  { id: "somNy", navn: "Som ny" },
-  { id: "god", navn: "God stand" },
-  { id: "brugt", navn: "Brugt" },
-  { id: "slidt", navn: "Slidt" },
+  { id: "nyMedMaerke", navn: "Ny med prismærker" },
+  { id: "somNy", navn: "Ny uden prismærker" },
+  { id: "god", navn: "Meget god" },
+  { id: "brugt", navn: "God" },
+  { id: "slidt", navn: "Tilfredsstillende" },
 ];
 
 const BASIS_DKK: Record<Kategori, number> = {

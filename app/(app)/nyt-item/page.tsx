@@ -3,12 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { EksempelBagside, EksempelHelhed } from "@/components/foto-eksempler";
+import { MaerkeVaelger } from "@/components/maerke-vaelger";
 import { SektionsMarkoer } from "@/components/sektions-markoer";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { vinted } from "@/lib/config";
 import { da } from "@/lib/copy/da";
-import { MAERKER } from "@/lib/data/maerker";
+import { VINTED_FARVER, stoerrelsesGrupperFor } from "@/lib/data/vinted-kriterier";
 import { komprimerFoto } from "@/lib/upload/compress";
 
 type Rolle = "full" | "back" | "label" | "defect";
@@ -17,11 +18,6 @@ type Rolle = "full" | "back" | "label" | "defect";
 // SKRIVES i stedet for at fotograferes (AI skal ikke identificere; det
 // sparer et vision-kald pr. annonce og giver mere præcis tekst).
 const FOTO_ROLLER: Rolle[] = ["full", "back"];
-
-const EKSEMPLER: Partial<Record<Rolle, React.ReactNode>> = {
-  full: <EksempelHelhed />,
-  back: <EksempelBagside />,
-};
 
 type FotoTilstand = { blob: Blob; forhaandsvisning: string };
 
@@ -51,6 +47,15 @@ export default function NytItem() {
     setFejl(null);
     setTrin(nyt);
     window.scrollTo({ top: 0 });
+  };
+
+  // Vinteds størrelsesliste for den valgte tøjdel (null = fritekst)
+  const stoerrelsesGrupper = stoerrelsesGrupperFor(kategori);
+
+  const vaelgDel = (del: string) => {
+    if (del !== kategori) setStoerrelse(""); // ny del = ny størrelsesliste
+    setKategori(del);
+    gaaTil(2);
   };
 
   // Trinnets krav — Næste er først aktiv, når trinnet er komplet
@@ -185,10 +190,7 @@ export default function NytItem() {
                     key={del}
                     type="button"
                     aria-pressed={aktiv}
-                    onClick={() => {
-                      setKategori(del);
-                      gaaTil(2);
-                    }}
+                    onClick={() => vaelgDel(del)}
                     className={`kort-klik min-h-touch p-4 text-left font-display text-lead font-semibold transition-colors duration-150 ease-out ${
                       aktiv ? "border-gran text-gran" : ""
                     }`}
@@ -218,8 +220,12 @@ export default function NytItem() {
                       alt={`Valgt foto: ${info.navn}`}
                       className="h-16 w-16 rounded-stram object-cover"
                     />
+                  ) : rolle === "full" ? (
+                    // Ikonet følger tøjdelen fra trin 1 (ejer-ordre 20/8:
+                    // jeans skal ikke vises som en trøje)
+                    <EksempelHelhed kategori={kategori} />
                   ) : (
-                    EKSEMPLER[rolle]
+                    <EksempelBagside kategori={kategori} />
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">
@@ -252,24 +258,51 @@ export default function NytItem() {
         {trin === 3 ? (
         <section aria-label={da.nytItem.felterTitel} className="flex flex-col gap-5">
           <SektionsMarkoer nr={3} titel={da.nytItem.felterTitel} />
-          <Field
-            label={da.nytItem.maerkeLabel}
-            list="maerker"
-            required
-            value={maerke}
-            onChange={(e) => setMaerke(e.target.value)}
-          />
-          <datalist id="maerker">
-            {MAERKER.map((m) => (
-              <option key={m} value={m} />
-            ))}
-          </datalist>
-          <Field
-            label={da.nytItem.stoerrelseLabel}
-            required
-            value={stoerrelse}
-            onChange={(e) => setStoerrelse(e.target.value)}
-          />
+          <MaerkeVaelger value={maerke} onChange={setMaerke} />
+          {/* Størrelse, stand og farve følger Vinteds egne lister 1:1
+              (ejer-ordre 20/8) — fritekst kun hvor Vinted ingen liste har */}
+          {stoerrelsesGrupper ? (
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="stoerrelse" className="text-basis font-medium">
+                {da.nytItem.stoerrelseLabel}
+              </label>
+              <select
+                id="stoerrelse"
+                required
+                value={stoerrelse}
+                onChange={(e) => setStoerrelse(e.target.value)}
+                className="min-h-touch rounded-bloed border border-kant bg-baggrund px-3 text-basis"
+              >
+                <option value="" disabled>
+                  {da.nytItem.stoerrelseVaelg}
+                </option>
+                {stoerrelsesGrupper.length === 1 ? (
+                  stoerrelsesGrupper[0]!.stoerrelser.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))
+                ) : (
+                  stoerrelsesGrupper.map((gruppe) => (
+                    <optgroup key={gruppe.navn} label={gruppe.navn}>
+                      {gruppe.stoerrelser.map((s) => (
+                        <option key={`${gruppe.navn}-${s}`} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))
+                )}
+              </select>
+            </div>
+          ) : (
+            <Field
+              label={da.nytItem.stoerrelseLabel}
+              required
+              value={stoerrelse}
+              onChange={(e) => setStoerrelse(e.target.value)}
+            />
+          )}
           <div className="flex flex-col gap-1.5">
             <label htmlFor="stand" className="text-basis font-medium">
               {da.nytItem.standLabel}
@@ -302,12 +335,25 @@ export default function NytItem() {
               onChange={(e) => setKategori(e.target.value || "Andet")}
             />
           ) : null}
-          <Field
-            label={da.nytItem.farveLabel}
-            hjaelp={da.nytItem.farveHjaelp}
-            value={farve}
-            onChange={(e) => setFarve(e.target.value)}
-          />
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="farve" className="text-basis font-medium">
+              {da.nytItem.farveLabel}
+            </label>
+            <select
+              id="farve"
+              value={farve}
+              onChange={(e) => setFarve(e.target.value)}
+              className="min-h-touch rounded-bloed border border-kant bg-baggrund px-3 text-basis"
+            >
+              <option value="">{da.nytItem.farveVaelg}</option>
+              {VINTED_FARVER.map((f) => (
+                <option key={f.navn} value={f.navn}>
+                  {f.navn}
+                </option>
+              ))}
+            </select>
+            <p className="text-detalje text-tekst/70">{da.nytItem.farveHjaelp}</p>
+          </div>
           <Field
             label={da.nytItem.labelTekstLabel}
             hjaelp={da.nytItem.labelTekstHjaelp}

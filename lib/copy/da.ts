@@ -139,9 +139,12 @@ export const da = {
       "Taske",
       "Andet",
     ],
-    // Ejer-ordre 20/8: label og farve skrives (AI læser ikke label-fotos)
+    // Ejer-ordre 20/8: label og farve skrives (AI læser ikke label-fotos).
+    // Ejer-ordre 20/8 (senere): farve, størrelse og stand følger Vinteds
+    // egne lister 1:1, så annoncen kan sættes direkte ind.
     farveLabel: "Farve",
-    farveHjaelp: "Fx mørkeblå, salviegrøn — hjælper titlen og søgningen.",
+    farveVaelg: "Vælg farve",
+    farveHjaelp: "Vinteds farveliste — vælg den, der ligger tættest.",
     labelTekstLabel: "Fra vaskemærket",
     labelTekstHjaelp:
       "Skriv materiale og evt. vask, fx \"100 % uld, vask ved 30°\". Valgfrit.",
@@ -171,9 +174,12 @@ export const da = {
     skiftFoto: "Skift foto",
     komprimerer: "Gør fotoet klar …",
     felterTitel: "Om tøjet",
-    maerkeLabel: "Mærke",
+    maerkeLabel: "Varemærke",
+    maerkeHjaelp: "Søg i Vinteds mærker — eller skriv dit eget.",
+    maerkeIngenMatch: "Ingen match — dit eget mærkenavn bruges, som du skriver det.",
     stoerrelseLabel: "Størrelse",
-    standLabel: "Stand",
+    stoerrelseVaelg: "Vælg størrelse",
+    standLabel: "Artiklens stand",
     standVaelg: "Vælg stand",
     kategoriLabel: "Kategori",
     kategoriHjaelp: "Fx striktrøje, kjole, jeans, jakke",

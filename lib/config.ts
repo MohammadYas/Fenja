@@ -163,10 +163,12 @@ export const misbrugsvaern = {
 } as const;
 
 export const vinted = {
+  // Vinteds danske standskala 1:1 (ejer-ordre 2026-08-20; aflæst fra
+  // vinted.dk samme dag) — labels må ikke omformuleres
   standskala: [
-    "Ny med prismærke",
-    "Ny uden prismærke",
-    "Rigtig god",
+    "Ny med prismærker",
+    "Ny uden prismærker",
+    "Meget god",
     "God",
     "Tilfredsstillende",
   ] as const,
