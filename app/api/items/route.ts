@@ -2,14 +2,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { misbrugsvaern, upload, vinted } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { SupabaseLedgerDb } from "@/lib/credits/supabase";
-import { koerItemPipeline } from "@/lib/pipeline/run";
 import { STANDARD_PRESET_ID, PRESETS } from "@/lib/pipeline/presets";
-import {
-  SupabasePipelineDb,
-  SupabasePipelineStorage,
-} from "@/lib/pipeline/supabase-db";
+import { startPipeline } from "@/lib/pipeline/start";
 import { normaliserVisningsvalg } from "@/lib/pipeline/visninger";
-import { hentImageProvider, hentTextProvider } from "@/lib/providers";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
 
@@ -67,6 +62,19 @@ export async function POST(request: NextRequest) {
 
   const service = opretServiceKlient();
 
+  // Idempotens (bulletproof, ejer-ordre 20/8): samme kladde må aldrig blive
+  // to annoncer — et gentaget kald (netudfald, dobbeltklik, retry) returnerer
+  // den eksisterende annonce. Fejler harmløst før migrationen er kørt.
+  const { data: eksisterende } = await service
+    .from("items")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("kladde_id", krop.kladdeId)
+    .maybeSingle();
+  if (eksisterende) {
+    return NextResponse.json({ itemId: eksisterende.id });
+  }
+
   // Rate limit pr. bruger pr. dag (E-5)
   const midnat = new Date();
   midnat.setUTCHours(0, 0, 0, 0);
@@ -116,12 +124,25 @@ export async function POST(request: NextRequest) {
       ...basisItem,
       label_text: krop.labelTekst?.trim() || null,
       color: krop.farve?.trim() || null,
+      kladde_id: krop.kladdeId,
+      visninger: visninger.map((v) => v.id),
     })
     .select("id")
     .single();
-  if (itemFejl && /label_text|color|column/i.test(itemFejl.message)) {
-    // Migration 20260820020000 er ikke kørt endnu — opret uden de nye felter,
-    // så leverancen aldrig blokeres af manglende kolonner
+  if (itemFejl && /duplicate|unique|unik/i.test(itemFejl.message)) {
+    // To samtidige forsøg på samme kladde: unik-indekset vandt — returnér
+    // den annonce, der allerede blev oprettet
+    const { data: dublet } = await service
+      .from("items")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("kladde_id", krop.kladdeId)
+      .maybeSingle();
+    if (dublet) return NextResponse.json({ itemId: dublet.id });
+  }
+  if (itemFejl && /label_text|color|kladde_id|visninger|column/i.test(itemFejl.message)) {
+    // Migrationer (20260820020000/20260820100000) er ikke kørt endnu — opret
+    // uden de nye felter, så leverancen aldrig blokeres af manglende kolonner
     ({ data: item, error: itemFejl } = await service
       .from("items")
       .insert(basisItem)
@@ -148,31 +169,3 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ itemId: item.id });
 }
 
-// Med Trigger.dev-nøgle køres jobbet dér (G-3); uden nøgle (lokal dev/mock)
-// køres pipelinen i baggrunden i processen — mock-providers er hurtige.
-async function startPipeline(
-  itemId: string,
-  presetId: string,
-  visninger: string[],
-): Promise<void> {
-  if (process.env.TRIGGER_SECRET_KEY) {
-    const { tasks } = await import("@trigger.dev/sdk");
-    await tasks.trigger("item-pipeline", { itemId, presetId, visninger });
-    return;
-  }
-  const service = opretServiceKlient();
-  void koerItemPipeline(
-    {
-      db: new SupabasePipelineDb(service),
-      storage: new SupabasePipelineStorage(service),
-      image: await hentImageProvider(),
-      text: await hentTextProvider(),
-      ledger: new SupabaseLedgerDb(service),
-    },
-    itemId,
-    presetId,
-    visninger,
-  ).catch((fejl) => {
-    console.error(`Pipeline fejlede for item ${itemId}:`, fejl);
-  });
-}

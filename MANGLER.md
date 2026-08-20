@@ -27,6 +27,13 @@ Sidst opdateret: 2026-08-20 (morgen). Ejer-prioritering: Resend er på vej;
         med avanceret prompt. Ejer 19/8: erstattede Claude.
 - [ ] **RESEND_API_KEY + domæneverifikation** — PÅ VEJ (ejer). Låser op:
       transaktionsmails (S32) + glemt adgangskode (S39).
+- [ ] **TRIGGER_SECRET_KEY (skalering, 20/8):** i produktion med mange
+      brugere SKAL pipelinen køre via Trigger.dev (koden er klar — sæt
+      nøglen). Uden den kører jobs i serverprocessen: genoptag-knappen
+      redder hængende kørsler, men jobs overlever ikke genstarter.
+- [ ] **Kør migration `20260820100000_bulletproof_oprettelse.sql`** —
+      giver idempotent oprettelse (kladde_id-unikhed) + gemte visningsvalg
+      til genoptag. Koden virker før migrationen, garantierne gælder efter.
 
 ## 2. Deploy
 - [ ] **Netlify-site kobles til GitHub-repoet** (ejer: "bare uploade github til

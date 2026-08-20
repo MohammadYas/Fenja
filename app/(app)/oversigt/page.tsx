@@ -12,7 +12,7 @@ type ItemRaekke = {
   brand: string | null;
   titel: string | null;
   category: string | null;
-  status: "draft" | "active" | "sold";
+  status: "draft" | "active" | "sold" | "failed";
   sold_price_dkk: number | null;
   leveret_at: string | null;
   solgt_at: string | null;
@@ -90,14 +90,16 @@ export default async function Oversigt() {
               id: item.id,
               titel:
                 item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
-              status: item.status,
+              // Bulletproof (ejer-ordre 20/8): en fejlet kørsel vises ærligt —
+              // man åbner annoncen og kører den igen derfra
+              status: item.status === "failed" ? "draft" : item.status,
+              fejlet: item.status === "failed" && !item.leveret_at,
               soldPrisDkk: item.sold_price_dkk,
               // B-9: en kladde med kørende pipeline er "på vej", ikke efterladt
               paaVej:
                 item.status === "draft" &&
-                (item.generations ?? []).some(
-                  (g) => g.status === "queued" || g.status === "running",
-                ),
+                !item.leveret_at &&
+                (item.generations ?? []).length > 0,
             }))}
           />
         </>

@@ -15,6 +15,8 @@ export type ItemTilListe = {
   soldPrisDkk: number | null;
   /** Kladde med kørende pipeline (B-9) — vises som "På vej" */
   paaVej: boolean;
+  /** Kørslen gik i stå (bulletproof, 20/8) — åbn annoncen og kør igen */
+  fejlet: boolean;
 };
 
 const STATUSSER: Status[] = ["draft", "active", "sold"];
@@ -81,7 +83,11 @@ export function ItemListe({ items }: { items: ItemTilListe[] }) {
                     <span className="block truncate">{item.titel}</span>
                   </Link>
                   <Badge variant={item.status === "sold" ? "status" : "neutral"}>
-                    {item.paaVej ? da.oversigt.paaVej : da.oversigt.status[item.status]}
+                    {item.fejlet
+                      ? da.oversigt.gikIStaa
+                      : item.paaVej
+                        ? da.oversigt.paaVej
+                        : da.oversigt.status[item.status]}
                   </Badge>
                 </div>
                 {item.status === "sold" && item.soldPrisDkk != null ? (

@@ -205,6 +205,11 @@ export const da = {
       "Du har ingen kreditter tilbage. Fyld op eller vælg et abonnement under Kreditter.",
     fejlRateLimit: "Du har nået dagens grænse for nye annoncer. Prøv igen i morgen.",
     fejlUpload: "Et foto kunne ikke uploades. Tjek forbindelsen og prøv igen.",
+    // Bulletproof kladde (ejer-ordre 20/8)
+    kladdeGendannet:
+      "Din kladde er gendannet — felter og fotos er gemt på telefonen, indtil annoncen er oprettet.",
+    fejlOffline:
+      "Ingen forbindelse lige nu. Alt er gemt på telefonen — prøv igen om lidt.",
     // Ejer-ordre 20/8: brugeren vælger selv hvilke billeder der genereres —
     // med eksempler, tydelig pris og en eksplicit opret-knap (ingen auto-start)
     visningTitel: "Hvilke billeder skal laves?",
@@ -233,6 +238,13 @@ export const da = {
     },
     // Ejer-ordre 20/8: tydeligere fremdrift på "på vej"-siden
     procentFaerdig: (p: number) => `${p} % færdig`,
+    // Bulletproof (ejer-ordre 20/8): hængende/fejlet kørsel kan genstartes
+    genoptagTitel: "Det tog længere end det skulle",
+    genoptagTekst:
+      "Noget drillede undervejs. Der er ikke trukket nogen kreditter — tryk, så kører vi den igen med de samme valg.",
+    genoptagKnap: "Kør igen",
+    genoptagArbejder: "Genstarter …",
+    genoptagKoerer: "Annoncen arbejder stadig — vent et øjeblik.",
     trinBilledTaeller: (faerdige: number, alle: number) =>
       `${faerdige} af ${alle}`,
     trinVenter: "venter",
@@ -282,6 +294,7 @@ export const da = {
     },
     // Kladde med kørende pipeline (B-9): adskil "arbejder" fra "efterladt"
     paaVej: "På vej",
+    gikIStaa: "Gik i stå — åbn og kør igen",
     filterLabel: "Vis kun",
     filterAlle: "Alle",
     filterTom: "Ingen annoncer med den status endnu.",

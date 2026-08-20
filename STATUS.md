@@ -1,6 +1,31 @@
 # STATUS
 Sidst opdateret: 2026-08-20 (eftermiddag) af Claude Code
 
+## Denne session (20/8 eftermiddag, runde 3) — BULLETPROOF (ejer-ordre)
+Ordre: sluk telefonen, tab nettet, luk siden — intet må gå tabt, og intet må
+hænge for evigt. Leveret (336 tests, lint + typecheck grønne):
+- **Kladden overlever alt:** felter i localStorage + foto-blobs i IndexedDB
+  (`lib/kladde/lager.ts`); wizarden gendanner automatisk med "Din kladde er
+  gendannet"-note og rydder først efter vellykket oprettelse. Alle netkald
+  (signering, storage-upload, opret) prøver 3× med stigende pause; offline
+  giver "Alt er gemt på telefonen — prøv igen om lidt".
+- **Idempotent oprettelse:** retry/dobbeltklik kan aldrig give to annoncer —
+  API'et slår kladde_id op og returnerer den eksisterende; unik-indeks som
+  bagstopper. Migration `20260820100000_bulletproof_oprettelse.sql`
+  (kladde_id + visninger jsonb) er skrevet, IKKE kørt mod cloud (ejer/ordre).
+- **Ingen evig "på vej":** væltet pipeline markerer item `failed`;
+  status-API'et opdager også hængende kørsler (>3 min uden aktivitet — fx
+  server-genstart, formentlig det ejeren så som "bliver aldrig færdig", da
+  Claude genstartede dev-serveren). UI viser "Det tog længere end det
+  skulle" + **Kør igen**-knap → `/api/items/[id]/genoptag` (idempotent,
+  genbruger gemte visningsvalg, nægter at køre oveni en aktiv kørsel).
+- **Progress-baren er forankret i serverens starttid** — refresh/genbesøg
+  nulstiller den aldrig; polling backer af ved netfejl (2,5→15 s) men giver
+  aldrig op. Oversigten viser "Gik i stå — åbn og kør igen" for fejlede.
+- **Skalering:** produktion skal sætte TRIGGER_SECRET_KEY (jobs i
+  Trigger.dev overlever genstarter) — står nu i MANGLER §1. Delt start i
+  `lib/pipeline/start.ts`.
+
 ## Denne session (20/8 eftermiddag, runde 2) — brugeren vælger billederne
 Ejer-ordre: ingen auto-generering — wizarden skal SPØRGE hvilke billeder der
 laves, med eksempler. Leveret (336 tests, lint + typecheck grønne, pushet):

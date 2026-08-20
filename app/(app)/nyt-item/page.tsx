@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EksempelBagside, EksempelHelhed } from "@/components/foto-eksempler";
 import { MaerkeVaelger } from "@/components/maerke-vaelger";
 import { SektionsMarkoer } from "@/components/sektions-markoer";
@@ -17,6 +17,14 @@ import {
   eksempelBillede,
   type VisningsTypeId,
 } from "@/lib/pipeline/visninger";
+import {
+  gemFelter,
+  gemFotoBlob,
+  hentFelter,
+  hentFotoBlobs,
+  medForsoeg,
+  rydKladde,
+} from "@/lib/kladde/lager";
 import { komprimerFoto } from "@/lib/upload/compress";
 
 type Rolle = "full" | "back" | "label" | "defect";
@@ -51,7 +59,79 @@ export default function NytItem() {
   ]);
   const [fejl, setFejl] = useState<string | null>(null);
   const [travl, setTravl] = useState(false);
+  const [gendannet, setGendannet] = useState(false);
   const kladdeId = useRef<string>(crypto.randomUUID());
+  // Persistér først når en evt. gemt kladde er læst — ellers overskriver
+  // mount-defaults den gemte kladde
+  const klarTilGem = useRef(false);
+
+  // Bulletproof kladde (ejer-ordre 20/8): gendan felter + fotos efter luk,
+  // sluk eller mistet net — intet må gå tabt
+  useEffect(() => {
+    let aktiv = true;
+    void (async () => {
+      const felter = hentFelter();
+      if (felter) {
+        kladdeId.current = felter.kladdeId;
+        setKategori(felter.kategori);
+        setMaerke(felter.maerke);
+        setStoerrelse(felter.stoerrelse);
+        setStand(felter.stand);
+        setFejlTekst(felter.fejlTekst);
+        setFarver(felter.farver);
+        setLabelTekst(felter.labelTekst);
+        setKoebspris(felter.koebspris);
+        setVisninger(felter.visninger as VisningsTypeId[]);
+        setTrin(Math.min(Math.max(felter.trin, 1), SIDSTE_TRIN) as Trin);
+      }
+      const blobs = await hentFotoBlobs();
+      if (!aktiv) return;
+      if (Object.keys(blobs).length > 0) {
+        setFotos(
+          Object.fromEntries(
+            Object.entries(blobs).map(([rolle, blob]) => [
+              rolle,
+              { blob, forhaandsvisning: URL.createObjectURL(blob) },
+            ]),
+          ),
+        );
+      }
+      if (felter || Object.keys(blobs).length > 0) setGendannet(true);
+      klarTilGem.current = true;
+    })();
+    return () => {
+      aktiv = false;
+    };
+  }, []);
+
+  // Gem felterne løbende (fotos gemmes i vaelgFoto)
+  useEffect(() => {
+    if (!klarTilGem.current) return;
+    gemFelter({
+      kladdeId: kladdeId.current,
+      trin,
+      kategori,
+      maerke,
+      stoerrelse,
+      stand,
+      fejlTekst,
+      farver,
+      labelTekst,
+      koebspris,
+      visninger,
+    });
+  }, [
+    trin,
+    kategori,
+    maerke,
+    stoerrelse,
+    stand,
+    fejlTekst,
+    farver,
+    labelTekst,
+    koebspris,
+    visninger,
+  ]);
 
   const gaaTil = (nyt: Trin) => {
     setFejl(null);
@@ -93,28 +173,38 @@ export default function NytItem() {
         if (gammel) URL.revokeObjectURL(gammel.forhaandsvisning);
         return { ...f, [rolle]: { blob, forhaandsvisning: URL.createObjectURL(blob) } };
       });
+      void gemFotoBlob(rolle, blob); // kladden overlever luk/sluk (ejer-ordre)
     } finally {
       setKomprimererRolle(null);
     }
   }
 
+  // Bulletproof (ejer-ordre 20/8): hvert netkald prøver op til 3 gange med
+  // stigende pause, så et par sekunders udfald aldrig vælter oprettelsen
   async function uploadFoto(rolle: Rolle, blob: Blob): Promise<string> {
-    const signering = await fetch("/api/upload-signering", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ kladdeId: kladdeId.current, rolle }),
+    const { sti, token } = await medForsoeg(async () => {
+      const signering = await fetch("/api/upload-signering", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kladdeId: kladdeId.current, rolle }),
+      });
+      if (!signering.ok) throw new Error(da.nytItem.fejlUpload);
+      return (await signering.json()) as { sti: string; token: string };
     });
-    if (!signering.ok) throw new Error(da.nytItem.fejlUpload);
-    const { sti, token } = (await signering.json()) as { sti: string; token: string };
 
     // Hentes først ved upload (dynamisk import er cachet efter første kald),
     // så selve formularsiden ikke bærer Supabase-bundtet
     const { opretBrowserKlient } = await import("@/lib/supabase/client");
     const supabase = opretBrowserKlient();
-    const { error } = await supabase.storage
-      .from("item-photos")
-      .uploadToSignedUrl(sti, token, blob, { contentType: "image/jpeg" });
-    if (error) throw new Error(da.nytItem.fejlUpload);
+    await medForsoeg(async () => {
+      const { error } = await supabase.storage
+        .from("item-photos")
+        .uploadToSignedUrl(sti, token, blob, {
+          contentType: "image/jpeg",
+          upsert: true, // gentagne forsøg må overskrive deres eget delvise upload
+        });
+      if (error) throw new Error(da.nytItem.fejlUpload);
+    });
     return sti;
   }
 
@@ -142,32 +232,45 @@ export default function NytItem() {
         uploads.push({ rolle, sti: await uploadFoto(rolle, foto.blob) });
       }
 
-      const svar = await fetch("/api/items", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          kladdeId: kladdeId.current,
-          maerke,
-          stoerrelse,
-          stand,
-          kategori,
-          fejlBeskrivelse: fejlTekst || undefined,
-          farve: farver.length > 0 ? farver.join(", ") : undefined,
-          labelTekst: labelTekst || undefined,
-          koebsprisDkk: koebspris ? Number(koebspris) : undefined,
-          visninger,
-          fotos: uploads,
+      // Netfejl prøves igen; serveren er idempotent pr. kladde-id, så et
+      // gentaget kald aldrig kan blive til to annoncer
+      const svar = await medForsoeg(() =>
+        fetch("/api/items", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            kladdeId: kladdeId.current,
+            maerke,
+            stoerrelse,
+            stand,
+            kategori,
+            fejlBeskrivelse: fejlTekst || undefined,
+            farve: farver.length > 0 ? farver.join(", ") : undefined,
+            labelTekst: labelTekst || undefined,
+            koebsprisDkk: koebspris ? Number(koebspris) : undefined,
+            visninger,
+            fotos: uploads,
+          }),
         }),
-      });
+      );
       const data = (await svar.json()) as { itemId?: string; fejl?: string };
       if (!svar.ok || !data.itemId) {
         setFejl(data.fejl ?? da.fejl.generel);
         setTravl(false);
         return;
       }
+      await rydKladde(); // annoncen er oprettet — kladden er brugt
       router.push(`/items/${data.itemId}`);
     } catch (fejlobjekt) {
-      setFejl(fejlobjekt instanceof Error ? fejlobjekt.message : da.fejl.generel);
+      // Kladden ligger stadig gemt — intet er tabt, man kan bare prøve igen
+      const offline = typeof navigator !== "undefined" && !navigator.onLine;
+      setFejl(
+        offline
+          ? da.nytItem.fejlOffline
+          : fejlobjekt instanceof Error
+            ? fejlobjekt.message
+            : da.fejl.generel,
+      );
       setTravl(false);
     }
   }
@@ -178,6 +281,11 @@ export default function NytItem() {
         {da.nytItem.titel}
       </h1>
       <p className="mt-3 max-w-laesbar text-tekst/80">{da.nytItem.forklaring}</p>
+      {gendannet ? (
+        <p className="mt-3 max-w-laesbar rounded-bloed border border-kant bg-flade px-3 py-2 text-detalje text-tekst/80">
+          {da.nytItem.kladdeGendannet}
+        </p>
+      ) : null}
 
       {/* Fremdrift: fire rolige segmenter + trin-tekst */}
       <div className="mt-6">
