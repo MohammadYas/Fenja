@@ -1,7 +1,18 @@
 # STATUS
 Sidst opdateret: 2026-08-20 (sen aften) af Claude Code
 
-## Denne session (20/8 sen aften, runde 8) — ejer-ordrer i bundter
+## Denne session (20/8 sen aften, runde 9) — metadata væk, migrations kørt
+- **EJER-BESLUTNING: INGEN metadata i billedfilerne** (overstyrer C-4 og
+  manifest §2.1.7 helt): paafoerBadge normaliserer kun til JPEG. AI-mærkning
+  findes nu KUN i UI'et/på forsiden (+ Googles egen C2PA-signatur, som vi
+  ikke styrer). Tests vendt (asserter ingen egen EXIF).
+- **Begge ventende migrations KØRT mod cloud via Composio (ejer-ordre)** og
+  verificeret: items.kladde_id + visninger + unik-indeks (idempotent
+  oprettelse + genoptag med gemte valg gælder nu FULDT), profiles.koen +
+  haar_farve (onboarding virker live).
+- **Rul-ned-pil på resultatsiden** (ejer-ordre): animeret pil + "Titel,
+  beskrivelse og prisforslag ligger lige herunder" mellem billederne og
+  tekst-sektionen (anker #annonce-tekst).
 - **6. root cause:** vision-503 ("high demand") kastede ufanget og væltede
   ALT — derfor døde billede 2. Nu: vision-retry + billedet leveres u-tjekket
   (score 0) frem for at smides væk; og én visnings nedbrud isoleres (kan

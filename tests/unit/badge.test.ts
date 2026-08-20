@@ -1,6 +1,6 @@
 import sharp from "sharp";
 import { describe, expect, it } from "vitest";
-import { AI_METADATA_TEKST, beskaerTilVinted, paafoerBadge } from "@/lib/pipeline/badge";
+import { beskaerTilVinted, paafoerBadge } from "@/lib/pipeline/badge";
 
 async function testBillede(bredde = 800, hoejde = 600): Promise<Buffer> {
   return sharp({
@@ -15,13 +15,13 @@ async function testBillede(bredde = 800, hoejde = 600): Promise<Buffer> {
     .toBuffer();
 }
 
-describe("AI-badge (C-4 — kan ikke fravælges)", () => {
-  it("indlejrer AI-mærkning i EXIF-metadata", async () => {
+describe("leverance-billede (ejer-beslutning 20/8: ingen mærkning i filen)", () => {
+  it("tilføjer INGEN egen metadata til billedet", async () => {
     const output = await paafoerBadge(await testBillede());
     const meta = await sharp(output).metadata();
     const exif = meta.exif?.toString("utf8") ?? "";
-    expect(exif).toContain("AI-genereret");
-    expect(AI_METADATA_TEKST).toContain("art. 50");
+    expect(exif).not.toContain("AI-genereret");
+    expect(exif).not.toContain("Selja");
   });
 
   it("sætter ALDRIG synlig tekst på billedet (ejer-ordre 20/8)", async () => {

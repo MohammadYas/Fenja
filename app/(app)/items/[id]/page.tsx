@@ -209,10 +209,17 @@ export default async function ItemSide({
         )}
       </section>
 
+      {/* Ejer-ordre 20/8: tydelig vej ned — teksten og prisen ligger under
+          billederne, og det var uklart */}
+      <a href="#annonce-tekst" className="rul-ned mt-6 inline-flex min-h-touch items-center gap-2 font-medium text-primaer">
+        <span aria-hidden="true" className="rul-ned-pil">↓</span>
+        {da.resultat.rulNed}
+      </a>
+
       <div className="soem-vandret mt-8" aria-hidden="true" />
 
       {/* 3 · Annoncetekst med kopiér-knap pr. element */}
-      <section className="mt-8" aria-label={da.resultat.tekstTitel}>
+      <section id="annonce-tekst" className="mt-8" aria-label={da.resultat.tekstTitel}>
         <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
           03 — {da.resultat.tekstTitel}
         </h2>

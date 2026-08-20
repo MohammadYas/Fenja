@@ -1,28 +1,13 @@
-// AI-mærkning indlejret i selve billedfilen (C-4, EU AI-forordningen art.
-// 50). EJER-ORDRE 2026-08-20: der må UNDER INGEN OMSTÆNDIGHEDER stå synlig
-// tekst på billedet — mærkningen er metadata i filen (+ Googles egen C2PA-
-// signatur fra genereringen) og de synlige noter i UI'et/på forsiden.
-// Kaldes stadig altid på genererede billeder før levering.
+// EJER-BESLUTNING 2026-08-20 (overstyrer C-4/manifest §2.1.7): billedfilen
+// bærer HVERKEN synlig badge ELLER egen metadata. AI-mærkningen bor i
+// UI'et/på forsiden — og Googles egen C2PA-signatur fra genereringen sidder
+// stadig i filen fra deres side. Funktionen normaliserer kun til JPEG.
 
 import sharp from "sharp";
 
-export const AI_METADATA_TEKST =
-  "AI-genereret visualisering. Maerket jf. EU AI-forordningen art. 50. Lavet med Selja.";
-
-/**
- * Indlejrer AI-mærkning i billedets metadata (ingen synlig badge —
- * ejer-ordre 20/8). Returnerer altid JPEG (Vinted-venligt).
- */
+/** Normaliserer leverancen til JPEG (Vinted-venligt) — ingen mærkning i filen */
 export async function paafoerBadge(billede: Buffer): Promise<Buffer> {
-  return sharp(billede)
-    .withExif({
-      IFD0: {
-        ImageDescription: AI_METADATA_TEKST,
-        Software: "Selja (AI-genereret visualisering)",
-      },
-    })
-    .jpeg({ quality: 88 })
-    .toBuffer();
+  return sharp(billede).jpeg({ quality: 88 }).toBuffer();
 }
 
 /** 4:5-venlig beskæring til Vinteds visning (C-8) — ændrer aldrig indholdet, kun beskæring */

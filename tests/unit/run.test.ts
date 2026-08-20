@@ -117,7 +117,7 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
     expect(onmodel?.promptVersion).toContain(hjemVersionsTag(valgtHjem));
   });
 
-  it("visualiseringen i storage har badge-metadata (C-4)", async () => {
+  it("visualiseringen i storage er ren JPEG uden egen mærkning (ejer-beslutning 20/8)", async () => {
     const { deps } = await opsaetning();
     const resultat = await koerItemPipeline(deps, "item-1");
     const storage = deps.storage as FakePipelineStorage;
@@ -125,6 +125,7 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
     expect(gemt).toBeDefined();
     const sharp = (await import("sharp")).default;
     const meta = await sharp(gemt!).metadata();
-    expect(meta.exif?.toString("utf8")).toContain("AI-genereret");
+    expect(meta.format).toBe("jpeg");
+    expect(meta.exif?.toString("utf8") ?? "").not.toContain("AI-genereret");
   });
 });

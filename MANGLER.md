@@ -43,10 +43,10 @@ Sidst opdateret: 2026-08-20 (morgen). Ejer-prioritering: Resend er på vej;
       runtime hos Netlify — så værdierne skal stadig ind i Netlify-sitets
       Environment variables ved deploy (engangsopgave/synk). Uden dem
       deployer sitet, men kører demo-mode: intet login, intet køb, ingen AI.
-- [ ] **Migrationer der venter på kørsel mod cloud:**
-      `20260820100000_bulletproof_oprettelse.sql` (kladde-idempotens +
-      gemte visningsvalg) og `20260820110000_profil_generering.sql`
-      (onboarding: køn/hårfarve). Koden er fejltolerant uden dem.
+- [x] **Migrationer kørt mod cloud (20/8 via Composio på ejer-ordre):**
+      `20260820100000_bulletproof_oprettelse.sql` og
+      `20260820110000_profil_generering.sql` — verificeret (kladde_id,
+      visninger, koen, haar_farve + unik-indeks findes).
 - [ ] **Domæne** — stadig `SELJA_DOMAIN`-placeholder (`selja.studio`) i
       `lib/config.ts`; `kontakt.email` peger på gmail, skiftes ved domæne.
 

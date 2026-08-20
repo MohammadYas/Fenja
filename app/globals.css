@@ -226,6 +226,22 @@
       background-position: -60% 0;
     }
   }
+  /* Rul-ned-pil på resultatsiden (ejer-ordre 20/8): blidt hop, peger på at
+     tekst + pris ligger under billederne */
+  .rul-ned-pil {
+    display: inline-block;
+    animation: rul-ned-hop 1.6s ease-in-out infinite;
+  }
+  @keyframes rul-ned-hop {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(0.3em);
+    }
+  }
+
   /* Tre prikker der puster efter tur (ejer-ordre 20/8: flere animationer) */
   .genererer-prikker {
     display: inline-flex;

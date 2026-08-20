@@ -288,6 +288,7 @@ export const da = {
     billederPaaVej: "Dine billeder",
     genererFrame: "Genererer …",
     aabnFuldStoerrelse: "Åbn i fuld størrelse",
+    rulNed: "Titel, beskrivelse og prisforslag ligger lige herunder",
     // Roterende statustekster i genererings-framen (ejer-ordre 20/8: mere liv)
     genererTekster: [
       "Tegner tøjet …",
