@@ -1,11 +1,27 @@
 # MANGLER FØR PUBLISH
-Sidst opdateret: 2026-08-20 (morgen). Ejer-prioritering: Resend er på vej;
-"resten laver vi senere". Kritisk vej øverst — tages oppefra.
+Sidst opdateret: 2026-08-20 (nat, runde 13). Kritisk vej øverst — tages oppefra.
 
-## 0. Nyt siden 19/8
-- [ ] **Kør migration `20260820010000_klager.sql` mod cloud-DB'en** (klage/
-      kredit retur-flowet virker først derefter). Kun ejeren deployer (§6) —
-      eller giv Claude ordre til at køre den via Composio.
+## KRITISK VEJ LIGE NU (alt andet venter på disse tre)
+1. **Push main til GitHub** — Netlify deployer fra repoet, så intet kan
+   deployes før koden er skubbet.
+2. **Netlify-site kobles til repoet + ALLE env-vars sættes i Netlify.**
+   Uden env-vars deployer sitet, men kører demo-mode: intet login, intet
+   køb, ingen AI.
+3. **Stripe webhook mod den deployede URL** → `/api/webhooks/stripe`.
+   Kan først oprettes når URL'en findes. Dét er blocker #1 for omsætning.
+
+## 0. Status på database og auth (verificeret 20/8 nat)
+- [x] **Supabase-skemaet er KOMPLET** — alle 14 migrations kørt og
+      verificeret kolonne for kolonne (profiles, items, item_photos,
+      generations, credit_ledger, credit_balances, klager, preset_stats)
+      + `item-photos`-bucket (privat). Intet mangler i databasen.
+- [x] **Google-login live** — provider aktiv, client id/secret sat,
+      authorize-endpointet svarer 302 mod Google med korrekt redirect.
+      Apple fravalgt (ejer 20/8: kræver betalt Apple Developer).
+- [ ] **Supabase → Authentication → URL Configuration:** dit Netlify-domæne
+      skal tilføjes som Redirect URL ved deploy, ellers fejler Google-login
+      i produktion (localhost virker allerede).
+- [ ] **Rotér Google client secret** — blev delt i klartekst i chatten 20/8.
 - [ ] **Konverterings-planen ("sælg drømmen")**: leveret som plan i chatten
       20/8 — afventer ejerens go før forsiden ændres.
 - [ ] **"Fra vores brugere"-undertekst** på anmeldelses-billedet: afvist som
@@ -31,9 +47,8 @@ Sidst opdateret: 2026-08-20 (morgen). Ejer-prioritering: Resend er på vej;
       brugere SKAL pipelinen køre via Trigger.dev (koden er klar — sæt
       nøglen). Uden den kører jobs i serverprocessen: genoptag-knappen
       redder hængende kørsler, men jobs overlever ikke genstarter.
-- [ ] **Kør migration `20260820100000_bulletproof_oprettelse.sql`** —
-      giver idempotent oprettelse (kladde_id-unikhed) + gemte visningsvalg
-      til genoptag. Koden virker før migrationen, garantierne gælder efter.
+- [x] **Alle migrations kørt** (se §0) — inkl. klager, bulletproof
+      oprettelse og profil-generering. Verificeret mod cloud-DB'en.
 
 ## 2. Deploy (EJER-BESLUTNING 20/8: Netlify hoster; alle envs/edge
 ##    functions/secrets bor i SUPABASE og lægges ind via Composio senere)

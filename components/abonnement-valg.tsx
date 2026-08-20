@@ -99,13 +99,24 @@ export function AbonnementValg({
           const navn = copy.navne[tier.id] ?? tier.id;
           const funktioner = copy.funktioner[tier.id] ?? [];
           const pris = periode === "aar" ? tier.prisDkkPrAar : tier.prisDkkPrMd;
-          const prisPrAnnonce = (tier.prisDkkPrMd / tier.annoncerPrMd)
+          // Stykprisen SKAL følge den valgte periode. Den regnede altid på
+          // månedsprisen, så årsplanen viste den dyrere månedspris og skjulte
+          // hele rabatten — netop det argument, årsplanen sælger på.
+          const prisPrAnnonce = (
+            periode === "aar"
+              ? tier.prisDkkPrAar / (tier.annoncerPrMd * 12)
+              : tier.prisDkkPrMd / tier.annoncerPrMd
+          )
             .toFixed(2)
             .replace(".", ",");
           return (
+            // Fast to-kolonne-gitter i stedet for flex-wrap: prisen er
+            // bredere som årspris ("1190 kr."), og wrappet fik hele
+            // pris-kolonnen til at falde ned under navnet, så rækken skiftede
+            // udseende alt efter periode. Gitteret ligger fast.
             <div
               key={tier.id}
-              className={`flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 border-b py-6 ${raekkeKant}`}
+              className={`grid grid-cols-1 items-baseline gap-x-6 gap-y-4 border-b py-6 sm:grid-cols-[minmax(0,1fr)_auto] ${raekkeKant}`}
             >
               <div className="max-w-xs">
                 <p className="font-display text-titel font-semibold">
@@ -120,7 +131,7 @@ export function AbonnementValg({
                   </p>
                 ) : null}
               </div>
-              <div className="text-right">
+              <div className="text-left sm:text-right">
                 <p className="overflow-hidden font-mono text-hero font-bold leading-none">
                   {/* key-skiftet genstarter pris-rul, så tallet ruller ind */}
                   <span key={periode} className="pris-rul inline-block">
@@ -163,7 +174,7 @@ export function AbonnementValg({
                 </div>
               </div>
               {/* Funktioner pr. tier — konkrete, ingen marketing-luft */}
-              <ul className={`w-full text-detalje ${daempet}`}>
+              <ul className={`text-detalje sm:col-span-2 ${daempet}`}>
                 {funktioner.map((punkt) => (
                   <li key={punkt} className="mt-1">
                     {punkt}
