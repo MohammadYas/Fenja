@@ -48,25 +48,86 @@ export default async function Admin() {
   const dagensForbrug = prDag.get(iDag) ?? 0;
   const loft = misbrugsvaern.dagligtBudgetloftDkk;
 
-  // Åbne klager (ejer-ordre 2026-08-20) — service-rollen ser alle
+  // Åbne klager (ejer-ordrer 2026-08-20) — service-rollen ser alle, og admin
+  // får ALT relevant: genererede billeder, brugerens fotos og itemets felter,
+  // så afgørelsen kan træffes direkte i listen
   const { data: klageData } = await service
     .from("klager")
-    .select("id, begrundelse, oprettet_at, items(titel)")
+    .select(
+      "id, begrundelse, oprettet_at, items(titel, brand, size, condition, category, color, label_text, defects_text, item_photos(role, original_url, cleaned_url), generations(kind, status, output_url, created_at))",
+    )
     .eq("status", "aaben")
     .order("oprettet_at", { ascending: true });
-  const klager: KlageRaekke[] = (
-    (klageData ?? []) as unknown as {
-      id: string;
-      begrundelse: string;
-      oprettet_at: string;
-      items: { titel: string | null } | null;
-    }[]
-  ).map((k) => ({
-    id: k.id,
-    begrundelse: k.begrundelse,
-    oprettet_at: k.oprettet_at,
-    item_titel: k.items?.titel ?? null,
-  }));
+
+  const signer = async (sti: string | null): Promise<string | null> => {
+    if (!sti) return null;
+    if (sti.startsWith("http")) return sti;
+    const { data } = await service.storage
+      .from("item-photos")
+      .createSignedUrl(sti, 3600);
+    return data?.signedUrl ?? null;
+  };
+
+  type KlageRaa = {
+    id: string;
+    begrundelse: string;
+    oprettet_at: string;
+    items: {
+      titel: string | null;
+      brand: string | null;
+      size: string | null;
+      condition: string | null;
+      category: string | null;
+      color: string | null;
+      label_text: string | null;
+      defects_text: string | null;
+      item_photos: { role: string; original_url: string; cleaned_url: string | null }[];
+      generations: {
+        kind: string;
+        status: string;
+        output_url: string | null;
+        created_at: string;
+      }[];
+    } | null;
+  };
+
+  const klager: KlageRaekke[] = await Promise.all(
+    ((klageData ?? []) as unknown as KlageRaa[]).map(async (k) => {
+      const item = k.items;
+      const genererede = (
+        await Promise.all(
+          (item?.generations ?? [])
+            .filter((g) => g.kind === "onmodel" && g.status === "succeeded" && g.output_url)
+            .sort((a, b) => b.created_at.localeCompare(a.created_at))
+            .map((g) => signer(g.output_url)),
+        )
+      ).filter((url): url is string => url !== null);
+      const brugerFotos = (
+        await Promise.all(
+          (item?.item_photos ?? []).map((f) => signer(f.cleaned_url ?? f.original_url)),
+        )
+      ).filter((url): url is string => url !== null);
+      return {
+        id: k.id,
+        begrundelse: k.begrundelse,
+        oprettet_at: k.oprettet_at,
+        item_titel: item?.titel ?? null,
+        detaljer: [
+          item?.brand,
+          item?.category,
+          item?.size,
+          item?.condition,
+          item?.color,
+          item?.label_text,
+        ]
+          .filter(Boolean)
+          .join(" · "),
+        fejl_beskrivelse: item?.defects_text ?? null,
+        genererede,
+        bruger_fotos: brugerFotos,
+      };
+    }),
+  );
 
   return (
     <main className="py-6">

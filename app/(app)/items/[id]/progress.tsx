@@ -16,9 +16,9 @@ type StatusSvar = {
   trin: Trin[];
 };
 
-// Kun de trin brugeren skal forholde sig til (ejer-ordre 20/8: "renser dine
-// fotos" er væk — det er en teknikalitet)
-const TRIN_ORDEN = ["onmodel", "text"] as const;
+// Kun de trin brugeren skal forholde sig til (ejer-ordrer 20/8: "renser dine
+// fotos" er væk, og 01 er annonceteksten, 02 er billederne)
+const TRIN_ORDEN = ["text", "onmodel"] as const;
 
 // Progress med reelle trin (B-4), bulletproof + ærlig om tempoet (ejer-ordrer
 // 20/8): kurven er forankret i serverens starttid og skaleret efter antal
@@ -145,21 +145,39 @@ export function Progress({
     }, 0) / TRIN_ORDEN.length;
   const procent = Math.min(97, Math.round(Math.max(tidsAndel, reelAndel) * 100));
 
-  const faerdigeBilledeVisning = billeder.length > 0 && (
+  // Frames pr. valgt billede (ejer-ordre 20/8): hvert billede har sin egen
+  // ramme med genererings-effekt, som afløses af billedet, når det er klar
+  const antalFrames = Math.max(raekkerFor("onmodel").length, billeder.length);
+  const faerdigeBilledeVisning = antalFrames > 0 && (
     <div className="mt-6">
       <p className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
-        {da.resultat.faerdigeBilleder(billeder.length)}
+        {billeder.length > 0
+          ? da.resultat.faerdigeBilleder(billeder.length)
+          : da.resultat.billederPaaVej}
       </p>
       <div className="mt-2 grid grid-cols-2 gap-3">
-        {billeder.map((url, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={url}
-            src={url}
-            alt={`Færdigt billede ${i + 1}`}
-            className="w-full rounded-bloed border border-kant"
-          />
-        ))}
+        {Array.from({ length: antalFrames }, (_, i) =>
+          billeder[i] ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={billeder[i]}
+              src={billeder[i]}
+              alt={`Færdigt billede ${i + 1}`}
+              className="pris-rul w-full rounded-bloed border border-kant"
+            />
+          ) : (
+            <div
+              key={`frame-${i}`}
+              className="genererer-frame flex aspect-[2/3] w-full items-end rounded-bloed border border-kant p-3"
+              role="img"
+              aria-label={da.resultat.genererFrame}
+            >
+              <span className="font-mono text-detalje text-tekst/60">
+                {da.resultat.genererFrame}
+              </span>
+            </div>
+          ),
+        )}
       </div>
     </div>
   );

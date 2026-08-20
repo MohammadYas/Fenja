@@ -205,6 +205,28 @@
     }
   }
 
+  /* Genererings-frame (ejer-ordre 2026-08-20): pladsholder pr. valgt billede
+     på "på vej"-siden — et blødt lysstrøg glider hen over rammen, indtil det
+     færdige billede afløser den. */
+  .genererer-frame {
+    background: linear-gradient(
+      110deg,
+      theme("colors.flade") 35%,
+      theme("colors.hoer") 50%,
+      theme("colors.flade") 65%
+    );
+    background-size: 220% 100%;
+    animation: genererer-skimmer 1.8s ease-in-out infinite;
+  }
+  @keyframes genererer-skimmer {
+    from {
+      background-position: 120% 0;
+    }
+    to {
+      background-position: -60% 0;
+    }
+  }
+
   /* Annonce-strømmen (ejer-ordre 2026-08-19): to modsat drivende rækker af
      katalogbilleder. Basis-tilstanden er en statisk, side-scrollbar række
      (virker uden JS og med reduceret bevægelse — dubletterne er skjult);

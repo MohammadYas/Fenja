@@ -10,6 +10,13 @@ export type KlageRaekke = {
   begrundelse: string;
   oprettet_at: string;
   item_titel: string | null;
+  /** Mærke · kategori · størrelse · stand · farve · label — alt i én linje */
+  detaljer: string;
+  fejl_beskrivelse: string | null;
+  /** Signerede urls: de genererede billeder (nyeste først) — det der bedømmes */
+  genererede: string[];
+  /** Signerede urls: brugerens egne (rensede) fotos som reference */
+  bruger_fotos: string[];
 };
 
 export function KlageListe({ klager }: { klager: KlageRaekke[] }) {
@@ -51,6 +58,60 @@ export function KlageListe({ klager }: { klager: KlageRaekke[] }) {
           <p className="mt-2 max-w-laesbar text-detalje text-tekst/80">
             {klage.begrundelse}
           </p>
+          {/* Ejer-ordre 20/8: admin ser ALT relevant — felter, det genererede
+              billede (det der bedømmes) og brugerens egne fotos som reference */}
+          {klage.detaljer ? (
+            <p className="mt-2 font-mono text-detalje text-tekst/70">
+              {klage.detaljer}
+            </p>
+          ) : null}
+          {klage.fejl_beskrivelse ? (
+            <p className="mt-1 text-detalje text-tekst/70">
+              {copy.klageFejlFelt}: {klage.fejl_beskrivelse}
+            </p>
+          ) : null}
+          {klage.genererede.length > 0 ? (
+            <div className="mt-3">
+              <p className="font-mono text-detalje font-bold text-tekst/70">
+                {copy.klageGenererede}
+              </p>
+              <div className="mt-1 flex flex-wrap gap-2">
+                {klage.genererede.map((url, i) => (
+                  <a key={url} href={url} target="_blank" rel="noreferrer">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={url}
+                      alt={`Genereret billede ${i + 1}`}
+                      className="h-36 rounded-stram border border-kant object-cover"
+                      loading="lazy"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="mt-3 text-detalje text-tekst/70">{copy.klageIngenBilleder}</p>
+          )}
+          {klage.bruger_fotos.length > 0 ? (
+            <div className="mt-3">
+              <p className="font-mono text-detalje font-bold text-tekst/70">
+                {copy.klageBrugerFotos}
+              </p>
+              <div className="mt-1 flex flex-wrap gap-2">
+                {klage.bruger_fotos.map((url, i) => (
+                  <a key={url} href={url} target="_blank" rel="noreferrer">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={url}
+                      alt={`Brugerens foto ${i + 1}`}
+                      className="h-24 rounded-stram border border-kant object-cover"
+                      loading="lazy"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : null}
           <div className="mt-3 flex gap-3">
             <button
               type="button"

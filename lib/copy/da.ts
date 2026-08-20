@@ -255,6 +255,8 @@ export const da = {
       "Regn med 2–3 minutter pr. billede. De færdige billeder dukker op herunder, så snart de er klar — du kan roligt lukke siden imens.",
     faerdigeBilleder: (n: number) =>
       n === 1 ? "1 billede er klar" : `${n} billeder er klar`,
+    billederPaaVej: "Dine billeder",
+    genererFrame: "Genererer …",
     trinBilledTaeller: (faerdige: number, alle: number) =>
       `${faerdige} af ${alle}`,
     trinVenter: "venter",
@@ -868,6 +870,11 @@ export const da = {
     ingenKlager: "Ingen åbne klager.",
     godkendKnap: "Godkend + refundér",
     afvisKnap: "Afvis",
+    // Ejer-ordre 20/8: admin ser alt relevant direkte i klagen
+    klageFejlFelt: "Oplyste fejl",
+    klageGenererede: "Genererede billeder (det der bedømmes)",
+    klageIngenBilleder: "Ingen genererede billeder på annoncen.",
+    klageBrugerFotos: "Brugerens egne fotos (reference)",
   },
   // Klage over genereret billede (ejer-ordre 2026-08-20): brugeren kan anmode
   // om sin kredit tilbage; ejeren afgør klagen i admin.

@@ -90,11 +90,15 @@ export class SupabasePipelineDb implements PipelineDb {
   async startGenerering(
     itemId: string,
     kind: "cleanup" | "onmodel" | "text",
-    presetId?: string,
+    _presetId?: string,
   ): Promise<string> {
     const { data, error } = await this.klient
       .from("generations")
-      .insert({ item_id: itemId, kind, status: "running", preset_id: presetId ?? null })
+      // preset_id-kolonnen er uuid (init-migrationen) men vores preset-id'er
+      // er tekst ("lys-minimalisme") — skrivningen væltede HVER onmodel-
+      // generering (fundet 20/8: "invalid input syntax for type uuid").
+      // Presettet står allerede i prompt_version, og kolonnen læses aldrig.
+      .insert({ item_id: itemId, kind, status: "running" })
       .select("id")
       .single();
     if (error || !data) throw new Error(`Kunne ikke starte generering: ${error?.message}`);
