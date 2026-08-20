@@ -1,5 +1,47 @@
 # STATUS
-Sidst opdateret: 2026-08-20 (formiddag) af Claude Code — SESSION AFSLUTTET TRYGT
+Sidst opdateret: 2026-08-20 (eftermiddag) af Claude Code
+
+## Denne session (20/8 eftermiddag) — Vinted-kriterier 1:1 + wizard-UX + mærkning
+Ejer-ordrer mid-session, alt leveret, committet og pushet til main. 329 tests,
+lint + typecheck grønne.
+
+**Wizard (nyt item):**
+- **Kriterier følger Vinted 1:1** (aflæst fra vinted.dk 20/8, testlåst i
+  tests/unit/vinted-kriterier.test.ts): standskala er nu Vinteds fem
+  ("Ny med prismærker" … "Tilfredsstillende") i lib/config.ts; størrelse og
+  farve kommer fra ny `lib/data/vinted-kriterier.ts` (29 farver, størrelses-
+  grupper Kvinder / Mænd / herrebukser EU|W pr. tøjdel; fritekst kun ved
+  "Andet"). Prisberegnerens standnavne følger samme skala (id'er/kalibrering
+  uændret).
+- **Varemærke** er en kort rangeret combobox (components/maerke-vaelger.tsx,
+  bruger soegMaerker) — datalisten fyldte hele skærmen (ejer-klage).
+- **Farve** er inline chips med farveprik, op til 2 farver (ejer-ordre
+  "man skal ku vælge flere"), ingen dropdown; 12 vises, resten bag
+  "Vis alle farver" (components/farve-vaelger.tsx). Gemmes som "Sort, Grå".
+- **Foto-trin:** tydelig linje "Kun helhedsfotoet skal med…" + "Skal med"/
+  "Valgfrit"-chips på rollekortene (ejer-ordre). Eksempel-ikonet følger
+  tøjdelen fra trin 1 — jeans vises som bukser, ikke trøje (ejer-ordre).
+- **"Failed to fetch" ved upload (ejer-rapport):** skyldtes næsten sikkert,
+  at jeg stoppede dev-serveren midlertidigt for at køre Lighthouse, mens
+  ejeren testede — beklager. E2E-smoke mod den RIGTIGE cloud-DB kørt
+  bagefter (signeret upload-URL → storage-upload → items-insert med
+  label_text/color → item_photos-insert, alt grønt, testdata ryddet op).
+  Selve browser-flowet efter login er stadig ikke klikket igennem (kræver
+  ejerens login) — prøv wizarden igen, serveren kører.
+
+**Forsiden (MANGLER §4 lukket):**
+- **Sleek AI-mærkning:** stille noter — "Eksempel: alle billeder er genereret
+  med Selja." under før/efter-panelet + samme note under bund-strømmen
+  (billedserien havde den allerede). Ingen badges.
+- **Ærligheds-blokken genplaceret** som rolig stribe efter det mørke bånd
+  (originalen fra 14/8 omskrevet: Selja, ingen gratis-tier).
+
+**Åbent/parkeret:**
+- Lighthouse-genmåling (MANGLER §5) blev afbrudt: chrome-launcher fejlede
+  headless, og ejeren testede live på :3000 — måles i et roligt vindue
+  (prod-build ligger klar efter `npm run build`; kør `next start` på 3001).
+- Gate 1 (S12) er stadig ejerens: kræver ~20 egne tøjfotos + koster
+  Gemini-credits (`npx tsx scripts/gate1-fidelity-test.ts <mappe> --live`).
 
 ## EJERENS GØR-DETTE-LISTE
 1. ✅ FÆRDIG (2026-08-20, via Composio på ejer-ordre): begge migrations
