@@ -56,13 +56,15 @@ export async function GET(
       Date.now() - senesteAktivitet > HAENGER_EFTER_MS);
 
   // Færdige billeder NU (ejer-ordre): signerede urls for vellykkede
-  // visualiseringer, nyeste først
+  // visualiseringer — ÆLDSTE FØRST, så listen kun vokser bagpå og klienten
+  // kan beholde allerede viste billeder (nye tokens hvert poll fik billedet
+  // til at "loade forfra" igen og igen — ejer-klage 20/8)
   const service = opretServiceKlient();
   const billeder = (
     await Promise.all(
       generinger
         .filter((g) => g.kind === "onmodel" && g.status === "succeeded" && g.output_url)
-        .sort((a, b) => b.created_at.localeCompare(a.created_at))
+        .sort((a, b) => a.created_at.localeCompare(b.created_at))
         .map(async (g) => {
           const { data } = await service.storage
             .from("item-photos")

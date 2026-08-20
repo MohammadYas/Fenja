@@ -24,19 +24,20 @@ describe("AI-badge (C-4 — kan ikke fravælges)", () => {
     expect(AI_METADATA_TEKST).toContain("art. 50");
   });
 
-  it("ændrer pixels i badge-hjørnet (synligt badge)", async () => {
+  it("sætter ALDRIG synlig tekst på billedet (ejer-ordre 20/8)", async () => {
     const foer = await testBillede();
     const efter = await paafoerBadge(foer);
     const meta = await sharp(efter).metadata();
     expect(meta.width).toBe(800);
-    // Nederste venstre hjørne skal indeholde mørke badge-pixels (koks #212523)
+    // Nederste venstre hjørne (hvor badget sad) skal være urørt — ingen
+    // mørke badge-pixels; mærkningen bor i metadata + UI'et
     const hjoerne = await sharp(efter)
       .extract({ left: 10, top: 520, width: 100, height: 60 })
       .greyscale()
       .raw()
       .toBuffer();
     const moerke = [...hjoerne].filter((v) => v < 80).length;
-    expect(moerke).toBeGreaterThan(0);
+    expect(moerke).toBe(0);
   });
 
   it("beskærer til 4:5 uden at ændre bredden (C-8)", async () => {

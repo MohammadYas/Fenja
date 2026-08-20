@@ -153,7 +153,7 @@ export class DeepSeekTextProvider implements TextProvider {
       { inlineData: await tilInlineData(input.aegteUrl) },
       { inlineData: await tilInlineData(input.genereretUrl) },
       {
-        text: `Billede 1 er et ægte foto af et stykke tøj. Billede 2 er en genereret visualisering af en person, der bærer tøjet. Vurdér om billede 2 viser PRÆCIS det samme stykke tøj: samme print/grafik, samme farve, samme snit og længde, og om synligt slid/fejl er bevaret. Svar KUN med JSON: {"score": number mellem 0 og 1, "begrundelse": string på dansk}`,
+        text: `Billede 1 er et ægte foto af et stykke tøj. Billede 2 er en genereret visualisering af en person, der BÆRER tøjet. Vurdér to ting: (1) Viser billede 2 PRÆCIS det samme stykke tøj — samme print/grafik, samme farve, samme snit og længde, og er synligt slid/fejl bevaret? (2) Bæres tøjet NATURLIGT på kroppen med arme/ben inde i det? Hænger tøjet på en bøjle, holdes det frem foran kroppen, eller svæver det tomt, er scoren ALTID 0 uanset hvor godt tøjet matcher. Svar KUN med JSON: {"score": number mellem 0 og 1, "begrundelse": string på dansk}`,
       },
     ]);
     const data = parseJson<{ score: number; begrundelse: string }>(tekst);

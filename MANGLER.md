@@ -35,15 +35,18 @@ Sidst opdateret: 2026-08-20 (morgen). Ejer-prioritering: Resend er på vej;
       giver idempotent oprettelse (kladde_id-unikhed) + gemte visningsvalg
       til genoptag. Koden virker før migrationen, garantierne gælder efter.
 
-## 2. Deploy
-- [ ] **Netlify-site kobles til GitHub-repoet** (ejer: "bare uploade github til
-      netlify og så virker det").
-- [ ] **FLAG (Claude, 2026-08-19):** Netlify læser ikke nøgler fra Supabase.
-      Next.js-serverkoden kører hos Netlify, så env-vars (Supabase URL/anon/
-      service-key, Stripe, FAL/GEMINI/ANTHROPIC, Resend, ADMIN_EMAIL) skal
-      sættes i Netlify-sitets Environment variables — engangsopgave i deres UI.
-      Uden dem deployer sitet, men kører demo-mode: intet login, intet køb,
-      ingen AI. Ejer beslutter — men det kan ikke undværes teknisk.
+## 2. Deploy (EJER-BESLUTNING 20/8: Netlify hoster; alle envs/edge
+##    functions/secrets bor i SUPABASE og lægges ind via Composio senere)
+- [ ] **Netlify-site kobles til GitHub-repoet.**
+- [ ] **FLAG (Claude, gentaget 20/8):** uanset hvor nøglerne OPBEVARES
+      (Supabase secrets), læser Next.js-serverkoden `process.env` ved
+      runtime hos Netlify — så værdierne skal stadig ind i Netlify-sitets
+      Environment variables ved deploy (engangsopgave/synk). Uden dem
+      deployer sitet, men kører demo-mode: intet login, intet køb, ingen AI.
+- [ ] **Migrationer der venter på kørsel mod cloud:**
+      `20260820100000_bulletproof_oprettelse.sql` (kladde-idempotens +
+      gemte visningsvalg) og `20260820110000_profil_generering.sql`
+      (onboarding: køn/hårfarve). Koden er fejltolerant uden dem.
 - [ ] **Domæne** — stadig `SELJA_DOMAIN`-placeholder (`selja.studio`) i
       `lib/config.ts`; `kontakt.email` peger på gmail, skiftes ved domæne.
 

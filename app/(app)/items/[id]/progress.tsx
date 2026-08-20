@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { da } from "@/lib/copy/da";
-import { forventetSekunder, psykologiskAndel } from "@/lib/fremdrift";
+import { beregnProcent, forventetSekunder } from "@/lib/fremdrift";
 
 type TrinStatus = "venter" | "running" | "succeeded" | "failed";
 type Trin = { kind: string; status: string };
@@ -42,19 +42,11 @@ export function Progress({
   );
   const faldbackStart = useRef<number>(Date.now());
   const forventet = useRef<number>(forventetSekunder(1));
-  const [tidsAndel, setTidsAndel] = useState(() =>
-    startetAt.current
-      ? psykologiskAndel(startetAt.current, Date.now(), forventet.current)
-      : 0,
-  );
+  // Puls driver både procenttallet og de roterende genererings-tekster
+  const [tik, setTik] = useState(0);
 
-  // Tidskurven (lib/fremdrift.ts): beregnet ud fra serverens starttid, så et
-  // refresh aldrig nulstiller den
   useEffect(() => {
-    const puls = setInterval(() => {
-      const start = startetAt.current ?? faldbackStart.current;
-      setTidsAndel(psykologiskAndel(start, Date.now(), forventet.current));
-    }, 400);
+    const puls = setInterval(() => setTik((t) => t + 1), 400);
     return () => clearInterval(puls);
   }, []);
 
@@ -72,15 +64,17 @@ export function Progress({
         if (!aktiv) return;
         pauseMs = 2500; // succes: tilbage til normal kadence
         setTrin(data.trin);
-        setBilleder(data.billeder ?? []);
+        // Stabil visning (ejer-klage: billedet "loadede forfra" igen og
+        // igen): allerede viste billeder beholdes — nye tilføjes kun bagpå
+        setBilleder((prev) =>
+          (data.billeder ?? []).length > prev.length
+            ? [...prev, ...(data.billeder ?? []).slice(prev.length)]
+            : prev,
+        );
         setFejlet(data.fejlet);
         if (data.forventetSekunder) forventet.current = data.forventetSekunder;
         if (data.startetAt) {
           startetAt.current = new Date(data.startetAt).getTime();
-          // Med det samme — baren skal stå rigtigt fra første svar
-          setTidsAndel(
-            psykologiskAndel(startetAt.current, Date.now(), forventet.current),
-          );
         }
         if (data.leveret) {
           router.refresh();
@@ -131,19 +125,14 @@ export function Progress({
     failed: da.resultat.trinFejlet,
   };
 
-  // Reel andel over de viste trin; billedtrinnet skalerer med hvor mange af
-  // de valgte billeder der er færdige.
-  const reelAndel =
-    TRIN_ORDEN.reduce((sum, kind) => {
-      const raekker = raekkerFor(kind);
-      if (raekker.length === 0) return sum;
-      const faerdige = raekker.filter(
-        (r) => r.status === "succeeded" || r.status === "failed",
-      ).length;
-      if (faerdige === raekker.length) return sum + 1;
-      return sum + Math.max(0.15, faerdige / raekker.length);
-    }, 0) / TRIN_ORDEN.length;
-  const procent = Math.min(97, Math.round(Math.max(tidsAndel, reelAndel) * 100));
+  // ÉN fælles beregning (lib/fremdrift.ts) — samme tal som på oversigten
+  void tik; // pulsen driver re-render
+  const procent = beregnProcent({
+    startetAtMs: startetAt.current ?? faldbackStart.current,
+    nuMs: Date.now(),
+    forventetSek: forventet.current,
+    trin,
+  });
 
   // Frames pr. valgt billede (ejer-ordre 20/8): hvert billede har sin egen
   // ramme med genererings-effekt, som afløses af billedet, når det er klar
@@ -158,22 +147,44 @@ export function Progress({
       <div className="mt-2 grid grid-cols-2 gap-3">
         {Array.from({ length: antalFrames }, (_, i) =>
           billeder[i] ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={billeder[i]}
-              src={billeder[i]}
-              alt={`Færdigt billede ${i + 1}`}
-              className="pris-rul w-full rounded-bloed border border-kant"
-            />
+            // Klik = fuld størrelse (ejer-ordre 20/8: man skal kunne zoome)
+            <a
+              key={`billede-${i}`}
+              href={billeder[i]}
+              target="_blank"
+              rel="noreferrer"
+              title={da.resultat.aabnFuldStoerrelse}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={billeder[i]}
+                alt={`Færdigt billede ${i + 1} — tryk for fuld størrelse`}
+                className="pris-rul w-full rounded-bloed border border-kant"
+              />
+            </a>
           ) : (
             <div
               key={`frame-${i}`}
-              className="genererer-frame flex aspect-[2/3] w-full items-end rounded-bloed border border-kant p-3"
+              className="genererer-frame flex aspect-[2/3] w-full flex-col justify-between rounded-bloed border border-kant p-3"
               role="img"
               aria-label={da.resultat.genererFrame}
             >
-              <span className="font-mono text-detalje text-tekst/60">
-                {da.resultat.genererFrame}
+              {/* Levende frame (ejer-ordre 20/8: flere animationer): tre
+                  pulserende prikker + roterende statustekst pr. frame */}
+              <span className="genererer-prikker" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+              <span
+                key={(Math.floor(tik / 8) + i) % da.resultat.genererTekster.length}
+                className="pris-rul font-mono text-detalje text-tekst/60"
+              >
+                {
+                  da.resultat.genererTekster[
+                    (Math.floor(tik / 8) + i) % da.resultat.genererTekster.length
+                  ]
+                }
               </span>
             </div>
           ),

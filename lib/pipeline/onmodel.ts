@@ -38,6 +38,9 @@ export async function genererOnModelMedTroskab(args: {
   hjemAnker?: string | null;
   /** Brugerens valgte visningstype (ejer-ordre 20/8) */
   visning?: VisningsType;
+  /** Onboarding (20/8): sælgerens køn/hår styrer person-ankeret */
+  koen?: string | null;
+  haarFarve?: string | null;
 }): Promise<OnModelUdfald> {
   const preset = hentPreset(args.presetId);
   const prompt = bygOnModelPromptMedSkabelon({
@@ -47,6 +50,8 @@ export async function genererOnModelMedTroskab(args: {
     kategori: args.kategori,
     hjemAnker: args.hjemAnker,
     visning: args.visning,
+    koen: args.koen,
+    haarFarve: args.haarFarve,
   });
   const vaegte = [cfg.normalReferenceVaegt, cfg.strammereReferenceVaegt];
 
@@ -67,10 +72,36 @@ export async function genererOnModelMedTroskab(args: {
     }
     cost += genereret.costDkk;
 
-    const troskab = await tjekTroskab(args.text, {
-      aegteUrl: args.referenceUrl,
-      genereretUrl: genereret.url,
-    });
+    // Vision-tjenesten kan være nede (503 "high demand", set 20/8) — det må
+    // ALDRIG vælte leverancen: ét nyt forsøg efter kort pause, og fejler det
+    // også, leveres billedet u-tjekket (bedre end at smide et betalt billede
+    // væk pga. Googles nedetid). Score 0 markerer "ikke målt".
+    let troskab;
+    try {
+      troskab = await tjekTroskab(args.text, {
+        aegteUrl: args.referenceUrl,
+        genereretUrl: genereret.url,
+      });
+    } catch {
+      await new Promise((r) => setTimeout(r, 3000));
+      try {
+        troskab = await tjekTroskab(args.text, {
+          aegteUrl: args.referenceUrl,
+          genereretUrl: genereret.url,
+        });
+      } catch {
+        return {
+          billede: {
+            url: genereret.url,
+            providerJobId: genereret.providerJobId,
+            fidelityScore: 0,
+          },
+          forsoeg: forsoeg + 1,
+          costDkk: cost,
+          scores,
+        };
+      }
+    }
     cost += troskab.costDkk;
     scores.push(troskab.score);
 

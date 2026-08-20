@@ -121,17 +121,32 @@ async function visualiseringsTrin(
     visning,
   });
   const genId = await deps.db.startGenerering(item.id, "onmodel", presetId);
-  const udfald = await genererOnModelMedTroskab({
-    image: deps.image,
-    text: deps.text,
-    itemId: item.id,
-    presetId,
-    referenceUrl,
-    userId: item.userId,
-    kategori: item.kategori,
-    hjemAnker: item.hjemAnker,
-    visning,
-  });
+  // Én visnings nedbrud (provider-udfald m.m.) må ALDRIG vælte de andre
+  // visninger eller teksten — fang, markér fejlet, og lad resten levere
+  let udfald;
+  try {
+    udfald = await genererOnModelMedTroskab({
+      image: deps.image,
+      text: deps.text,
+      itemId: item.id,
+      presetId,
+      referenceUrl,
+      userId: item.userId,
+      kategori: item.kategori,
+      hjemAnker: item.hjemAnker,
+      visning,
+      koen: item.koen,
+      haarFarve: item.haarFarve,
+    });
+  } catch (fejl) {
+    console.error(`Visning ${visning?.id ?? "standard"} fejlede for ${item.id}:`, fejl);
+    await deps.db.afslutGenerering(genId, {
+      status: "failed",
+      costDkk: 0,
+      promptVersion,
+    });
+    return null;
+  }
 
   if (!udfald.billede) {
     await deps.db.afslutGenerering(genId, {

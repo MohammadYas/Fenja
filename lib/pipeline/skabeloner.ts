@@ -269,10 +269,13 @@ export function hjemVersionsTag(hjem: Hjem): string {
 // prioriteten — troskab mod referencen først, æstetik sidst.
 
 const REFERENCE_INSTRUKS =
-  "The person wears EXACTLY the garment from the reference image — preserve its " +
-  "print, graphics, colour, material, cut, length and every visible detail " +
-  "precisely; invent, remove or 'improve' nothing, and keep visible wear and " +
-  "flaws where they are.";
+  "The person WEARS exactly the garment from the reference image, naturally on " +
+  "the body with arms/legs inside it and the body filling it out — NEVER held " +
+  "up in front of the body, NEVER hanging on a hanger, NEVER an empty garment " +
+  "floating. Remove any hanger, clips or props from the reference. Preserve the " +
+  "garment's print, graphics, colour, material, cut, length and every visible " +
+  "detail precisely; invent, remove or 'improve' nothing, and keep visible wear " +
+  "and flaws where they are.";
 
 // Ejerens fotostil-princip (2026-08-15/16): autentisk hverdagsfoto, ikke studie.
 const FOTOSTIL =
@@ -295,7 +298,9 @@ const NEGATIV_LISTE =
   "Avoid: any text, logos or watermarks beyond the garment's own; face " +
   "retouching; changing the garment's fit; extra accessories; deformed or extra " +
   "fingers; duplicated limbs; warped anatomy; plastic-looking skin; CGI " +
-  "appearance; artificial-looking backgrounds; studio lighting.";
+  "appearance; artificial-looking backgrounds; studio lighting; a garment on a " +
+  "hanger or held up in front of the body; an empty garment not worn by the " +
+  "person; visible hangers, clips or props.";
 
 /** Deterministisk visning pr. item, så retries er stabile */
 export function vaelgVisning(skabelon: KategoriSkabelon, itemId: string): string {
@@ -305,6 +310,30 @@ export function vaelgVisning(skabelon: KategoriSkabelon, itemId: string): string
 /** Deterministisk person-anker pr. item (C-6, engelsk udgave) */
 export function vaelgPersonAnkerEngelsk(itemId: string): string {
   return PERSON_ANKRE[stabilHash(itemId) % PERSON_ANKRE.length]!;
+}
+
+// Onboarding (ejer-ordre 20/8): sælgerens eget valg af køn + hårfarve vinder
+// over rotationen, så personen på billederne er konsistent med sælgeren.
+const HAAR_ENGELSK: Record<string, string> = {
+  sort: "black",
+  brunt: "brown",
+  blondt: "blonde",
+  roedt: "red",
+  graat: "grey",
+  moerkt: "dark",
+};
+
+export function bygPersonAnker(args: {
+  itemId: string;
+  koen?: string | null;
+  haarFarve?: string | null;
+}): string {
+  if (args.koen !== "mand" && args.koen !== "kvinde") {
+    return vaelgPersonAnkerEngelsk(args.itemId);
+  }
+  const krop = args.koen === "mand" ? "an adult man" : "an adult woman";
+  const haar = args.haarFarve ? HAAR_ENGELSK[args.haarFarve] : undefined;
+  return `${krop}${haar ? ` with ${haar} hair` : ""} with a neutral appearance`;
 }
 
 /**
@@ -322,6 +351,9 @@ export function bygOnModelPromptMedSkabelon(args: {
   hjemAnker?: string | null;
   /** Brugerens valgte visningstype (ejer-ordre 20/8); uden = deterministisk framing */
   visning?: VisningsType;
+  /** Onboarding (20/8): sælgerens køn/hår vinder over person-rotationen */
+  koen?: string | null;
+  haarFarve?: string | null;
 }): string {
   const skabelon = vaelgSkabelon(args.kategori);
   const sted = args.userId
@@ -350,7 +382,7 @@ export function bygOnModelPromptMedSkabelon(args: {
 
   return [
     REFERENCE_INSTRUKS,
-    `The person is ${vaelgPersonAnkerEngelsk(args.itemId)} — an anonymous person, never a recognizable or real person; the face is always hidden by the phone or cropped out of frame.`,
+    `The person is ${bygPersonAnker({ itemId: args.itemId, koen: args.koen, haarFarve: args.haarFarve })} — an anonymous person, never a recognizable or real person; the face is always hidden by the phone or cropped out of frame.`,
     `Framing: ${framing}.`,
     `Location: ${sted}.`,
     skabelon.fokus,

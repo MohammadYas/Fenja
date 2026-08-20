@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { da } from "@/lib/copy/da";
-import { psykologiskAndel } from "@/lib/fremdrift";
+import { beregnProcent, type FremdriftTrin } from "@/lib/fremdrift";
 import { MarkerSolgt } from "./marker-solgt";
 
 type Status = "draft" | "active" | "sold";
@@ -32,18 +32,13 @@ function MiniFremdrift({ itemId, startetAt }: { itemId: string; startetAt: strin
   const router = useRouter();
   const start = new Date(startetAt).getTime();
   const [forventet, setForventet] = useState<number | undefined>(undefined);
+  const [trin, setTrin] = useState<FremdriftTrin[]>([]);
   const [fejlet, setFejlet] = useState(false);
-  const [procent, setProcent] = useState(() =>
-    Math.min(97, Math.round(psykologiskAndel(start, Date.now()) * 100)),
-  );
+  const [, setTik] = useState(0);
 
   useEffect(() => {
-    const puls = setInterval(() => {
-      setProcent(
-        Math.min(97, Math.round(psykologiskAndel(start, Date.now(), forventet) * 100)),
-      );
-    }, 1000);
-    const poll = setInterval(async () => {
+    const puls = setInterval(() => setTik((t) => t + 1), 1000);
+    const poll = async () => {
       try {
         const svar = await fetch(`/api/items/${itemId}/status`);
         if (!svar.ok) return;
@@ -51,24 +46,35 @@ function MiniFremdrift({ itemId, startetAt }: { itemId: string; startetAt: strin
           leveret: boolean;
           fejlet: boolean;
           forventetSekunder?: number;
+          trin: FremdriftTrin[];
         };
-        // Samme sandhed som annoncesiden (ejer-ordre 20/8): "Kør igen" dér
-        // må aldrig stå ved siden af 93 % her
+        // Samme sandhed og SAMME tal som annoncesiden (ejer-ordre 20/8:
+        // 86 % her og 75 % dér går ikke — fælles beregnProcent)
         setFejlet(data.fejlet);
+        setTrin(data.trin ?? []);
         if (data.forventetSekunder) setForventet(data.forventetSekunder);
         if (data.leveret) {
-          clearInterval(poll);
+          clearInterval(pollInterval);
           router.refresh();
         }
       } catch {
         // Netudfald: næste poll prøver igen
       }
-    }, 5000);
+    };
+    void poll(); // straks — tallet er rigtigt fra første sekund
+    const pollInterval = setInterval(poll, 5000);
     return () => {
       clearInterval(puls);
-      clearInterval(poll);
+      clearInterval(pollInterval);
     };
-  }, [itemId, start, router, forventet]);
+  }, [itemId, router]);
+
+  const procent = beregnProcent({
+    startetAtMs: start,
+    nuMs: Date.now(),
+    forventetSek: forventet,
+    trin,
+  });
 
   if (fejlet) {
     return (

@@ -40,6 +40,25 @@ async function miniatureUrl(fotos: ItemRaekke["item_photos"]): Promise<string | 
 // Item-bibliotek (B-7) + statistik (B-10): salgsværdi, antal, liggetid.
 export default async function Oversigt() {
   const supabase = await opretServerKlient();
+
+  // Onboarding-banner (ejer-ordre 20/8): indtil køn er valgt, mind om det —
+  // fejltolerant før migration 20260820110000 (banner vises da bare ikke)
+  let manglerOnboarding = false;
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profil, error } = await supabase
+        .from("profiles")
+        .select("koen")
+        .eq("id", user.id)
+        .maybeSingle();
+      manglerOnboarding = !error && profil != null && !profil.koen;
+    }
+  } catch {
+    // Ingen auth i konteksten (fx tests) — så heller intet banner
+  }
   const { data } = await supabase
     .from("items")
     .select(
@@ -72,6 +91,15 @@ export default async function Oversigt() {
       </h1>
 
       <SupplierKommerSnartKort />
+
+      {manglerOnboarding ? (
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-bloed border border-kant bg-flade p-4">
+          <p className="max-w-laesbar text-tekst/80">{da.onboarding.bannerTekst}</p>
+          <Link href="/onboarding" className="knap-link px-5">
+            {da.onboarding.bannerKnap}
+          </Link>
+        </div>
+      ) : null}
 
       {items.length === 0 ? (
         // Tom tilstand som gran-blok (REDESIGN §2.2)

@@ -1,5 +1,34 @@
 # STATUS
-Sidst opdateret: 2026-08-20 (eftermiddag) af Claude Code
+Sidst opdateret: 2026-08-20 (sen aften) af Claude Code
+
+## Denne session (20/8 sen aften, runde 8) — ejer-ordrer i bundter
+- **6. root cause:** vision-503 ("high demand") kastede ufanget og væltede
+  ALT — derfor døde billede 2. Nu: vision-retry + billedet leveres u-tjekket
+  (score 0) frem for at smides væk; og én visnings nedbrud isoleres (kan
+  aldrig vælte de andre visninger eller teksten).
+- **Bøjle-katastrofen (ejer-screenshot: bukser på bøjle foran personen):**
+  prompten kræver nu eksplicit at tøjet BÆRES (aldrig bøjle/holdt frem/
+  svævende, props fjernes), og troskabstjekket giver ALTID score 0 for
+  ikke-båret tøj.
+- **"VISUALISERING" er VÆK fra billedet** (ejer-ordre: under ingen
+  omstændigheder synlig tekst): mærkningen er nu kun EXIF-metadata +
+  Googles C2PA + UI-noterne. Badge-testen vendt om (asserter INGEN pixels).
+- **Procent-konsistens:** oversigt og annonceside deler nu beregnProcent
+  (lib/fremdrift.ts) — aldrig 86 % ét sted og 75 % et andet. Oversigten
+  poller straks og viser også "Gik i stå".
+- **Stabil billedvisning:** status-API sorterer ældste-først og klienten
+  beholder viste billeder (nye signerede urls hvert poll fik billedet til
+  at "loade forfra"). Klik på færdigt billede åbner fuld størrelse (zoom).
+- **Flere animationer i frames:** tre pulserende prikker + roterende
+  statustekster ("Tegner tøjet …", "Tjekker mod dit foto …" …) + shimmer.
+- **Onboarding (ejer-ordre):** /onboarding vælger mand/kvinde + hårfarve →
+  gemmes på profilen (migration 20260820110000, IKKE kørt endnu) og styrer
+  person-ankeret i alle genereringer. Banner på oversigten indtil valgt.
+  API: /api/profil/generering. Fejltolerant før migrationen (rotation).
+- **Kreditsiden force-dynamic** (frisk saldo hver gang).
+- **Hosting-beslutning (ejer):** Netlify hoster; alle envs/secrets/edge
+  functions bor i Supabase og lægges ind via Composio senere (MANGLER §2 —
+  værdierne skal stadig synkes til Netlifys env ved deploy).
 
 ## Denne session (20/8 aften, runde 6) — TRE root causes + omsætnings-audit
 Ejeren sov; ordre: fiks alt, test e2e, angrib omsætningsdræbere.

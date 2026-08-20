@@ -38,6 +38,7 @@ export class SupabasePipelineDb implements PipelineDb {
       fejlBeskrivelse: item.defects_text as string | null,
       koebsprisDkk: item.purchase_price_dkk as number | null,
       ...(await this.hentSkrevetLabel(itemId)),
+      ...(await this.hentGenereringsProfil(item.user_id as string)),
       hjemAnker: (profil as { home_anchor: string | null } | null)?.home_anchor ?? null,
       fotos: await Promise.all(
         (
@@ -73,6 +74,23 @@ export class SupabasePipelineDb implements PipelineDb {
     return {
       labelTekst: (data.label_text as string | null) ?? null,
       farve: (data.color as string | null) ?? null,
+    };
+  }
+
+  /** Onboarding-felter (migration 20260820110000) — fejltolerant, så
+   *  pipelinen også kører før migrationen (falder tilbage til rotation). */
+  private async hentGenereringsProfil(
+    userId: string,
+  ): Promise<{ koen: string | null; haarFarve: string | null }> {
+    const { data, error } = await this.klient
+      .from("profiles")
+      .select("koen, haar_farve")
+      .eq("id", userId)
+      .maybeSingle();
+    if (error || !data) return { koen: null, haarFarve: null };
+    return {
+      koen: (data.koen as string | null) ?? null,
+      haarFarve: (data.haar_farve as string | null) ?? null,
     };
   }
 

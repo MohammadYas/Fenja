@@ -195,7 +195,7 @@ describe("promptbygning overholder C-2 og C-6", () => {
 
   it("reference-instruksen står først — prompten styrer aldrig tøjets udseende", () => {
     expect(
-      prompt.startsWith("The person wears EXACTLY the garment from the reference image"),
+      prompt.startsWith("The person WEARS exactly the garment from the reference image"),
     ).toBe(true);
   });
 

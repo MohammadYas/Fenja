@@ -8,6 +8,9 @@ import { PortalKnap } from "./portal-knap";
 
 export const metadata = { title: `${da.kreditter.titel} · ${da.site.navn}` };
 
+// Ejer-ordre 20/8: saldoen skal være FRISK hver gang — ingen cachet side
+export const dynamic = "force-dynamic";
+
 const formaterDato = (dato: Date): string =>
   dato.toLocaleDateString("da-DK", { day: "numeric", month: "long", year: "numeric" });
 

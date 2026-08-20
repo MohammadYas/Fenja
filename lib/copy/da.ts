@@ -228,6 +228,35 @@ export const da = {
     fejlForFaaKreditter: (n: number) =>
       `Du skal bruge ${n} kreditter til ${n} billeder. Fyld op, eller vælg færre billeder.`,
   },
+  // Onboarding (ejer-ordre 2026-08-20): personen på billederne skal ligne sælgeren
+  onboarding: {
+    titel: "Hvem skal vise tøjet frem?",
+    forklaring:
+      "Billederne genereres med en anonym person, der ligner dig — så din profil hænger sammen. Ansigtet er altid skjult, og du kan ændre valget her når som helst.",
+    koenTitel: "Person på billederne",
+    koenValg: [
+      { id: "mand", navn: "Mand" },
+      { id: "kvinde", navn: "Kvinde" },
+    ],
+    haarTitel: "Hårfarve",
+    haarHjaelp: "Valgfrit — gør personen mere genkendelig som dig.",
+    haarValg: [
+      { id: "sort", navn: "Sort" },
+      { id: "brunt", navn: "Brunt" },
+      { id: "blondt", navn: "Blondt" },
+      { id: "roedt", navn: "Rødt" },
+      { id: "graat", navn: "Gråt" },
+      { id: "moerkt", navn: "Mørkt" },
+    ],
+    gemKnap: "Gem og kom i gang",
+    fejlKoenMangler: "Vælg om personen på billederne skal være mand eller kvinde.",
+    fejlMigration:
+      "Profil-felterne findes ikke i databasen endnu (migration 20260820110000). Kør den, og prøv igen.",
+    // Banner på oversigten indtil valget er truffet
+    bannerTekst:
+      "Vælg hvem der skal vise tøjet frem på dine billeder — så ligner personen dig fra første annonce.",
+    bannerKnap: "Vælg nu",
+  },
   resultat: {
     titelArbejder: "Din annonce er på vej",
     // B-9 batch: pipelinen kører færdig i baggrunden — man kan fotografere videre
@@ -258,6 +287,15 @@ export const da = {
       n === 1 ? "1 billede er klar" : `${n} billeder er klar`,
     billederPaaVej: "Dine billeder",
     genererFrame: "Genererer …",
+    aabnFuldStoerrelse: "Åbn i fuld størrelse",
+    // Roterende statustekster i genererings-framen (ejer-ordre 20/8: mere liv)
+    genererTekster: [
+      "Tegner tøjet …",
+      "Sætter lyset …",
+      "Finder vinklen …",
+      "Finpudser detaljer …",
+      "Tjekker mod dit foto …",
+    ],
     trinBilledTaeller: (faerdige: number, alle: number) =>
       `${faerdige} af ${alle}`,
     trinVenter: "venter",

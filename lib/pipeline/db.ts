@@ -18,6 +18,9 @@ export type ItemTilPipeline = {
   farve?: string | null;
   /** Sælgerens selvvalgte hjem-id (S31); null = det deterministiske hjem */
   hjemAnker: string | null;
+  /** Onboarding (20/8): "mand"/"kvinde" + hårfarve — styrer person-ankeret */
+  koen?: string | null;
+  haarFarve?: string | null;
   fotos: { id: string; rolle: FotoRolle; url: string; rensetUrl?: string | null }[];
 };
 
