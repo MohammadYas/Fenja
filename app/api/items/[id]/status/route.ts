@@ -5,7 +5,10 @@ import { opretServerKlient } from "@/lib/supabase/server";
 // rækkerne. Bulletproof (ejer-ordre 20/8): svaret bærer også starttiden (så
 // fremdriftskurven er forankret i virkeligheden, ikke i sidste refresh) og
 // om kørslen er fejlet/hængende, så UI'et kan tilbyde genstart.
-const HAENGER_EFTER_MS = 3 * 60 * 1000;
+// 10 min: rigtige provider-kørsler (flere billeder × retries) kan tage flere
+// minutter uden nye generations-rækker — 3 min gav falske "gik i stå"
+// (ejer-rapport 20/8: boksen kom efter baren næsten var i mål).
+const HAENGER_EFTER_MS = 10 * 60 * 1000;
 
 export async function GET(
   _request: NextRequest,

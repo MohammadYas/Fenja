@@ -18,7 +18,24 @@ type ItemRaekke = {
   solgt_at: string | null;
   created_at: string;
   generations: { status: string }[];
+  item_photos: { role: string; original_url: string; cleaned_url: string | null }[];
 };
+
+// Miniature (ejer-ordre 20/8): man kan have flere af samme mærke — billedet
+// gør listen genkendelig. Renset helhedsfoto først, ellers originalen.
+async function miniatureUrl(fotos: ItemRaekke["item_photos"]): Promise<string | null> {
+  const helhed = fotos.find((f) => f.role === "full") ?? fotos[0];
+  const sti = helhed?.cleaned_url ?? helhed?.original_url;
+  if (!sti) return null;
+  if (sti.startsWith("http")) return sti;
+  // Dynamisk: server-only-modulet må ikke evalueres i klient-test-kæden
+  const { opretServiceKlient } = await import("@/lib/supabase/service");
+  const service = opretServiceKlient();
+  const { data } = await service.storage
+    .from("item-photos")
+    .createSignedUrl(sti, 3600);
+  return data?.signedUrl ?? null;
+}
 
 // Item-bibliotek (B-7) + statistik (B-10): salgsværdi, antal, liggetid.
 export default async function Oversigt() {
@@ -26,10 +43,13 @@ export default async function Oversigt() {
   const { data } = await supabase
     .from("items")
     .select(
-      "id, brand, titel, category, status, sold_price_dkk, leveret_at, solgt_at, created_at, generations(status)",
+      "id, brand, titel, category, status, sold_price_dkk, leveret_at, solgt_at, created_at, generations(status), item_photos(role, original_url, cleaned_url)",
     )
     .order("created_at", { ascending: false });
   const items = (data ?? []) as ItemRaekke[];
+  const miniaturer = await Promise.all(
+    items.map((item) => miniatureUrl(item.item_photos ?? [])),
+  );
 
   const solgte = items.filter((i) => i.status === "sold");
   const samletVaerdi = solgte.reduce((sum, i) => sum + (i.sold_price_dkk ?? 0), 0);
@@ -86,7 +106,7 @@ export default async function Oversigt() {
           ) : null}
 
           <ItemListe
-            items={items.map((item) => ({
+            items={items.map((item, i) => ({
               id: item.id,
               titel:
                 item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
@@ -95,11 +115,16 @@ export default async function Oversigt() {
               status: item.status === "failed" ? "draft" : item.status,
               fejlet: item.status === "failed" && !item.leveret_at,
               soldPrisDkk: item.sold_price_dkk,
+              miniature: miniaturer[i] ?? null,
               // B-9: en kladde med kørende pipeline er "på vej", ikke efterladt
               paaVej:
                 item.status === "draft" &&
                 !item.leveret_at &&
                 (item.generations ?? []).length > 0,
+              // Ejer-ordre 20/8: fremdriften vises OGSÅ på oversigten —
+              // kurven er forankret i starttiden og står derfor øjeblikkeligt
+              // præcis hvor den var
+              startetAt: item.created_at,
             }))}
           />
         </>

@@ -184,8 +184,11 @@ export const da = {
     komprimerer: "Gør fotoet klar …",
     felterTitel: "Om tøjet",
     maerkeLabel: "Varemærke",
-    maerkeHjaelp: "Søg i Vinteds mærker — eller skriv dit eget.",
-    maerkeIngenMatch: "Ingen match — dit eget mærkenavn bruges, som du skriver det.",
+    // Ejer-ordre 20/8: det skal være TYDELIGT at man bare kan skrive selv
+    maerkeHjaelp:
+      "Skriv mærket selv — forslagene er kun en genvej, du behøver ikke vælge fra listen.",
+    maerkePlaceholder: "Fx Zara, Ganni eller et mærke, vi ikke kender",
+    maerkeIngenMatch: "Helt fint — vi bruger mærket, præcis som du skriver det.",
     stoerrelseLabel: "Størrelse",
     stoerrelseVaelg: "Vælg størrelse",
     standLabel: "Artiklens stand",

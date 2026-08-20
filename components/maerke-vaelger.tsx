@@ -71,6 +71,7 @@ export function MaerkeVaelger({
         aria-describedby={hjaelpId}
         autoComplete="off"
         required
+        placeholder={da.nytItem.maerkePlaceholder}
         value={value}
         onChange={(e) => {
           onChange(e.target.value);
@@ -79,7 +80,7 @@ export function MaerkeVaelger({
         }}
         onFocus={() => setAaben(true)}
         onKeyDown={paaTast}
-        className="min-h-touch rounded-bloed border border-kant bg-baggrund px-3 text-basis text-tekst"
+        className="min-h-touch rounded-bloed border border-kant bg-baggrund px-3 text-basis text-tekst placeholder:text-tekst/50"
       />
       {aaben && forslag.length > 0 ? (
         <ul

@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { da } from "@/lib/copy/da";
+import { psykologiskAndel } from "@/lib/fremdrift";
 import { MarkerSolgt } from "./marker-solgt";
 
 type Status = "draft" | "active" | "sold";
@@ -13,11 +15,63 @@ export type ItemTilListe = {
   titel: string;
   status: Status;
   soldPrisDkk: number | null;
+  /** Signeret url til helhedsfotoet (ejer-ordre 20/8: genkendelig liste) */
+  miniature: string | null;
   /** Kladde med kørende pipeline (B-9) — vises som "På vej" */
   paaVej: boolean;
   /** Kørslen gik i stå (bulletproof, 20/8) — åbn annoncen og kør igen */
   fejlet: boolean;
+  /** Annoncens created_at — forankrer fremdriftskurven */
+  startetAt: string;
 };
+
+// Mini-fremdrift på oversigten (ejer-ordre 20/8): samme forankrede kurve som
+// annoncesiden, så den øjeblikkeligt står hvor kørslen faktisk er. Poller
+// stille for leverance og genindlæser listen, når annoncen er klar.
+function MiniFremdrift({ itemId, startetAt }: { itemId: string; startetAt: string }) {
+  const router = useRouter();
+  const start = new Date(startetAt).getTime();
+  const [procent, setProcent] = useState(() =>
+    Math.min(97, Math.round(psykologiskAndel(start, Date.now()) * 100)),
+  );
+
+  useEffect(() => {
+    const puls = setInterval(() => {
+      setProcent(Math.min(97, Math.round(psykologiskAndel(start, Date.now()) * 100)));
+    }, 1000);
+    const poll = setInterval(async () => {
+      try {
+        const svar = await fetch(`/api/items/${itemId}/status`);
+        if (!svar.ok) return;
+        const data = (await svar.json()) as { leveret: boolean };
+        if (data.leveret) {
+          clearInterval(poll);
+          router.refresh();
+        }
+      } catch {
+        // Netudfald: næste poll prøver igen
+      }
+    }, 5000);
+    return () => {
+      clearInterval(puls);
+      clearInterval(poll);
+    };
+  }, [itemId, start, router]);
+
+  return (
+    <div className="flex items-center gap-2" aria-label={da.oversigt.paaVej}>
+      <div className="h-1.5 flex-1 overflow-hidden rounded-stram bg-kant">
+        <div
+          className="h-full rounded-stram bg-gran transition-[width] duration-700 ease-out"
+          style={{ width: `${procent}%` }}
+        />
+      </div>
+      <span className="font-mono text-detalje font-bold text-gran">
+        {procent} %
+      </span>
+    </div>
+  );
+}
 
 const STATUSSER: Status[] = ["draft", "active", "sold"];
 
@@ -78,8 +132,24 @@ export function ItemListe({ items }: { items: ItemTilListe[] }) {
                 <div className="flex items-center justify-between gap-3">
                   <Link
                     href={`/items/${item.id}`}
-                    className="soem-link flex min-h-touch min-w-0 flex-1 items-center font-medium"
+                    className="soem-link flex min-h-touch min-w-0 flex-1 items-center gap-3 font-medium"
                   >
+                    {/* Miniature (ejer-ordre 20/8): flere af samme mærke skal
+                        kunne kendes fra hinanden */}
+                    {item.miniature ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={item.miniature}
+                        alt=""
+                        className="h-12 w-12 flex-shrink-0 rounded-stram border border-kant object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="h-12 w-12 flex-shrink-0 rounded-stram border border-kant bg-flade"
+                      />
+                    )}
                     <span className="block truncate">{item.titel}</span>
                   </Link>
                   <Badge variant={item.status === "sold" ? "status" : "neutral"}>
@@ -90,6 +160,10 @@ export function ItemListe({ items }: { items: ItemTilListe[] }) {
                         : da.oversigt.status[item.status]}
                   </Badge>
                 </div>
+                {/* Fremdriften vises OGSÅ her (ejer-ordre 20/8) */}
+                {item.paaVej && !item.fejlet ? (
+                  <MiniFremdrift itemId={item.id} startetAt={item.startetAt} />
+                ) : null}
                 {item.status === "sold" && item.soldPrisDkk != null ? (
                   <p className="font-mono text-detalje font-bold text-pris">
                     {item.soldPrisDkk} kr.

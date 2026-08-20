@@ -47,7 +47,7 @@ export default async function ItemSide({
   const { data: item } = await supabase
     .from("items")
     .select(
-      "id, brand, titel, beskrivelse, soegeord, pris_fra_dkk, pris_til_dkk, pris_begrundelse, defects_text, leveret_at, item_photos(id, role, original_url, cleaned_url), generations(kind, status, output_url, created_at)",
+      "id, brand, titel, beskrivelse, soegeord, pris_fra_dkk, pris_til_dkk, pris_begrundelse, defects_text, leveret_at, created_at, item_photos(id, role, original_url, cleaned_url), generations(kind, status, output_url, created_at)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -80,7 +80,7 @@ export default async function ItemSide({
         <h1 className="font-display text-kaempe font-bold">
           {da.resultat.titelArbejder}
         </h1>
-        <Progress itemId={id} />
+        <Progress itemId={id} startetAt={item.created_at as string} />
         {/* B-9 batch: pipelinen kører serverside — TYDELIG boks (ejer-ordre
             20/8): man behøver ikke vente her */}
         <div className="mt-10 rounded-bloed border border-kant bg-flade p-5">

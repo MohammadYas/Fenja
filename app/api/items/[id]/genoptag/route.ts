@@ -10,7 +10,9 @@ import { opretServiceKlient } from "@/lib/supabase/service";
 // en server-genstart eller et providerudfald må aldrig efterlade annoncen i
 // evigt "på vej". Genkørsel er sikker: ledger og leverance er idempotente
 // pr. item (E-4), så det kan aldrig koste dobbelt.
-const KOERER_STADIG_MS = 2 * 60 * 1000;
+// Samme tålmodighed som status-API'et: rigtige kørsler kan tage flere
+// minutter — genstart må ikke lægge sig oveni en kørsel, der faktisk arbejder
+const KOERER_STADIG_MS = 10 * 60 * 1000;
 
 export async function POST(
   _request: NextRequest,

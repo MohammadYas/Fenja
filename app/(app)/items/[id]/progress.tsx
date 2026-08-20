@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { da } from "@/lib/copy/da";
+import { psykologiskAndel } from "@/lib/fremdrift";
 
 type TrinStatus = "venter" | "running" | "succeeded" | "failed";
 type Trin = { kind: string; status: string };
@@ -23,22 +24,32 @@ const TRIN_ORDEN = ["cleanup", "onmodel", "text"] as const;
 //   nogensinde at give op — et netudfald på nogle sekunder mærkes ikke.
 // - Er kørslen fejlet eller hængende (fx server-genstart), vises en tydelig
 //   genstart-knap i stedet for evig venten.
-export function Progress({ itemId }: { itemId: string }) {
+export function Progress({
+  itemId,
+  startetAt: startetAtProp,
+}: {
+  itemId: string;
+  /** Annoncens created_at fra serveren — baren står rigtigt fra første paint */
+  startetAt?: string;
+}) {
   const router = useRouter();
   const [trin, setTrin] = useState<Trin[]>([]);
   const [fejlet, setFejlet] = useState(false);
   const [genstarter, setGenstarter] = useState(false);
-  const [tidsAndel, setTidsAndel] = useState(0);
-  const startetAt = useRef<number | null>(null);
+  const startetAt = useRef<number | null>(
+    startetAtProp ? new Date(startetAtProp).getTime() : null,
+  );
   const faldbackStart = useRef<number>(Date.now());
+  const [tidsAndel, setTidsAndel] = useState(() =>
+    startetAt.current ? psykologiskAndel(startetAt.current, Date.now()) : 0,
+  );
 
-  // Tidskurven: hurtig i starten, asymptotisk mod ~93 % — beregnet ud fra
-  // serverens starttid, så et refresh aldrig nulstiller den
+  // Tidskurven (lib/fremdrift.ts): beregnet ud fra serverens starttid, så et
+  // refresh aldrig nulstiller den
   useEffect(() => {
     const puls = setInterval(() => {
       const start = startetAt.current ?? faldbackStart.current;
-      const sekunder = Math.max(0, (Date.now() - start) / 1000);
-      setTidsAndel(0.93 * (1 - Math.exp(-sekunder / 35)));
+      setTidsAndel(psykologiskAndel(start, Date.now()));
     }, 400);
     return () => clearInterval(puls);
   }, []);
@@ -58,7 +69,12 @@ export function Progress({ itemId }: { itemId: string }) {
         pauseMs = 2500; // succes: tilbage til normal kadence
         setTrin(data.trin);
         setFejlet(data.fejlet);
-        if (data.startetAt) startetAt.current = new Date(data.startetAt).getTime();
+        if (data.startetAt) {
+          startetAt.current = new Date(data.startetAt).getTime();
+          // Med det samme — baren skal stå rigtigt fra første svar, ikke
+          // vente på næste puls (ejer-ordre 20/8)
+          setTidsAndel(psykologiskAndel(startetAt.current, Date.now()));
+        }
         if (data.leveret) {
           router.refresh();
           return;
