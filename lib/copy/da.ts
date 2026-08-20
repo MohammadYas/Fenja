@@ -158,6 +158,9 @@ export const da = {
       "Kun helhedsfotoet skal med. Bagsiden er valgfri og kan gøre annoncen bedre.",
     fotoSkalMed: "Skal med",
     fotoValgfrit: "Valgfrit",
+    // Opsummeringen (ejer-ordre 20/8): navngiv de angivne fotos
+    fotoAngivet: (navne: string[]) =>
+      navne.length === 0 ? "Intet foto angivet" : `Angivet: ${navne.join(" + ")}`,
     roller: {
       full: {
         navn: "Helhed",
@@ -219,8 +222,9 @@ export const da = {
   resultat: {
     titelArbejder: "Din annonce er på vej",
     // B-9 batch: pipelinen kører færdig i baggrunden — man kan fotografere videre
+    batchTitel: "Du behøver ikke vente her",
     batchTekst:
-      "Du behøver ikke vente her. Annoncen bliver færdig i baggrunden, og du finder den på oversigten.",
+      "Annoncen bliver færdig i baggrunden — du finder den på oversigten, når den er klar.",
     batchKnap: "Fotografér det næste imens",
     trin: {
       cleanup: "Renser dine fotos",

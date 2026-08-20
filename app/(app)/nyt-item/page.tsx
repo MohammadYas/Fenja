@@ -468,9 +468,14 @@ export default function NytItem() {
                   [da.nytItem.maerkeLabel, maerke],
                   [da.nytItem.stoerrelseLabel, stoerrelse],
                   [da.nytItem.standLabel, stand],
+                  // Ejer-ordre 20/8: sig HVILKE fotos der er angivet, ikke "1 af 2"
                   [
                     da.nytItem.fotoTitel,
-                    `${Object.keys(fotos).length} af ${FOTO_ROLLER.length}`,
+                    da.nytItem.fotoAngivet(
+                      FOTO_ROLLER.filter((r) => fotos[r]).map(
+                        (r) => da.nytItem.roller[r].navn,
+                      ),
+                    ),
                   ],
                   [
                     da.nytItem.visningLabel,

@@ -16,6 +16,19 @@ const TRIN_ORDEN = ["cleanup", "onmodel", "text"] as const;
 export function Progress({ itemId }: { itemId: string }) {
   const router = useRouter();
   const [trin, setTrin] = useState<Trin[]>([]);
+  // Ejer-ordre 20/8: baren er PSYKOLOGISK, ikke 1:1 med processerne — den
+  // bevæger sig altid fremad (hurtigt i starten, asymptotisk mod ~93 %),
+  // og de reelle trin kan kun skubbe den længere frem, aldrig tilbage.
+  const [tidsAndel, setTidsAndel] = useState(0);
+
+  useEffect(() => {
+    const start = performance.now();
+    const puls = setInterval(() => {
+      const sekunder = (performance.now() - start) / 1000;
+      setTidsAndel(0.93 * (1 - Math.exp(-sekunder / 35)));
+    }, 400);
+    return () => clearInterval(puls);
+  }, []);
 
   useEffect(() => {
     let aktiv = true;
@@ -62,9 +75,9 @@ export function Progress({ itemId }: { itemId: string }) {
     failed: da.resultat.trinFejlet,
   };
 
-  // Andel: hvert hovedtrin vejer 1/3; billedtrinnet skalerer med hvor mange af
-  // de valgte billeder der er færdige.
-  const andel =
+  // Reel andel: hvert hovedtrin vejer 1/3; billedtrinnet skalerer med hvor
+  // mange af de valgte billeder der er færdige.
+  const reelAndel =
     TRIN_ORDEN.reduce((sum, kind) => {
       const raekker = raekkerFor(kind);
       if (raekker.length === 0) return sum;
@@ -74,7 +87,9 @@ export function Progress({ itemId }: { itemId: string }) {
       if (faerdige === raekker.length) return sum + 1;
       return sum + Math.max(0.15, faerdige / raekker.length);
     }, 0) / TRIN_ORDEN.length;
-  const procent = Math.round(andel * 100);
+  // Vist andel = det største af tidskurven og virkeligheden (kun fremad);
+  // 100 % nås først når leverancen er der og siden genindlæses.
+  const procent = Math.min(97, Math.round(Math.max(tidsAndel, reelAndel) * 100));
 
   return (
     <div className="mt-6">
