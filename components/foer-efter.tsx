@@ -1,53 +1,88 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import { vinted } from "@/lib/copy/vinted";
 
-// Before/after-panelet — signatur-elementet (DESIGN.md): den sjuskede annonce
-// mod den færdige leverance, adskilt af sømmen. Ejer-ordre 2026-08-19: panelet
-// viser nu RIGTIGE billeder fra katalogserien — FØR er det bevidst dårlige
-// hverdagsfoto (p13), EFTER er samme mørkeblå strik vist båret (p6). Begge er
-// AI-genererede visualiseringer (provenance: docs/katalog-prompts.md).
+// Before/after-panelet — signatur-elementet (DESIGN.md). Ejer-ordrer 19-20/8:
+// panelet viser RIGTIGE billeder fra katalogserien og har nu en vælger med
+// flere eksempler (samme stykke tøj i FØR og EFTER: dårligt aftenfoto →
+// spejlselfie i dagslys). Alle billeder er AI-genererede visualiseringer
+// (provenance: docs/katalog-prompts.md).
 export function FoerEfter() {
+  const copy = vinted.foerEfter;
+  const [valgtId, setValgtId] = useState<string>(copy.par[0]!.id);
+  const par = copy.par.find((p) => p.id === valgtId) ?? copy.par[0]!;
+
   return (
     <figure>
-      <div className="grid overflow-hidden rounded-bloed border border-kant sm:grid-cols-[1fr_auto_1.2fr]">
+      <div
+        role="radiogroup"
+        aria-label={copy.vaelgerLabel}
+        className="mb-3 flex flex-wrap gap-2"
+      >
+        {copy.par.map((p) => {
+          const aktiv = p.id === valgtId;
+          return (
+            <button
+              key={p.id}
+              type="button"
+              role="radio"
+              aria-checked={aktiv}
+              onClick={() => setValgtId(p.id)}
+              className={`min-h-touch rounded-bloed border px-3 py-1.5 text-detalje transition-colors duration-150 ease-out focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-koks ${
+                aktiv
+                  ? "border-gran bg-gran text-kalk"
+                  : "border-kant bg-baggrund text-tekst/80 hover:border-koks/40"
+              }`}
+            >
+              {p.navn}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* key-skiftet lader panelet rulle ind ved skift (pris-rul) */}
+      <div
+        key={par.id}
+        className="pris-rul grid overflow-hidden rounded-bloed border border-kant sm:grid-cols-[1fr_auto_1.2fr]"
+      >
         <div className="bg-flade p-5">
           <span className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/70">
-            {vinted.foerEfter.foer.label}
+            {copy.foerLabel}
           </span>
           <Image
-            src="/eksempler/katalog/p13-foer-billede.webp"
-            alt="Sjusket hverdagsfoto af mørkeblå striktrøje smidt på en seng i dårligt lys"
+            src={par.foerBillede}
+            alt={par.foerAlt}
             width={900}
             height={1350}
             sizes="(min-width: 640px) 240px, 80vw"
             className="mt-3 aspect-[4/3] w-full rounded-bloed border border-kant object-cover"
           />
           <p className="mt-3 font-mono text-detalje lowercase leading-snug text-tekst/80">
-            {vinted.foerEfter.foer.tekst}
+            {par.foerTekst}
           </p>
           <p className="mt-1 font-mono text-detalje lowercase text-tekst/80">
-            {vinted.foerEfter.foer.pris}
+            {par.foerPris}
           </p>
         </div>
         <div className="soem-vandret sm:hidden" aria-hidden="true" />
         <div className="soem hidden sm:block" aria-hidden="true" />
         <div className="bg-baggrund p-5">
           <span className="font-mono text-detalje font-medium uppercase tracking-wide text-gran">
-            {vinted.foerEfter.efter.label}
+            {copy.efterLabel}
           </span>
           <Image
-            src="/eksempler/katalog/p14-efter-strik.webp"
-            alt="Renset foto af den mørkeblå striktrøje på neutral lys baggrund"
+            src={par.efterBillede}
+            alt={par.efterAlt}
             width={900}
             height={1350}
             sizes="(min-width: 640px) 280px, 80vw"
-            className="mt-3 aspect-[4/3] w-full rounded-bloed border border-kant object-cover"
+            className="mt-3 aspect-[4/3] w-full rounded-bloed border border-kant object-cover object-top"
           />
-          <p className="mt-3 font-display text-titel font-bold">
-            {vinted.foerEfter.efter.titel}
-          </p>
+          <p className="mt-3 font-display text-titel font-bold">{par.efterTitel}</p>
           <ul className="mt-2 flex flex-col gap-1 text-detalje text-tekst/80">
-            {vinted.foerEfter.efter.punkter.map((punkt) => (
+            {copy.punkter.map((punkt) => (
               <li key={punkt} className="flex gap-2">
                 <span aria-hidden="true" className="text-tekst/40">
                   —
@@ -57,7 +92,7 @@ export function FoerEfter() {
             ))}
           </ul>
           <p className="mt-3 font-mono text-detalje font-bold text-pris">
-            {vinted.foerEfter.efter.pris}
+            {par.efterPris}
           </p>
         </div>
       </div>

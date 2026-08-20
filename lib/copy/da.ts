@@ -336,7 +336,9 @@ export const da = {
     // Abonnementer (pricing v3.0, S36) — standardvejen; købes md./år
     abonnement: {
       titel: "Abonnementer",
-      lead: "Kvoten fyldes hver måned, og ubrugte annoncer følger med til næste måned.",
+      // Ejer-ordre 2026-08-20: kvoten omtales som fotosæt (billeder), ikke
+      // annoncer — indpakket så det frister ("færdige fotosæt").
+      lead: "Kvoten fyldes hver måned, og ubrugte fotosæt følger med til næste måned.",
       stempel: "Uden binding",
       periodeMd: "Månedligt",
       periodeAar: "Årligt",
@@ -347,8 +349,8 @@ export const da = {
       navne: { plus: "Plus", pro: "Pro" } as Record<string, string>,
       prMd: "pr. måned",
       prisPrAar: (pris: number) => `eller ${pris} kr. pr. år — to måneder sparet`,
-      annoncerPrMd: (antal: number) => `${antal} annoncer hver måned`,
-      lavestePris: "Lavest pris pr. annonce",
+      annoncerPrMd: (antal: number) => `${antal} færdige fotosæt hver måned`,
+      lavestePris: "Lavest pris pr. fotosæt",
       faellesTitel: "Med i begge",
       faelles: ["Salgsstatistik", "Prioriteret kø — dine annoncer laves først"],
       funktioner: {
@@ -413,22 +415,35 @@ export const da = {
   },
   // Eksperimentelle forside-features (lib/eksperimenter.ts) — ærlige tal fra
   // markedshøsten, aldrig opdigtede. Slås fra centralt.
+  // Redesignet 2026-08-20 (ejer-ordre: sektionen skal være et brugbart gratis
+  // værktøj, der trækker trafik — ikke døde lister). Pristjekkeren er helten;
+  // toplisterne er klikbare genveje ind i den.
   eksperimenter: {
-    stempel: "Nyt",
-    titel: "Populært på Vinted lige nu",
+    stempel: "Gratis værktøj",
+    titel: "Hvad går dit tøj for på Vinted?",
     lead: (dato: string) =>
-      `Fra vores markedshøst ${dato}: hvad der er flest aktive annoncer af — og hvad det typisk går for.`,
+      `Slå op i vores markedshøst fra ${dato} — priser fra rigtige aktive Vinted-annoncer. Gratis, uden konto.`,
     antalAnnoncer: (antal: number) => `${antal} aktive annoncer`,
     median: (kr: number) => `median ${kr} kr.`,
     bedsteFundTitel: "Giver mest ved gensalg",
-    bedsteFundLead:
-      "Søgningerne med den højeste medianpris i høsten — værd at holde øje med i genbrugen.",
-    prisTjekTitel: "Tjek prisen",
-    prisTjekLead: "Vælg en søgning og se, hvad den går for.",
-    prisTjekLabel: "Søgning",
-    prisTjekInterval: (p25: number, p75: number) => `Typisk ${p25}–${p75} kr.`,
-    prisTjekKilde: (antal: number, dato: string) =>
-      `Baseret på ${antal} aktive annoncer · høstet ${dato}`,
+    bedsteFundLead: "Højeste medianpris i høsten — tryk og se intervallet.",
+    populaertTitel: "Mest udbudt lige nu",
+    populaertLead: "Flest aktive annoncer i høsten — tryk og se prisen.",
+    prisTjekTitel: "Hvad kan DIN vare gå for?",
+    prisTjekLead:
+      "Vælg type, mærke-niveau og stand — få et vejledende prisleje for præcis din vare.",
+    kategoriLabel: "Hvad sælger du?",
+    maerkeLabel: "Mærke-niveau",
+    standLabel: "Stand",
+    prisTjekInterval: (p25: number, p75: number) => `${p25}–${p75} kr.`,
+    prisTjekIntervalNote: "vejledende prisleje",
+    beregnerKilde: (dato: string) =>
+      `Kalibreret mod rigtige aktive Vinted-annoncer · høstet ${dato}`,
+    hurtigtSalg: (kr: number) => `Vil du sælge hurtigt: læg dig omkring ${kr} kr.`,
+    taalmodig: (kr: number) => `Har du tid til at vente: prøv ${kr} kr.`,
+    ctaNote: "Gode billeder og en ærlig tekst er det, der flytter prisen.",
+    cta: "Gør din annonce klar på 2 minutter",
+    presetNote: "Tryk på en søgning og se beregnerens bud mod den ægte median.",
   },
   landing: {
     // v6 (ejer-beslutning 2026-08-15): forsiden fører med B2B — UGC-annoncer,

@@ -209,62 +209,41 @@
      katalogbilleder. Basis-tilstanden er en statisk, side-scrollbar række
      (virker uden JS og med reduceret bevægelse — dubletterne er skjult);
      kun med scripting + fuld bevægelse driver sporet i en sømløs løkke. */
-  .stroem {
+  /* EJER-ORDRE 2026-08-20: strømmen kører ALTID — også ved OS-niveau
+     "reduceret bevægelse". Bevægelsen ejes af requestAnimationFrame i
+     components/billedstroem.tsx (CSS-animation ville både kunne tvangs-
+     klampes af browseren og overtrumfe rAF-transformen). Her bor kun
+     layout, maskering og skjult scrollbar. */
+  .stroem,
+  .slides {
     overflow-x: auto;
     scrollbar-width: none;
   }
-  .stroem::-webkit-scrollbar {
+  .stroem::-webkit-scrollbar,
+  .slides::-webkit-scrollbar {
     display: none;
+  }
+  .stroem {
+    overflow-x: hidden;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 6%,
+      black 94%,
+      transparent
+    );
   }
   .stroem-spor {
     display: flex;
     width: max-content;
+    will-change: transform;
   }
   .stroem-kort {
     width: 11rem;
     aspect-ratio: 2 / 3;
     flex-shrink: 0;
     /* Margin i stedet for gap: sporet består af to identiske halvdele, og
-       translateX(-50%) er kun sømløs når hver halvdel har samme bredde */
+       translateX(-halv bredde) er kun sømløs når halvdelene er lige brede */
     margin-right: theme("spacing.4");
-  }
-  .stroem-dublet {
-    display: none;
-  }
-
-  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
-    .stroem {
-      overflow-x: hidden;
-      mask-image: linear-gradient(
-        to right,
-        transparent,
-        black 6%,
-        black 94%,
-        transparent
-      );
-    }
-    .stroem-dublet {
-      display: block;
-    }
-    .stroem-spor {
-      animation: stroem-drift 90s linear infinite;
-    }
-    .stroem[data-retning="hoejre"] .stroem-spor {
-      animation-direction: reverse;
-      animation-duration: 110s;
-    }
-    .stroem:hover .stroem-spor,
-    .stroem:focus-within .stroem-spor {
-      animation-play-state: paused;
-    }
-    @keyframes stroem-drift {
-      from {
-        transform: translateX(0);
-      }
-      to {
-        /* Sporet indeholder to identiske halvdele — én halvdel = sømløs løkke */
-        transform: translateX(-50%);
-      }
-    }
   }
 }

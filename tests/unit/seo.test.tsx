@@ -122,11 +122,11 @@ describe("llms.txt: findbarhed for sprogmodeller", () => {
     // Abonnementet er standardvejen (ejer-ordre 2026-08-16)
     for (const t of abonnementer.tiers) {
       expect(txt).toContain(
-        `${t.annoncerPrMd} annoncer/md. — ${t.prisDkkPrMd} kr./md. eller ${t.prisDkkPrAar} kr./år`,
+        `${t.annoncerPrMd} fotosæt/md. — ${t.prisDkkPrMd} kr./md. eller ${t.prisDkkPrAar} kr./år`,
       );
     }
     expect(txt).toContain(
-      `Top-up (kun ved tom saldo): ${kreditter.topUp.antal} annoncer for ${kreditter.topUp.prisDkk} kr.`,
+      `Top-up (kun ved tom saldo): ${kreditter.topUp.antal} fotosæt for ${kreditter.topUp.prisDkk} kr.`,
     );
     expect(txt).toContain("Uden binding");
     expect(txt).not.toContain("gratis annoncer");

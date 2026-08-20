@@ -1,23 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Anmeldelser } from "@/components/anmeldelser";
+import { BilledSlides } from "@/components/billed-slides";
 import { Billedstroem } from "@/components/billedstroem";
 import { FoerEfter } from "@/components/foer-efter";
-import {
-  katalogRaekkeA,
-  katalogRaekkeB,
-  type KatalogBillede,
-} from "@/lib/copy/katalog-billeder";
-
-// "Tøjet vist båret"-gridet viser netop de fire bårne motiver
-const baarneMotiver: KatalogBillede[] = [
-  ...katalogRaekkeA,
-  ...katalogRaekkeB,
-].filter((billede) =>
-  ["p3-entre-overshirt-mand", "p4-sovevaerelse-kjole", "p6-vaerelse-strik-mand", "p9-stue-strik"].some(
-    (id) => billede.src.includes(id),
-  ),
-);
+import { hentKatalogBilleder, hentKatalogRaekker } from "@/lib/katalog-server";
 import { JsonLd } from "@/components/json-ld";
 import { PopulaertSektion } from "@/components/eksperimenter/populaert-sektion";
 import { Reveal } from "@/components/reveal";
@@ -42,6 +28,10 @@ export const metadata = {
 
 export default function Forside() {
   const guides = hentGuides().slice(0, 3);
+  // Katalogbillederne findes automatisk fra public/eksempler/katalog/ —
+  // nye filer kommer med i både slides og strøm uden kodeændring (ejer-ordre)
+  const katalogBilleder = hentKatalogBilleder();
+  const katalogRaekker = hentKatalogRaekker();
 
   return (
     <main>
@@ -64,21 +54,23 @@ export default function Forside() {
             <Link href="/log-ind" className="knap-link mt-8">
               {vinted.hero.knap}
             </Link>
+            {/* Anmeldelserne bor i venstre kolonne, så heroen balancerer
+                (ejer-ordre 2026-08-20: begge skal med, men siden var skæv) */}
+            <div className="mt-10">
+              <Anmeldelser />
+            </div>
           </div>
           <div className="mt-12 lg:mt-0">
             <Reveal>
               <FoerEfter />
-              {/* Ejer-ordre 2026-08-20: anmeldelses-blokken hører til ved
-                  før/efter-panelet */}
-              <Anmeldelser />
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* Fire bårne motiver fra katalogserien som statisk grid — hele serien
-          kører som annonce-strøm i bunden af siden (ejer-ordre 2026-08-20).
-          Mærkning tilføjes først i ejerens særskilte udgivelsesrunde (STATUS). */}
+      {/* "Tøjet vist båret" som slides (ejer-ordre 2026-08-20): ALLE
+          katalogbilleder kører rundt automatisk — også nye filer. Mærkning
+          tilføjes først i ejerens særskilte udgivelsesrunde (STATUS). */}
       <section className="border-b border-kant" aria-labelledby="billedserie-titel">
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
           <h2
@@ -87,19 +79,7 @@ export default function Forside() {
           >
             {vinted.billedserie.titel}
           </h2>
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {baarneMotiver.map((billede, i) => (
-              <Reveal key={billede.src} forsinkelseTrin={i}>
-                <Image
-                  src={billede.src}
-                  alt={billede.alt}
-                  width={900}
-                  height={1350}
-                  className="w-full rounded-bloed border border-kant object-cover"
-                />
-              </Reveal>
-            ))}
-          </div>
+          <BilledSlides billeder={katalogBilleder} />
         </div>
       </section>
 
@@ -219,7 +199,7 @@ export default function Forside() {
           pause på hover, statisk scrollbar uden JS/med reduceret bevægelse. */}
       <section aria-label={vinted.billedserie.titel}>
         <div className="py-14 md:py-16">
-          <Billedstroem />
+          <Billedstroem raekker={katalogRaekker} />
         </div>
       </section>
     </main>

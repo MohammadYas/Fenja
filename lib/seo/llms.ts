@@ -20,9 +20,9 @@ export function byggLlmsTxt(): string {
   const priser = [
     ...abonnementer.tiers.map(
       (t) =>
-        `- ${da.priserSide.abonnement.navne[t.id]}: ${t.annoncerPrMd} annoncer/md. — ${t.prisDkkPrMd} kr./md. eller ${t.prisDkkPrAar} kr./år`,
+        `- ${da.priserSide.abonnement.navne[t.id]}: ${t.annoncerPrMd} fotosæt/md. — ${t.prisDkkPrMd} kr./md. eller ${t.prisDkkPrAar} kr./år`,
     ),
-    `- Top-up (kun ved tom saldo): ${kreditter.topUp.antal} annoncer for ${kreditter.topUp.prisDkk} kr.`,
+    `- Top-up (kun ved tom saldo): ${kreditter.topUp.antal} fotosæt for ${kreditter.topUp.prisDkk} kr.`,
   ].join("\n");
   const guides = hentGuides()
     .map((g) => `- [${g.titel}](${base}/laer/${g.slug}): ${g.beskrivelse}`)

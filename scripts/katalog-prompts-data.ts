@@ -298,8 +298,60 @@ const EFTER_PROMPT: KatalogPrompt = {
     "A finished secondhand listing photo, the cleaned-up AFTER version: a navy-blue crew-neck lambswool sweater presented neatly on a clean, neutral light-grey seamless background, softly and evenly lit. The sweater is the same garment as an ordinary home photo — its knit texture, fine ribbing at neck, cuffs and hem, and natural slight signs of use are preserved completely faithfully; visible knit stitches, a soft matte wool surface, gentle natural folds where the fabric relaxes. Presented slightly angled and photographed straight on at chest height, filling most of the frame with calm air around it. The result looks like a professional-quality product photo made from a phone photo: clean background, balanced neutral white balance, soft shadow under the garment — but the garment itself stays real and unretouched, no artificial smoothing of the wool. No people, no hands, no hanger visible, no props. Any visible collar interior is plain fabric with NO label. Vertical 2:3 composition, photorealistic, high detail, realistic knit texture. Avoid: AI look, CGI, render, mannequin, ghost-mannequin effect, floating unnatural shape, plastic-smooth fabric, logos, readable or pseudo-readable text, labels, watermark, harsh studio glamour lighting, oversaturated colour, deformed proportions.",
 };
 
+// P15: EFTER som SPEJLSELFIE (ejer-ordre 2026-08-20: "efter med selja" skal
+// være et realistisk spejlbillede) — samme mørkeblå strik som P13 (FØR), nu
+// båret og fotograferet ordentligt i dagslys. Kontrasten til FØR er lyset og
+// omhuen, ikke stilen: stadig et ægte telefonfoto.
+const EFTER_SELFIE_PROMPT: KatalogPrompt = {
+  id: "p15-efter-spejl-strik",
+  titel: "P15 · EFTER — spejlselfie med mørkeblå strik (dagslys)",
+  prompt:
+    SELFIE_KERNE +
+    `A young adult man with an ordinary natural build stands in front of a tall floor-length mirror with a thin oak frame leaning slightly against the wall in a bright, tidy Scandinavian bedroom. He wears the navy-blue crew-neck lambswool sweater — the SAME sweater as in a bad night-time photo, now worn and photographed properly: fine ribbing at neck, cuffs and hem clearly visible, soft matte wool with visible knit stitches, regular fit, the collar of a white t-shirt just visible at the neck. Dark plain straight-leg jeans, wool socks, no shoes. He has short dark brown hair, slightly untidy. The phone is a dark grey smartphone with a plain one-colour case. The free hand rests relaxed at his side; weight on one leg, relaxed posture, no posing. The whole sweater is clearly visible and centred — the sweater is the focus of the photo. The room is bright with soft daylight from a window with a thin white curtain: a neatly made bed with sand-coloured linen bedding, an oak floor, a small plant on the windowsill, calm and tidy but lived-in (a book and a glass of water on the bedside table). The light is generous and even — the clear daylight OPPOSITE of a dim yellow evening photo — with soft natural shadows, no flash.` +
+    REALISME +
+    UNDGAA_FAELLES +
+    " Also avoid: blonde or long hair, an oversized fit, a messy dark room, yellow evening light, shoes.",
+};
+
+// P16–P18: flere FØR-billeder til før/efter-vælgeren (ejer-ordre 2026-08-20:
+// man skal kunne vælge mellem flere eksempler). Samme bevidst dårlige stil
+// som P13; tøjet matcher eksisterende EFTER-spejlselfies (p4 kjole, p5 jeans,
+// p2 cardigan), så hvert par viser SAMME stykke tøj.
+function foerPrompt(toej: string, ekstra: string): string {
+  return `A genuinely BAD amateur phone photo, like a typical careless secondhand listing photo, no people. ${toej} lies dumped on a bed with crumpled, slightly dark bedding — thrown there, not laid out. The garment is wrinkled and partly folded under itself so the shape is hard to read. ${ekstra} The light is bad: warm yellowish ceiling light at night — no daylight. A clear hard shadow from the photographer's phone and arm falls across the garment; one corner is slightly underexposed. The composition is skew and careless: a half-lazy side angle, the garment off-centre, too much empty bedding on one side, a slice of a messy bedside table — a charger, a glass, a TV remote — poking into the frame edge. Ordinary phone in poor light: visible noise and grain in the shadows, slightly soft focus, yellowish white balance. NOT artistic — just sloppy. The garment must still clearly be recognisable — the photo is bad, not incomprehensible; the garment itself is fine, just badly photographed. Badly lit amateur phone photo, cluttered bedroom, warm yellow indoor lighting at night, noisy shadows, careless framing, vertical 2:3, no people. Avoid: people, daylight, a neatly made bed, neat folding, good composition, a flash look, black and white, artistic filters, extreme blur, readable logos, damaged or stained clothing, AI look, CGI, render.`;
+}
+
+const FOER_PROMPTS: KatalogPrompt[] = [
+  {
+    id: "p16-foer-kjole",
+    titel: "P16 · FØR — dårligt foto af salviegrøn kjole",
+    prompt: foerPrompt(
+      "A dusty sage-green midi dress in light matte viscose with thin straps",
+      "One strap is twisted and the hem is bunched up.",
+    ),
+  },
+  {
+    id: "p17-foer-jeans",
+    titel: "P17 · FØR — dårligt foto af blå jeans",
+    prompt: foerPrompt(
+      "A pair of classic medium-blue straight-leg jeans in a vintage wash",
+      "One leg is folded under the other and the waistband is turned half inside out.",
+    ),
+  },
+  {
+    id: "p18-foer-cardigan",
+    titel: "P18 · FØR — dårligt foto af taupegrå cardigan",
+    prompt: foerPrompt(
+      "A fitted light taupe-grey fine-knit cardigan with small pearly buttons and a deep V-neck",
+      "One sleeve hangs over the bed edge and the button row is askew.",
+    ),
+  },
+];
+
 export const KATALOG_PROMPTS: KatalogPrompt[] = [
   ...PERSON_PROMPTS,
   EFTER_PROMPT,
+  EFTER_SELFIE_PROMPT,
+  ...FOER_PROMPTS,
   ...PRODUKTVINKLER,
 ];
