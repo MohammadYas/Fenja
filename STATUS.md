@@ -2,6 +2,15 @@
 Sidst opdateret: 2026-08-19 af Claude Code (publish-overblik)
 
 ## Denne session (19/8) — hvad mangler før publish
+- **Billed-QA (19/8 aften):** alle 33 billeder gennemgået; 8 regenereret
+  (fotograf-telefon/hånd synlig ×3, delvist ansigt p7, dobbelt knap,
+  svævende jeans, dobbelt bøjle, flosset kant). Prompts hærdet i
+  scripts/katalog-prompts-data.ts (fotografen usynlig, intakt konstruktion).
+  **Før/efter-panelet viser nu rigtige billeder** (FØR = p13, EFTER = p6);
+  p1 ude af strømmen, p3 forrest (ejer-ordre). Credit-total 19/8: **56**.
+  p7 har stadig mund/hage lige i overkant — ikke identificerbar, men sig til
+  hvis den skal om. Ejeren sendte et Vinted-anmeldelses-screenshot uden
+  instruks — IKKE bygget (fabrikeret proof er forbudt, PRODUCT.md); afklar.
 - **EJER-OVERSTYRING (19/8, DESIGN §6):** forsiden skal være ANIMATIONSRIG
   med hele katalogserien — "derudover ingen nye animationer" er ophævet for
   annonce-strømmen. Bygget: `components/billedstroem.tsx` + `.stroem-*` i
