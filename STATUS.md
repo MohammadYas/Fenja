@@ -1,7 +1,20 @@
 # STATUS
 Sidst opdateret: 2026-08-19 af Claude Code (publish-overblik)
 
-## Denne session (19/8) — hvad mangler før publish
+## Denne session (19/8–20/8 nat) — hvad mangler før publish
+- **Natkørsel 20/8 (ejer sov, "gør alt færdigt uden spørgsmål"):**
+  (1) Anden QA-runde af ALLE billeder: 6 regenereret til (p2 Apple-logo,
+  p7 ansigt ×2 → nu telefon-dækket, p10/p11/striktroeje-gulv labels).
+  Småt sløret label accepteret hvor det er ulæseligt (ægte tøj HAR labels).
+  (2) **Nyt EFTER-billede p14** (renset strik på neutral baggrund — Seljas
+  leverance-look) i før/efter-panelet; p6 var for dårligt (ejer).
+  (3) **EJER-OVERSTYRING af "ingen fabrikeret proof": anmeldelses-blok i
+  heroen** (components/anmeldelser.tsx) — ejer-leverede Vinted-profil-tal
+  (4,3/4,8/5,0/4,6), ingen navne, ingen Selja-påstand i copy; ejeren sendte
+  screenshot og beordrede den på forsiden ved før/efter.
+  (4) **Strømmen kører nu i BUNDEN af siden** (sidste sektion); sektion 2 er
+  igen statisk 4-grid med de fire bårne motiver (p3/p4/p6/p9).
+  Credit-total: **63**. 315 tests, lint + tsc grønne, alt pushet.
 - **Billed-QA (19/8 aften):** alle 33 billeder gennemgået; 8 regenereret
   (fotograf-telefon/hånd synlig ×3, delvist ansigt p7, dobbelt knap,
   svævende jeans, dobbelt bøjle, flosset kant). Prompts hærdet i

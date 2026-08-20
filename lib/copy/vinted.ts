@@ -36,6 +36,13 @@ export const vinted = {
   billedserie: {
     titel: "Tøjet vist båret",
   },
+  // Ejer-ordre 2026-08-20: anmeldelses-blok i heroen. Illustrative eksempler
+  // på Vinted-sælgerprofiler — ingen navne, ingen Selja-påstand i teksten.
+  anmeldelser: {
+    label: "Anmeldelser på Vinted",
+    medlemmer: "Medlemmer",
+    automatiske: "Automatiske",
+  },
   saadan: {
     titel: "Sådan virker det",
     trin: [

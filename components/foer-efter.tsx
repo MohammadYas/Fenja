@@ -36,12 +36,12 @@ export function FoerEfter() {
             {vinted.foerEfter.efter.label}
           </span>
           <Image
-            src="/eksempler/katalog/p6-vaerelse-strik-mand.webp"
-            alt="Spejlselfie hvor den mørkeblå striktrøje vises båret"
+            src="/eksempler/katalog/p14-efter-strik.webp"
+            alt="Renset foto af den mørkeblå striktrøje på neutral lys baggrund"
             width={900}
             height={1350}
             sizes="(min-width: 640px) 280px, 80vw"
-            className="mt-3 aspect-[4/3] w-full rounded-bloed border border-kant object-cover object-top"
+            className="mt-3 aspect-[4/3] w-full rounded-bloed border border-kant object-cover"
           />
           <p className="mt-3 font-display text-titel font-bold">
             {vinted.foerEfter.efter.titel}

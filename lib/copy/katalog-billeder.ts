@@ -28,6 +28,7 @@ export const katalogRaekkeA: KatalogBillede[] = [
   { src: sti("striktroeje-detalje"), alt: "Nærbillede af ribkant og masker på striktrøje" },
   { src: sti("p10-boejle-skjorte"), alt: "Lyseblå skjorte på bøjle på klædeskabsdør" },
   { src: sti("taske-gulv"), alt: "Sort skuldertaske fotograferet på trægulv" },
+  { src: sti("p14-efter-strik"), alt: "Renset foto af mørkeblå striktrøje på neutral baggrund" },
 ];
 
 export const katalogRaekkeB: KatalogBillede[] = [

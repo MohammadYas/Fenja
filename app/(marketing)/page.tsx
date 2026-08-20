@@ -1,6 +1,23 @@
+import Image from "next/image";
 import Link from "next/link";
+import { Anmeldelser } from "@/components/anmeldelser";
 import { Billedstroem } from "@/components/billedstroem";
 import { FoerEfter } from "@/components/foer-efter";
+import {
+  katalogRaekkeA,
+  katalogRaekkeB,
+  type KatalogBillede,
+} from "@/lib/copy/katalog-billeder";
+
+// "Tøjet vist båret"-gridet viser netop de fire bårne motiver
+const baarneMotiver: KatalogBillede[] = [
+  ...katalogRaekkeA,
+  ...katalogRaekkeB,
+].filter((billede) =>
+  ["p3-entre-overshirt-mand", "p4-sovevaerelse-kjole", "p6-vaerelse-strik-mand", "p9-stue-strik"].some(
+    (id) => billede.src.includes(id),
+  ),
+);
 import { JsonLd } from "@/components/json-ld";
 import { PopulaertSektion } from "@/components/eksperimenter/populaert-sektion";
 import { Reveal } from "@/components/reveal";
@@ -51,27 +68,37 @@ export default function Forside() {
           <div className="mt-12 lg:mt-0">
             <Reveal>
               <FoerEfter />
+              {/* Ejer-ordre 2026-08-20: anmeldelses-blokken hører til ved
+                  før/efter-panelet */}
+              <Anmeldelser />
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* Annonce-strømmen: hele katalogserien som to drivende rækker (ejer-
-          ordre 2026-08-19: animationsrig forside med mange flere billeder).
-          Mærkning tilføjes først i ejerens særskilte udgivelsesrunde (se
-          STATUS). Strømmen er fuldbredde; overskriften bliver i gridet. */}
+      {/* Fire bårne motiver fra katalogserien som statisk grid — hele serien
+          kører som annonce-strøm i bunden af siden (ejer-ordre 2026-08-20).
+          Mærkning tilføjes først i ejerens særskilte udgivelsesrunde (STATUS). */}
       <section className="border-b border-kant" aria-labelledby="billedserie-titel">
-        <div className="py-14 md:py-20">
-          <div className="mx-auto max-w-6xl px-4">
-            <h2
-              id="billedserie-titel"
-              className="font-display text-display font-bold"
-            >
-              {vinted.billedserie.titel}
-            </h2>
-          </div>
-          <div className="mt-8">
-            <Billedstroem />
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+          <h2
+            id="billedserie-titel"
+            className="font-display text-display font-bold"
+          >
+            {vinted.billedserie.titel}
+          </h2>
+          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            {baarneMotiver.map((billede, i) => (
+              <Reveal key={billede.src} forsinkelseTrin={i}>
+                <Image
+                  src={billede.src}
+                  alt={billede.alt}
+                  width={900}
+                  height={1350}
+                  className="w-full rounded-bloed border border-kant object-cover"
+                />
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -171,7 +198,7 @@ export default function Forside() {
       <PopulaertSektion />
 
       {/* Slut-CTA: taler kun til sælgere — vejen til studioet bor i footeren */}
-      <section>
+      <section className="border-b border-kant">
         <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
           <Reveal>
             <h2 className="max-w-2xl font-display text-kaempe font-bold">
@@ -184,6 +211,15 @@ export default function Forside() {
               {vinted.cta.knap}
             </Link>
           </Reveal>
+        </div>
+      </section>
+
+      {/* Annonce-strømmen i bunden (ejer-ordre 2026-08-20: billederne skal
+          køre i bunden, så hele serien kan ses): to modsat drivende rækker,
+          pause på hover, statisk scrollbar uden JS/med reduceret bevægelse. */}
+      <section aria-label={vinted.billedserie.titel}>
+        <div className="py-14 md:py-16">
+          <Billedstroem />
         </div>
       </section>
     </main>
