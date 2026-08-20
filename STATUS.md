@@ -1,6 +1,29 @@
 # STATUS
 Sidst opdateret: 2026-08-20 (eftermiddag) af Claude Code
 
+## Denne session (20/8 eftermiddag, runde 2) — brugeren vælger billederne
+Ejer-ordre: ingen auto-generering — wizarden skal SPØRGE hvilke billeder der
+laves, med eksempler. Leveret (336 tests, lint + typecheck grønne, pushet):
+- **Wizard har 5 trin:** trin 4 = "Hvilke billeder skal laves?" — fire
+  visningstyper (Spejlbillede / På gulvet / På bøjle / Nærbillede) som
+  multi-vælg-kort med eksempelbillede fra forsideserien (matcher valgt
+  tøjdel), beskrivelse og løbende "N billeder · N kreditter". Trin 5 =
+  tjek og send; genereringen starter FØRST ved klik på knappen (prisen
+  står lige under den).
+- **Pipeline:** alle valgte visninger genereres parallelt med teksten.
+  Produkt-visninger (gulv/bøjle/nærbillede) har egen prompt uden person —
+  samme troskabskrav (C-2), troskabstjek og badge. `lib/pipeline/visninger.ts`
+  er kataloget; prompt_version bærer visnings-tag.
+- **Kreditter (ejer: 1 kredit = 1 billede):** basiskredit dækker rens +
+  tekst + første billede; hvert ekstra vellykket billede trækker 1 kredit,
+  idempotent pr. (item × visning); fejler alle billeder refunderes basis-
+  kreditten (B-6). API kræver saldo ≥ antal valgte.
+- **Resultatside:** viser ALLE vellykkede billeder i grid, nyeste først.
+- **"Din annonce er på vej" (ejer-klage):** poller nu STRAKS (et refresh
+  viser status med det samme i stedet for 2,5 s tomhed), tydelig gran-
+  bjælke med stort procenttal, og billedtrinnet tæller "2 af 3".
+- NB: klikket igennem i browser er stadig kun muligt for ejeren (login).
+
 ## Denne session (20/8 eftermiddag) — Vinted-kriterier 1:1 + wizard-UX + mærkning
 Ejer-ordrer mid-session, alt leveret, committet og pushet til main. 329 tests,
 lint + typecheck grønne.
