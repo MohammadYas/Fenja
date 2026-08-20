@@ -1,5 +1,15 @@
 # STATUS
-Sidst opdateret: 2026-08-20 (sen aften) af Claude Code
+Sidst opdateret: 2026-08-20 (natten) af Claude Code
+
+## Denne session (20/8 nat) — priser-copy: "smukke billeder" + kun main
+- **EJER-ORDRE:** abonnementskvoten hedder nu **"12/30 smukke billeder hver
+  måned"** (ikke "annoncer", ikke tørt "billeder" — indpakket så det lyder
+  fristende). `lib/copy/da.ts` (annoncerPrMd) + llms.txt følger med
+  ("billeder/md.", "1 kredit = 1 billede"). Tests opdateret.
+- **GitHub:** alt pushet til main; den gamle feature-branch var allerede
+  væk — remote har KUN main (ejer-regel HANDOFF §5.1).
+- `.impeccable/live/` (session-token/pids) er nu i .gitignore — committes
+  aldrig.
 
 ## Denne session (20/8 sen aften, runde 9) — metadata væk, migrations kørt
 - **EJER-BESLUTNING: INGEN metadata i billedfilerne** (overstyrer C-4 og

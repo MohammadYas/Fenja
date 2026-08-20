@@ -470,9 +470,10 @@ export const da = {
     abonnement: {
       titel: "Abonnementer",
       // Ejer-ordre 2026-08-20: kvoten omtales som billeder, ikke annoncer —
-      // men indpakket ("looks"). IKKE "fotosæt": 1 kredit = 1 billede, så
-      // "sæt" ville love for meget (ejer-korrektion).
-      lead: "Kvoten fyldes hver måned, og ubrugte looks følger med til næste måned.",
+      // indpakket i "smukke", så der ikke bare står et tørt "12 billeder"
+      // (ejer-korrektion). IKKE "fotosæt": 1 kredit = 1 billede, så "sæt"
+      // ville love for meget.
+      lead: "Kvoten fyldes hver måned, og ubrugte billeder følger med til næste måned.",
       stempel: "Uden binding",
       periodeMd: "Månedligt",
       periodeAar: "Årligt",
@@ -483,7 +484,7 @@ export const da = {
       navne: { plus: "Plus", pro: "Pro" } as Record<string, string>,
       prMd: "pr. måned",
       prisPrAar: (pris: number) => `eller ${pris} kr. pr. år — to måneder sparet`,
-      annoncerPrMd: (antal: number) => `${antal} færdige looks hver måned`,
+      annoncerPrMd: (antal: number) => `${antal} smukke billeder hver måned`,
       lavestePris: "Lavest pris pr. look",
       faellesTitel: "Med i begge",
       faelles: ["Salgsstatistik", "Prioriteret kø — dine annoncer laves først"],
