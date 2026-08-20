@@ -56,6 +56,14 @@ export const da = {
       "Kontoen kunne ikke oprettes. Måske findes e-mailen allerede — prøv at logge ind i stedet.",
     fejlKortKode: "Adgangskoden skal være mindst 8 tegn.",
     fejlGenerel: "Noget gik galt. Tjek forbindelsen og prøv igen.",
+    // Social login (ejer-ordre 2026-08-20): Google + Apple ved siden af e-mail
+    ellers: "eller",
+    google: "Fortsæt med Google",
+    apple: "Fortsæt med Apple",
+    socialAlderFoerst:
+      "Bekræft først, at du er 18 år eller ældre — så kan du fortsætte med Google eller Apple.",
+    fejlSocial:
+      "Log ind med den tjeneste kunne ikke starte. Prøv igen, eller brug e-mail og adgangskode.",
   },
   konto: {
     titel: "Konto",

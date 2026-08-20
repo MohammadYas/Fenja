@@ -162,12 +162,15 @@ export function ItemListe({ items }: { items: ItemTilListe[] }) {
         <ul className="mt-6 flex flex-col gap-4">
           {synlige.map((item) => (
             <li key={item.id}>
-              {/* Roligt, interaktivt kort: kanten mørkner på hover/fokus */}
-              <div className="kort-klik flex flex-col gap-2 p-4">
+              {/* Roligt, interaktivt kort: kanten mørkner på hover/fokus.
+                  HELE kortet er klikbart (ejer-ordre 20/8) — titlens link
+                  spænder et usynligt lag ud over kortet, mens knapperne
+                  ligger ovenpå og stadig kan rammes. */}
+              <div className="kort-klik relative flex flex-col gap-2 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <Link
                     href={`/items/${item.id}`}
-                    className="soem-link flex min-h-touch min-w-0 flex-1 items-center gap-3 font-medium"
+                    className="soem-link flex min-h-touch min-w-0 flex-1 items-center gap-3 font-medium after:absolute after:inset-0 after:content-['']"
                   >
                     {/* Miniature (ejer-ordre 20/8): flere af samme mærke skal
                         kunne kendes fra hinanden */}
@@ -204,9 +207,13 @@ export function ItemListe({ items }: { items: ItemTilListe[] }) {
                     {item.soldPrisDkk} kr.
                   </p>
                 ) : null}
-                {item.status === "active" ? <MarkerSolgt itemId={item.id} /> : null}
-                {/* Slet med dobbelt bekræftelse (ejer-ordre 20/8) */}
-                <SletKnap itemId={item.id} />
+                {/* Knapperne ligger OVER kortets kliklag, så de stadig
+                    virker, når resten af kortet fører ind i annoncen */}
+                <div className="relative z-10 flex flex-col gap-2">
+                  {item.status === "active" ? <MarkerSolgt itemId={item.id} /> : null}
+                  {/* Slet med dobbelt bekræftelse (ejer-ordre 20/8) */}
+                  <SletKnap itemId={item.id} />
+                </div>
               </div>
             </li>
           ))}

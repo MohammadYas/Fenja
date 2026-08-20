@@ -25,7 +25,13 @@ export async function GET(request: NextRequest) {
   }
 
   const service = opretServiceKlient();
-  if (data.user.user_metadata?.age_confirmed === true) {
+  // E-mail-signup bærer alderen i user_metadata; Google/Apple kan ikke bære
+  // metadata gennem OAuth-flowet, så login-siden spørger FØR omdirigeringen
+  // og sender svaret med som ?alder=1 (samme selvangivne tillid som feltet).
+  const alderBekraeftet =
+    data.user.user_metadata?.age_confirmed === true ||
+    url.searchParams.get("alder") === "1";
+  if (alderBekraeftet) {
     await service
       .from("profiles")
       .update({ age_confirmed: true })

@@ -58,6 +58,20 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Auto-login (ejer-ordre 2026-08-20): sessionen fornyes ovenfor og overlever
+  // både genstart og lukket browser, så en bruger der allerede ER logget ind
+  // skal aldrig se login-formularen igen — han sendes direkte videre.
+  if (user && request.nextUrl.pathname === "/log-ind") {
+    const url = request.nextUrl.clone();
+    const videre = request.nextUrl.searchParams.get("videre");
+    // Kun interne stier — en åben omdirigering må aldrig kunne smugles ind
+    url.pathname = videre?.startsWith("/") && !videre.startsWith("//")
+      ? videre
+      : "/oversigt";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
   return respons;
 }
 
