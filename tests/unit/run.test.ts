@@ -18,6 +18,7 @@ import { FakePipelineDb, FakePipelineStorage, testItem } from "../fakes/pipeline
 
 async function opsaetning(mock: {
   onModelFejler?: boolean;
+  onModelFejlAntal?: number;
   troskabsScore?: number;
   tekstFejler?: boolean;
 } = {}) {
@@ -91,6 +92,25 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
       STARTSALDO - kreditter.prisPrAnnonce,
     );
   });
+
+  it(
+    "anden bølge (bulletproof 20/8): billeder der rammer rate limit i første omgang leveres alligevel",
+    async () => {
+      const { deps, ledger } = await opsaetning({ onModelFejlAntal: 2 });
+      await reserverVisninger(ledger, "user-1", "item-1", ["spejl", "gulv"]);
+      const resultat = await koerItemPipeline(deps, "item-1", undefined, [
+        "spejl",
+        "gulv",
+      ]);
+
+      expect(resultat.visualiseringer).toHaveLength(2);
+      // Begge billeder leveret → ingen refusion
+      expect(await ledger.hentSaldo("user-1")).toBe(
+        STARTSALDO - 2 * kreditter.prisPrAnnonce,
+      );
+    },
+    15_000,
+  );
 
   it("genkørsel trækker ikke dobbelt (E-4/NFR-10)", async () => {
     const { deps, ledger } = await opsaetning();

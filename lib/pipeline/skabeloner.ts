@@ -380,25 +380,29 @@ export function bygOnModelPromptMedSkabelon(args: {
     ].join(" ");
   }
 
-  // On-model: brugerens spejl-valg tager skabelonens spejl-framing (indeks 0 —
-  // alle skabeloner har spejlbilledet først); uden valg roteres deterministisk
-  const framing =
-    args.visning?.slags === "onmodel"
-      ? skabelon.visninger[0]!
-      : vaelgVisning(skabelon, args.itemId);
+// On-model: brugerens spejl-valg tager skabelonens spejl-framing (indeks 0 —
+// alle skabeloner har spejlbilledet først); uden valg roteres deterministisk
+const framing =
+  args.visning?.slags === "onmodel"
+    ? skabelon.visninger[0]!
+    : vaelgVisning(skabelon, args.itemId);
 
-  return [
-    REFERENCE_INSTRUKS,
-    `The person is ${bygPersonAnker({ itemId: args.itemId, koen: args.koen, haarFarve: args.haarFarve })} — an anonymous person, never a recognizable or real person; the face is always hidden by the phone or cropped out of frame.`,
-    `Framing: ${framing}.`,
-    skabelon.regel,
-    `Location: ${sted}.`,
-    skabelon.fokus,
-    FOTOSTIL,
-    NEGATIV_LISTE,
-  ]
-    .filter((del): del is string => Boolean(del))
-    .join(" ");
+return [
+  REFERENCE_INSTRUKS,
+  `The person is ${bygPersonAnker({ itemId: args.itemId, koen: args.koen, haarFarve: args.haarFarve })} — an anonymous person, never a recognizable or real person; the face is always hidden by the phone or cropped out of frame.`,
+  // Ejer-ordre 20/8: ALDRIG bar mave/overkrop — gælder ALLE kategorier.
+  // Overdelen er altid en simpel neutral top, medmindre tøjet fra referencen
+  // selv dækker overkroppen (fx en kjole eller jakke).
+  "The person always wears a simple, plain, neutral-colored top so the torso is fully covered — never shirtless, never in underwear, never with a bare midriff — unless the garment from the reference image itself covers the torso.",
+  `Framing: ${framing}.`,
+  skabelon.regel,
+  `Location: ${sted}.`,
+  skabelon.fokus,
+  FOTOSTIL,
+  NEGATIV_LISTE,
+]
+  .filter((del): del is string => Boolean(del))
+  .join(" ");
 }
 
 /**

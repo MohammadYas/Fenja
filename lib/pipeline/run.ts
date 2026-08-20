@@ -292,7 +292,9 @@ export async function koerRegenerering(
   const item = await deps.db.hentItem(itemId);
 
   const kind = del === "visualisering" ? "onmodel" : "text";
-  const antal = await deps.db.antalGenereringer(item.id, kind);
+  // Loftet tæller KUN regenereringer (genereringer efter første leverance) —
+  // et item med 4 valgte billeder må ikke være spærret fra dag ét (fix 20/8)
+  const antal = await deps.db.antalRegenereringer(item.id, kind);
   if (antal >= misbrugsvaern.maksGenereringerPrDel) {
     throw new RegenGraenseFejl();
   }
@@ -360,7 +362,7 @@ export async function koerItemPipeline(
   // provider-kald ikke rammer API'et i præcis samme sekund (rate limits) —
   // svarerne lander stadig næsten samtidig.
   const reference = await referenceTilProvider(deps, helhed.rensetUrl);
-  const [tekst, ...visningsUdfald] = await Promise.all([
+  const foersteBoelge = await Promise.all([
     tekstTrin(deps, item).catch((fejl) => {
       console.error(`Teksttrin fejlede for ${item.id}:`, fejl);
       return null;
@@ -373,6 +375,32 @@ export async function koerItemPipeline(
       ),
     ),
   ]);
+  const tekst = foersteBoelge[0] as AnnonceTekst | null;
+  let visningsUdfald = foersteBoelge.slice(1) as {
+    visning: VisningsType;
+    resultat: { sti: string; fidelityScore: number; costDkk: number } | null;
+  }[];
+
+  // Anden bølge (bulletproof, ejer-ordre 20/8): hvert fejlet billede får ét
+  // ekstra forsøg med frisk generations-række, før noget refunderes. Rate
+  // limits og enkeltstående provider-fejl skal ikke koste brugeren billeder
+  // (ejer-rapport: 2 af 3 leveret, selv efter backoff).
+  const fejlede = visningsUdfald.filter((u) => u.resultat === null);
+  if (fejlede.length > 0) {
+    const andenBoelge = await Promise.all(
+      fejlede.map((u) =>
+        sov(300).then(() =>
+          visualiseringsTrin(deps, item, reference, presetId, u.visning).then(
+            (resultat) => ({ visning: u.visning, resultat }),
+          ),
+        ),
+      ),
+    );
+    visningsUdfald = visningsUdfald.map((u) => {
+      const retry = andenBoelge.find((b) => b.visning.id === u.visning.id);
+      return retry?.resultat ? retry : u;
+    });
+  }
   type Vellykket = {
     visning: VisningsType;
     resultat: { sti: string; fidelityScore: number; costDkk: number };

@@ -22,6 +22,8 @@ import type { VideoKlipInput, VideoKlipResultat, VideoProvider } from "./video";
 export type MockOpsaetning = {
   /** Kast fejl ved on-model-generering (tester delvis leverance, B-6) */
   onModelFejler?: boolean;
+  /** Kast fejl ved de FØRSTE N on-model-kald — tester anden bølge (20/8) */
+  onModelFejlAntal?: number;
   /** Fast troskabs-score; default over tærsklen */
   troskabsScore?: number;
   /** Kast fejl ved baggrundsrens */
@@ -37,6 +39,7 @@ export type MockOpsaetning = {
 
 export class MockImageProvider implements ImageProvider {
   kald: string[] = [];
+  private onmodelKald = 0;
 
   constructor(private opsaetning: MockOpsaetning = {}) {}
 
@@ -50,8 +53,15 @@ export class MockImageProvider implements ImageProvider {
 
   async genererOnModel(input: OnModelInput): Promise<OnModelResultat> {
     this.kald.push(`onmodel:vaegt=${input.referenceVaegt}`);
+    this.onmodelKald++;
     if (this.opsaetning.onModelFejler) {
       throw new Error("mock: on-model-generering fejlede");
+    }
+    if (
+      this.opsaetning.onModelFejlAntal &&
+      this.onmodelKald <= this.opsaetning.onModelFejlAntal
+    ) {
+      throw new Error("gemini: HTTP 429 — rate limit (mock)");
     }
     return {
       url: `${input.referenceUrl}#onmodel-${this.kald.length}`,

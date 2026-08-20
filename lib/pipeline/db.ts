@@ -49,6 +49,10 @@ export interface PipelineDb {
   dagensOmkostningerDkk(): Promise<number>;
   /** B-8: antal genereringer af en delaftype for et item — loftet pr. del */
   antalGenereringer(itemId: string, kind: "onmodel" | "text"): Promise<number>;
+  /** B-8: antal regenereringer (genereringer EFTER første leverance) — loftet
+   *  pr. del tæller kun disse, så et item med flere valgte billeder aldrig
+   *  blokerer for regenerering alene på grund af sin egen oprindelige kørsel */
+  antalRegenereringer(itemId: string, kind: "onmodel" | "text"): Promise<number>;
 }
 
 export interface PipelineStorage {

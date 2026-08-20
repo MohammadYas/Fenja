@@ -36,6 +36,7 @@ type Generering = {
   costDkk: number;
   fidelityScore?: number;
   promptVersion?: string;
+  createdAt?: string;
 };
 
 export class FakePipelineDb implements PipelineDb {
@@ -44,6 +45,7 @@ export class FakePipelineDb implements PipelineDb {
   tekster = new Map<string, AnnonceTekst>();
   leverede: string[] = [];
   dagensForbrug = 0;
+  leveretAt: string | null = null;
 
   constructor(private item: ItemTilPipeline = testItem()) {}
 
@@ -57,7 +59,15 @@ export class FakePipelineDb implements PipelineDb {
     presetId?: string,
   ): Promise<string> {
     const id = `gen-${this.generings.length + 1}`;
-    this.generings.push({ id, itemId, kind, presetId, status: "running", costDkk: 0 });
+    this.generings.push({
+      id,
+      itemId,
+      kind,
+      presetId,
+      status: "running",
+      costDkk: 0,
+      createdAt: new Date().toISOString(),
+    });
     return id;
   }
 
@@ -80,6 +90,7 @@ export class FakePipelineDb implements PipelineDb {
 
   async markerLeveret(itemId: string): Promise<void> {
     this.leverede.push(itemId);
+    this.leveretAt = new Date().toISOString();
   }
 
   async dagensOmkostningerDkk(): Promise<number> {
@@ -88,6 +99,16 @@ export class FakePipelineDb implements PipelineDb {
 
   async antalGenereringer(itemId: string, kind: "onmodel" | "text"): Promise<number> {
     return this.generings.filter((g) => g.itemId === itemId && g.kind === kind).length;
+  }
+
+  async antalRegenereringer(itemId: string, kind: "onmodel" | "text"): Promise<number> {
+    if (!this.leveretAt) return 0;
+    return this.generings.filter(
+      (g) =>
+        g.itemId === itemId &&
+        g.kind === kind &&
+        (g.createdAt ?? "") >= this.leveretAt!,
+    ).length;
   }
 }
 

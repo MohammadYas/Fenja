@@ -179,6 +179,27 @@ export class SupabasePipelineDb implements PipelineDb {
     return count ?? 0;
   }
 
+  async antalRegenereringer(itemId: string, kind: "onmodel" | "text"): Promise<number> {
+    // Regenereringer = genereringer skabt EFTER første leverance. Den
+    // oprindelige kørsel (og genoptag) ligger før leveret_at — ellers ville
+    // 4 valgte billeder straks spærre for regenerering (ejer-rapport 20/8).
+    const { data: item } = await this.klient
+      .from("items")
+      .select("leveret_at")
+      .eq("id", itemId)
+      .maybeSingle();
+    const leveret = item?.leveret_at as string | null | undefined;
+    if (!leveret) return 0;
+    const { count, error } = await this.klient
+      .from("generations")
+      .select("id", { count: "exact", head: true })
+      .eq("item_id", itemId)
+      .eq("kind", kind)
+      .gte("created_at", leveret);
+    if (error) throw new Error(error.message);
+    return count ?? 0;
+  }
+
   async dagensOmkostningerDkk(): Promise<number> {
     const midnat = new Date();
     midnat.setUTCHours(0, 0, 0, 0);

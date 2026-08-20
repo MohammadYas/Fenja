@@ -1,5 +1,39 @@
 # STATUS
-Sidst opdateret: 2026-08-20 (natten, runde 10) af Claude Code
+Sidst opdateret: 2026-08-20 (natten, runde 11) af Claude Code
+
+## Denne session (20/8 nat, runde 11) — anden bølge, slet-knap, Smart Salgsplan
+Alt lokalt, committet men IKKE pushet (ejer-ordre står ved magt).
+
+**Bar mave fis (ejer: "må stadig ikke ske"):** torso-reglen er nu GLOBAL i
+on-model-prompten — ALLE kategorier, ikke kun bukser: personen bærer altid
+en simpel neutral overdel, aldrig bar overkrop/mave, medmindre tøjet fra
+referencen selv dækker overkroppen. Testlåst for alle kategorier.
+
+**2 af 3 billeder (ejer-rapport):** pipelinen har nu en ANDEN BØLGE — hvert
+fejlet billede får ét ekstra forsøg med frisk generations-række, før noget
+refunderes. Rate limits koster ikke længere brugeren billeder. Dertil fixet
+en skjult spærre: regenererings-loftet talte ALLE onmodel-rækker (4 valgte
+billeder = loftet nået fra dag ét) — tæller nu kun genereringer EFTER første
+leverance (`antalRegenereringer`).
+
+**Slet fra oversigt (ejer-ordre):** hver annonce har en slet-knap med DOBBELT
+bekræftelse (tryk 1 = bekræftelse, tryk 2 = "Slet permanent"). Ny route
+`DELETE /api/items/[id]` med ejerskabs-tjek: storage-filer først, derefter
+generations/item_photos/klager, til sidst annoncen. Ledgeren røres ikke.
+Logik testbar i `lib/item/slet.ts`.
+
+**SMART SALGSPLAN (ejer: "implementér noget ekstraordinært til abonnenter"):**
+- `lib/salg/saeson.ts` — sæson-tabel pr. kategori-skabelon (dansk genbrugs-
+  marked), `lib/salg/smart-plan.ts` — rene funktioner, der regner konkrete
+  råd ud fra brugerens annoncer + sæson + den committede markedshøst:
+  **Sæt ned** (liggetid ≥ 14 dage + pris over medianen → konkret tal),
+  **Sælg nu** (højsæson), **Klargør** (sæsonen 1-2 mdr. væk), **Vent**.
+- Vises på /oversigt KUN for abonnenter (ledger-tjek, fejltolerant);
+  ikke-abonnenter ser en teaser → /priser. Design: gran-blok med rav-labels
+  og mono-pristal.
+- 12 rene unit-tests (regler, prioritet, loft, sæson-matematik).
+
+**Tests:** 357 grønne (17 nye). Lint + typecheck + build grønne.
 
 ## Denne session (20/8 nat, runde 10) — BULLETPROOF lokalt, IKKE pushet endnu
 Ejer-rapport: 1-2 ud af 4 bestilte billeder leveret, progress-bar der ikke

@@ -360,6 +360,27 @@ export const da = {
     solgtMedSelja: "solgt med Selja",
     liggetid: (dage: number) =>
       dage === 1 ? "1 dag i snit før salg" : `${dage} dage i snit før salg`,
+    // Slet med dobbelt bekræftelse (ejer-ordre 20/8)
+    sletKnap: "Slet annonce",
+    sletBekraeft: "Er du sikker? Sletningen kan ikke fortrydes.",
+    sletPermanent: "Slet permanent",
+    sletFortryd: "Fortryd",
+    // Smart Salgsplan (ejer-ordre 20/8) — abonnent-fordelen
+    salgplanTitel: "Din smarte salgsplan",
+    salgplanStempel: "For abonnenter",
+    salgplanLead:
+      "Regnet ud fra dine annoncer, sæsonen og ægte salgspriser — det, en travl sælger aldrig selv når at regne ud.",
+    salgplanTom: "Ingen anbefalinger lige nu — dine annoncer kører fint.",
+    salgplanHandling: {
+      saelgNu: "Sælg nu",
+      saetNed: "Sæt prisen ned",
+      klarGoer: "Klargør",
+      vent: "Vent lidt",
+    },
+    salgplanTeaserTitel: "Smart Salgsplan er for abonnenter",
+    salgplanTeaserTekst:
+      "Få konkrete råd hver gang du åbner oversigten: hvad der skal sælges nu, hvad der skal sættes ned — og hvad du skal vente med. Regnet ud fra dine annoncer, sæsonen og ægte salgspriser.",
+    salgplanTeaserKnap: "Se abonnementer",
   },
   suppliers: {
     titel: "Suppliers",

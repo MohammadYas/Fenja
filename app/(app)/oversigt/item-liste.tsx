@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { da } from "@/lib/copy/da";
 import { beregnProcent, type FremdriftTrin } from "@/lib/fremdrift";
 import { MarkerSolgt } from "./marker-solgt";
+import { SletKnap } from "./slet-knap";
 
 type Status = "draft" | "active" | "sold";
 
@@ -204,6 +205,8 @@ export function ItemListe({ items }: { items: ItemTilListe[] }) {
                   </p>
                 ) : null}
                 {item.status === "active" ? <MarkerSolgt itemId={item.id} /> : null}
+                {/* Slet med dobbelt bekræftelse (ejer-ordre 20/8) */}
+                <SletKnap itemId={item.id} />
               </div>
             </li>
           ))}

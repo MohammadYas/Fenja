@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Taeller } from "@/components/taeller";
 import { da } from "@/lib/copy/da";
+import { bygSalgsplan, type SalgsPunkt } from "@/lib/salg/smart-plan";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { SupplierKommerSnartKort } from "../suppliers/supplier-kommer-snart-kort";
 import { ItemListe } from "./item-liste";
@@ -17,6 +18,8 @@ type ItemRaekke = {
   leveret_at: string | null;
   solgt_at: string | null;
   created_at: string;
+  pris_fra_dkk: number | null;
+  pris_til_dkk: number | null;
   generations: { status: string }[];
   item_photos: { role: string; original_url: string; cleaned_url: string | null }[];
 };
@@ -41,34 +44,77 @@ async function miniatureUrl(fotos: ItemRaekke["item_photos"]): Promise<string | 
 export default async function Oversigt() {
   const supabase = await opretServerKlient();
 
+  // Auth fejltolerant (mock-kæder i tests har ingen auth-del)
+  let user: { id: string } | null = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data?.user ?? null;
+  } catch {
+    user = null;
+  }
+
   // Onboarding-banner (ejer-ordre 20/8): indtil køn er valgt, mind om det —
   // fejltolerant før migration 20260820110000 (banner vises da bare ikke)
   let manglerOnboarding = false;
-  try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
+  if (user) {
+    try {
       const { data: profil, error } = await supabase
         .from("profiles")
         .select("koen")
         .eq("id", user.id)
         .maybeSingle();
       manglerOnboarding = !error && profil != null && !profil.koen;
+    } catch {
+      // Ingen auth i konteksten (fx tests) — så heller intet banner
     }
-  } catch {
-    // Ingen auth i konteksten (fx tests) — så heller intet banner
   }
   const { data } = await supabase
     .from("items")
     .select(
-      "id, brand, titel, category, status, sold_price_dkk, leveret_at, solgt_at, created_at, generations(status), item_photos(role, original_url, cleaned_url)",
+      "id, brand, titel, category, status, sold_price_dkk, leveret_at, solgt_at, created_at, pris_fra_dkk, pris_til_dkk, generations(status), item_photos(role, original_url, cleaned_url)",
     )
     .order("created_at", { ascending: false });
   const items = (data ?? []) as ItemRaekke[];
   const miniaturer = await Promise.all(
     items.map((item) => miniatureUrl(item.item_photos ?? [])),
   );
+
+  // Smart Salgsplan (ejer-ordre 20/8) — KUN for abonnenter. Fejltolerant:
+  // kan abonnementsstatus ikke læses (demo/nedbrud), skjules blokken.
+  // Server-only-moduler importeres dynamisk, så oversigt-siden også kan
+  // evalueres i klient-test-kæder uden service-klienten.
+  let salgplan: SalgsPunkt[] = [];
+  let erAbonnent = false;
+  if (user) {
+    try {
+      const { SupabaseLedgerDb } = await import("@/lib/credits/supabase");
+      const { opretServiceKlient } = await import("@/lib/supabase/service");
+      const ledger = new SupabaseLedgerDb(opretServiceKlient());
+      const status = await ledger.hentStatus(user.id);
+      erAbonnent = status.prKilde.subscription > 0;
+      if (erAbonnent) {
+        salgplan = bygSalgsplan(
+          items.map((item) => ({
+            id: item.id,
+            titel: item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
+            maerke: item.brand ?? "",
+            kategori: item.category ?? "",
+            status: item.status === "failed" ? "draft" : item.status,
+            leveretAt: item.leveret_at,
+            prisTilDkk: item.pris_til_dkk,
+            // Kladde med kørende pipeline rådgives ikke — den er ikke klar endnu
+            paaVej:
+              item.status === "draft" &&
+              !item.leveret_at &&
+              (item.generations ?? []).length > 0,
+          })),
+        );
+      }
+    } catch {
+      salgplan = [];
+      erAbonnent = false;
+    }
+  }
 
   const solgte = items.filter((i) => i.status === "sold");
   const samletVaerdi = solgte.reduce((sum, i) => sum + (i.sold_price_dkk ?? 0), 0);
@@ -99,6 +145,61 @@ export default async function Oversigt() {
             {da.onboarding.bannerKnap}
           </Link>
         </div>
+      ) : null}
+
+      {/* Smart Salgsplan (ejer-ordre 20/8): abonnent-fordelen — konkrete,
+          udregnede råd, eller en teaser der viser hvad abonnenter får */}
+      {erAbonnent && salgplan.length > 0 ? (
+        <section className="mt-6 rounded-bloed bg-gran p-5 text-kalk" aria-label={da.oversigt.salgplanTitel}>
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="font-mono text-detalje font-bold tracking-wide text-hoer">
+              {da.oversigt.salgplanTitel}
+            </p>
+            <p className="font-mono text-detalje uppercase tracking-wide text-kalk/60">
+              {da.oversigt.salgplanStempel}
+            </p>
+          </div>
+          <p className="mt-1 max-w-laesbar text-detalje text-kalk/80">
+            {da.oversigt.salgplanLead}
+          </p>
+          <ul className="mt-4 flex flex-col gap-3">
+            {salgplan.map((punkt) => (
+              <li
+                key={punkt.itemId}
+                className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-bloed border border-kalk/20 bg-kalk/5 p-3"
+              >
+                <div className="max-w-laesbar">
+                  <p className="font-mono text-detalje font-bold text-rav">
+                    {da.oversigt.salgplanHandling[punkt.handling]}
+                  </p>
+                  <p className="mt-0.5 font-medium">{punkt.titel}</p>
+                  <p className="mt-0.5 text-detalje text-kalk/80">{punkt.tekst}</p>
+                </div>
+                {punkt.foreslaaetPrisDkk != null ? (
+                  <p className="font-mono text-titel font-bold text-kalk">
+                    {punkt.foreslaaetPrisDkk} kr.
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : !erAbonnent ? (
+        <section className="mt-6 rounded-bloed border border-kant bg-flade p-5" aria-label={da.oversigt.salgplanTeaserTitel}>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="max-w-laesbar">
+              <p className="font-display text-lead font-semibold">
+                {da.oversigt.salgplanTeaserTitel}
+              </p>
+              <p className="mt-1 text-detalje text-tekst/80">
+                {da.oversigt.salgplanTeaserTekst}
+              </p>
+            </div>
+            <Link href="/priser" className="knap-link px-5">
+              {da.oversigt.salgplanTeaserKnap}
+            </Link>
+          </div>
+        </section>
       ) : null}
 
       {items.length === 0 ? (

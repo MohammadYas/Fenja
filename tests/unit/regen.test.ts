@@ -91,8 +91,9 @@ describe("regenerering af enkeltdele (B-8)", () => {
 
   it("loftet pr. del håndhæves", async () => {
     const { deps } = await leveretOpsaetning();
-    // Originalen tæller som 1 — kør op til loftet
-    for (let i = 1; i < misbrugsvaern.maksGenereringerPrDel; i++) {
+    // Loftet tæller regenereringer EFTER første leverance (fix 20/8) —
+    // den oprindelige kørsel tæller ikke med, så 4 regens går lige igennem
+    for (let i = 1; i <= misbrugsvaern.maksGenereringerPrDel; i++) {
       await koerRegenerering(deps, "item-1", "tekst", { requestId: `req-loft-${i}` });
     }
     await expect(

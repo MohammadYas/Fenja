@@ -67,6 +67,17 @@ describe("kategori-skabeloner (ejer-princip 2026-08-15)", () => {
     expect(prompt).toContain("torso is fully covered");
     expect(prompt).toContain("never shirtless");
   });
+
+  it("ALLE kategorier forbyder bar overkrop (ejer-ordre 20/8: intet bar mave fis)", () => {
+    const prompt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "striktrøje",
+    });
+    expect(prompt).toContain("never shirtless");
+    expect(prompt).toContain("never with a bare midriff");
+  });
 });
 
 describe("hjem-ankre: samme sælger, samme bolig", () => {

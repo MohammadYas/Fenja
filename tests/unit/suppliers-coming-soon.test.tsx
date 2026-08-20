@@ -15,6 +15,12 @@ vi.mock("@/lib/supabase/server", () => ({
   }),
 }));
 
+// Static markup har ingen router — slet-knappen (og andre klient-knapper)
+// skal kunne renderes uden den
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: () => {} }),
+}));
+
 async function renderOversigt(items: Record<string, unknown>[]): Promise<string> {
   database.items = items;
   return renderToStaticMarkup(await Oversigt());
