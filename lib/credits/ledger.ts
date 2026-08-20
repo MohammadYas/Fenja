@@ -66,6 +66,9 @@ export const noegler = {
   // B-8: nøglen er requestId (mintet af API-routen), så genkørsler af samme
   // regenerering aldrig koster dobbelt
   regen: (requestId: string) => `regen:${requestId}`,
+  // Klage-refusion (ejer-godkendt i admin): nøglen er klage-id, så en klage
+  // aldrig kan refunderes dobbelt — uanset hvor mange gange der klikkes
+  klage: (klageId: string) => `refund-klage:${klageId}`,
 } as const;
 
 /** Udløbsdato for en kreditering: 12 mdr. fra købsdatoen (lib/config.ts) */
@@ -184,6 +187,23 @@ export async function refunderOnModel(db: LedgerDb, userId: string, itemId: stri
     delta: kreditter.prisPrAnnonce,
     reason: "refund",
     idempotencyKey: noegler.refundOnModel(itemId),
+  });
+  if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
+  return resultat.saldo;
+}
+
+/** Klage-refusion (ejer-ordre 2026-08-20): når ejeren godkender en klage i
+ *  admin, får brugeren annonce-prisen tilbage. Idempotent pr. klage-id. */
+export async function refunderKlage(
+  db: LedgerDb,
+  userId: string,
+  klageId: string,
+): Promise<number> {
+  const resultat = await db.tilfoejKreditter({
+    userId,
+    delta: kreditter.prisPrAnnonce,
+    reason: "refund",
+    idempotencyKey: noegler.klage(klageId),
   });
   if ("fejl" in resultat) throw new UtilstraekkeligSaldoFejl();
   return resultat.saldo;

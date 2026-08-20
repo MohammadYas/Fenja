@@ -9,8 +9,13 @@ export type KatalogBillede = { src: string; alt: string };
 // Neutral fallback-alt til nye filer uden kurateret tekst
 export const FALLBACK_ALT = "Tøjfoto fra katalogserien";
 
-// FØR-billedet indgår aldrig i strøm/slides — det hører til før/efter-panelet
-export const EKSKLUDERET = ["p13-foer-billede"];
+// FØR-billederne indgår aldrig i strøm/slides — de hører til før/efter-panelet
+export const EKSKLUDERET = [
+  "p13-foer-billede",
+  "p16-foer-kjole",
+  "p17-foer-jeans",
+  "p18-foer-cardigan",
+];
 
 // p1 er taget ud af visningerne (ejer-ordre 19/8) men ligger stadig på disk
 export const SKJULTE = ["p1-sovevaerelse-tanktop"];

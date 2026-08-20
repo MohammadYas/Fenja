@@ -4,6 +4,7 @@ import { misbrugsvaern } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
+import { KlageListe, type KlageRaekke } from "./klage-liste";
 
 export const metadata = { title: `${da.admin.titel} · ${da.site.navn}` };
 
@@ -46,6 +47,26 @@ export default async function Admin() {
   const iDag = new Date().toISOString().slice(0, 10);
   const dagensForbrug = prDag.get(iDag) ?? 0;
   const loft = misbrugsvaern.dagligtBudgetloftDkk;
+
+  // Åbne klager (ejer-ordre 2026-08-20) — service-rollen ser alle
+  const { data: klageData } = await service
+    .from("klager")
+    .select("id, begrundelse, oprettet_at, items(titel)")
+    .eq("status", "aaben")
+    .order("oprettet_at", { ascending: true });
+  const klager: KlageRaekke[] = (
+    (klageData ?? []) as unknown as {
+      id: string;
+      begrundelse: string;
+      oprettet_at: string;
+      items: { titel: string | null } | null;
+    }[]
+  ).map((k) => ({
+    id: k.id,
+    begrundelse: k.begrundelse,
+    oprettet_at: k.oprettet_at,
+    item_titel: k.items?.titel ?? null,
+  }));
 
   return (
     <main className="py-6">
@@ -91,6 +112,10 @@ export default async function Admin() {
           </li>
         ))}
       </ul>
+
+      {/* Klager (ejer-ordre 2026-08-20): åbne anmodninger om kredit retur */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.klagerTitel}</h2>
+      <KlageListe klager={klager} />
     </main>
   );
 }

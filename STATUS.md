@@ -2,6 +2,25 @@
 Sidst opdateret: 2026-08-19 af Claude Code (publish-overblik)
 
 ## Denne session (19/8–20/8 nat) — hvad mangler før publish
+- **Natkørsel 20/8, runde 2 (otte ejer-ordrer mens ejeren halvsov):**
+  (1) Anmeldelserne er nu et BILLEDE (canvas-genskabt 1:1 fra ejerens
+  screenshot → public/eksempler/anmeldelser-vinted.webp), placeret i venstre
+  herokolonne så heroen balancerer. (2) Før/efter har VÆLGER med 4 par
+  (strik/kjole/jeans/cardigan) — 3 nye FØR-billeder (p16–18) + EFTER er
+  spejlselfies (nyt p15 til strikken; p14-produktfotoet ligger i serien).
+  (3) "Tøjet vist båret" = auto-kørende slides med ALLE billeder; nye filer i
+  public/eksempler/katalog/ opdages automatisk (lib/katalog-server.ts).
+  (4) **EJER-OVERSTYRING af reduced-motion:** strøm + slides kører ALTID
+  (rAF-drevet — browsere kan tvangs-klampe CSS-animationer). (5) Abonnement-
+  kvoter hedder nu "færdige fotosæt" (ikke "annoncer") på /priser + llms.txt.
+  (6) Pristjekkeren erstattet af PRISBEREGNER (kategori × mærke-niveau ×
+  stand → vejledende leje for enhver vare, kalibreret mod høstens medianer,
+  kalibrerings-test); toplister er presets ind i beregneren. (7) **KLAGE-FLOW
+  bygget:** bruger kan anmode om kredit retur på item-siden → lander i admin
+  med godkend (idempotent ledger-refusion pr. klage-id) / afvis. **NB:
+  migration 20260820010000_klager.sql er IKKE kørt mod cloud-DB** (kun
+  ejeren deployer, HANDOFF §6) — kør den før featuren virker live.
+  Credit-total 20/8: **72** (63 + p14/p15/p16-18 + regen-runde 2). 321 tests.
 - **Natkørsel 20/8 (ejer sov, "gør alt færdigt uden spørgsmål"):**
   (1) Anden QA-runde af ALLE billeder: 6 regenereret til (p2 Apple-logo,
   p7 ansigt ×2 → nu telefon-dækket, p10/p11/striktroeje-gulv labels).

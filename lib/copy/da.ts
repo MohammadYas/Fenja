@@ -725,6 +725,26 @@ export const da = {
     prDag: "Forbrug pr. dag (7 dage)",
     prBruger: "Forbrug pr. bruger (7 dage)",
     senesteGenereringer: "Seneste genereringer",
+    klagerTitel: "Klager (kredit retur)",
+    ingenKlager: "Ingen åbne klager.",
+    godkendKnap: "Godkend + refundér",
+    afvisKnap: "Afvis",
+  },
+  // Klage over genereret billede (ejer-ordre 2026-08-20): brugeren kan anmode
+  // om sin kredit tilbage; ejeren afgør klagen i admin.
+  klage: {
+    knap: "Ikke tilfreds med billedet? Anmod om kredit retur",
+    titel: "Anmod om kredit retur",
+    forklaring:
+      "Skriv kort hvad der er galt med det genererede billede. Vi kigger på det og giver dig kreditten tilbage, hvis noget er gået skævt.",
+    pladsholder: "Fx: trøjen på billedet har et andet print end min …",
+    sendKnap: "Send anmodning",
+    senderKnap: "Sender …",
+    fortryd: "Fortryd",
+    fejl: "Noget gik galt — prøv igen.",
+    statusAaben: "Din anmodning om kredit retur er modtaget og afventer svar.",
+    statusGodkendt: "Din klage blev godkendt — kreditten er sat tilbage på din saldo.",
+    statusAfvist: "Din klage er behandlet og blev afvist.",
   },
   delebillede: {
     hent: "Hent før/efter-billede til deling",

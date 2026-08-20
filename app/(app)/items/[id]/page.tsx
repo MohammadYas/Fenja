@@ -5,6 +5,7 @@ import { KopierKnap } from "@/components/kopier-knap";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
+import { KlageBoks } from "./klage-boks";
 import { Progress } from "./progress";
 import { Regenerer } from "./regenerer";
 import { PRESETS } from "@/lib/pipeline/presets";
@@ -64,6 +65,14 @@ export default async function ItemSide({
       </main>
     );
   }
+
+  // Eksisterende klage på annoncen (RLS: kun brugerens egen) — styrer om
+  // klage-boksen viser formularen eller status
+  const { data: klage } = await supabase
+    .from("klager")
+    .select("status")
+    .eq("item_id", id)
+    .maybeSingle();
 
   if (!item.leveret_at) {
     return (
@@ -285,6 +294,14 @@ export default async function ItemSide({
             presets={PRESETS.map((p) => ({ id: p.id, navn: p.navn }))}
           />
         </div>
+      </section>
+
+      {/* Klage/kredit retur (ejer-ordre 2026-08-20) — afgøres i admin */}
+      <section className="mt-8" aria-label={da.klage.titel}>
+        <KlageBoks
+          itemId={item.id as string}
+          eksisterendeStatus={klage?.status ?? null}
+        />
       </section>
     </main>
   );
