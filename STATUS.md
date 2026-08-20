@@ -1,19 +1,17 @@
 # STATUS
 Sidst opdateret: 2026-08-20 (formiddag) af Claude Code — SESSION AFSLUTTET TRYGT
 
-## EJERENS GØR-DETTE-LISTE (før test virker fuldt)
-1. **Kør SQL i Supabase-dashboardet** (SQL Editor → New query):
-   indholdet af `supabase/migrations/20260820010000_klager.sql` og
-   `20260820020000_label_farve.sql`, plus kredit-granten (SQL står i
-   chatten/nedenfor) — Claude blev blokeret af permission-klassifikatoren
-   på både Composio-SQL og kredit-script, så ejeren skal køre det:
-   `select public.tilfoej_kreditter(u.id, 100, 'purchase',
-   'test-grant:mohammadyassin26:2026-08-20', null, null, null)
-   from auth.users u where u.email = 'mohammadyassin26@hotmail.com';`
+## EJERENS GØR-DETTE-LISTE
+1. ✅ FÆRDIG (2026-08-20, via Composio på ejer-ordre): begge migrations
+   kørt mod cloud-DB (klager + label/farve) og **100 test-kreditter sat
+   ind på `mohammadyassin2626@gmail.com`** (saldo bekræftet 100,00).
+   NB: ejeren skrev hotmail-adressen, men app-kontoen i auth.users er
+   GMAIL'en — hotmail-kontoen findes ikke.
 2. Provider-nøgler (Gemini + DeepSeek, ejer-leveret i chat) ligger i
    `.env.local` — genstart dev-serveren, så kører pipelinen ÆGTE providers.
    Ejeren roterer nøglerne senere (delt i chat).
 3. Stripe secret/webhook-nøgler mangler stadig (MANGLER.md §1).
+Supabase-dashboardet: log ind med `visual.studio.tuturials@gmail.com`.
 
 ## Denne session (20/8 formiddag) — drømme-forside + wizard-økonomi
 - **Drømme-pivot bygget (ejer-godkendt plan):** hero "Dit klædeskab er
