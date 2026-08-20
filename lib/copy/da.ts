@@ -276,7 +276,9 @@ export const da = {
       { id: "graat", navn: "Gråt" },
       { id: "moerkt", navn: "Mørkt" },
     ],
-    gemKnap: "Gem og kom i gang",
+    // Fører tilbage til oversigten (ejer-ordre 20/8) — teksten må ikke love
+    // at man lander midt i wizarden
+    gemKnap: "Gem og fortsæt",
     fejlKoenMangler: "Vælg om personen på billederne skal være mand eller kvinde.",
     fejlMigration:
       "Profil-felterne findes ikke i databasen endnu (migration 20260820110000). Kør den, og prøv igen.",
