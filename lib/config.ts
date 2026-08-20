@@ -115,7 +115,10 @@ export const billedProvidere: {
     final: "gemini",
   },
   gemini: {
-    preview: { model: "gemini-2.5-flash-image", costDkk: 0.28 }, // Nano Banana
+    // 20/8: 2.5-generationen nedlægges løbende af Google (2.5-flash gav 404)
+    // — preview kører nu på den stabile 3.1-flash-image. Bruges til
+    // baggrundsrens (økonomi: 0,28 vs. 0,95 kr. — ejer-ordre 20/8).
+    preview: { model: "gemini-3.1-flash-image", costDkk: 0.28 },
     final: { model: "gemini-3-pro-image-preview", costDkk: 0.95 }, // Nano Banana Pro
   },
 };
