@@ -19,6 +19,7 @@ import { FakePipelineDb, FakePipelineStorage, testItem } from "../fakes/pipeline
 async function opsaetning(mock: {
   onModelFejler?: boolean;
   troskabsScore?: number;
+  tekstFejler?: boolean;
 } = {}) {
   const db = new FakePipelineDb();
   const ledger = new MemoryLedgerDb();
@@ -45,7 +46,7 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
 
     expect(resultat.rensede).toHaveLength(2);
     expect(resultat.visualisering).not.toBeNull();
-    expect(resultat.tekst.beskrivelse).toContain("lille hul");
+    expect(resultat.tekst?.beskrivelse).toContain("lille hul");
     expect(resultat.refunderet).toBe(false);
     expect(await ledger.hentSaldo("user-1")).toBe(
       STARTSALDO - kreditter.prisPrAnnonce,
@@ -64,7 +65,7 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
 
     expect(resultat.visualisering).toBeNull();
     expect(resultat.refunderet).toBe(true);
-    expect(resultat.tekst.titel).toContain("Ganni");
+    expect(resultat.tekst?.titel).toContain("Ganni");
     // Netto nul: træk + refund
     expect(await ledger.hentSaldo("user-1")).toBe(STARTSALDO);
     expect(db.generings.find((g) => g.kind === "onmodel")?.status).toBe("failed");
@@ -75,6 +76,20 @@ describe("item-pipelinen ende-til-ende mod mocks (S5)", () => {
     const resultat = await koerItemPipeline(deps, "item-1");
     expect(resultat.visualisering).toBeNull();
     expect(resultat.refunderet).toBe(true);
+  });
+
+  it("tekst-fejl vælter IKKE billederne (bulletproof 20/8): billeder leveres, item markeres leveret", async () => {
+    const { deps, db, ledger } = await opsaetning({ tekstFejler: true });
+    await reserverVisninger(ledger, "user-1", "item-1", ["spejl"]);
+    const resultat = await koerItemPipeline(deps, "item-1");
+
+    expect(resultat.tekst).toBeNull();
+    expect(resultat.visualisering).not.toBeNull();
+    expect(db.leverede).toContain("item-1");
+    // Kreditten for billedet er trukket (ikke refunderet) — kun teksten mangler
+    expect(await ledger.hentSaldo("user-1")).toBe(
+      STARTSALDO - kreditter.prisPrAnnonce,
+    );
   });
 
   it("genkørsel trækker ikke dobbelt (E-4/NFR-10)", async () => {

@@ -25,30 +25,36 @@ export function psykologiskAndel(
 
 export type FremdriftTrin = { kind: string; status: string };
 
-// De trin brugeren ser (rens er en teknikalitet)
-const VISTE_TRIN = ["text", "onmodel"] as const;
-
 /**
  * ÉN fælles procent-beregning (ejer-ordre 20/8: oversigt og annonceside
- * viste 86 % vs. 75 % — de skal være ENIGE). max(tidskurve, reelle trin),
- * loft 97 % indtil leverancen lander.
+ * viste 86 % vs. 75 % — de skal være ENIGE). Procenten følger nu det
+ * FAKTISKE arbejde (80 % billeder + 20 % tekst) med tidskurven som blødt
+ * gulv, så baren aldrig står stille og aldrig lyver — og max() gør den
+ * monotont voksende. Loft 97 % indtil leverancen lander.
  */
 export function beregnProcent(args: {
   startetAtMs: number;
   nuMs: number;
   forventetSek?: number;
   trin: FremdriftTrin[];
+  /** Serverens sandhed om hvor mange billeder der ER bestilt (items.visninger) */
+  totalBilleder?: number;
 }): number {
-  const reel =
-    VISTE_TRIN.reduce((sum, kind) => {
-      const raekker = args.trin.filter((t) => t.kind === kind);
-      if (raekker.length === 0) return sum;
-      const faerdige = raekker.filter(
-        (r) => r.status === "succeeded" || r.status === "failed",
-      ).length;
-      if (faerdige === raekker.length) return sum + 1;
-      return sum + Math.max(0.15, faerdige / raekker.length);
-    }, 0) / VISTE_TRIN.length;
+  const billedeRaekker = args.trin.filter((t) => t.kind === "onmodel");
+  const total =
+    args.totalBilleder && args.totalBilleder > 0
+      ? args.totalBilleder
+      : billedeRaekker.length;
+  const faerdige = billedeRaekker.filter((r) => r.status === "succeeded").length;
+  const tekstRaekker = args.trin.filter((t) => t.kind === "text");
+  const tekstKlaret = tekstRaekker.some(
+    (r) => r.status === "succeeded" || r.status === "failed",
+  );
+
+  let reel = 0;
+  if (total > 0) reel += 0.8 * Math.min(1, faerdige / total);
+  if (tekstRaekker.length > 0) reel += 0.2 * (tekstKlaret ? 1 : 0.4);
+
   const tid = psykologiskAndel(args.startetAtMs, args.nuMs, args.forventetSek);
-  return Math.min(97, Math.round(Math.max(tid, reel) * 100));
+  return Math.min(97, Math.round(Math.max(reel, tid) * 100));
 }

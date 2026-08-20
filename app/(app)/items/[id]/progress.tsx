@@ -12,6 +12,7 @@ type StatusSvar = {
   fejlet: boolean;
   startetAt: string | null;
   forventetSekunder: number;
+  totalBilleder?: number;
   billeder: string[];
   trin: Trin[];
 };
@@ -35,6 +36,7 @@ export function Progress({
   const router = useRouter();
   const [trin, setTrin] = useState<Trin[]>([]);
   const [billeder, setBilleder] = useState<string[]>([]);
+  const [totalBilleder, setTotalBilleder] = useState<number>(0);
   const [fejlet, setFejlet] = useState(false);
   const [genstarter, setGenstarter] = useState(false);
   const startetAt = useRef<number | null>(
@@ -42,6 +44,9 @@ export function Progress({
   );
   const faldbackStart = useRef<number>(Date.now());
   const forventet = useRef<number>(forventetSekunder(1));
+  // Procenten må ALDRIG gå baglæns (ejer-klage 20/8: baren passede ikke
+  // med tallet) — husk det højeste sete tal
+  const maxProcent = useRef<number>(0);
   // Puls driver både procenttallet og de roterende genererings-tekster
   const [tik, setTik] = useState(0);
 
@@ -73,6 +78,7 @@ export function Progress({
         );
         setFejlet(data.fejlet);
         if (data.forventetSekunder) forventet.current = data.forventetSekunder;
+        if (data.totalBilleder) setTotalBilleder(data.totalBilleder);
         if (data.startetAt) {
           startetAt.current = new Date(data.startetAt).getTime();
         }
@@ -102,6 +108,7 @@ export function Progress({
         setFejlet(false);
         startetAt.current = Date.now(); // ny kørsel, ny kurve
         faldbackStart.current = Date.now();
+        maxProcent.current = 0;
       }
     } finally {
       setGenstarter(false);
@@ -125,23 +132,32 @@ export function Progress({
     failed: da.resultat.trinFejlet,
   };
 
-  // ÉN fælles beregning (lib/fremdrift.ts) — samme tal som på oversigten
+  // ÉN fælles beregning (lib/fremdrift.ts) — samme tal som på oversigten.
+  // Monoton: procenten huskes, så baren aldrig kan krybe baglæns.
   void tik; // pulsen driver re-render
-  const procent = beregnProcent({
+  const beregnet = beregnProcent({
     startetAtMs: startetAt.current ?? faldbackStart.current,
     nuMs: Date.now(),
     forventetSek: forventet.current,
     trin,
+    totalBilleder,
   });
+  maxProcent.current = Math.max(maxProcent.current, beregnet);
+  const procent = maxProcent.current;
 
-  // Frames pr. valgt billede (ejer-ordre 20/8): hvert billede har sin egen
-  // ramme med genererings-effekt, som afløses af billedet, når det er klar
-  const antalFrames = Math.max(raekkerFor("onmodel").length, billeder.length);
+  // Frames pr. bestilt billede (ejer-ordre 20/8): serveren kender totalen,
+  // så ALLE fire rammer står der fra første sekund — hver med sin egen
+  // genererings-effekt, som afløses af billedet, når det er klar
+  const antalFrames = Math.max(
+    totalBilleder,
+    raekkerFor("onmodel").length,
+    billeder.length,
+  );
   const faerdigeBilledeVisning = antalFrames > 0 && (
     <div className="mt-6">
       <p className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
         {billeder.length > 0
-          ? da.resultat.faerdigeBilleder(billeder.length)
+          ? da.resultat.faerdigeBilleder(billeder.length, totalBilleder || undefined)
           : da.resultat.billederPaaVej}
       </p>
       <div className="mt-2 grid grid-cols-2 gap-3">
@@ -169,16 +185,17 @@ export function Progress({
               role="img"
               aria-label={da.resultat.genererFrame}
             >
-              {/* Levende frame (ejer-ordre 20/8: flere animationer): tre
-                  pulserende prikker + roterende statustekst pr. frame */}
-              <span className="genererer-prikker" aria-hidden="true">
+              {/* Levende frame (ejer-ordre 20/8: animationerne skal føles som
+                  om billedet er ved at blive færdigt): tre pulserende prikker,
+                  et lysstrøg der "fremkalder" billedet og roterende statustekst */}
+              <span className="genererer-prikker relative z-10" aria-hidden="true">
                 <i />
                 <i />
                 <i />
               </span>
               <span
                 key={(Math.floor(tik / 8) + i) % da.resultat.genererTekster.length}
-                className="pris-rul font-mono text-detalje text-tekst/60"
+                className="pris-rul relative z-10 font-mono text-detalje text-tekst/60"
               >
                 {
                   da.resultat.genererTekster[
@@ -233,7 +250,7 @@ export function Progress({
         aria-hidden="true"
       >
         <div
-          className="h-full rounded-stram bg-gran transition-[width] duration-700 ease-out"
+          className="h-full rounded-stram bg-gran"
           style={{ width: `${procent}%` }}
         />
       </div>
@@ -244,10 +261,6 @@ export function Progress({
       <ol className="mt-5 flex flex-col gap-3">
         {TRIN_ORDEN.map((kind, i) => {
           const status = statusFor(kind);
-          const raekker = raekkerFor(kind);
-          const faerdigeBilleder = raekker.filter(
-            (r) => r.status === "succeeded",
-          ).length;
           return (
             <li key={kind} className="flex items-center gap-3">
               <span
@@ -263,10 +276,10 @@ export function Progress({
               </span>
               <span className="flex-1">
                 {da.resultat.trin[kind as keyof typeof da.resultat.trin]}
-                {kind === "onmodel" && raekker.length > 1 ? (
+                {kind === "onmodel" && totalBilleder > 0 ? (
                   <span className="text-tekst/60">
                     {" "}
-                    ({da.resultat.trinBilledTaeller(faerdigeBilleder, raekker.length)})
+                    ({da.resultat.trinBilledTaeller(billeder.length, totalBilleder)})
                   </span>
                 ) : null}
               </span>

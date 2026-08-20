@@ -57,7 +57,9 @@ export const itemPipeline = task({
       const profil = Array.isArray(data?.profiles) ? data.profiles[0] : data?.profiles;
       const til = (profil as { email?: string } | null | undefined)?.email;
       if (!til) return;
-      const itemTitel = resultat.tekst.titel;
+      // Teksten kan være fejlet (bulletproof: billeder leveres alligevel) —
+      // mailen falder tilbage til en neutral titel
+      const itemTitel = resultat.tekst?.titel ?? "Din annonce";
       const itemUrl = `${site.baseUrl}/items/${payload.itemId}`;
       const afsender = hentEmailAfsender();
       if (resultat.refunderet) {

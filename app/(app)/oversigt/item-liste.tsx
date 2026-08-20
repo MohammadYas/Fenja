@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { da } from "@/lib/copy/da";
 import { beregnProcent, type FremdriftTrin } from "@/lib/fremdrift";
@@ -33,8 +33,11 @@ function MiniFremdrift({ itemId, startetAt }: { itemId: string; startetAt: strin
   const start = new Date(startetAt).getTime();
   const [forventet, setForventet] = useState<number | undefined>(undefined);
   const [trin, setTrin] = useState<FremdriftTrin[]>([]);
+  const [totalBilleder, setTotalBilleder] = useState<number | undefined>(undefined);
   const [fejlet, setFejlet] = useState(false);
   const [, setTik] = useState(0);
+  // Monoton: procenten huskes, så baren aldrig kryber baglæns
+  const maxProcent = useRef(0);
 
   useEffect(() => {
     const puls = setInterval(() => setTik((t) => t + 1), 1000);
@@ -46,6 +49,7 @@ function MiniFremdrift({ itemId, startetAt }: { itemId: string; startetAt: strin
           leveret: boolean;
           fejlet: boolean;
           forventetSekunder?: number;
+          totalBilleder?: number;
           trin: FremdriftTrin[];
         };
         // Samme sandhed og SAMME tal som annoncesiden (ejer-ordre 20/8:
@@ -53,6 +57,7 @@ function MiniFremdrift({ itemId, startetAt }: { itemId: string; startetAt: strin
         setFejlet(data.fejlet);
         setTrin(data.trin ?? []);
         if (data.forventetSekunder) setForventet(data.forventetSekunder);
+        if (data.totalBilleder) setTotalBilleder(data.totalBilleder);
         if (data.leveret) {
           clearInterval(pollInterval);
           router.refresh();
@@ -69,12 +74,15 @@ function MiniFremdrift({ itemId, startetAt }: { itemId: string; startetAt: strin
     };
   }, [itemId, router]);
 
-  const procent = beregnProcent({
+  const beregnet = beregnProcent({
     startetAtMs: start,
     nuMs: Date.now(),
     forventetSek: forventet,
     trin,
+    totalBilleder,
   });
+  maxProcent.current = Math.max(maxProcent.current, beregnet);
+  const procent = maxProcent.current;
 
   if (fejlet) {
     return (
@@ -88,7 +96,7 @@ function MiniFremdrift({ itemId, startetAt }: { itemId: string; startetAt: strin
     <div className="flex items-center gap-2" aria-label={da.oversigt.paaVej}>
       <div className="h-1.5 flex-1 overflow-hidden rounded-stram bg-kant">
         <div
-          className="h-full rounded-stram bg-gran transition-[width] duration-700 ease-out"
+          className="h-full rounded-stram bg-gran"
           style={{ width: `${procent}%` }}
         />
       </div>

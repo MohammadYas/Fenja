@@ -33,6 +33,8 @@ export type KategoriSkabelon = {
   visninger: readonly string[];
   /** Kategori-specifikt troskabs-fokus (supplerer den fælles reference-instruks) */
   fokus: string;
+  /** Kategori-specifik regel der gælder ALLE visninger (fx torso dækket ved bukser) */
+  regel?: string;
 };
 
 export const KATEGORI_SKABELONER: readonly KategoriSkabelon[] = [
@@ -51,14 +53,19 @@ export const KATEGORI_SKABELONER: readonly KategoriSkabelon[] = [
   },
   {
     id: "bukser",
-    version: 2,
+    // v3 (ejer-ordre 20/8): bukser vises ALTID forfra, og personen har ALTID
+    // en simpel neutral overdel på — aldrig bar overkrop, aldrig bagfra som
+    // hovedvinkel (ejer-rapport: billedet viste ryggen af en topløs person)
+    version: 3,
     navn: "Bukser & jeans",
     noegleord: ["bukser", "jeans", "chinos", "cargo", "shorts", "joggers"],
     visninger: [
-      "mirror selfie with the phone completely covering the face; the legs and the fit of the trousers are the focus of the image",
-      "standing with one hand in a pocket, framed from the chest down",
-      "a natural mid-step walking shot framed from the waist down so the leg shape is visible",
+      "mirror selfie taken from the FRONT: the person faces the mirror directly, the phone is held vertically in front of the face and completely covers it, one hand relaxed at the side — the legs and the fit of the trousers are the focus of the image",
+      "standing FRONT-ON facing the camera directly, with one hand in a pocket, framed from the chest down",
+      "a natural mid-step walking shot coming TOWARD the camera, framed from the waist down so the leg shape is visible",
     ],
+    regel:
+      "Lower-body garment: the person ALWAYS wears a simple, plain, neutral-colored top so the torso is fully covered — never shirtless, never in underwear, never with a bare midriff. The main view is ALWAYS the FRONT; a back view may appear only as an extra angle, never as the main photo.",
     fokus:
       "Preserve the exact fit and leg shape, waistband, pockets, buttons, belt loops and stitching; show realistic creases and tension at the hips, knees and ankles.",
   },
@@ -384,11 +391,14 @@ export function bygOnModelPromptMedSkabelon(args: {
     REFERENCE_INSTRUKS,
     `The person is ${bygPersonAnker({ itemId: args.itemId, koen: args.koen, haarFarve: args.haarFarve })} — an anonymous person, never a recognizable or real person; the face is always hidden by the phone or cropped out of frame.`,
     `Framing: ${framing}.`,
+    skabelon.regel,
     `Location: ${sted}.`,
     skabelon.fokus,
     FOTOSTIL,
     NEGATIV_LISTE,
-  ].join(" ");
+  ]
+    .filter((del): del is string => Boolean(del))
+    .join(" ");
 }
 
 /**

@@ -45,7 +45,7 @@ Abonnement er standardvejen — 1 kredit = 1 færdig annonce, kvoten fyldes hver
 ${priser}
 
 ## Ærlighed og compliance
-- Ægte fotos først: dit rensede helhedsfoto er billede 1 på Vinted.
+- Ægte foto først: du lægger dit eget foto af tøjet som billede 1 på Vinted.
 - Visualiseringer er AI-genererede og altid mærket (EU AI-forordningen art. 50) — de er et supplement, aldrig billede 1.
 - Fejl og slid fremhæves i annonceteksten, aldrig skjult.
 - Billeder bruges kun til din egen leverance: ingen træning, ingen deling.

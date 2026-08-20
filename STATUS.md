@@ -1,5 +1,55 @@
 # STATUS
-Sidst opdateret: 2026-08-20 (sen aften) af Claude Code
+Sidst opdateret: 2026-08-20 (natten, runde 10) af Claude Code
+
+## Denne session (20/8 nat, runde 10) — BULLETPROOF lokalt, IKKE pushet endnu
+Ejer-rapport: 1-2 ud af 4 bestilte billeder leveret, progress-bar der ikke
+passer, underlig bukse-visualisering (bar overkrop, set bagfra), elendige
+frame-animationer, kald der svarer for langsomt. Alt fikset LOKALT —
+**IKKE pushet endnu** (ejer-ordre: fiks færdigt først).
+
+**Pipeline (roden til "kun 1. billede"):**
+- 4 parallelle Gemini-kald + vision-kald tromlede rate limits → 2 billeder
+  døde. Nu: eksponentiel backoff + jitter ved 429/503/5xx (1,5 s → 3 s →
+  loft 20 s) + 350 ms start-skridt mellem visningerne — svarerne lander
+  næsten samtidig, og alle 4 overlever.
+- **Én visnings nedbrud kan ikke vælte noget:** startGenerering, provider,
+  badge OG storage er hver især isoleret — de øvrige visninger leverer
+  alligevel (før: et storage-nedbrud dræbte hele kørslen).
+- **Tekst-fejl dræber ikke billederne:** tekstTrin fanges til `null`,
+  billeder leveres og item markeres leveret alligevel (testet).
+
+**Progress (passer nu med virkeligheden):**
+- `beregnProcent` er vægtet efter FAKTISK arbejde: 80 % billeder
+  (færdige/total fra serverens `items.visninger`) + 20 % tekst; tidskurven
+  er kun et blødt gulv. Monoton: procenten kan aldrig gå baglæns, og baren
+  opdateres uden overgangs-lag (før: baren jagtede tallet og "passede ikke").
+- Oversigt og annonceside bruger SAMME tal — også mini-baren på oversigten.
+- Status-API'et leverer `totalBilleder`, så ALLE fire frames står der fra
+  første sekund (før voksede de løbende med generations-rækkerne).
+
+**Frames:** nyt "fremkaldelses-strøg" (scanline) fejer ned over hver frame
+oven i shimmer + prikker + roterende tekster — føles som om billedet er ved
+at blive færdigt. "N af 4 billeder er klar" vises løbende.
+
+**Bukser (ejer-rapport: bar overkrop, set bagfra):** kategori-skabelonen er
+v3 — ALLE bukse-visninger er forfra, og personen bærer ALTID en simpel
+neutral overdel (regel-felt, gælder alle visninger). Testlåst.
+
+**Resultatside (ejer-ordre):** sektion 01 "Dine rensede fotos" er FJERNET —
+de rensede fotos er kun input til modellen og vises ikke. Rækkefølgen er nu
+01 Visualisering · 02 Annoncetekst · 03 Checkliste · 04 Regenerér · 05 Klage.
+Checkliste + llms.txt opdateret ("dit eget foto som billede 1").
+NB: dette overstyrer HANDOFF B-5/FR-6 — foldet ind i HANDOFF.
+
+**Klage-boksen** er gjort livlig: gran-blok med hør-overskrift, kalk-tekst
+og gran-knap med pil i lukket tilstand (ejer: "skal være mere livlig").
+
+**Kost pr. kredit (ejer-ordre):** admin-siden viser nu samlet API-omkostning
+delt med antal leverede billeder (7 dage) — den ægte produktionskost pr.
+kredit, med forklaring.
+
+**Tests:** 340 grønne (nye: tekst-fejl vælter ikke billeder, bukse-regel,
+compliance-rækkefølge opdateret). Lint + typecheck + build grønne.
 
 ## Denne session (20/8 sen aften, runde 9) — metadata væk, migrations kørt
 - **EJER-BESLUTNING: INGEN metadata i billedfilerne** (overstyrer C-4 og

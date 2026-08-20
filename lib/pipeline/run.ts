@@ -41,7 +41,8 @@ export type PipelineResultat = {
     sti: string;
     fidelityScore: number;
   }[];
-  tekst: AnnonceTekst;
+  /** null når teksten fejlede — billederne leveres alligevel (bulletproof) */
+  tekst: AnnonceTekst | null;
   totalCostDkk: number;
   saldoEfter: number;
   refunderet: boolean;
@@ -103,6 +104,10 @@ async function referenceTilProvider(
   return `data:image/jpeg;base64,${buffer.toString("base64")}`;
 }
 
+function sov(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 async function visualiseringsTrin(
   deps: PipelineAfhaengigheder,
   item: ItemTilPipeline,
@@ -120,9 +125,15 @@ async function visualiseringsTrin(
     hjemAnker: item.hjemAnker,
     visning,
   });
-  const genId = await deps.db.startGenerering(item.id, "onmodel", presetId);
   // Én visnings nedbrud (provider-udfald m.m.) må ALDRIG vælte de andre
-  // visninger eller teksten — fang, markér fejlet, og lad resten levere
+  // visninger eller teksten — ALT herinde fanges, og resten leverer.
+  let genId: string;
+  try {
+    genId = await deps.db.startGenerering(item.id, "onmodel", presetId);
+  } catch (fejl) {
+    console.error(`Kunne ikke starte generering for ${item.id}:`, fejl);
+    return null;
+  }
   let udfald;
   try {
     udfald = await genererOnModelMedTroskab({
@@ -144,7 +155,7 @@ async function visualiseringsTrin(
       status: "failed",
       costDkk: 0,
       promptVersion,
-    });
+    }).catch(() => {});
     return null;
   }
 
@@ -153,28 +164,39 @@ async function visualiseringsTrin(
       status: "failed",
       costDkk: udfald.costDkk,
       promptVersion,
-    });
+    }).catch(() => {});
     return null;
   }
 
-  // Badge + AI-metadata påføres ALTID før billedet rører eget storage (C-4)
-  const raa = await deps.storage.hentBillede(udfald.billede.url);
-  const medBadge = await paafoerBadge(raa);
-  // Stien er unik pr. generering, så en regenerering (B-8) aldrig
-  // overskriver en tidligere visualisering — resultatsiden læser output_url
-  const sti = await deps.storage.gemBillede(
-    `${item.userId}/${item.id}/visualisering-${genId}.jpg`,
-    medBadge,
-  );
-  await deps.db.afslutGenerering(genId, {
-    status: "succeeded",
-    costDkk: udfald.costDkk,
-    outputUrl: sti,
-    fidelityScore: udfald.billede.fidelityScore,
-    promptVersion,
-    providerJobId: udfald.billede.providerJobId,
-  });
-  return { sti, fidelityScore: udfald.billede.fidelityScore, costDkk: udfald.costDkk };
+  // Badge + AI-metadata påføres ALTID før billedet rører eget storage (C-4) —
+  // og et nedbrud her (storage/badge) må heller ikke vælte de andre visninger
+  try {
+    const raa = await deps.storage.hentBillede(udfald.billede.url);
+    const medBadge = await paafoerBadge(raa);
+    // Stien er unik pr. generering, så en regenerering (B-8) aldrig
+    // overskriver en tidligere visualisering — resultatsiden læser output_url
+    const sti = await deps.storage.gemBillede(
+      `${item.userId}/${item.id}/visualisering-${genId}.jpg`,
+      medBadge,
+    );
+    await deps.db.afslutGenerering(genId, {
+      status: "succeeded",
+      costDkk: udfald.costDkk,
+      outputUrl: sti,
+      fidelityScore: udfald.billede.fidelityScore,
+      promptVersion,
+      providerJobId: udfald.billede.providerJobId,
+    });
+    return { sti, fidelityScore: udfald.billede.fidelityScore, costDkk: udfald.costDkk };
+  } catch (fejl) {
+    console.error(`Lagring af visning ${visning?.id ?? "standard"} fejlede for ${item.id}:`, fejl);
+    await deps.db.afslutGenerering(genId, {
+      status: "failed",
+      costDkk: udfald.costDkk,
+      promptVersion,
+    }).catch(() => {});
+    return null;
+  }
 }
 
 async function tekstTrin(
@@ -332,12 +354,22 @@ export async function koerItemPipeline(
 
   // Trin 2+3 parallelt: alle valgte visninger og annonceteksten (NFR-3).
   // Referencen pakkes som data-URL én gang og deles af alle visninger.
+  // Bulletproof (ejer-ordre 20/8): en fejlet tekst må ALDRIG tage billederne
+  // med i faldet — teksten bliver til null, billederne leveres alligevel.
+  // Visningerne startes med et lille skridt imellem (350 ms), så de fire
+  // provider-kald ikke rammer API'et i præcis samme sekund (rate limits) —
+  // svarerne lander stadig næsten samtidig.
   const reference = await referenceTilProvider(deps, helhed.rensetUrl);
   const [tekst, ...visningsUdfald] = await Promise.all([
-    tekstTrin(deps, item),
-    ...visninger.map((visning) =>
-      visualiseringsTrin(deps, item, reference, presetId, visning).then(
-        (resultat) => ({ visning, resultat }),
+    tekstTrin(deps, item).catch((fejl) => {
+      console.error(`Teksttrin fejlede for ${item.id}:`, fejl);
+      return null;
+    }),
+    ...visninger.map((visning, i) =>
+      sov(i * 350).then(() =>
+        visualiseringsTrin(deps, item, reference, presetId, visning).then(
+          (resultat) => ({ visning, resultat }),
+        ),
       ),
     ),
   ]);
@@ -371,7 +403,7 @@ export async function koerItemPipeline(
   const totalCost =
     rensede.reduce((sum, f) => sum + f.costDkk, 0) +
     visningsUdfald.reduce((sum, u) => sum + (u.resultat?.costDkk ?? 0), 0) +
-    tekst.costDkk;
+    (tekst?.costDkk ?? 0);
 
   const foerste = vellykkede[0]?.resultat ?? null;
   return {

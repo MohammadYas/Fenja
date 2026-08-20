@@ -16,6 +16,7 @@ import {
   vaelgSkabelon,
   vaelgVisning,
 } from "@/lib/pipeline/skabeloner";
+import { hentVisningsType } from "@/lib/pipeline/visninger";
 
 const preset = hentPreset("lys-minimalisme");
 
@@ -52,6 +53,19 @@ describe("kategori-skabeloner (ejer-princip 2026-08-15)", () => {
   it("visningen er deterministisk pr. item (stabile retries)", () => {
     const skabelon = vaelgSkabelon("kjole");
     expect(vaelgVisning(skabelon, "item-42")).toBe(vaelgVisning(skabelon, "item-42"));
+  });
+
+  it("bukser: personen har ALTID overdel på og vises ALTID forfra (ejer-ordre 20/8)", () => {
+    const prompt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "jeans",
+      visning: hentVisningsType("spejl"),
+    });
+    expect(prompt).toContain("from the FRONT");
+    expect(prompt).toContain("torso is fully covered");
+    expect(prompt).toContain("never shirtless");
   });
 });
 

@@ -26,6 +26,8 @@ export type MockOpsaetning = {
   troskabsScore?: number;
   /** Kast fejl ved baggrundsrens */
   rensFejler?: boolean;
+  /** Kast fejl ved tekstgenerering (tester at billeder leveres alligevel) */
+  tekstFejler?: boolean;
   labelTekst?: string | null;
   /** Cost pr. on-model-billede — Gate 1-trekampen spejler providernes skøn i mock */
   onModelCostDkk?: number;
@@ -66,6 +68,9 @@ export class MockTextProvider implements TextProvider {
 
   async genererAnnonceTekst(input: AnnonceTekstInput): Promise<AnnonceTekst> {
     this.kald.push("tekst");
+    if (this.opsaetning.tekstFejler) {
+      throw new Error("mock: tekstgenerering fejlede");
+    }
     const fejlDel = input.fejlBeskrivelse
       ? ` Bemærk: ${input.fejlBeskrivelse}.`
       : "";

@@ -283,8 +283,12 @@ export const da = {
     // Ejer-ordrer 20/8: ærlig forventning + færdige billeder løbende
     tidsForventning:
       "Regn med 2–3 minutter pr. billede. De færdige billeder dukker op herunder, så snart de er klar — du kan roligt lukke siden imens.",
-    faerdigeBilleder: (n: number) =>
-      n === 1 ? "1 billede er klar" : `${n} billeder er klar`,
+    faerdigeBilleder: (n: number, total?: number) =>
+      total && total > 0
+        ? `${n} af ${total} billeder er klar`
+        : n === 1
+          ? "1 billede er klar"
+          : `${n} billeder er klar`,
     billederPaaVej: "Dine billeder",
     genererFrame: "Genererer …",
     aabnFuldStoerrelse: "Åbn i fuld størrelse",
@@ -303,16 +307,13 @@ export const da = {
     trinIGang: "i gang",
     trinFaerdig: "færdig",
     trinFejlet: "sprang over",
-    aegteFotosTitel: "Dine rensede fotos",
-    aegteFotosInstruks:
-      "Brug dette som billede 1 på Vinted. Vinted kræver, at første foto viser hele den faktiske vare, taget af dig.",
     downloadFoto: "Hent foto",
     visualiseringTitel: "Visualisering",
     visualiseringForklaring:
-      "Sådan kan tøjet se ud på. Billedet er genereret ud fra dit foto og mærket som visualisering — brug det som supplement, aldrig som billede 1.",
+      "Sådan kan tøjet se ud på. Billedet er genereret ud fra dit foto og mærket som visualisering.",
     visualiseringBadge: "Visualisering",
     visualiseringFejlede:
-      "Visualiseringen ramte ikke vores kvalitetskrav denne gang, så vi leverer den ikke — og kreditten for den er sat tilbage. Dine rensede fotos og annonceteksten er klar herunder.",
+      "Visualiseringen ramte ikke vores kvalitetskrav denne gang, så vi leverer den ikke — og kreditten for den er sat tilbage. Din annoncetekst er klar herunder.",
     tekstTitel: "Annoncetekst",
     titelLabel: "Titel",
     beskrivelseLabel: "Beskrivelse",
@@ -324,8 +325,8 @@ export const da = {
     checklisteTitel: "Sådan lægger du den på Vinted",
     checkliste: [
       "Åbn Vinted og tryk på Sælg.",
-      "Upload det rensede helhedsfoto som billede 1, og de øvrige fotos efter.",
-      "Tilføj eventuelt visualiseringen til sidst — aldrig som første billede.",
+      "Upload dit eget foto af tøjet som billede 1 — det ægte foto skal altid komme først.",
+      "Tilføj visualiseringen bagefter — aldrig som første billede.",
       "Kopiér titel og beskrivelse ind fra Selja.",
       "Sæt prisen ud fra prisforslaget, og justér efter din tidshorisont.",
       "Tjek at fejl og slid står i beskrivelsen, og send annoncen af sted.",
@@ -903,6 +904,10 @@ export const da = {
     titel: "Drift",
     dagensForbrug: "Dagens API-forbrug (globalt loft)",
     loftNaaet: "Loftet er nået — nye pipelines afvises indtil midnat (UTC).",
+    // Ejer-ordre 20/8: kost pr. kredit skal kunne aflæses direkte
+    kostPrKredit: "Kost pr. kredit (7 dage)",
+    kostPrKreditForklaring:
+      "Samlet API-omkostning delt med antal leverede billeder — hver kredit skal holdes billigere end prisen, brugeren betaler.",
     prDag: "Forbrug pr. dag (7 dage)",
     prBruger: "Forbrug pr. bruger (7 dage)",
     senesteGenereringer: "Seneste genereringer",

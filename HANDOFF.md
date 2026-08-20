@@ -90,7 +90,7 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | B-2 | Klientside-komprimering før upload (mobildata!); målstørrelse ≤ 1,5 MB/foto uden synligt kvalitetstab | P0 |
 | B-3 | Metadatafelter: mærke (autocomplete på kendte mærker), størrelse, stand (Vinteds standskala), fejlbeskrivelse (fri tekst), kategori, evt. købspris | P0 |
 | B-4 | Ét samlet "Lav min annonce"-tryk starter hele pipelinen; progress-visning med reelle trin (renser billeder → laver visualisering → skriver tekst) | P0 |
-| B-5 | Resultatside i compliance-rækkefølge: (1) rensede ægte fotos med "brug dette som billede 1 på Vinted", (2) visualisering(er) med badge, (3) titel/beskrivelse/prisforslag med kopiér-knap pr. element, (4) checkliste "sådan lægger du den på Vinted" | P0 |
+| B-5 | Resultatside i ejerens rækkefølge (overstyret 2026-08-20): (1) visualisering(er) med badge, (2) titel/beskrivelse/prisforslag med kopiér-knap pr. element, (3) checkliste "sådan lægger du den på Vinted". **De rensede ægte fotos vises IKKE længere** — de er kun input til modellen (ejer-beslutning 2026-08-20, erstatter FR-6's "ægte fotos først") | P0 |
 | B-6 | Delvis leverance ved fejl: fejler visualiseringen, leveres rens + tekst alligevel, og visualiserings-kreditten refunderes automatisk | P0 |
 | B-7 | Item-bibliotek: alle items med status kladde/aktiv/solgt; gen-download; "markér som solgt" med salgspris | P0 |
 | B-8 | Regenerér enkeltdele (ny visualisering i andet preset, ny tekst) til reduceret kreditpris | P1 |

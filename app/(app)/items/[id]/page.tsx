@@ -12,12 +12,6 @@ import { PRESETS } from "@/lib/pipeline/presets";
 
 const BUCKET = "item-photos";
 
-type FotoRaekke = {
-  id: string;
-  role: string;
-  original_url: string;
-  cleaned_url: string | null;
-};
 type GenereringRaekke = {
   kind: string;
   status: string;
@@ -33,9 +27,9 @@ async function signeretUrl(sti: string | null): Promise<string | null> {
   return data?.signedUrl ?? null;
 }
 
-// Resultatside i compliance-rækkefølge (B-5/FR-6): (1) ægte fotos med
-// "billede 1"-instruks, (2) visualisering med badge, (3) tekst med kopiér-knapper,
-// (4) Vinted-checkliste. Rækkefølgen er et lovkrav i produktet — ændr den ikke.
+// Resultatside (ejer-ordre 20/8): de rensede fotos vises IKKE — de er kun
+// input til modellen. Rækkefølgen er: (1) visualiseringer med badge,
+// (2) annoncetekst med kopiér-knapper, (3) Vinted-checkliste.
 export default async function ItemSide({
   params,
 }: {
@@ -47,7 +41,7 @@ export default async function ItemSide({
   const { data: item } = await supabase
     .from("items")
     .select(
-      "id, brand, titel, beskrivelse, soegeord, pris_fra_dkk, pris_til_dkk, pris_begrundelse, defects_text, leveret_at, created_at, item_photos(id, role, original_url, cleaned_url), generations(kind, status, output_url, created_at)",
+      "id, brand, titel, beskrivelse, soegeord, pris_fra_dkk, pris_til_dkk, pris_begrundelse, defects_text, leveret_at, created_at, generations(kind, status, output_url, created_at)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -101,7 +95,6 @@ export default async function ItemSide({
     );
   }
 
-  const fotos = item.item_photos as FotoRaekke[];
   const generings = item.generations as GenereringRaekke[];
   // Ejer-ordre 20/8: brugeren vælger flere visninger — vis ALLE vellykkede
   // billeder, nyeste først (en regenerering lægger sig forrest)
@@ -112,16 +105,6 @@ export default async function ItemSide({
     .filter((url): url is string => url !== null);
   const visualiseringFejlede = visualiseringStier.length === 0;
 
-  const rensedeMedUrl = (
-    await Promise.all(
-      fotos
-        .filter((f) => f.cleaned_url)
-        .map(async (f) => ({
-          ...f,
-          visUrl: await signeretUrl(f.cleaned_url),
-        })),
-    )
-  ).filter((f) => f.visUrl);
   const visualiseringUrls = (
     await Promise.all(visualiseringStier.map(signeretUrl))
   ).filter((url): url is string => url !== null);
@@ -132,45 +115,12 @@ export default async function ItemSide({
         {item.titel ?? item.brand}
       </h1>
 
-      {/* 1 · Ægte fotos først — altid (compliance-rækkefølgen, FR-6) */}
-      <section className="mt-10" aria-label={da.resultat.aegteFotosTitel}>
-        <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
-          01 — {da.resultat.aegteFotosTitel}
-        </h2>
-        <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
-          {da.resultat.aegteFotosInstruks}
-        </p>
-        <div className="mt-3 grid grid-cols-2 gap-3">
-          {rensedeMedUrl.map((foto, i) => (
-            <figure key={foto.id}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={foto.visUrl!}
-                alt={`Renset foto ${i + 1}: ${da.nytItem.roller[foto.role as keyof typeof da.nytItem.roller]?.navn ?? foto.role}`}
-                className="aspect-[4/5] w-full rounded-bloed border border-kant object-cover"
-                loading={i > 1 ? "lazy" : undefined}
-              />
-              <figcaption className="mt-1">
-                <a
-                  href={foto.visUrl!}
-                  download
-                  className="text-detalje text-primaer underline underline-offset-4"
-                >
-                  {da.resultat.downloadFoto}
-                </a>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </section>
-
-      <div className="soem-vandret mt-8" aria-hidden="true" />
-
-      {/* 2 · Visualisering efter — med badge, aldrig først */}
-      <section className="mt-8" aria-label={da.resultat.visualiseringTitel}>
+      {/* 1 · Visualisering efter — med badge (ejer-ordre 20/8: de rensede
+          fotos er kun input til modellen og vises ikke) */}
+      <section className="mt-10" aria-label={da.resultat.visualiseringTitel}>
         <div className="flex items-center gap-3">
           <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
-            02 — {da.resultat.visualiseringTitel}
+            01 — {da.resultat.visualiseringTitel}
           </h2>
           <Badge variant="visualisering">{da.resultat.visualiseringBadge}</Badge>
         </div>
@@ -218,10 +168,10 @@ export default async function ItemSide({
 
       <div className="soem-vandret mt-8" aria-hidden="true" />
 
-      {/* 3 · Annoncetekst med kopiér-knap pr. element */}
+      {/* 2 · Annoncetekst med kopiér-knap pr. element */}
       <section id="annonce-tekst" className="mt-8" aria-label={da.resultat.tekstTitel}>
         <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
-          03 — {da.resultat.tekstTitel}
+          02 — {da.resultat.tekstTitel}
         </h2>
         <div className="mt-3 flex flex-col gap-4">
           <Card>
@@ -280,10 +230,10 @@ export default async function ItemSide({
 
       <div className="soem-vandret mt-8" aria-hidden="true" />
 
-      {/* 4 · Checkliste */}
+      {/* 3 · Checkliste */}
       <section className="mt-8" aria-label={da.resultat.checklisteTitel}>
         <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
-          04 — {da.resultat.checklisteTitel}
+          03 — {da.resultat.checklisteTitel}
         </h2>
         <ol className="mt-3 flex max-w-laesbar list-decimal flex-col gap-2 pl-5">
           {da.resultat.checkliste.map((punkt) => (
@@ -303,10 +253,10 @@ export default async function ItemSide({
         </p>
       </section>
 
-      {/* 5 · Regenerér enkeltdele (B-8) — reduceret pris, trækkes kun ved succes */}
+      {/* 4 · Regenerér enkeltdele (B-8) — reduceret pris, trækkes kun ved succes */}
       <section className="mt-8" aria-label={da.regenerer.titel}>
         <h2 className="font-mono text-detalje font-bold tracking-wide text-tekst/70">
-          05 — {da.regenerer.titel}
+          04 — {da.regenerer.titel}
         </h2>
         <div className="mt-3">
           <Regenerer

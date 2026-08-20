@@ -25,7 +25,7 @@ export async function GET(
   const { data: item } = await supabase
     .from("items")
     .select(
-      "id, status, leveret_at, created_at, generations(kind, status, output_url, created_at)",
+      "id, status, leveret_at, created_at, visninger, generations(kind, status, output_url, created_at)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -37,6 +37,13 @@ export async function GET(
     output_url: string | null;
     created_at: string;
   }[];
+  // Serverens sandhed om hvor mange billeder der ER bestilt (items.visninger) —
+  // ellers ville framen-kontoen vokse løbende med generations-rækkerne, og
+  // forventet varighed skaleres nu rigtigt fra første poll
+  const valgteVisninger = (item as { visninger?: string[] | null }).visninger;
+  const totalBilleder = Array.isArray(valgteVisninger)
+    ? valgteVisninger.length
+    : generinger.filter((g) => g.kind === "onmodel").length;
   const leveret = item.leveret_at != null;
   const koerer = generinger.some(
     (g) =>
@@ -74,13 +81,14 @@ export async function GET(
     )
   ).filter((url): url is string => url !== null);
 
-  const antalBilleder = generinger.filter((g) => g.kind === "onmodel").length;
+  const antalBilleder = Math.max(1, totalBilleder);
 
   return NextResponse.json({
     leveret,
     fejlet,
     startetAt: item.created_at,
     forventetSekunder: forventetSekunder(antalBilleder),
+    totalBilleder,
     billeder,
     trin: generinger.map((g) => ({ kind: g.kind, status: g.status })),
   });

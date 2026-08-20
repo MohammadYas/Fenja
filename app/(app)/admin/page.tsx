@@ -48,6 +48,15 @@ export default async function Admin() {
   const dagensForbrug = prDag.get(iDag) ?? 0;
   const loft = misbrugsvaern.dagligtBudgetloftDkk;
 
+  // Kost pr. kredit (ejer-ordre 20/8): samlet API-omkostning delt med antal
+  // leverede billeder — enheden der måles på er 1 kredit = 1 billede, og
+  // rens + tekst er regnet med, så tallet er den ÆGTE produktionskost pr. kredit.
+  const totalCost = raekker.reduce((sum, r) => sum + Number(r.cost_dkk ?? 0), 0);
+  const leveredeBilleder = raekker.filter(
+    (r) => r.kind === "onmodel" && r.status === "succeeded",
+  ).length;
+  const kostPrKredit = leveredeBilleder > 0 ? totalCost / leveredeBilleder : null;
+
   // Åbne klager (ejer-ordrer 2026-08-20) — service-rollen ser alle, og admin
   // får ALT relevant: genererede billeder, brugerens fotos og itemets felter,
   // så afgørelsen kan træffes direkte i listen
@@ -141,6 +150,16 @@ export default async function Admin() {
         {dagensForbrug >= loft ? (
           <p className="mt-1 text-detalje text-fejl">{da.admin.loftNaaet}</p>
         ) : null}
+      </Card>
+
+      <Card className="mt-4">
+        <p className="text-detalje text-tekst/70">{da.admin.kostPrKredit}</p>
+        <p className="mt-1 font-mono text-titel">
+          {kostPrKredit != null ? `${kostPrKredit.toFixed(2)} kr.` : "—"}
+        </p>
+        <p className="mt-1 text-detalje text-tekst/70">
+          {da.admin.kostPrKreditForklaring}
+        </p>
       </Card>
 
       <h2 className="mt-8 text-titel font-medium">{da.admin.prDag}</h2>

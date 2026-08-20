@@ -23,6 +23,10 @@ export type OnModelUdfald = {
   scores: number[];
 };
 
+function sov(ms: number): Promise<void> {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 export async function genererOnModelMedTroskab(args: {
   image: ImageProvider;
   text: TextProvider;
@@ -66,8 +70,17 @@ export async function genererOnModelMedTroskab(args: {
         prompt,
         referenceVaegt: vaegte[forsoeg] ?? cfg.strammereReferenceVaegt,
       });
-    } catch {
-      // Provider-fejl tæller som et brugt forsøg; næste runde strammere
+    } catch (fejl) {
+      // Provider-fejl tæller som et brugt forsøg. Rate-limit-agtige fejl
+      // (429/503/5xx) får eksponentiel backoff + jitter, så 4 parallelle
+      // billedkald ikke tromler Geminis kvoter — ellers falder billederne
+      // fra ét efter ét (ejer-rapport 20/8: 1-2 ud af 4 leveret). Andre fejl
+      // (fx autentificering) heler ikke af ventetid og fejler hurtigt.
+      const fejlTekst = String(fejl);
+      if (/429|503|500|rate|quota|overloaded/i.test(fejlTekst)) {
+        const vent = Math.min(1500 * 2 ** forsoeg, 20_000) + Math.random() * 800;
+        await sov(vent);
+      }
       continue;
     }
     cost += genereret.costDkk;

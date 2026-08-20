@@ -206,9 +206,12 @@
   }
 
   /* Genererings-frame (ejer-ordre 2026-08-20): pladsholder pr. valgt billede
-     på "på vej"-siden — et blødt lysstrøg glider hen over rammen, indtil det
-     færdige billede afløser den. */
+     på "på vej"-siden. To lag: et blødt lysstrøg der glider hen over rammen
+     + et "fremkaldelses-strøg" der fejer ned over billedet igen og igen, så
+     det føles som om billedet er ved at blive færdigt. */
   .genererer-frame {
+    position: relative;
+    overflow: hidden;
     background: linear-gradient(
       110deg,
       theme("colors.flade") 35%,
@@ -218,12 +221,36 @@
     background-size: 220% 100%;
     animation: genererer-skimmer 1.8s ease-in-out infinite;
   }
+  .genererer-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 40%,
+      theme("colors.kalk") 50%,
+      transparent 60%
+    );
+    opacity: 0.6;
+    transform: translateY(-120%);
+    animation: genererer-scan 2.6s cubic-bezier(0.45, 0, 0.35, 1) infinite;
+  }
   @keyframes genererer-skimmer {
     from {
       background-position: 120% 0;
     }
     to {
       background-position: -60% 0;
+    }
+  }
+  @keyframes genererer-scan {
+    0% {
+      transform: translateY(-120%);
+    }
+    55%,
+    100% {
+      transform: translateY(120%);
     }
   }
   /* Rul-ned-pil på resultatsiden (ejer-ordre 20/8): blidt hop, peger på at
