@@ -1,14 +1,20 @@
 # MANGLER FØR PUBLISH
 Sidst opdateret: 2026-08-20 (nat, runde 13). Kritisk vej øverst — tages oppefra.
 
-## KRITISK VEJ LIGE NU (alt andet venter på disse tre)
-1. **Push main til GitHub** — Netlify deployer fra repoet, så intet kan
-   deployes før koden er skubbet.
-2. **Netlify-site kobles til repoet + ALLE env-vars sættes i Netlify.**
+## KRITISK VEJ LIGE NU
+1. [x] **Push main til GitHub** — gjort 20/8 nat (13 commits). Historikken er
+   scannet: ingen nøgler i arbejdstræ eller historik, `.env.local` har
+   aldrig været committet.
+2. [ ] **Netlify-site kobles til repoet + ALLE env-vars sættes i Netlify.**
    Uden env-vars deployer sitet, men kører demo-mode: intet login, intet
    køb, ingen AI.
-3. **Stripe webhook mod den deployede URL** → `/api/webhooks/stripe`.
+3. [ ] **Stripe webhook mod den deployede URL** → `/api/webhooks/stripe`.
    Kan først oprettes når URL'en findes. Dét er blocker #1 for omsætning.
+4. [ ] **RESEND_API_KEY + domæneverifikation — MANGLER STADIG.** Uden den
+   sendes INGEN mails: ingen velkomstmail, ingen kvittering, og "glemt
+   adgangskode" (S39) findes slet ikke. En bruger der mister sin kode kan
+   i dag ikke komme ind igen. Google-login er en delvis redning, men kun
+   for dem der brugte Google.
 
 ## 0. Status på database og auth (verificeret 20/8 nat)
 - [x] **Supabase-skemaet er KOMPLET** — alle 14 migrations kørt og
@@ -32,17 +38,19 @@ Sidst opdateret: 2026-08-20 (nat, runde 13). Kritisk vej øverst — tages oppef
       for abonnenter, log ud på Konto.
 
 ## 1. Nøgler (blokerer alt rigtigt)
-- [ ] **STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET** — hentes i Stripe-dashboardet
-      (LIVE mode; price-id'er findes allerede i `.env.local`). Uden dem: intet køb.
-- [ ] **Stripe webhook-endpoint** — oprettes i Stripe mod deployet URL →
-      `/api/webhooks/stripe`. Kræver at sitet er deployet først.
-- [ ] **Provider-nøgler (AI-motoren — uden dem kører alt på mock):**
-      - `GEMINI_API_KEY` — AL billedgenerering (final + preview) + vision
-        (troskabs-tjek, label-aflæsning). Ejer 19/8: fal droppet, Gemini eneste.
-      - `DEEPSEEK_API_KEY` — DeepSeek skriver titel/beskrivelse/prisforslag
-        med avanceret prompt. Ejer 19/8: erstattede Claude.
-- [ ] **RESEND_API_KEY + domæneverifikation** — PÅ VEJ (ejer). Låser op:
-      transaktionsmails (S32) + glemt adgangskode (S39).
+- [x] **Provider-nøgler (AI-motoren) SAT og roteret 20/8:** `GEMINI_API_KEY`
+      (al billedgenerering + vision) og `DEEPSEEK_API_KEY` (annoncetekst).
+      Ligger i gitignoret `.env.local`. Skal også ind i Netlify ved deploy.
+- [ ] **RESEND_API_KEY + domæneverifikation — MANGLER (ejer 20/8).**
+      Konsekvens uden den: ingen velkomstmail (S32), ingen kvitteringer,
+      og glemt-adgangskode (S39) eksisterer ikke — mister en bruger sin
+      kode, er kontoen låst ude permanent. Domænet skal verificeres hos
+      Resend, før mails kan sendes fra andet end en testadresse.
+- [ ] **STRIPE_SECRET_KEY** — hentes i Stripe-dashboardet (LIVE mode;
+      price-id'erne findes allerede i `.env.local`). Feltet står klar i
+      `.env.local`, mangler kun værdien. Uden den: intet køb.
+- [ ] **STRIPE_WEBHOOK_SECRET** — kan FØRST laves efter deploy: Stripe →
+      Webhooks → endpoint mod `<url>/api/webhooks/stripe` → Signing secret.
 - [ ] **TRIGGER_SECRET_KEY (skalering, 20/8):** i produktion med mange
       brugere SKAL pipelinen køre via Trigger.dev (koden er klar — sæt
       nøglen). Uden den kører jobs i serverprocessen: genoptag-knappen
@@ -85,6 +93,16 @@ Sidst opdateret: 2026-08-20 (nat, runde 13). Kritisk vej øverst — tages oppef
       for forsiden; appens genererede billeder har fortsat deres badge.)
 - [x] **Ærligheds-blokken (20/8)** genplaceret som rolig stribe efter det
       mørke bånd (omskrevet til Selja-æraen, uden gratis-tier).
+
+## 4b. Auth (nyt 20/8 nat)
+- [x] **Google-login bygget og live** — knap på log-ind, callback veksler
+      koden, 18+-gaten fanges i onboardingen (OAuth kan ikke bære svaret
+      med, og "log ind"-fanen opretter også konti — fundet i data:
+      en Google-bruger stod med `age_confirmed = false`).
+- [x] **Auto-login** — sessionen fornyes i middleware og en indlogget
+      bruger springer login-formularen over.
+- [ ] **Apple-login: FRAVALGT** (ejer 20/8) — kræver betalt Apple Developer
+      Program. Genbesøg kun hvis iOS-app bliver aktuelt.
 
 ## 5. Launch-gates (HANDOFF §8 — S26)
 - [ ] Lighthouse mobil ≥ 90 genmåles (L1 målt før Vinted-first-forsiden)

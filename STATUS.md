@@ -1,5 +1,72 @@
 # STATUS
-Sidst opdateret: 2026-08-20 (natten, runde 12) af Claude Code
+Sidst opdateret: 2026-08-20 (natten, runde 13) af Claude Code
+
+## Denne session (20/8 nat, runde 13) — billedkvalitet, Google-login, publish-vej
+**PUSHET TIL GITHUB** (13 commits) efter ejer-ordre. Historikken scannet for
+nøgler først: intet i arbejdstræ eller historik, `.env.local` aldrig committet.
+
+**8. root cause — floatende produktbilleder (ejer: "det ligner den floater"):**
+produkt-prompten fik on-model-negativlisten med, som forbød "a garment on a
+hanger" og "an empty garment not worn by the person" — præcis det, framingen
+KRÆVEDE ("hanging on a simple wooden hanger", "laid out flat"). Modellen
+splittede forskellen og lod tøjet svæve. Listen er nu delt i tre: fælles,
+on-model, og en produkt-regel der kræver at tøjet hviler fysisk på gulv eller
+synlig bøjle, aldrig svæver og aldrig formes af en usynlig krop.
+
+**Troskabstjekket var pynt:** det gav score 1,00 til ALT — også en top gengivet
+som kort kjole på bare ben. Nu tjekkes (1) samme tøj, (2) uændret TYPE og
+LÆNGDE (top må aldrig blive kjole → score under 0,3), (3) at personen er
+fornuftigt påklædt / at produkttøj hviler på noget virkeligt. Modellen får
+besked på at bruge hele skalaen og runde ned ved tvivl.
+
+**Personen følger nu forsidens opskrift (ejer-ordre):** person-ankeret var fire
+tynde sætninger. Sprogbrugen er hentet fra ejerens egen katalog-serie
+(`scripts/katalog-prompts-data.ts`): attraktiv skandinavisk voksen i starten af
+tyverne, slank naturlig krop, afslappet asymmetrisk positur, hånd i forlomme,
+**aldrig posering, timeglasfigur eller retouchering**. Overdele bæres altid med
+rolige skandinaviske jeans (cremehvid / lys blågrå / mørk navy, aldrig skinny,
+ingen print eller huller) — aldrig bare ben. Ejer: "attraktive personer sælger,
+og det er ikke i strid med reglerne."
+
+**Tøjet bestemmer huden (ejer-ordre):** den globale "torso is fully covered"
+er væk. En croptop SKAL vise mave; tøjet må aldrig forlænges eller dækkes til,
+for så sælger annoncen et andet produkt. Neutral top kun når referencetøjet
+slet ikke dækker overkroppen.
+
+**Ny kategori "Top & bluse":** wizard-listen manglede en top helt, så alt endte
+i "Andet" → fritekst-størrelse og den GENERISKE skabelon. Ny test går hele
+listen igennem og fejler, hvis en tøjdel falder til generisk.
+
+**Rammer viser hver sin visning:** billederne blev tilføjet i færdig-orden og
+tegnet positionelt, så de landede i tilfældige rammer og "rykkede på plads",
+når alle var færdige. Status-ruten melder nu visningen pr. billede (fra
+prompt_version-tagget) + brugerens valgte rækkefølge.
+
+**Kreditsiden — årsplanen underslog sig selv:** stykprisen dividerede ALTID med
+månedsprisen, så årsplanen reklamerede med 4,92 kr./kredit for Plus i stedet
+for 4,10 (Pro: 3,97 i stedet for 3,31) — den skjulte hele den rabat, planen
+sælges på. Rækken brugte desuden `flex-wrap`, så de bredere årspriser skubbede
+priskolonnen ned under navnet og rækken skiftede form mellem de to knapper.
+Nu fast to-kolonne-gitter (målt: prisens højrekant står på samme px i begge
+tilstande). Låst med 4 nye tests.
+
+**Auth:** Google-login bygget, live og verificeret mod projektet (authorize
+svarer 302 mod Google med korrekt client id og redirect). Apple FRAVALGT
+(ejer: vil ikke betale for Apple Developer). Auto-login: indlogget bruger
+springer login-formularen over; videresendelse låst til interne stier.
+**18+-hul fundet i data:** OAuth kan ikke skelne login fra signup, og log
+ind-fanen er standard — en ny Google-bruger blev oprettet med
+`age_confirmed = false`. Onboardingen spørger nu, når bekræftelsen mangler,
+og gaten på /nyt-item behandler det som manglende onboarding.
+
+**Andre ejer-ordrer:** hele oversigtskortet er klikbart (stretched link,
+knapperne hævet over kliklaget); onboarding fører tilbage til /oversigt i
+stedet for ind i wizarden; wizarden er gated bag onboarding.
+
+**Supabase verificeret komplet:** alle 14 migrations, kolonne for kolonne,
+plus `item-photos`-bucket. Intet manglede i databasen.
+
+**Tests:** 379 grønne. Lint + typecheck grønne.
 
 ## Denne session (20/8 nat, runde 12) — 7. root cause: produkt-visninger blev altid kasseret
 
