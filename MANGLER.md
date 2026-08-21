@@ -30,6 +30,16 @@ Sidst opdateret: 2026-08-21 (launch-dag). Kritisk vej øverst — tages oppefra.
    er oprettet på krausesigne@gmail.com.
 
 ## EFTER LAUNCH (vigtigst først)
+- [x] **21/8 aften-runde (alle ejer-ordrer leveret):** e-mail-bekræftelse TIL
+      (lukker konto-overtagelse via andres e-mail; Supabase sender nu via
+      produktets eget maildomæne, danske skabeloner), glemt adgangskode
+      (S39) bygget, forsiden strammet (Lær-teaser + eksperiment ud),
+      abonnement-rækker mobil-ombygget, feedback-formular på Konto (+tabel
+      med RLS kørt mod cloud), admin: kommasepareret ADMIN_EMAIL (begge
+      ejer-adresser), nøgletal, content-prompts til Claude/ChatGPT,
+      Garderobe-radar + salgsstatistik for abonnenter. GitHub er nu koblet
+      til Netlify: push til main auto-deployer (sharp-workaround overflødig).
+
 - [x] **E2E-VERIFICERET I PRODUKTION 21/8 (autonom runde):** login, oversigt,
       kreditside, konto, wizard → rigtig annonce leveret via Trigger.dev
       (tekst+pris fra DeepSeek; visualisering dumpede troskabstjek → kredit
