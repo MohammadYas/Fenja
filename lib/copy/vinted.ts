@@ -17,7 +17,7 @@ export const vinted = {
     tekst:
       "Tag 2–4 fotos, så renser Selja billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
     knap: "Lav din første annonce",
-    friktion: "Uden binding · fejler et billede, får du kreditten tilbage automatisk",
+    friktion: "Uden binding · du betaler kun for leverede billeder — fejler ét, refunderes kreditten automatisk",
   },
   // Drømme-regnestykket: ægte høst-medianer, tydeligt mærket regneeksempel
   skabRegner: {
@@ -29,7 +29,7 @@ export const vinted = {
       `Regneeksempel — ikke et løfte. Typisk midterpris ${median} kr. pr. stykke fra vores markedshøst ${dato}.`,
     knap: "Kom i gang nu",
   },
-  mellemCta: "Lav min annonce",
+  mellemCta: "Lav din første annonce",
   stickyCta: "Lav min annonce",
   // Ejer-ordre 2026-08-20: flere valgbare før/efter-eksempler. Hvert par
   // viser SAMME stykke tøj (FØR = dårligt aftenfoto, EFTER = spejlselfie i
@@ -156,7 +156,7 @@ export const vinted = {
     alleGuides: "Alle guides",
   },
   cta: {
-    titel: "Prøv med det næste stykke tøj, du vil sælge",
+    titel: "Det næste stykke tøj, du sælger, kan være klar om 2 minutter",
     kreditNote:
       "Du skal bruge kreditter for at lave en annonce. Vælg et abonnement, når du er klar — uden binding, opsig når som helst.",
     knap: "Opret dig og kom i gang",

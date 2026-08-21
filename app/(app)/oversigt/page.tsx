@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Taeller } from "@/components/taeller";
 import { da } from "@/lib/copy/da";
+import { bygSaesonKalender } from "@/lib/salg/kalender";
+import { bygKonkurrentTjek } from "@/lib/salg/konkurrent";
 import { bygRadar } from "@/lib/salg/radar";
 import { bygSalgsplan, type SalgsPunkt } from "@/lib/salg/smart-plan";
 import { bygSalgsstatistik } from "@/lib/salg/statistik";
@@ -47,7 +49,7 @@ export default async function Oversigt() {
   const supabase = await opretServerKlient();
 
   // Auth fejltolerant (mock-kæder i tests har ingen auth-del)
-  let user: { id: string } | null = null;
+  let user: { id: string; email?: string } | null = null;
   try {
     const { data } = await supabase.auth.getUser();
     user = data?.user ?? null;
@@ -87,6 +89,9 @@ export default async function Oversigt() {
   // evalueres i klient-test-kæder uden service-klienten.
   let salgplan: SalgsPunkt[] = [];
   let erAbonnent = false;
+  // Tier styrer Pro-funktioner (konkurrent-tjek). Ledger siger "abonnent",
+  // Stripe siger hvilken — kan tieren ikke læses, behandles man som plus.
+  let tier: "plus" | "pro" = "plus";
   if (user) {
     try {
       const { SupabaseLedgerDb } = await import("@/lib/credits/supabase");
@@ -94,6 +99,10 @@ export default async function Oversigt() {
       const ledger = new SupabaseLedgerDb(opretServiceKlient());
       const status = await ledger.hentStatus(user.id);
       erAbonnent = status.prKilde.subscription > 0;
+      if (erAbonnent && user.email) {
+        const { hentAbonnementsTier } = await import("@/lib/betaling/abonnement");
+        tier = (await hentAbonnementsTier(user.email)) ?? "plus";
+      }
       if (erAbonnent) {
         salgplan = bygSalgsplan(
           items.map((item) => ({
@@ -133,6 +142,22 @@ export default async function Oversigt() {
     })),
   );
   const radar = erAbonnent ? bygRadar() : [];
+  // Sæson-kalender (alle abonnenter) + konkurrent-tjek (kun Pro), 21/8
+  const planInput = items.map((item) => ({
+    id: item.id,
+    titel: item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
+    maerke: item.brand ?? "",
+    kategori: item.category ?? "",
+    status: (item.status === "failed" ? "draft" : item.status) as
+      | "draft"
+      | "active"
+      | "sold",
+    prisTilDkk: item.pris_til_dkk,
+  }));
+  const kalender = erAbonnent
+    ? bygSaesonKalender(planInput).filter((m) => m.erNu || m.titler.length > 0)
+    : [];
+  const konkurrent = erAbonnent && tier === "pro" ? bygKonkurrentTjek(planInput) : [];
 
   const solgte = items.filter((i) => i.status === "sold");
   const samletVaerdi = solgte.reduce((sum, i) => sum + (i.sold_price_dkk ?? 0), 0);
@@ -272,6 +297,76 @@ export default async function Oversigt() {
           </ul>
           <p className="mt-3 text-detalje text-tekst/60">
             {da.oversigt.radar.note}
+          </p>
+        </section>
+      ) : null}
+
+      {/* Sæson-kalender (alle abonnenter, 21/8): garderobens 12 måneder */}
+      {erAbonnent && kalender.length > 0 ? (
+        <section
+          className="mt-6 rounded-bloed border border-kant bg-flade p-5"
+          aria-label={da.oversigt.kalender.titel}
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="font-mono text-detalje font-bold tracking-wide text-gran">
+              {da.oversigt.kalender.titel}
+            </p>
+            <p className="font-mono text-detalje uppercase tracking-wide text-tekst/50">
+              {da.oversigt.salgplanStempel}
+            </p>
+          </div>
+          <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+            {da.oversigt.kalender.lead}
+          </p>
+          <ul className="mt-3 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+            {kalender.map((m) => (
+              <li key={m.maaned} className="border-b border-kant py-2 text-detalje">
+                <span className={`font-mono font-bold ${m.erNu ? "text-gran" : "text-tekst/70"}`}>
+                  {m.navn}
+                  {m.erNu ? ` · ${da.oversigt.kalender.nu}` : ""}
+                </span>{" "}
+                <span className="text-tekst/80">
+                  {m.titler.length > 0
+                    ? m.titler.join(" · ") +
+                      (m.flere > 0 ? ` · +${m.flere}` : "")
+                    : da.oversigt.kalender.tomMaaned}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {/* Konkurrent-tjek (KUN Pro, 21/8): din pris mod markedets kvartiler */}
+      {konkurrent.length > 0 ? (
+        <section
+          className="mt-6 rounded-bloed border border-kant bg-flade p-5"
+          aria-label={da.oversigt.konkurrent.titel}
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="font-mono text-detalje font-bold tracking-wide text-gran">
+              {da.oversigt.konkurrent.titel}
+            </p>
+            <p className="font-mono text-detalje uppercase tracking-wide text-tekst/50">
+              {da.oversigt.konkurrent.stempel}
+            </p>
+          </div>
+          <ul className="mt-3 flex flex-col gap-3">
+            {konkurrent.map((punkt) => (
+              <li key={punkt.itemId} className="border-b border-kant pb-3 text-detalje">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <span className="font-medium">{punkt.titel}</span>
+                  <span className="font-mono">
+                    {da.oversigt.konkurrent.dinPris(punkt.dinPrisDkk)} ·{" "}
+                    {da.oversigt.konkurrent.marked(punkt.p25Dkk, punkt.p75Dkk)}
+                  </span>
+                </div>
+                <p className="mt-1 text-tekst/80">{punkt.tekst}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-detalje text-tekst/60">
+            {da.oversigt.konkurrent.note}
           </p>
         </section>
       ) : null}

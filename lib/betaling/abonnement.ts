@@ -32,3 +32,35 @@ export async function harAktivtAbonnement(email: string): Promise<boolean> {
     return false;
   }
 }
+
+// Hvilken tier har brugeren? (21/8: Pro-funktioner skal gates på tier, ikke
+// kun "abonnent"). Slås op via prisens lookup_key (selja_plus_*/selja_pro_*).
+// null = intet aktivt abonnement. Fejlsikker: Stripe nede → null.
+export async function hentAbonnementsTier(
+  email: string,
+): Promise<"plus" | "pro" | null> {
+  const noegle = process.env.STRIPE_SECRET_KEY;
+  if (!noegle) return null;
+  try {
+    const stripe = new Stripe(noegle);
+    const { data: kunder } = await stripe.customers.list({ email, limit: 5 });
+    for (const kunde of kunder) {
+      for (const status of ["active", "trialing"] as const) {
+        const { data: abonnementer } = await stripe.subscriptions.list({
+          customer: kunde.id,
+          status,
+          limit: 3,
+          expand: ["data.items.data.price"],
+        });
+        for (const abonnement of abonnementer) {
+          const lookup = abonnement.items.data[0]?.price?.lookup_key ?? "";
+          if (lookup.startsWith("selja_pro")) return "pro";
+          if (lookup.startsWith("selja_plus")) return "plus";
+        }
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}

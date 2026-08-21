@@ -453,8 +453,23 @@ export const da = {
     },
     salgplanTeaserTitel: "Smart Salgsplan er for abonnenter",
     salgplanTeaserTekst:
-      "Få konkrete råd hver gang du åbner oversigten: hvad der skal sælges nu, hvad der skal sættes ned — og hvad du skal vente med. Regnet ud fra dine annoncer, sæsonen og ægte salgspriser.",
+      "Salgsplan med konkrete råd, garderobe-radar med ægte markedspriser, sæson-kalender og ugens plan på mail hver mandag. Regnet ud fra dine annoncer, sæsonen og ægte salgspriser.",
     salgplanTeaserKnap: "Se abonnementer",
+    // Sæson-kalender (alle abonnenter, 21/8)
+    kalender: {
+      titel: "Sæson-kalender",
+      lead: "Hvornår topper din garderobe? Månederne herunder er dem, hvor noget af dit tøj sælger bedst.",
+      nu: "nu",
+      tomMaaned: "Intet topper denne måned — se salgsplanen for hvad du kan gøre.",
+    },
+    // Konkurrent-tjek (kun Pro, 21/8)
+    konkurrent: {
+      titel: "Konkurrent-tjek",
+      stempel: "Kun Pro",
+      dinPris: (kr: number) => `Din: ${kr} kr.`,
+      marked: (p25: number, p75: number) => `Markedet: ${p25}–${p75} kr.`,
+      note: "Kvartiler fra ægte Vinted-annoncer for samme mærke og kategori.",
+    },
     // Garderobe-radar (abonnent-fordel, 21/8)
     radar: {
       titel: "Garderobe-radar",
@@ -595,6 +610,8 @@ export const da = {
       faelles: [
         "Smart Salgsplan på oversigten — hvad du skal sælge nu, sætte ned og vente med",
         "Ugens salgsplan på mail hver mandag morgen",
+        "Garderobe-radar — hvad din garderobe er værd, og hvad der er værd at source lige nu",
+        "Sæson-kalender — hvornår hvert stykke tøj i din garderobe topper",
         "Salgsstatistik",
         "Prioriteret kø — dine annoncer laves først",
       ],
@@ -603,6 +620,7 @@ export const da = {
           "Favorit-overvågning: op til 25 favoritter med dagligt overblik på mail og prisanbefaling",
         ],
         pro: [
+          "Konkurrent-tjek: din pris mod markedets kvartiler pr. annonce",
           "Favorit-overvågning uden loft, opdateret løbende, med dynamisk prisanbefaling",
           "Besked når lignende annoncer ændrer pris",
           "Ret prisen på flere annoncer ad gangen",

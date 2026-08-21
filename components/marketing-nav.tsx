@@ -10,7 +10,7 @@ function erAktiv(sti: string, href: string): boolean {
 }
 
 function sideLinkKlasse(aktiv: boolean): string {
-  return `soem-link inline-flex min-h-touch min-w-touch items-center justify-center px-1 font-medium sm:px-2 ${
+  return `soem-link inline-flex min-h-touch min-w-touch items-center justify-center px-2 font-medium ${
     aktiv ? "text-primaer" : ""
   }`;
 }
@@ -21,7 +21,7 @@ export function MarketingNav() {
   return (
     <nav
       aria-label="Hovednavigation"
-      className="mx-auto flex min-h-touch max-w-5xl items-center justify-between gap-1 px-2 py-1 sm:gap-4 sm:px-4"
+      className="mx-auto flex min-h-touch max-w-5xl items-center justify-between gap-2 px-3 py-1 sm:gap-4 sm:px-4"
     >
       <Link
         href="/"
@@ -30,11 +30,11 @@ export function MarketingNav() {
       >
         {da.site.navn}
       </Link>
-      <div className="flex items-center text-detalje sm:gap-2">
+      <div className="flex items-center gap-1 text-detalje sm:gap-2">
         <Link
           href="/#saadan"
           aria-label={da.nav.saadanVirkerDet}
-          className="soem-link inline-flex min-h-touch min-w-touch items-center justify-center px-1 font-medium sm:px-2"
+          className="soem-link inline-flex min-h-touch min-w-touch items-center justify-center px-2 font-medium"
         >
           <span className="sm:hidden">Sådan</span>
           <span className="hidden sm:inline">{da.nav.saadanVirkerDet}</span>
