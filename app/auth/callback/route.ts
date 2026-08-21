@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { koerEfterBekraeftelse } from "@/lib/auth/efter-bekraeftelse";
+import { site } from "@/lib/config";
 import { opretServerKlient } from "@/lib/supabase/server";
 
 // OAuth/PKCE-callback (A-1): veksler koden til en session. Første succesfulde
@@ -9,17 +10,21 @@ import { opretServerKlient } from "@/lib/supabase/server";
 // token_hash-flowet i auth/confirm, som virker på tværs af browsere.
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
+  // Bag Netlify kan request-URL'ens host være det interne branch-domæne
+  // (main--selja.netlify.app) — cookies gælder kun det domæne, brugeren ser.
+  // I produktion redirectes derfor ALTID til den konfigurerede base-URL.
+  const origin = process.env.NODE_ENV === "production" ? site.baseUrl : url.origin;
   const kode = url.searchParams.get("code");
   const videre = url.searchParams.get("videre") ?? "/oversigt";
 
   if (!kode) {
-    return NextResponse.redirect(new URL("/log-ind", url.origin));
+    return NextResponse.redirect(new URL("/log-ind", origin));
   }
 
   const supabase = await opretServerKlient();
   const { data, error } = await supabase.auth.exchangeCodeForSession(kode);
   if (error || !data.user) {
-    return NextResponse.redirect(new URL("/log-ind", url.origin));
+    return NextResponse.redirect(new URL("/log-ind", origin));
   }
 
   // E-mail-signup bærer alderen i user_metadata; Google kan ikke bære
@@ -31,9 +36,9 @@ export async function GET(request: NextRequest) {
     alderBekraeftet:
       data.user.user_metadata?.age_confirmed === true ||
       url.searchParams.get("alder") === "1",
-    origin: url.origin,
+    origin: origin,
   });
 
   const sikkerVidere = videre.startsWith("/") && !videre.startsWith("//") ? videre : "/oversigt";
-  return NextResponse.redirect(new URL(sikkerVidere, url.origin));
+  return NextResponse.redirect(new URL(sikkerVidere, origin));
 }

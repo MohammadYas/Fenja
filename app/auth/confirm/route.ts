@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { koerEfterBekraeftelse } from "@/lib/auth/efter-bekraeftelse";
+import { site } from "@/lib/config";
 import { opretServerKlient } from "@/lib/supabase/server";
 
 // Bekræftelses-callback via token_hash (21/8): mail-linkene peger HER i
@@ -12,12 +13,16 @@ const TILLADTE_TYPER: readonly EmailOtpType[] = ["signup", "recovery", "email_ch
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
+  // Bag Netlify kan request-URL'ens host være det interne branch-domæne
+  // (main--selja.netlify.app) — cookies gælder kun det domæne, brugeren ser.
+  // I produktion redirectes derfor ALTID til den konfigurerede base-URL.
+  const origin = process.env.NODE_ENV === "production" ? site.baseUrl : url.origin;
   const tokenHash = url.searchParams.get("token_hash");
   const type = url.searchParams.get("type") as EmailOtpType | null;
   const videre = url.searchParams.get("videre") ?? "/oversigt";
 
   if (!tokenHash || !type || !TILLADTE_TYPER.includes(type)) {
-    return NextResponse.redirect(new URL("/log-ind", url.origin));
+    return NextResponse.redirect(new URL("/log-ind", origin));
   }
 
   const supabase = await opretServerKlient();
@@ -25,7 +30,7 @@ export async function GET(request: NextRequest) {
   if (error || !data.user) {
     // Udløbet/brugt link → log ind-siden (ny-adgangskode-siden forklarer selv
     // "linket er udløbet", hvis det var en nulstilling)
-    return NextResponse.redirect(new URL("/log-ind", url.origin));
+    return NextResponse.redirect(new URL("/log-ind", origin));
   }
 
   // Kun interne stier — aldrig eksterne redirects fra et mail-link
@@ -35,8 +40,8 @@ export async function GET(request: NextRequest) {
     userId: data.user.id,
     email: data.user.email,
     alderBekraeftet: data.user.user_metadata?.age_confirmed === true,
-    origin: url.origin,
+    origin: origin,
   });
 
-  return NextResponse.redirect(new URL(sikkerVidere, url.origin));
+  return NextResponse.redirect(new URL(sikkerVidere, origin));
 }
