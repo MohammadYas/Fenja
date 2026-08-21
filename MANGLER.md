@@ -30,6 +30,13 @@ Sidst opdateret: 2026-08-21 (launch-dag). Kritisk vej øverst — tages oppefra.
    er oprettet på krausesigne@gmail.com.
 
 ## EFTER LAUNCH (vigtigst først)
+- [ ] **TÆND e-mail-bekræftelse FØR rigtige brugere lukkes ind** (ejer 21/8:
+      slået fra igen for nem test). Uden den kan enhver oprette konto på en
+      andens e-mail, og Google-login linker så offerets identitet ind i den
+      fremmede konto. Alt er klar (SMTP, danske skabeloner, UI håndterer
+      begge tilstande) — det er ÉT flip: Supabase auth-config
+      mailer_autoconfirm=false (via Composio eller dashboardet).
+
 - [x] **21/8 aften-runde (alle ejer-ordrer leveret):** e-mail-bekræftelse TIL
       (lukker konto-overtagelse via andres e-mail; Supabase sender nu via
       produktets eget maildomæne, danske skabeloner), glemt adgangskode
