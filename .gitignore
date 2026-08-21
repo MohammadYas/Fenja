@@ -42,3 +42,9 @@ next-env.d.ts
 
 # impeccable live session state (runtime token/pids, aldrig committes)
 /.impeccable/live/
+
+# Local Netlify folder
+.netlify
+
+# Netlify edge-bundling lagger denne under deploy
+deno.lock
