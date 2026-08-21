@@ -43,7 +43,9 @@ export default async function Admin() {
       service.from("items").select("sold_price_dkk").eq("status", "sold"),
       service
         .from("feedback")
-        .select("id, kategori, besked, status, created_at, profiles(email)")
+        // Ingen profiles-embed: feedback.user_id peger på auth.users, ikke
+        // profiles, så PostgREST kan ikke joine — e-mails slås op bagefter
+        .select("id, user_id, kategori, besked, status, created_at")
         .order("created_at", { ascending: false })
         .limit(30),
     ]);
@@ -53,14 +55,29 @@ export default async function Admin() {
   );
   type FeedbackRaekke = {
     id: string;
+    user_id: string;
     kategori: string;
     besked: string;
     status: string;
     created_at: string;
-    profiles: { email: string | null } | null;
+    email?: string | null;
   };
   // Fejler harmløst før feedback-migrationen er kørt
-  const feedback = (feedbackData.data ?? []) as unknown as FeedbackRaekke[];
+  const feedbackRaa = (feedbackData.data ?? []) as unknown as FeedbackRaekke[];
+  const feedbackBrugere = [...new Set(feedbackRaa.map((f) => f.user_id))];
+  const { data: feedbackProfiler } = feedbackBrugere.length
+    ? await service.from("profiles").select("id, email").in("id", feedbackBrugere)
+    : { data: [] };
+  const emailPrBruger = new Map(
+    ((feedbackProfiler ?? []) as { id: string; email: string | null }[]).map((p) => [
+      p.id,
+      p.email,
+    ]),
+  );
+  const feedback = feedbackRaa.map((f) => ({
+    ...f,
+    email: emailPrBruger.get(f.user_id) ?? null,
+  }));
 
   const { data } = await service
     .from("generations")
@@ -277,7 +294,7 @@ export default async function Admin() {
                 <p className="font-mono text-detalje text-tekst/70">
                   {new Date(f.created_at).toLocaleString("da-DK")} ·{" "}
                   {da.feedback.kategorier[f.kategori] ?? f.kategori} ·{" "}
-                  {f.profiles?.email ?? "ukendt"}
+                  {f.email ?? "ukendt"}
                 </p>
                 <p className="mt-2 max-w-laesbar whitespace-pre-wrap">{f.besked}</p>
               </Card>
