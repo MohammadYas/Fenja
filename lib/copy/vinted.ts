@@ -17,7 +17,7 @@ export const vinted = {
     tekst:
       "Tag 2–4 fotos, så renser Selja billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
     knap: "Lav din første annonce",
-    friktion: "Uden binding · du betaler kun for leverede billeder — fejler ét, refunderes kreditten automatisk",
+    friktion: "Uden binding · du betaler kun for leverede billeder · fejlede refunderes automatisk",
   },
   // Drømme-regnestykket: ægte høst-medianer, tydeligt mærket regneeksempel
   skabRegner: {
