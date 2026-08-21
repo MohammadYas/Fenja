@@ -632,8 +632,10 @@ export default function NytItem() {
           </div>
         ) : null}
 
-        {/* Navigation: Tilbage + Næste / stor afsend-knap på sidste trin */}
-        <div className="flex items-center gap-4">
+        {/* Navigation: Tilbage + Næste / stor afsend-knap på sidste trin.
+            scroll-mb holder knappen fri af den fikserede bund-nav, når der
+            scrolles til den (fundet i E2E 21/8: nav'en opfangede klikket) */}
+        <div className="flex scroll-mb-28 items-center gap-4">
           {trin > 1 ? (
             <button
               type="button"

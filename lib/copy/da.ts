@@ -36,7 +36,7 @@ export const da = {
     signupFane: "Opret konto",
     forklaringLogin: "Skriv din e-mail og adgangskode.",
     forklaringSignup:
-      "Vælg en e-mail og en adgangskode på mindst 8 tegn. Din konto oprettes med det samme — du kan gå direkte i gang.",
+      "Vælg en e-mail og en adgangskode på mindst 8 tegn. Du får et bekræftelseslink på mail — så er du i gang.",
     emailLabel: "E-mail",
     adgangskodeLabel: "Adgangskode",
     adgangskodeHjaelp: "Mindst 8 tegn.",
