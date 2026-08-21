@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
+import { erAdmin } from "@/lib/auth/admin";
 import { misbrugsvaern } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
@@ -8,17 +9,57 @@ import { KlageListe, type KlageRaekke } from "./klage-liste";
 
 export const metadata = { title: `${da.admin.titel} · ${da.site.navn}` };
 
-// Admin-omkostningsside (G-1) — kun for ejeren (ADMIN_EMAIL). Alle andre får 404.
+// Admin-side (G-1) — kun for admins (ADMIN_EMAIL, kommasepareret liste).
+// Alle andre får 404.
 export default async function Admin() {
   const supabase = await opretServerKlient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const adminEmail = process.env.ADMIN_EMAIL;
-  if (!adminEmail || user?.email !== adminEmail) notFound();
+  if (!erAdmin(user?.email)) notFound();
 
   const service = opretServiceKlient();
   const syvDageSiden = new Date(Date.now() - 7 * 86_400_000).toISOString();
+
+  // Nøgletal (avanceret panel, ejer-ordre 21/8): brugere, annoncer, salg og
+  // feedback — hurtige head-counts, ingen rækker hentes
+  const [brugere, brugereNye, annoncerAktive, annoncerSolgte, solgteRaekker, feedbackData] =
+    await Promise.all([
+      service.from("profiles").select("id", { count: "exact", head: true }),
+      service
+        .from("profiles")
+        .select("id", { count: "exact", head: true })
+        .gte("created_at", syvDageSiden),
+      service
+        .from("items")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active"),
+      service
+        .from("items")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "sold"),
+      service.from("items").select("sold_price_dkk").eq("status", "sold"),
+      service
+        .from("feedback")
+        .select("id, kategori, besked, status, created_at, profiles(email)")
+        .order("created_at", { ascending: false })
+        .limit(30),
+    ]);
+  const solgtSum = ((solgteRaekker.data ?? []) as { sold_price_dkk: number | null }[]).reduce(
+    (sum, r) => sum + Number(r.sold_price_dkk ?? 0),
+    0,
+  );
+  type FeedbackRaekke = {
+    id: string;
+    kategori: string;
+    besked: string;
+    status: string;
+    created_at: string;
+    profiles: { email: string | null } | null;
+  };
+  // Fejler harmløst før feedback-migrationen er kørt
+  const feedback = (feedbackData.data ?? []) as unknown as FeedbackRaekke[];
+
   const { data } = await service
     .from("generations")
     .select("kind, status, cost_dkk, created_at, items(user_id)")
@@ -142,6 +183,24 @@ export default async function Admin() {
     <main className="py-6">
       <h1 className="font-display text-display">{da.admin.titel}</h1>
 
+      {/* Nøgletal (21/8): fire tal øverst — resten af panelet er detaljer */}
+      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {(
+          [
+            [da.admin.noegletal.brugere, `${brugere.count ?? 0}`, da.admin.noegletal.nyeSyvDage(brugereNye.count ?? 0)],
+            [da.admin.noegletal.aktiveAnnoncer, `${annoncerAktive.count ?? 0}`, null],
+            [da.admin.noegletal.solgte, `${annoncerSolgte.count ?? 0}`, null],
+            [da.admin.noegletal.solgtFor, `${solgtSum.toFixed(0)} kr.`, null],
+          ] as const
+        ).map(([titel, vaerdi, note]) => (
+          <Card key={titel}>
+            <p className="text-detalje text-tekst/70">{titel}</p>
+            <p className="mt-1 font-mono text-titel">{vaerdi}</p>
+            {note ? <p className="mt-1 text-detalje text-tekst/70">{note}</p> : null}
+          </Card>
+        ))}
+      </div>
+
       <Card className="mt-6">
         <p className="text-detalje text-tekst/70">{da.admin.dagensForbrug}</p>
         <p className="mt-1 font-mono text-titel">
@@ -196,6 +255,27 @@ export default async function Admin() {
       {/* Klager (ejer-ordre 2026-08-20): åbne anmodninger om kredit retur */}
       <h2 className="mt-8 text-titel font-medium">{da.admin.klagerTitel}</h2>
       <KlageListe klager={klager} />
+
+      {/* Feedback (21/8): seneste 30, nyeste øverst */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.feedbackTitel}</h2>
+      {feedback.length === 0 ? (
+        <p className="mt-2 text-detalje text-tekst/70">{da.admin.feedbackTom}</p>
+      ) : (
+        <ul className="mt-3 flex flex-col gap-3">
+          {feedback.map((f) => (
+            <li key={f.id}>
+              <Card>
+                <p className="font-mono text-detalje text-tekst/70">
+                  {new Date(f.created_at).toLocaleString("da-DK")} ·{" "}
+                  {da.feedback.kategorier[f.kategori] ?? f.kategori} ·{" "}
+                  {f.profiles?.email ?? "ukendt"}
+                </p>
+                <p className="mt-2 max-w-laesbar whitespace-pre-wrap">{f.besked}</p>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
     </main>
   );
 }

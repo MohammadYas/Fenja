@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { erAdmin } from "@/lib/auth/admin";
 import { refunderKlage } from "@/lib/credits/ledger";
 import { SupabaseLedgerDb } from "@/lib/credits/supabase";
 import { opretServerKlient } from "@/lib/supabase/server";
@@ -8,17 +9,16 @@ import { opretServiceKlient } from "@/lib/supabase/service";
 // som resten af admin (G-1) — alle andre får 404, så ruten ikke røber noget.
 // Godkendelse refunderer annonce-prisen via ledgeren, idempotent pr. klage,
 // så dobbeltklik/genkørsler aldrig refunderer dobbelt.
-async function erAdmin(): Promise<boolean> {
+async function erAdminRequest(): Promise<boolean> {
   const supabase = await opretServerKlient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const adminEmail = process.env.ADMIN_EMAIL;
-  return Boolean(adminEmail && user?.email === adminEmail);
+  return erAdmin(user?.email);
 }
 
 export async function POST(request: NextRequest) {
-  if (!(await erAdmin())) {
+  if (!(await erAdminRequest())) {
     return NextResponse.json({ fejl: "findes ikke" }, { status: 404 });
   }
 

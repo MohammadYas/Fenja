@@ -87,6 +87,26 @@ export const da = {
       "Linket er udløbet eller allerede brugt. Bed om et nyt fra log ind-siden.",
     fejl: "Adgangskoden kunne ikke gemmes. Prøv igen.",
   },
+  // Feedback (ejer-ordre 21/8): kort formular på Konto, læses i admin
+  feedback: {
+    titel: "Ris, ros og idéer",
+    forklaring:
+      "Fandt du en fejl, eller mangler der noget? Skriv det her — vi læser det hele.",
+    kategoriLabel: "Hvad handler det om?",
+    kategorier: {
+      ros: "Ros",
+      fejl: "Fejl",
+      forslag: "Forslag",
+      andet: "Andet",
+    } as Record<string, string>,
+    beskedLabel: "Din besked",
+    beskedPladsholder: "Skriv kort og konkret — gerne med et eksempel.",
+    knap: "Send feedback",
+    tak: "Tak — vi har modtaget din besked og læser den snarest.",
+    fejlKategori: "Vælg hvad beskeden handler om.",
+    fejlBesked: "Skriv en besked på mellem 3 og 2000 tegn.",
+    fejlLoft: "Du har sendt meget feedback i dag — prøv igen i morgen.",
+  },
   konto: {
     titel: "Konto",
     emailLabel: "E-mail",
@@ -982,6 +1002,16 @@ export const da = {
   },
   admin: {
     titel: "Drift",
+    // Nøgletal øverst (avanceret panel, 21/8)
+    noegletal: {
+      brugere: "Brugere",
+      nyeSyvDage: (antal: number) => `+${antal} de sidste 7 dage`,
+      aktiveAnnoncer: "Aktive annoncer",
+      solgte: "Solgte",
+      solgtFor: "Solgt for i alt",
+    },
+    feedbackTitel: "Feedback fra brugerne",
+    feedbackTom: "Ingen feedback endnu.",
     dagensForbrug: "Dagens API-forbrug (globalt loft)",
     loftNaaet: "Loftet er nået — nye pipelines afvises indtil midnat (UTC).",
     // Ejer-ordre 20/8: kost pr. kredit skal kunne aflæses direkte
