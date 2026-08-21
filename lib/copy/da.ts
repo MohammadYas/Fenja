@@ -455,6 +455,16 @@ export const da = {
     salgplanTeaserTekst:
       "Få konkrete råd hver gang du åbner oversigten: hvad der skal sælges nu, hvad der skal sættes ned — og hvad du skal vente med. Regnet ud fra dine annoncer, sæsonen og ægte salgspriser.",
     salgplanTeaserKnap: "Se abonnementer",
+    // Garderobe-radar (abonnent-fordel, 21/8)
+    radar: {
+      titel: "Garderobe-radar",
+      garderobeVaerdi: (antal: number, sumDkk: number) =>
+        `Dine ${antal} aktive annoncer er cirka ${sumDkk} kr. værd tilsammen.`,
+      bedsteKategori: (navn: string, sumDkk: number) =>
+        `Din bedste kategori er ${navn.toLowerCase()} (${sumDkk} kr. solgt).`,
+      sourcingTitel: "Værd at source lige nu",
+      note: "Priser er medianer fra ægte Vinted-annoncer — brug dem som pejling, når du køber ind til videresalg.",
+    },
   },
   suppliers: {
     titel: "Suppliers",
@@ -1012,6 +1022,14 @@ export const da = {
     },
     feedbackTitel: "Feedback fra brugerne",
     feedbackTom: "Ingen feedback endnu.",
+    // Content-værktøjer (21/8): prompts klar til Claude/ChatGPT
+    content: {
+      titel: "Content-værktøjer",
+      forklaring:
+        "Kopiér en prompt, sæt den ind i Claude eller ChatGPT, og få udkast i Seljas tone med rigtige tal og fakta. Læs altid udkastet igennem før det postes.",
+      kopierKnap: "Kopiér prompt",
+      kopieret: "Kopieret ✓",
+    },
     dagensForbrug: "Dagens API-forbrug (globalt loft)",
     loftNaaet: "Loftet er nået — nye pipelines afvises indtil midnat (UTC).",
     // Ejer-ordre 20/8: kost pr. kredit skal kunne aflæses direkte

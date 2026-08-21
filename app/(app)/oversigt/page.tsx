@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Taeller } from "@/components/taeller";
 import { da } from "@/lib/copy/da";
+import { bygRadar } from "@/lib/salg/radar";
 import { bygSalgsplan, type SalgsPunkt } from "@/lib/salg/smart-plan";
+import { bygSalgsstatistik } from "@/lib/salg/statistik";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { SupplierKommerSnartKort } from "../suppliers/supplier-kommer-snart-kort";
 import { ItemListe } from "./item-liste";
@@ -116,6 +118,22 @@ export default async function Oversigt() {
     }
   }
 
+  // Garderobe-radar + statistik (abonnent, 21/8) — rene funktioner over
+  // annoncerne og den committede markedshøst
+  const statistik = bygSalgsstatistik(
+    items.map((item) => ({
+      status: item.status === "failed" ? "draft" : item.status,
+      soldPrisDkk: item.sold_price_dkk,
+      solgtAt: item.solgt_at,
+      leveretAt: item.leveret_at,
+      createdAt: item.created_at,
+      maerke: item.brand ?? "",
+      kategori: item.category ?? "",
+      prisTilDkk: item.pris_til_dkk,
+    })),
+  );
+  const radar = erAbonnent ? bygRadar() : [];
+
   const solgte = items.filter((i) => i.status === "sold");
   const samletVaerdi = solgte.reduce((sum, i) => sum + (i.sold_price_dkk ?? 0), 0);
   const liggetider = solgte
@@ -199,6 +217,62 @@ export default async function Oversigt() {
               {da.oversigt.salgplanTeaserKnap}
             </Link>
           </div>
+        </section>
+      ) : null}
+
+      {/* Garderobe-radar (abonnent-fordel, 21/8): garderobens forventede
+          værdi + hvad der er værd at source lige nu, vægtet med sæsonen */}
+      {erAbonnent ? (
+        <section
+          className="mt-6 rounded-bloed border border-kant bg-flade p-5"
+          aria-label={da.oversigt.radar.titel}
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="font-mono text-detalje font-bold tracking-wide text-gran">
+              {da.oversigt.radar.titel}
+            </p>
+            <p className="font-mono text-detalje uppercase tracking-wide text-tekst/50">
+              {da.oversigt.salgplanStempel}
+            </p>
+          </div>
+          {statistik.aktivAntal > 0 ? (
+            <p className="mt-3 max-w-laesbar text-detalje text-tekst/80">
+              {da.oversigt.radar.garderobeVaerdi(
+                statistik.aktivAntal,
+                Math.round(statistik.aktivVaerdiDkk),
+              )}
+              {statistik.bedsteKategori
+                ? ` ${da.oversigt.radar.bedsteKategori(
+                    statistik.bedsteKategori.navn,
+                    Math.round(statistik.bedsteKategori.sumDkk),
+                  )}`
+                : null}
+            </p>
+          ) : null}
+          <p className="mt-3 font-medium">{da.oversigt.radar.sourcingTitel}</p>
+          <ul className="mt-2 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+            {radar.map((punkt) => (
+              <li
+                key={`${punkt.maerke}-${punkt.kategori}`}
+                className="flex items-baseline justify-between gap-4 border-b border-kant py-2 text-detalje"
+              >
+                <span className="min-w-0">
+                  <span className="font-medium">
+                    {punkt.maerke} {punkt.kategori}
+                  </span>{" "}
+                  <span className={punkt.iSaeson ? "text-gran" : "text-tekst/60"}>
+                    · {punkt.saesonTekst}
+                  </span>
+                </span>
+                <span className="shrink-0 font-mono">
+                  ~{punkt.medianDkk} kr.
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-detalje text-tekst/60">
+            {da.oversigt.radar.note}
+          </p>
         </section>
       ) : null}
 

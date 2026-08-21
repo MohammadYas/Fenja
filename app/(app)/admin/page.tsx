@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
+import { CONTENT_PROMPTS } from "@/lib/admin/content-prompts";
 import { erAdmin } from "@/lib/auth/admin";
 import { misbrugsvaern } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
+import { ContentVaerktoejer } from "./content-vaerktoejer";
 import { KlageListe, type KlageRaekke } from "./klage-liste";
 
 export const metadata = { title: `${da.admin.titel} · ${da.site.navn}` };
@@ -255,6 +257,13 @@ export default async function Admin() {
       {/* Klager (ejer-ordre 2026-08-20): åbne anmodninger om kredit retur */}
       <h2 className="mt-8 text-titel font-medium">{da.admin.klagerTitel}</h2>
       <KlageListe klager={klager} />
+
+      {/* Content-værktøjer (21/8): prompts til Claude/ChatGPT + delebilleder */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.content.titel}</h2>
+      <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+        {da.admin.content.forklaring}
+      </p>
+      <ContentVaerktoejer prompts={CONTENT_PROMPTS} />
 
       {/* Feedback (21/8): seneste 30, nyeste øverst */}
       <h2 className="mt-8 text-titel font-medium">{da.admin.feedbackTitel}</h2>
