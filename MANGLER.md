@@ -6,10 +6,20 @@ Sidst opdateret: 2026-08-21 (deploy-runde). Kritisk vej øverst — tages oppefr
    scannet: ingen nøgler i arbejdstræ eller historik, `.env.local` har
    aldrig været committet. Arbejdstræet er rent og synkront med origin/main
    pr. 21/8; `npm run build` og alle 379 tests er grønne.
-2. [ ] **Netlify-site kobles til repoet + ALLE env-vars sættes i Netlify.**
-   Uden env-vars deployer sitet, men kører demo-mode: intet login, intet
-   køb, ingen AI. `netlify env:import .env.local` sætter dem i én kommando —
-   husk at rette `NEXT_PUBLIC_SITE_URL` til den deployede URL bagefter.
+2. [x] **DEPLOYET 21/8 — https://selja.netlify.app er live.** Site `selja`
+   oprettet, alle 13 env-vars importeret, `NEXT_PUBLIC_SITE_URL` sat til
+   produktions-URL'en. Verificeret: forsiden 200, `/oversigt` og `/nyt-item`
+   307'er til login (rigtig auth, ikke demo-mode), webhook-ruten svarer.
+   To fælder undervejs, begge fikset: (a) `netlify deploy --build` bygger
+   LOKALT, så `NEXT_PUBLIC_*` bages ind fra `.env.local` — uden
+   `.env.production.local` ville sitemap, Stripe-retur og OAuth-redirect
+   alle pege på localhost; (b) Next valgte `C:\Users\mo` som workspace-root
+   pga. en løs `package-lock.json` dér → serverbundlet blev sporet forkert
+   og sitet svarede 502 (`outputFileTracingRoot`, commit bfea359).
+   STADIG MANUELT: sitet er ikke git-koblet, så deploy sker via
+   `netlify deploy --build --prod` fra Fenja-mappen. Kobl repoet i Netlify-
+   UI'en for automatisk deploy ved push (så bygger Netlify i skyen med sine
+   egne env-vars, og fælde (a) forsvinder helt).
 3. [ ] **TRIGGER_SECRET_KEY — HARD BLOCKER PÅ NETLIFY, ikke "skalering".**
    `lib/pipeline/start.ts` kører uden nøglen pipelinen som fire-and-forget i
    selve request-processen. Det virker i en dev-server, men en Netlify-
@@ -18,12 +28,11 @@ Sidst opdateret: 2026-08-21 (deploy-runde). Kritisk vej øverst — tages oppefr
    produktion hængende i "på vej". Trigger.dev-projektet skal oprettes,
    `trigger.config.ts` pege på det, og `npx trigger.dev@latest deploy`
    køres, før betalende brugere slippes ind.
-4. [ ] **Stripe webhook mod den deployede URL** → `/api/webhooks/stripe`.
-   Kan først oprettes når URL'en findes. `STRIPE_SECRET_KEY` er nu SAT i
-   `.env.local`; kun `STRIPE_WEBHOOK_SECRET` er tom. Uden webhooken bliver
-   et gennemført køb aldrig til kreditter.
-5. [ ] **Supabase → Authentication → URL Configuration:** Netlify-URL'en ind
-   som Site URL + Redirect URL, ellers fejler Google-login i produktion.
+4. [ ] **Stripe webhook** → `https://selja.netlify.app/api/webhooks/stripe`.
+   URL'en findes nu. `STRIPE_SECRET_KEY` er SAT; kun `STRIPE_WEBHOOK_SECRET`
+   er tom. Uden webhooken bliver et gennemført køb aldrig til kreditter.
+5. [ ] **Supabase → Authentication → URL Configuration:** `https://selja.netlify.app`
+   ind som Site URL + Redirect URL, ellers fejler Google-login i produktion.
 6. [ ] **RESEND_API_KEY + domæneverifikation — MANGLER STADIG.** Uden den
    sendes INGEN mails: ingen velkomstmail, ingen kvittering, og "glemt
    adgangskode" (S39) findes slet ikke — hverken rute eller UI. En bruger
