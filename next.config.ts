@@ -32,6 +32,30 @@ const nextConfig: NextConfig = {
       { source: "/vinted", destination: "/", permanent: true },
     ];
   },
+  // Sikkerheds-headers (audit 21/8) — sat HER og ikke kun i netlify.toml,
+  // fordi Netlifys [[headers]] ikke rammer function-serverede svar (SSR).
+  // CSP bevidst udeladt: Next inliner scripts; kræver nonce-opsætning som
+  // egen opgave.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), payment=()",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
