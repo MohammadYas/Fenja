@@ -30,12 +30,15 @@ Sidst opdateret: 2026-08-21 (launch-dag). Kritisk vej øverst — tages oppefra.
    er oprettet på krausesigne@gmail.com.
 
 ## EFTER LAUNCH (vigtigst først)
-- [ ] **TÆND e-mail-bekræftelse FØR rigtige brugere lukkes ind** (ejer 21/8:
-      slået fra igen for nem test). Uden den kan enhver oprette konto på en
-      andens e-mail, og Google-login linker så offerets identitet ind i den
-      fremmede konto. Alt er klar (SMTP, danske skabeloner, UI håndterer
-      begge tilstande) — det er ÉT flip: Supabase auth-config
-      mailer_autoconfirm=false (via Composio eller dashboardet).
+- [x] **E-mail-bekræftelse er TÆNDT og E2E-VERIFICERET 21/8 (nat):** ejerens
+      dashboard-toggle havde ikke bidt på — sat via management-API'et.
+      Mail-links kører nu token_hash-flowet (/auth/confirm), som virker på
+      tværs af browsere/enheder — PKCE-linket knækkede, når mailen blev
+      åbnet et andet sted end signup'en (det var "det virkede ikke").
+      Redirects pinnes til selja.dk (Netlifys interne branch-domæne lækkede
+      ind og tabte sessionen). Verificeret med RIGTIGE mails via Resend:
+      signup → leveret mail → ægte link → logget ind; glemt kode → leveret
+      mail → ægte link → ny kode → login med ny kode. Testbrugere slettet.
 
 - [x] **21/8 aften-runde (alle ejer-ordrer leveret):** e-mail-bekræftelse TIL
       (lukker konto-overtagelse via andres e-mail; Supabase sender nu via

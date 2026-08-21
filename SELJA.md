@@ -30,9 +30,11 @@ B2B-delen (UGC/hjemmesider) er parkeret på `/studio` (noindex).
   - **Plus: 59 kr./md. eller 590 kr./år** — 12 kreditter/md.
   - **Pro: 119 kr./md. eller 1190 kr./år** — 30 kreditter/md.
   - Rollover: ubrugt kvote følger med, loftet er 2× månedskvoten.
+- **Engangspakker (tilbage i UI 21/8, ejer-ordre "skal have omsætning"):**
+  Prøv 5/49 kr. · Sælger 15/89 kr. (anbefalet) · Bunke 40/169 kr. · Lager
+  100/349 kr. — købes af alle på kreditsiden, ingen abonnement nødvendigt.
 - **Top-up** (10 kreditter/69 kr.) kan KUN købes af aktive abonnenter, og kun
-  når saldoen er under 0,5 kredit. Pakker (Prøv/Sælger/Bunke) findes i config
-  men er ude af UI (ejer-ordre).
+  når saldoen er under 0,5 kredit.
 - Ingen gratis kreditter ved signup (misbrugsværn, ejer-beslutning).
 - Regenerering af én del (ny visualisering/tekst): ½ kredit.
 
@@ -102,9 +104,7 @@ hvert deploy.
 - Security-headers (HSTS, X-Frame-Options DENY, nosniff m.fl.) via next.config
 - GDPR: selvbetjent indsigt/eksport + sletning på /konto; bilag 5 år
   (bogføringsloven); audit i `docs/gdpr-audit-2026-08-16.md` (P1+P2 åbne)
-- **E-mail-bekræftelse er BYGGET men SLÅET FRA** (ejer-valg under test).
-  Uden den kan man oprette konto på en andens e-mail → skal TÆNDES før
-  rigtige brugere (ét flip: Supabase `mailer_autoconfirm=false`)
+- **E-mail-bekræftelse er TÆNDT og E2E-verificeret** (21/8): mail-links kører token_hash-flowet via /auth/confirm (virker på tværs af enheder); glemt adgangskode fuldt verificeret med rigtige mails
 - 18+-gate ved signup OG i onboarding (OAuth kan ikke bære metadata)
 
 ## 6. Kendte root causes (lærdom — gentag dem ikke)
@@ -140,9 +140,7 @@ provider-nøgler KUN i gitignoret `.env.local`; nye features følger v6-designet
 ## 8. EJERENS TO-DO (prioriteret)
 
 ### Før du lukker rigtige brugere ind
-1. **Tænd e-mail-bekræftelse** — Supabase → Authentication → Sign In/Up →
-   "Confirm email" TIL (eller bed en assistent flippe `mailer_autoconfirm`).
-   Alt andet er klar (SMTP, danske skabeloner, UI)
+1. ~~Tænd e-mail-bekræftelse~~ GJORT og E2E-verificeret 21/8 (nat)
 2. **Kør Gate 1-troskabstesten** (`npx tsx scripts/gate1-fidelity-test.ts
    <mappe med ~20 egne tøjfotos> --live`) — mål ≥70 % troskab. Visualiseringen
    dumpede kvalitetstjekket i vores ene produktions-E2E; kalibrér
