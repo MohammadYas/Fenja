@@ -30,6 +30,22 @@ Sidst opdateret: 2026-08-21 (launch-dag). Kritisk vej øverst — tages oppefra.
    er oprettet på krausesigne@gmail.com.
 
 ## EFTER LAUNCH (vigtigst først)
+- [x] **E2E-VERIFICERET I PRODUKTION 21/8 (autonom runde):** login, oversigt,
+      kreditside, konto, wizard → rigtig annonce leveret via Trigger.dev
+      (tekst+pris fra DeepSeek; visualisering dumpede troskabstjek → kredit
+      auto-refunderet = ærligheds-flowet virker). delebillede (sharp på
+      lambda) svarer 200. 9. root cause fundet+fikset undervejs: lokal
+      Windows-deploy manglede linux-sharp → ALLE oprettelser 500´ede
+      (scripts/vendor-sharp-linux.sh + outputFileTracingIncludes, c0e5978).
+- [x] **Ny abonnent-feature 21/8: Ugens Salgsplan på mail** — Trigger.dev-
+      schedule (mandag 06 UTC) sender hver aktiv abonnents Smart Salgsplan
+      via Resend; stille uger sender intet. Vises på kreditsiden under
+      „Med i begge“.
+- [x] **IndexNow pinget 21/8** (202, 13 URL´er) — Bing/Yandex + ChatGPT-
+      søgning. Kør scripts/indexnow-ping.ts igen ved nye offentlige sider.
+- [ ] **Google Search Console:** kræver ejerens Google-login — tilføj
+      selja.dk som domain property og indsend sitemap.xml.
+
 - [ ] **Glemt adgangskode (S39) FINDES IKKE** — hverken rute eller UI. Nu
       hvor Resend virker, er den ublokeret. En e-mail+kode-bruger der mister
       koden er stadig låst ude (Google-login er eneste redning).
