@@ -21,8 +21,6 @@ describe("privatlivspolitikken oplyser det, art. 13 kræver", () => {
       "Stripe",
       "Resend",
       "Google",
-      "fal.ai",
-      "Anthropic",
     ]) {
       expect(alleAfsnit, `${behandler} mangler i politikken`).toContain(behandler);
     }

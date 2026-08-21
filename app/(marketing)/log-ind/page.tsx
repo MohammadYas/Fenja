@@ -33,6 +33,33 @@ function LogIndIndhold() {
   const [under18, setUnder18] = useState(false);
   const [fejl, setFejl] = useState<string | null>(null);
   const [travl, setTravl] = useState(false);
+  const [bekraeftMail, setBekraeftMail] = useState(false);
+  const [glemtSendt, setGlemtSendt] = useState(false);
+
+  // Glemt adgangskode (S39, ublokeret 21/8 da Resend-SMTP kom på): linket i
+  // mailen lander i callback-ruten, der veksler koden til en session og
+  // sender brugeren videre til ny-adgangskode-siden. Svarer altid "sendt" —
+  // også for ukendte adresser — så man ikke kan aflure hvem der har en konto.
+  async function sendNulstilling() {
+    setFejl(null);
+    if (!email) {
+      setFejl(da.logInd.glemt.emailFoerst);
+      return;
+    }
+    setTravl(true);
+    try {
+      const { opretBrowserKlient } = await import("@/lib/supabase/client");
+      const supabase = opretBrowserKlient();
+      await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?videre=${encodeURIComponent("/ny-adgangskode")}`,
+      });
+      setGlemtSendt(true);
+    } catch {
+      setFejl(da.logInd.fejlGenerel);
+    } finally {
+      setTravl(false);
+    }
+  }
 
   function skiftFane(ny: Fane) {
     setFane(ny);
@@ -109,6 +136,11 @@ function LogIndIndhold() {
           password: kode,
         });
         if (error) {
+          // Ubekræftet konto er ikke "forkert kode" — sig det ærligt
+          if (/confirm/i.test(error.message)) {
+            setBekraeftMail(true);
+            return;
+          }
           setFejl(da.logInd.fejlLogin);
           return;
         }
@@ -116,10 +148,23 @@ function LogIndIndhold() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password: kode,
-          options: { data: { age_confirmed: true } },
+          options: {
+            data: { age_confirmed: true },
+            // Bekræftelseslinket lander i callback-ruten, der veksler koden,
+            // sætter alder, tildeler kreditter og sender velkomstmail
+            emailRedirectTo: `${window.location.origin}/auth/callback?videre=${encodeURIComponent(videre)}`,
+          },
         });
         if (error || !data.user) {
           setFejl(da.logInd.fejlSignup);
+          return;
+        }
+        // E-mail-bekræftelse er slået TIL (sikkerhed, 21/8): ingen session før
+        // linket i mailen er fulgt. Findes adressen i forvejen, sender Supabase
+        // ingen mail men svarer identisk — samme besked her, så en angriber
+        // ikke kan aflure hvilke adresser der har en konto.
+        if (!data.session) {
+          setBekraeftMail(true);
           return;
         }
       }
@@ -146,6 +191,20 @@ function LogIndIndhold() {
       <main className="mx-auto max-w-md px-4 py-16">
         <h1 className="font-display text-kaempe font-bold">{da.logInd.titel}</h1>
         <p className="mt-4 max-w-laesbar">{da.logInd.under18}</p>
+      </main>
+    );
+  }
+
+  if (bekraeftMail) {
+    return (
+      <main className="mx-auto max-w-md px-4 py-16">
+        <h1 className="font-display text-kaempe font-bold">
+          {da.logInd.bekraeftMail.titel}
+        </h1>
+        <p className="mt-4 max-w-laesbar">{da.logInd.bekraeftMail.brod(email)}</p>
+        <p className="mt-2 max-w-laesbar text-detalje text-koks/70">
+          {da.logInd.bekraeftMail.spam}
+        </p>
       </main>
     );
   }
@@ -274,7 +333,22 @@ function LogIndIndhold() {
       </div>
 
       {!erSignup ? (
-        <p className="mt-6 text-detalje text-tekst/60">{da.logInd.glemtKode}</p>
+        <div className="mt-6">
+          {glemtSendt ? (
+            <p role="status" className="text-detalje text-tekst/80">
+              {da.logInd.glemt.sendt}
+            </p>
+          ) : (
+            <button
+              type="button"
+              disabled={travl}
+              onClick={sendNulstilling}
+              className="min-h-touch cursor-pointer text-detalje text-tekst/60 underline underline-offset-2 hover:text-koks"
+            >
+              {da.logInd.glemt.knap}
+            </button>
+          )}
+        </div>
       ) : null}
     </main>
   );

@@ -90,8 +90,8 @@ describe("forsidens forventningsafstemning", () => {
       (nummer) => nummer.includes("text-tekst"),
     );
 
-    // 3 trin + 3 guides + 3 salgsplan-punkter i markedstjekkeren (20/8)
-    expect(numre).toHaveLength(9);
+    // 3 trin — guides- og markedstjek-sektionerne røg af forsiden i 21/8-oprydningen
+    expect(numre).toHaveLength(3);
     for (const nummer of numre) {
       expect(nummer).toContain("text-tekst/70");
       expect(nummer).not.toContain("text-tekst/50");

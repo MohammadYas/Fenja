@@ -19,10 +19,8 @@ function typiskMedianDkk(): number {
   return Math.max(25, Math.floor(midt / 25) * 25);
 }
 import { JsonLd } from "@/components/json-ld";
-import { PopulaertSektion } from "@/components/eksperimenter/populaert-sektion";
 import { Reveal } from "@/components/reveal";
 import { vinted } from "@/lib/copy/vinted";
-import { hentGuides } from "@/lib/guides";
 import { forsideGraf } from "@/lib/seo/jsonld";
 
 // Forsiden er Vinted-appen (STRATEGISKIFT 2026-08-15: Selja er ét produkt
@@ -41,7 +39,6 @@ export const metadata = {
 };
 
 export default function Forside() {
-  const guides = hentGuides().slice(0, 3);
   const hoestDato = nyesteHoestDato();
   const regneMedian = typiskMedianDkk();
   // Katalogbillederne findes automatisk fra public/eksempler/katalog/ —
@@ -85,6 +82,38 @@ export default function Forside() {
               <FoerEfter />
             </Reveal>
           </div>
+        </div>
+      </section>
+
+      {/* Sådan virker det STÅR FØRST efter heroen (oprydning 21/8, ejer:
+          "forsiden er rodet for en ny bruger") — det første en ny besøgende
+          skal forstå er hvad produktet gør, ikke et regnestykke */}
+      <section id="saadan" className="border-b border-kant" aria-label={vinted.saadan.titel}>
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+          <h2 className="font-display text-display font-bold">
+            {vinted.saadan.titel}
+          </h2>
+          <ol className="mt-6">
+            {vinted.saadan.trin.map((trin, i) => (
+              <li
+                key={trin.titel}
+                className="border-t border-kant py-6 first:border-t-0 first:pt-4"
+              >
+                <Reveal forsinkelseTrin={i}>
+                  <div className="grid gap-1 md:grid-cols-[3rem_16rem_1fr] md:gap-6">
+                    <span
+                      aria-hidden="true"
+                      className="select-none font-mono text-basis text-tekst/70"
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <h3 className="font-display text-lead font-semibold">{trin.titel}</h3>
+                    <p className="max-w-laesbar text-tekst/80">{trin.tekst}</p>
+                  </div>
+                </Reveal>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
@@ -132,36 +161,6 @@ export default function Forside() {
         </div>
       </section>
 
-      {/* Sådan virker det: 3 trin som rolige rækker — nav-ankeret peger her */}
-      <section id="saadan" className="border-b border-kant" aria-label={vinted.saadan.titel}>
-        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <h2 className="font-display text-display font-bold">
-            {vinted.saadan.titel}
-          </h2>
-          <ol className="mt-6">
-            {vinted.saadan.trin.map((trin, i) => (
-              <li
-                key={trin.titel}
-                className="border-t border-kant py-6 first:border-t-0 first:pt-4"
-              >
-                <Reveal forsinkelseTrin={i}>
-                  <div className="grid gap-1 md:grid-cols-[3rem_16rem_1fr] md:gap-6">
-                    <span
-                      aria-hidden="true"
-                      className="select-none font-mono text-basis text-tekst/70"
-                    >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="font-display text-lead font-semibold">{trin.titel}</h3>
-                    <p className="max-w-laesbar text-tekst/80">{trin.tekst}</p>
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
       {/* Praktisk Vinted-brug i sidens ene mørke bånd. */}
       <section
         className="bg-koks text-kalk"
@@ -205,41 +204,7 @@ export default function Forside() {
         </div>
       </section>
 
-      {/* Lær-teaser: tre guides + vej til dem alle */}
-      <section className="border-b border-kant" aria-labelledby="laer-titel">
-        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
-          <h2 id="laer-titel" className="font-display text-display font-bold">
-            {vinted.laerTeaser.titel}
-          </h2>
-          <p className="mt-3 max-w-laesbar text-tekst/80">{vinted.laerTeaser.tekst}</p>
-          <div className="mt-6 grid gap-x-10 gap-y-6 md:grid-cols-3">
-            {guides.map((guide, i) => (
-              <Reveal key={guide.slug} forsinkelseTrin={i}>
-                <Link href={`/laer/${guide.slug}`} className="group block border-t border-kant pt-4">
-                  <span aria-hidden="true" className="select-none font-mono text-detalje text-tekst/70">
-                    {String(guide.raekkefoelge).padStart(2, "0")}
-                  </span>
-                  <span className="soem-link mt-1 block font-display text-lead font-semibold group-hover:text-gran">
-                    {guide.titel}
-                  </span>
-                  <span className="mt-2 block text-detalje text-tekst/70">
-                    {guide.beskrivelse}
-                  </span>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-          <p className="mt-8">
-            <Link href="/laer" className="soem-link inline-flex min-h-touch items-center font-medium text-primaer">
-              {vinted.laerTeaser.alleGuides} →
-            </Link>
-          </p>
-        </div>
-      </section>
 
-      {/* EKSPERIMENT (lib/eksperimenter.ts): markedstal fra høsten — hele
-          sektionen kan slås fra med ét flag eller env EKSPERIMENTER_FRA */}
-      <PopulaertSektion />
 
       {/* Slut-CTA: taler kun til sælgere — vejen til studioet bor i footeren */}
       <section className="border-b border-kant">

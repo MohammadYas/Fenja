@@ -109,78 +109,69 @@ export function AbonnementValg({
           )
             .toFixed(2)
             .replace(".", ",");
+          const knapKlasser = `inline-flex min-h-touch w-full cursor-pointer items-center justify-center rounded-bloed px-5 font-brod text-basis font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto ${
+            moerk
+              ? "bg-kalk text-koks hover:bg-hoer"
+              : "bg-primaer text-primaer-tekst hover:bg-koks"
+          }`;
           return (
-            // Fast to-kolonne-gitter i stedet for flex-wrap: prisen er
-            // bredere som årspris ("1190 kr."), og wrappet fik hele
-            // pris-kolonnen til at falde ned under navnet, så rækken skiftede
-            // udseende alt efter periode. Gitteret ligger fast.
-            <div
-              key={tier.id}
-              className={`grid grid-cols-1 items-baseline gap-x-6 gap-y-4 border-b py-6 sm:grid-cols-[minmax(0,1fr)_auto] ${raekkeKant}`}
-            >
-              <div className="max-w-xs">
-                <p className="font-display text-titel font-semibold">
-                  {navn}
-                </p>
-                <p className={`mt-1 font-mono text-detalje ${daempet}`}>
-                  {copy.annoncerPrMd(tier.annoncerPrMd)}
-                </p>
-                {tier.id === "pro" ? (
-                  <p className={`mt-1 font-mono text-detalje ${fremhaevet}`}>
-                    {copy.lavestePris}
+            // Mobil-ombygning (ejer 21/8: "ser ikke clean ud"): navn og pris
+            // deler ALTID øverste række (prisen mindre på mobil), funktioner
+            // står samlet under, og knappen er fuld bredde på mobil. Ingen
+            // kolonner der falder ned under hinanden længere.
+            <div key={tier.id} className={`border-b py-6 ${raekkeKant}`}>
+              <div className="flex items-baseline justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="font-display text-titel font-semibold">{navn}</p>
+                  <p className={`mt-1 font-mono text-detalje ${daempet}`}>
+                    {copy.annoncerPrMd(tier.annoncerPrMd)}
                   </p>
-                ) : null}
-              </div>
-              <div className="text-left sm:text-right">
-                <p className="overflow-hidden font-mono text-hero font-bold leading-none">
-                  {/* key-skiftet genstarter pris-rul, så tallet ruller ind */}
-                  <span key={periode} className="pris-rul inline-block">
-                    {pris} kr.
-                  </span>
-                </p>
-                <p className={`mt-1 font-mono text-detalje ${daempet}`}>
-                  {periode === "aar" ? copy.periodeAarNote : copy.prMd}
-                </p>
-                <p className={`mt-1 font-mono text-detalje ${daempet}`}>
-                  {da.kreditter.prisPrStk(prisPrAnnonce)}
-                </p>
-                <div className="mt-3">
-                  {koebAktiv ? (
-                    <button
-                      type="button"
-                      onClick={() => koeb(tier.id)}
-                      disabled={travlTier !== null}
-                      aria-busy={travlTier === tier.id || undefined}
-                      className={`inline-flex min-h-touch cursor-pointer items-center justify-center rounded-bloed px-5 font-brod text-basis font-medium transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 ${
-                        moerk
-                          ? "bg-kalk text-koks hover:bg-hoer"
-                          : "bg-primaer text-primaer-tekst hover:bg-koks"
-                      }`}
-                    >
-                      {copy.koebKnap(navn)}
-                    </button>
-                  ) : (
-                    <Link
-                      href="/log-ind?videre=/kreditter"
-                      className={`inline-flex min-h-touch items-center justify-center rounded-bloed px-5 font-brod text-basis font-medium transition active:scale-[0.98] ${
-                        moerk
-                          ? "bg-kalk text-koks hover:bg-hoer"
-                          : "bg-primaer text-primaer-tekst hover:bg-koks"
-                      }`}
-                    >
-                      {copy.koebKnap(navn)}
-                    </Link>
-                  )}
+                  {tier.id === "pro" ? (
+                    <p className={`mt-1 font-mono text-detalje ${fremhaevet}`}>
+                      {copy.lavestePris}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="overflow-hidden font-mono text-titel font-bold leading-none sm:text-hero">
+                    {/* key-skiftet genstarter pris-rul, så tallet ruller ind */}
+                    <span key={periode} className="pris-rul inline-block">
+                      {pris} kr.
+                    </span>
+                  </p>
+                  <p className={`mt-1 font-mono text-detalje ${daempet}`}>
+                    {periode === "aar" ? copy.periodeAarNote : copy.prMd}
+                  </p>
+                  <p className={`mt-1 font-mono text-detalje ${daempet}`}>
+                    {da.kreditter.prisPrStk(prisPrAnnonce)}
+                  </p>
                 </div>
               </div>
               {/* Funktioner pr. tier — konkrete, ingen marketing-luft */}
-              <ul className={`text-detalje sm:col-span-2 ${daempet}`}>
+              <ul className={`mt-3 text-detalje ${daempet}`}>
                 {funktioner.map((punkt) => (
                   <li key={punkt} className="mt-1">
                     {punkt}
                   </li>
                 ))}
               </ul>
+              <div className="mt-4">
+                {koebAktiv ? (
+                  <button
+                    type="button"
+                    onClick={() => koeb(tier.id)}
+                    disabled={travlTier !== null}
+                    aria-busy={travlTier === tier.id || undefined}
+                    className={knapKlasser}
+                  >
+                    {copy.koebKnap(navn)}
+                  </button>
+                ) : (
+                  <Link href="/log-ind?videre=/kreditter" className={knapKlasser}>
+                    {copy.koebKnap(navn)}
+                  </Link>
+                )}
+              </div>
             </div>
           );
         })}

@@ -46,11 +46,24 @@ export const da = {
     alderHjaelp: "Vinted kræver, at sælgere er myndige — det gør vi også.",
     logIndKnap: "Log ind",
     opretKnap: "Opret konto",
-    // Glemt-kode-flow kræver mail og er parkeret (S39) — indtil da: kontakt.
-    glemtKode: "Glemt din adgangskode? Skriv til os, så hjælper vi dig i gang igen.",
+    // Glemt adgangskode (S39, bygget 21/8 — Resend-SMTP gjorde det muligt)
+    glemt: {
+      knap: "Glemt din adgangskode?",
+      emailFoerst: "Skriv din e-mail i feltet ovenfor først.",
+      sendt: "Hvis adressen har en konto, har vi sendt et link til at vælge en ny adgangskode. Kig også i spam.",
+    },
     under18:
       "Selja er for sælgere på 18 år eller derover, fordi Vinted kræver det. Du er velkommen tilbage, når du er fyldt 18.",
     alderPaakraevet: "Bekræft at du er 18 år eller ældre for at fortsætte.",
+    // E-mail-bekræftelse (sikkerhed 21/8): ingen adgang før linket er fulgt.
+    // Samme besked uanset om adressen findes i forvejen — ellers kan man
+    // aflure hvilke e-mails der har en konto.
+    bekraeftMail: {
+      titel: "Tjek din indbakke",
+      brod: (email: string) =>
+        `Vi har sendt et bekræftelseslink til ${email}. Tryk på linket, så er din konto klar.`,
+      spam: "Ingen mail? Kig i spam, eller prøv igen om et øjeblik.",
+    },
     fejlLogin: "Forkert e-mail eller adgangskode. Prøv igen.",
     fejlSignup:
       "Kontoen kunne ikke oprettes. Måske findes e-mailen allerede — prøv at logge ind i stedet.",
@@ -64,6 +77,15 @@ export const da = {
       "Bekræft først, at du er 18 år eller ældre — så kan du fortsætte med Google.",
     fejlSocial:
       "Log ind med den tjeneste kunne ikke starte. Prøv igen, eller brug e-mail og adgangskode.",
+  },
+  // Ny adgangskode-siden (S39): landing fra nulstillings-mailen
+  nyAdgangskode: {
+    titel: "Vælg ny adgangskode",
+    forklaring: "Skriv din nye adgangskode — så er du logget ind med det samme.",
+    knap: "Gem ny adgangskode",
+    ingenSession:
+      "Linket er udløbet eller allerede brugt. Bed om et nyt fra log ind-siden.",
+    fejl: "Adgangskoden kunne ikke gemmes. Prøv igen.",
   },
   konto: {
     titel: "Konto",
@@ -885,7 +907,7 @@ export const da = {
   },
   privatliv: {
     titel: "Privatliv",
-    opdateret: "Senest opdateret: 16. august 2026",
+    opdateret: "Senest opdateret: 21. august 2026",
     afsnit: [
       {
         overskrift: "Kort version",
@@ -912,16 +934,16 @@ export const da = {
         overskrift: "Hvem behandler data for os",
         tekst: [
           "Supabase: database og billeder, hostet i EU (Irland), privat lager med midlertidige links.",
-          "Netlify: drift af selve siden. Trigger.dev: kører de tunge genereringsjobs — de får kun id'et på din annonce, aldrig dine billeder.",
-          "Stripe: betaling, abonnement og kvitteringer. Resend: de mails, vi sender dig.",
-          "Google (Gemini) og fal.ai: billedmodellerne, der renser dine fotos og laver visualiseringen. Anthropic (Claude): modellen, der skriver annonceteksten.",
-          "Dine billeder sendes kun til modellerne for at lave netop din annonce — aldrig til træning, aldrig til andre kunder.",
+          "Netlify: drift af selve siden. Trigger.dev: kører de tunge genereringsjobs.",
+          "Stripe: betaling, abonnement og kvitteringer. Resend: de mails, vi sender dig — inklusive login- og bekræftelsesmails.",
+          "Google (Gemini): billedmodellen, der renser dine fotos, laver visualiseringen og kvalitetstjekker resultatet. Dine billeder sendes kun dertil — og kun for at lave netop din annonce, aldrig til træning, aldrig til andre kunder.",
+          "Annonceteksten skrives af en ekstern sprogmodel-leverandør, der udelukkende modtager de oplysninger, du selv har tastet ind om tøjet (mærke, størrelse, stand, fejl) — aldrig dine billeder, dit navn eller din e-mail.",
         ],
       },
       {
-        overskrift: "Overførsel til USA",
+        overskrift: "Overførsel til lande uden for EU/EØS",
         tekst: [
-          "Nogle af leverandørerne behandler data i USA. Overførslen sker efter EU's godkendte rammer (EU-U.S. Data Privacy Framework eller standardkontraktbestemmelser), og vi holder en liste over grundlaget pr. leverandør, som du kan bede om at se.",
+          "Nogle af leverandørerne behandler data uden for EU/EØS, blandt andet i USA. Overførslerne sker efter EU's godkendte rammer (EU-U.S. Data Privacy Framework eller EU's standardkontraktbestemmelser med supplerende foranstaltninger), og vi holder en liste over grundlaget pr. leverandør, som du kan bede om at se.",
         ],
       },
       {
