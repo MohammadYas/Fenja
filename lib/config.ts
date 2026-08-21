@@ -1,9 +1,10 @@
 // Central konfiguration — justérbare forretningsværdier samlet ét sted.
 
-// Produktets domæne — ÉN kilde til alle domæne-referencer. PLACEHOLDER indtil
-// ejeren bekræfter det købte domæne; i produktion sættes NEXT_PUBLIC_SITE_URL,
-// ellers skiftes kun denne ene linje.
-export const SELJA_DOMAIN = "selja.studio";
+// Produktets domæne — ÉN kilde til alle domæne-referencer. Ejeren købte
+// selja.dk 2026-08-21. Dette er kun fallback'en: i produktion vinder
+// NEXT_PUBLIC_SITE_URL, som peger på selja.netlify.app indtil DNS'en for
+// selja.dk er lagt om.
+export const SELJA_DOMAIN = "selja.dk";
 
 // Sidens offentlige base-URL. Bruges hvor der ikke findes en request-origin
 // (Trigger.dev-jobs, transaktionsmails) til at bygge absolutte links. Samme
