@@ -15,7 +15,7 @@ export const vinted = {
     // Renset 21/8 (ejer: "det roder i toppen"): ét afsnit siger det hele —
     // tidsnoten er bagt ind, så heroen er rubrik → tekst → knap → friktion
     tekst:
-      "Tag 2–4 fotos, så renser Selja billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — klar til Vinted på cirka 2 minutter.",
+      "Tag 2–4 fotos, så renser Selja billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
     knap: "Lav din første annonce",
     friktion: "Uden binding · fejler et billede, får du kreditten tilbage automatisk",
   },
