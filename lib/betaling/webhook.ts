@@ -18,11 +18,21 @@ export type StripeCheckoutEvent = {
     object: {
       payment_status?: string;
       metadata?: Record<string, string>;
-      // invoice.paid-felter (kun sat på fakturaer)
+      // invoice.paid-felter (kun sat på fakturaer). Stripe FLYTTEDE felterne
+      // i 2025+-API-versionerne (fundet 21/8 på det FØRSTE rigtige køb —
+      // endpointet leverer med 2026-07-29.dahlia): subscription_details bor
+      // nu under parent, og linjens price under pricing.price_details. Begge
+      // former læses, så en betalt faktura aldrig efterlades ukrediteret.
       id?: string;
       status?: string;
       subscription_details?: { metadata?: Record<string, string> };
-      lines?: { data?: { price?: { id?: string } }[] };
+      parent?: { subscription_details?: { metadata?: Record<string, string> } };
+      lines?: {
+        data?: {
+          price?: { id?: string };
+          pricing?: { price_details?: { price?: string } };
+        }[];
+      };
     };
   };
 };
@@ -73,11 +83,14 @@ async function haandterFaktura(
   if (faktura.status !== "paid") {
     return { haandteret: false, grund: "faktura ikke betalt" };
   }
-  const userId = faktura.subscription_details?.metadata?.userId;
+  const userId =
+    faktura.subscription_details?.metadata?.userId ??
+    faktura.parent?.subscription_details?.metadata?.userId;
   if (!userId) {
     return { haandteret: false, grund: "faktura uden userId-metadata" };
   }
-  const prisId = faktura.lines?.data?.[0]?.price?.id;
+  const linje = faktura.lines?.data?.[0];
+  const prisId = linje?.price?.id ?? linje?.pricing?.price_details?.price;
   const tier = prisId ? TIER_FOR_PRIS[prisId] : undefined;
   if (!tier) {
     return { haandteret: false, grund: `ukendt pris-id: ${prisId ?? "mangler"}` };

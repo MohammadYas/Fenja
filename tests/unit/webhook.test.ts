@@ -96,6 +96,33 @@ describe("Stripe-webhook: top-up og abonnementer (pricing v3.0)", () => {
     expect(status.prKilde.topup).toBe(10);
   });
 
+  it("dahlia-formen (parent + pricing.price_details) krediterer også — 10. root cause 21/8", async () => {
+    // Stripe 2025+ flyttede felterne: subscription_details bor under parent,
+    // og linjens price under pricing.price_details. Det FØRSTE rigtige køb
+    // blev tabt på gulvet, fordi handleren kun læste den gamle form og
+    // svarede 200 — Stripe prøvede derfor aldrig igen.
+    const ledger = new MemoryLedgerDb();
+    const udfald = await haandterStripeEvent(ledger, {
+      id: "evt_dahlia",
+      type: "invoice.paid",
+      data: {
+        object: {
+          id: "in_dahlia",
+          status: "paid",
+          parent: { subscription_details: { metadata: { userId: "u9" } } },
+          lines: { data: [{ pricing: { price_details: { price: stripePriser.plusMd } } }] },
+        },
+      },
+    });
+    expect(udfald).toEqual({
+      haandteret: true,
+      slags: "abonnement",
+      userId: "u9",
+      tier: "plus",
+    });
+    const status = await ledger.hentStatus("u9");
+    expect(status.prKilde.subscription).toBe(12);
+  });
   it("betalt faktura giver månedskvoten for tierens pris-id", async () => {
     const ledger = new MemoryLedgerDb();
     const udfald = await haandterStripeEvent(ledger, fakturaEvent());

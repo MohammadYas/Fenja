@@ -12,11 +12,11 @@ export const vinted = {
   // penge værd) — aldrig et indtjeningsløfte. Funktionsløftet støtter under.
   hero: {
     rubrik: "Dit klædeskab er penge værd.",
+    // Renset 21/8 (ejer: "det roder i toppen"): ét afsnit siger det hele —
+    // tidsnoten er bagt ind, så heroen er rubrik → tekst → knap → friktion
     tekst:
-      "Tøjet, der bare hænger dér, kan blive til penge. Tag 2–4 fotos, så renser Selja billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag. Du kopierer bare ind på Vinted.",
-    tidsnote:
-      "Selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
-    knap: "Lav min annonce",
+      "Tag 2–4 fotos, så renser Selja billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — klar til Vinted på cirka 2 minutter.",
+    knap: "Lav din første annonce",
     friktion: "Uden binding · fejler et billede, får du kreditten tilbage automatisk",
   },
   // Drømme-regnestykket: ægte høst-medianer, tydeligt mærket regneeksempel

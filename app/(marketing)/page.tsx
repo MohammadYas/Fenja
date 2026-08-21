@@ -61,9 +61,6 @@ export default function Forside() {
             <p className="mt-6 max-w-laesbar text-lead text-tekst/80">
               {vinted.hero.tekst}
             </p>
-            <p className="mt-4 max-w-laesbar text-detalje text-tekst/70">
-              {vinted.hero.tidsnote}
-            </p>
             <Link href="/log-ind" className="knap-link mt-8">
               {vinted.hero.knap}
             </Link>
