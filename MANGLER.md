@@ -1,56 +1,50 @@
 # MANGLER FØR PUBLISH
-Sidst opdateret: 2026-08-21 (deploy-runde). Kritisk vej øverst — tages oppefra.
+Sidst opdateret: 2026-08-21 (launch-dag). Kritisk vej øverst — tages oppefra.
 
-## KRITISK VEJ LIGE NU
-1. [x] **Push main til GitHub** — gjort 20/8 nat (13 commits). Historikken er
-   scannet: ingen nøgler i arbejdstræ eller historik, `.env.local` har
-   aldrig været committet. Arbejdstræet er rent og synkront med origin/main
-   pr. 21/8; `npm run build` og alle 379 tests er grønne.
-2. [x] **DEPLOYET 21/8 — https://selja.netlify.app er live.** Site `selja`
-   oprettet, alle 13 env-vars importeret, `NEXT_PUBLIC_SITE_URL` sat til
-   produktions-URL'en. Verificeret: forsiden 200, `/oversigt` og `/nyt-item`
-   307'er til login (rigtig auth, ikke demo-mode), webhook-ruten svarer.
-   To fælder undervejs, begge fikset: (a) `netlify deploy --build` bygger
-   LOKALT, så `NEXT_PUBLIC_*` bages ind fra `.env.local` — uden
-   `.env.production.local` ville sitemap, Stripe-retur og OAuth-redirect
-   alle pege på localhost; (b) Next valgte `C:\Users\mo` som workspace-root
-   pga. en løs `package-lock.json` dér → serverbundlet blev sporet forkert
-   og sitet svarede 502 (`outputFileTracingRoot`, commit bfea359).
-   STADIG MANUELT: sitet er ikke git-koblet, så deploy sker via
-   `netlify deploy --build --prod` fra Fenja-mappen. Kobl repoet i Netlify-
-   UI'en for automatisk deploy ved push (så bygger Netlify i skyen med sine
-   egne env-vars, og fælde (a) forsvinder helt).
-3. [~] **Trigger.dev DEPLOYET 21/8 — version 20260821.1, 2 tasks**
-   (`item-pipeline`, `item-regen`) mod projektet Selja
-   (`proj_zmmrdmvkjhnxepwlxssi`, org SDu, ejerens konto
-   MohammadYassin26@hotmail.com). `trigger.config.ts` peger på ref'en, og
-   `syncEnvVars` skubber provider-nøglerne op ved hvert deploy, så jobmiljøet
-   aldrig drifter fra Netlifys. Pakkerne er pinnet til 4.5.12 = CLI-versionen
-   (deploy nægter ved mismatch). **MANGLER KUN: `TRIGGER_SECRET_KEY`
-   (tr_prod_…) ind i Netlify** — hentes i dashboardet under projektets
-   API keys og sættes med `netlify env:set TRIGGER_SECRET_KEY <nøgle>` +
-   redeploy. Uden den kører pipelinen stadig fire-and-forget i Netlify-
-   functionen og ALLE annoncer hænger i "på vej" (én billedkørsel ~150 s;
-   functionen fryses når svaret er sendt). Baggrund: `lib/pipeline/start.ts`.
-4. [ ] **Stripe webhook** → `https://selja.netlify.app/api/webhooks/stripe`.
-   URL'en findes nu. `STRIPE_SECRET_KEY` er SAT; kun `STRIPE_WEBHOOK_SECRET`
-   er tom. Uden webhooken bliver et gennemført køb aldrig til kreditter.
-5. [x] **Supabase URL Configuration sat af ejeren 21/8 og VERIFICERET:**
-   authorize-endpointet 302'er til Google med `selja.netlify.app` som
-   redirect_to. Google-login virker på den deployede URL.
-5b. [ ] **selja.dk KØBT 21/8 — skal kobles på Netlify-sitet.** Netlify-UI:
-   selja → Domain management → Add domain → selja.dk, og hos registraren
-   enten Netlifys navneservere ELLER A-record `@` → 75.2.60.5 + CNAME
-   `www` → selja.netlify.app. Når DNS'en svarer: opdatér
-   `NEXT_PUBLIC_SITE_URL` (Netlify + `.env.production.local`) og Supabase
-   redirect-URLs til https://selja.dk og redeploy. `lib/config.ts`-fallbacken
-   peger allerede på selja.dk. Webhooken på selja.netlify.app bliver ved med
-   at virke — netlify-URL'en forsvinder ikke når domænet kobles på.
-6. [ ] **RESEND_API_KEY + domæneverifikation — MANGLER STADIG.** Uden den
-   sendes INGEN mails: ingen velkomstmail, ingen kvittering, og "glemt
-   adgangskode" (S39) findes slet ikke — hverken rute eller UI. En bruger
-   der mister sin kode kan i dag ikke komme ind igen. Google-login er en
-   delvis redning, men kun for dem der brugte Google.
+## KRITISK VEJ — ALT LUKKET 21/8. APPEN ER LIVE PÅ https://selja.dk
+1. [x] **Push main til GitHub** — gjort 20/8 nat; arbejdstræ rent og synkront,
+   build + 379 tests grønne.
+2. [x] **DEPLOYET — https://selja.dk (+ www + selja.netlify.app).** Site
+   `selja`, alle env-vars sat. To fælder fikset: (a) `netlify deploy --build`
+   bygger LOKALT → `.env.production.local` styrer `NEXT_PUBLIC_*`;
+   (b) løs `package-lock.json` i C:\Users\mo gav forkert workspace-root →
+   502 på alt (`outputFileTracingRoot`, bfea359). STADIG MANUELT DEPLOY:
+   `netlify deploy --prod` fra Fenja-mappen — kobl repoet i Netlify-UI'en
+   for auto-deploy ved push.
+3. [x] **Trigger.dev LIVE** — projekt Selja (`proj_zmmrdmvkjhnxepwlxssi`),
+   2 tasks (`item-pipeline`, `item-regen`), `TRIGGER_SECRET_KEY` (tr_prod)
+   sat i Netlify. `syncEnvVars` skubber nøglerne til jobmiljøet ved hvert
+   `npx trigger.dev@4.5.12 deploy`. Pakker pinnet til CLI-versionen.
+4. [x] **Stripe webhook OPRETTET af ejeren:** `https://selja.dk/api/webhooks/stripe`
+   (destination `we_1U6uOmQu1PV9huwJxb66BP3B`, 4 events, API-version
+   2026-07-29.dahlia). `STRIPE_WEBHOOK_SECRET` sat i Netlify + `.env.local`.
+5. [x] **selja.dk AKTIVT** — Punktum/MitID-aktivering gjort af ejeren; A/CNAME
+   korrekte hos registraren; Netlify serverer domænet med HTTPS.
+6. [x] **Supabase auth-config rettet via Composio:** `site_url` var
+   `http://localhost:3000` (Google-login smed brugere til localhost efter
+   det nye domæne) → nu `https://selja.dk`; allowlist =
+   localhost:3000/**, selja.dk/**, www.selja.dk/**, selja.netlify.app/**.
+7. [x] **Resend LIVE:** selja.dk verificeret (DKIM/SPF/MX), nøgle sat i
+   Netlify + Trigger.dev, `RESEND_FROM="Selja <post@selja.dk>"`. Testmail
+   sendt og leveret til ejerens gmail (id 182ce635…). OBS: Resend-kontoen
+   er oprettet på krausesigne@gmail.com.
+
+## EFTER LAUNCH (vigtigst først)
+- [ ] **Glemt adgangskode (S39) FINDES IKKE** — hverken rute eller UI. Nu
+      hvor Resend virker, er den ublokeret. En e-mail+kode-bruger der mister
+      koden er stadig låst ude (Google-login er eneste redning).
+- [ ] **Verificér betalingskæden end-to-end:** ét rigtigt køb (mindste
+      abonnement) → webhooken leverer → kreditter på kontoen → kvittering.
+      Stripe-dashboardet viser leveringsstatus pr. event.
+- [ ] **Gate 1 (S12) er ALDRIG kørt** — se §3 nedenfor.
+- [ ] **Kobl GitHub-repoet på Netlify-sitet** (auto-deploy, bygger i skyen).
+- [ ] **Rotér nøgler der har været igennem chatten:** Google client secret
+      (20/8) samt TRIGGER_SECRET_KEY, RESEND_API_KEY og Stripe
+      webhook-secret (alle 21/8).
+- [ ] Trigger.dev-nøglens udløb: hvis den blev oprettet med 90 dages udløb,
+      dør pipelinen stille 19/11-2026 — sæt kalenderpåmindelse eller opret
+      permanent nøgle.
+
 ## 0. Status på database og auth (verificeret 20/8 nat)
 - [x] **Supabase-skemaet er KOMPLET** — alle 14 migrations kørt og
       verificeret kolonne for kolonne (profiles, items, item_photos,
