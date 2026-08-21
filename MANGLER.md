@@ -1,21 +1,34 @@
 # MANGLER FØR PUBLISH
-Sidst opdateret: 2026-08-20 (nat, runde 13). Kritisk vej øverst — tages oppefra.
+Sidst opdateret: 2026-08-21 (deploy-runde). Kritisk vej øverst — tages oppefra.
 
 ## KRITISK VEJ LIGE NU
 1. [x] **Push main til GitHub** — gjort 20/8 nat (13 commits). Historikken er
    scannet: ingen nøgler i arbejdstræ eller historik, `.env.local` har
-   aldrig været committet.
+   aldrig været committet. Arbejdstræet er rent og synkront med origin/main
+   pr. 21/8; `npm run build` og alle 379 tests er grønne.
 2. [ ] **Netlify-site kobles til repoet + ALLE env-vars sættes i Netlify.**
    Uden env-vars deployer sitet, men kører demo-mode: intet login, intet
-   køb, ingen AI.
-3. [ ] **Stripe webhook mod den deployede URL** → `/api/webhooks/stripe`.
-   Kan først oprettes når URL'en findes. Dét er blocker #1 for omsætning.
-4. [ ] **RESEND_API_KEY + domæneverifikation — MANGLER STADIG.** Uden den
+   køb, ingen AI. `netlify env:import .env.local` sætter dem i én kommando —
+   husk at rette `NEXT_PUBLIC_SITE_URL` til den deployede URL bagefter.
+3. [ ] **TRIGGER_SECRET_KEY — HARD BLOCKER PÅ NETLIFY, ikke "skalering".**
+   `lib/pipeline/start.ts` kører uden nøglen pipelinen som fire-and-forget i
+   selve request-processen. Det virker i en dev-server, men en Netlify-
+   function fryses/dræbes i samme øjeblik svaret er sendt — og én billed-
+   kørsel tager ~150 s pr. billede. Uden nøglen bliver ALLE annoncer i
+   produktion hængende i "på vej". Trigger.dev-projektet skal oprettes,
+   `trigger.config.ts` pege på det, og `npx trigger.dev@latest deploy`
+   køres, før betalende brugere slippes ind.
+4. [ ] **Stripe webhook mod den deployede URL** → `/api/webhooks/stripe`.
+   Kan først oprettes når URL'en findes. `STRIPE_SECRET_KEY` er nu SAT i
+   `.env.local`; kun `STRIPE_WEBHOOK_SECRET` er tom. Uden webhooken bliver
+   et gennemført køb aldrig til kreditter.
+5. [ ] **Supabase → Authentication → URL Configuration:** Netlify-URL'en ind
+   som Site URL + Redirect URL, ellers fejler Google-login i produktion.
+6. [ ] **RESEND_API_KEY + domæneverifikation — MANGLER STADIG.** Uden den
    sendes INGEN mails: ingen velkomstmail, ingen kvittering, og "glemt
-   adgangskode" (S39) findes slet ikke. En bruger der mister sin kode kan
-   i dag ikke komme ind igen. Google-login er en delvis redning, men kun
-   for dem der brugte Google.
-
+   adgangskode" (S39) findes slet ikke — hverken rute eller UI. En bruger
+   der mister sin kode kan i dag ikke komme ind igen. Google-login er en
+   delvis redning, men kun for dem der brugte Google.
 ## 0. Status på database og auth (verificeret 20/8 nat)
 - [x] **Supabase-skemaet er KOMPLET** — alle 14 migrations kørt og
       verificeret kolonne for kolonne (profiles, items, item_photos,
