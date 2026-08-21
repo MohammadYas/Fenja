@@ -5,3 +5,15 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# Sikkerheds-headers (audit 21/8): clickjacking-, MIME-sniffing- og
+# referrer-værn + HSTS. CSP er bevidst udeladt — Next inliner scripts, og en
+# forhastet CSP ville brække sitet; tages som egen opgave med nonce-opsætning.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"

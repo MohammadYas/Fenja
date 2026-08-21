@@ -73,6 +73,25 @@ export const emails = {
       "Vil du have en visualisering alligevel, kan du prøve i et andet miljø fra annoncesiden.",
     knap: "Se min annonce",
   },
+  // Ugens Salgsplan (abonnent-fordel, 21/8): Smart Salgsplan-rådene fra
+  // oversigten leveret på mail hver mandag morgen — abonnenten får værdien
+  // uden at skulle åbne appen. Sendes kun når der ER råd at give.
+  salgsplan: {
+    emne: (antal: number) =>
+      antal === 1 ? "Ugens salgsplan: 1 ting at gøre" : `Ugens salgsplan: ${antal} ting at gøre`,
+    forhaandsvisning: "Hvad du skal sælge nu, sætte ned — og vente med.",
+    overskrift: "Din salgsplan for ugen",
+    brod: "Regnet ud fra dine annoncer, sæsonen og ægte salgspriser. Gør det øverste først — det flytter mest.",
+    handlinger: {
+      saelgNu: "Sælg nu",
+      saetNed: "Sæt prisen ned",
+      klarGoer: "Gør klar",
+      vent: "Vent",
+    } as Record<string, string>,
+    knap: "Åbn min oversigt",
+    hvorfor:
+      "Du får denne mail, fordi du har et Selja-abonnement. Planen opdateres løbende på din oversigt.",
+  },
 } as const;
 
 export type EmailCopy = typeof emails;

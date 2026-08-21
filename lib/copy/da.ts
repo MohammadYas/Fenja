@@ -540,7 +540,12 @@ export const da = {
       annoncerPrMd: (antal: number) => `${antal} færdige looks hver måned`,
       lavestePris: "Lavest pris pr. look",
       faellesTitel: "Med i begge",
-      faelles: ["Salgsstatistik", "Prioriteret kø — dine annoncer laves først"],
+      faelles: [
+        "Smart Salgsplan på oversigten — hvad du skal sælge nu, sætte ned og vente med",
+        "Ugens salgsplan på mail hver mandag morgen",
+        "Salgsstatistik",
+        "Prioriteret kø — dine annoncer laves først",
+      ],
       funktioner: {
         plus: [
           "Favorit-overvågning: op til 25 favoritter med dagligt overblik på mail og prisanbefaling",

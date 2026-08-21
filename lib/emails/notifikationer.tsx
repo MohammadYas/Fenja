@@ -8,8 +8,10 @@ import { AnnonceKlarMail } from "@/emails/annonce-klar";
 import { KreditRefunderetMail } from "@/emails/kredit-refunderet";
 import { KvitteringMail } from "@/emails/kvittering";
 import { renderMailHtml } from "@/emails/render";
+import { SalgsplanMail } from "@/emails/salgsplan";
 import { VelkomstMail } from "@/emails/velkomst";
 import { emails as kopi } from "@/lib/copy/emails";
+import type { SalgsPunkt } from "@/lib/salg/smart-plan";
 import type { EmailAfsender, EmailKvittering } from "./send";
 
 /**
@@ -78,6 +80,21 @@ export async function sendKreditRefunderet(
     html: await renderMailHtml(
       emne,
       <KreditRefunderetMail itemTitel={args.itemTitel} itemUrl={args.itemUrl} />,
+    ),
+  });
+}
+
+export async function sendSalgsplan(
+  afsender: EmailAfsender,
+  args: { til: string; punkter: readonly SalgsPunkt[]; oversigtUrl: string },
+): Promise<EmailKvittering> {
+  const emne = kopi.salgsplan.emne(args.punkter.length);
+  return afsender.send({
+    til: args.til,
+    emne,
+    html: await renderMailHtml(
+      emne,
+      <SalgsplanMail punkter={args.punkter} oversigtUrl={args.oversigtUrl} />,
     ),
   });
 }

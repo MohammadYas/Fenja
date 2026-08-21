@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import Stripe from "stripe";
+import { site } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 
@@ -27,7 +28,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ fejl: da.kreditter.abonnementIngen }, { status: 404 });
   }
 
-  const oprindelse = request.headers.get("origin") ?? request.nextUrl.origin;
+  // Samme origin-værn som checkout: headeren er angriberstyret
+  const origin = request.headers.get("origin");
+  const oprindelse =
+    origin && [site.baseUrl, "http://localhost:3000"].includes(origin)
+      ? origin
+      : site.baseUrl;
   const session = await stripe.billingPortal.sessions.create({
     customer: kunde.id,
     return_url: `${oprindelse}/kreditter`,

@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import Stripe from "stripe";
-import { abonnementer, kreditter, stripePriser } from "@/lib/config";
+import { abonnementer, kreditter, site, stripePriser } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 
@@ -25,7 +25,14 @@ export async function POST(request: NextRequest) {
     abonnement?: string;
     periode?: string;
   };
-  const oprindelse = request.headers.get("origin") ?? request.nextUrl.origin;
+  // Origin-headeren er angriberstyret — brug den kun hvis den er en af vores
+  // egne (ellers kunne success/cancel sende kunden til et fremmed domæne
+  // efter betaling). Fallback: den konfigurerede base-URL.
+  const origin = request.headers.get("origin");
+  const oprindelse =
+    origin && [site.baseUrl, "http://localhost:3000"].includes(origin)
+      ? origin
+      : site.baseUrl;
   const stripe = new Stripe(noegle);
 
   // Abonnement (Plus/Pro, md./år) — kvoten leveres af webhookens invoice.paid

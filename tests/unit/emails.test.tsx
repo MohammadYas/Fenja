@@ -4,6 +4,7 @@ import { KreditRefunderetMail } from "@/emails/kredit-refunderet";
 import { KvitteringMail } from "@/emails/kvittering";
 import { MagicLinkMail } from "@/emails/magic-link";
 import { renderMailHtml } from "@/emails/render";
+import { SalgsplanMail } from "@/emails/salgsplan";
 import { VelkomstMail } from "@/emails/velkomst";
 import { emails } from "@/lib/copy/emails";
 import {
@@ -49,6 +50,20 @@ const skabeloner = [
     emne: emails.kreditRefunderet.emne,
     element: <KreditRefunderetMail itemTitel={TITEL} itemUrl={ITEM_URL} />,
     skalIndeholde: [TITEL, ITEM_URL, emails.kreditRefunderet.knap],
+  },
+  {
+    navn: "ugens salgsplan",
+    emne: emails.salgsplan.emne(2),
+    element: (
+      <SalgsplanMail
+        punkter={[
+          { itemId: "i1", titel: TITEL, handling: "saetNed", tekst: "Har ligget 21 dage - saet ned til 120 kr.", foreslaaetPrisDkk: 120 },
+          { itemId: "i2", titel: "Sort hoodie str. S", handling: "vent", tekst: "Bedst i oktober - vent." },
+        ]}
+        oversigtUrl={ITEM_URL}
+      />
+    ),
+    skalIndeholde: [TITEL, ITEM_URL, emails.salgsplan.handlinger.saetNed, emails.salgsplan.knap],
   },
 ];
 
