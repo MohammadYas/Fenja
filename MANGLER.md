@@ -20,19 +20,32 @@ Sidst opdateret: 2026-08-21 (deploy-runde). Kritisk vej øverst — tages oppefr
    `netlify deploy --build --prod` fra Fenja-mappen. Kobl repoet i Netlify-
    UI'en for automatisk deploy ved push (så bygger Netlify i skyen med sine
    egne env-vars, og fælde (a) forsvinder helt).
-3. [ ] **TRIGGER_SECRET_KEY — HARD BLOCKER PÅ NETLIFY, ikke "skalering".**
-   `lib/pipeline/start.ts` kører uden nøglen pipelinen som fire-and-forget i
-   selve request-processen. Det virker i en dev-server, men en Netlify-
-   function fryses/dræbes i samme øjeblik svaret er sendt — og én billed-
-   kørsel tager ~150 s pr. billede. Uden nøglen bliver ALLE annoncer i
-   produktion hængende i "på vej". Trigger.dev-projektet skal oprettes,
-   `trigger.config.ts` pege på det, og `npx trigger.dev@latest deploy`
-   køres, før betalende brugere slippes ind.
+3. [~] **Trigger.dev DEPLOYET 21/8 — version 20260821.1, 2 tasks**
+   (`item-pipeline`, `item-regen`) mod projektet Selja
+   (`proj_zmmrdmvkjhnxepwlxssi`, org SDu, ejerens konto
+   MohammadYassin26@hotmail.com). `trigger.config.ts` peger på ref'en, og
+   `syncEnvVars` skubber provider-nøglerne op ved hvert deploy, så jobmiljøet
+   aldrig drifter fra Netlifys. Pakkerne er pinnet til 4.5.12 = CLI-versionen
+   (deploy nægter ved mismatch). **MANGLER KUN: `TRIGGER_SECRET_KEY`
+   (tr_prod_…) ind i Netlify** — hentes i dashboardet under projektets
+   API keys og sættes med `netlify env:set TRIGGER_SECRET_KEY <nøgle>` +
+   redeploy. Uden den kører pipelinen stadig fire-and-forget i Netlify-
+   functionen og ALLE annoncer hænger i "på vej" (én billedkørsel ~150 s;
+   functionen fryses når svaret er sendt). Baggrund: `lib/pipeline/start.ts`.
 4. [ ] **Stripe webhook** → `https://selja.netlify.app/api/webhooks/stripe`.
    URL'en findes nu. `STRIPE_SECRET_KEY` er SAT; kun `STRIPE_WEBHOOK_SECRET`
    er tom. Uden webhooken bliver et gennemført køb aldrig til kreditter.
-5. [ ] **Supabase → Authentication → URL Configuration:** `https://selja.netlify.app`
-   ind som Site URL + Redirect URL, ellers fejler Google-login i produktion.
+5. [x] **Supabase URL Configuration sat af ejeren 21/8 og VERIFICERET:**
+   authorize-endpointet 302'er til Google med `selja.netlify.app` som
+   redirect_to. Google-login virker på den deployede URL.
+5b. [ ] **selja.dk KØBT 21/8 — skal kobles på Netlify-sitet.** Netlify-UI:
+   selja → Domain management → Add domain → selja.dk, og hos registraren
+   enten Netlifys navneservere ELLER A-record `@` → 75.2.60.5 + CNAME
+   `www` → selja.netlify.app. Når DNS'en svarer: opdatér
+   `NEXT_PUBLIC_SITE_URL` (Netlify + `.env.production.local`) og Supabase
+   redirect-URLs til https://selja.dk og redeploy. `lib/config.ts`-fallbacken
+   peger allerede på selja.dk. Webhooken på selja.netlify.app bliver ved med
+   at virke — netlify-URL'en forsvinder ikke når domænet kobles på.
 6. [ ] **RESEND_API_KEY + domæneverifikation — MANGLER STADIG.** Uden den
    sendes INGEN mails: ingen velkomstmail, ingen kvittering, og "glemt
    adgangskode" (S39) findes slet ikke — hverken rute eller UI. En bruger
