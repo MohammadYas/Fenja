@@ -22,7 +22,11 @@ export function byggLlmsTxt(): string {
       (t) =>
         `- ${da.priserSide.abonnement.navne[t.id]}: ${t.annoncerPrMd} looks/md. — ${t.prisDkkPrMd} kr./md. eller ${t.prisDkkPrAar} kr./år`,
     ),
-    `- Top-up (kun ved tom saldo): ${kreditter.topUp.antal} looks for ${kreditter.topUp.prisDkk} kr.`,
+    ...kreditter.pakker.map(
+      (p) =>
+        `- Engangskøb "${da.kreditter.pakkeNavne[p.id] ?? p.id}": ${p.antal} kreditter for ${p.prisDkk} kr. (uden abonnement)`,
+    ),
+    `- Top-up (kun for abonnenter med tom saldo): ${kreditter.topUp.antal} looks for ${kreditter.topUp.prisDkk} kr.`,
   ].join("\n");
   const guides = hentGuides()
     .map((g) => `- [${g.titel}](${base}/laer/${g.slug}): ${g.beskrivelse}`)

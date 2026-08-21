@@ -20,10 +20,15 @@ export const kreditter = {
   // Pricing v3.0 (ejer-beslutning 2026-08-16): tre pakker med tydelig
   // værdistige — prisen pr. annonce falder fra Prøv (9,80) over Sælger (5,93)
   // til Bunke (4,23). Navnene bor i lib/copy/da.ts (NFR-12).
+  // Ejer-ordre 21/8 ("skal have omsætning"): pakkerne er TILBAGE i UI'et som
+  // engangskøb for alle — lav indgang uden abonnement. Ny stor pakke "Lager"
+  // til reselleren; stykprisen (3,49) holder sig over Pro-årets 3,31, så
+  // abonnementet stadig er det bedste valg for faste sælgere.
   pakker: [
     { id: "proev", antal: 5, prisDkk: 49 },
     { id: "saelger", antal: 15, prisDkk: 89 },
     { id: "bunke", antal: 40, prisDkk: 169 },
+    { id: "lager", antal: 100, prisDkk: 349 },
   ],
   // Ankeret på /priser — den pakke vi anbefaler (ærlig anbefaling, intet pres)
   anbefaletPakkeId: "saelger",

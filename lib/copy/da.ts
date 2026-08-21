@@ -530,8 +530,13 @@ export const da = {
       proev: "Prøv",
       saelger: "Sælger",
       bunke: "Bunke",
+      lager: "Lager",
       "fyld-op": "Fyld op",
     } as Record<string, string>,
+    // Engangskøb (ejer-ordre 21/8: pakkerne tilbage i UI — lav indgang)
+    pakkeTitel: "Eller køb kreditter enkeltvis",
+    pakkeForklaring:
+      "Ingen abonnement nødvendigt — køb en pakke, og brug kreditterne når det passer dig. De gælder 12 måneder.",
     anbefalet: "Anbefalet",
     pakkeLinje: (antal: number, pris: number) => `${antal} kreditter · ${pris} kr.`,
     pakkeAntal: (antal: number) => `${antal} kreditter`,

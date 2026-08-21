@@ -416,5 +416,278 @@ export const guideIndhold: readonly GuideIndhold[] = [
         "tekst": "Når du alligevel skifter garderoben forår og efterår, står du med bunken i hånden: Fotografér, mens tøjet er fremme, og læg annoncerne op over et par uger i stedet for alle på én gang — så ligger du synligt i søgningerne længere."
       }
     ]
-  }
+  },
+  {
+      "slug": "kom-i-gang-med-vinted",
+      "titel": "Sådan kommer du i gang med at sælge på Vinted",
+      "beskrivelse": "Fra første foto til første salg: kontoen, den første annonce og de fejl, alle begyndere laver.",
+      "raekkefoelge": 9,
+      "blokke": [
+        {
+          "type": "afsnit",
+          "tekst": "Vinted er det nemmeste sted at sælge brugt tøj i Danmark: ingen salgsgebyr for sælger, køberen betaler fragten, og pengene står på din konto få dage efter at køberen har godkendt varen. Her er vejen fra nul til første salg."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Opret kontoen rigtigt"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Brug dit rigtige navn og tilføj et profilbillede — profiler uden ansigt eller navn sælger målbart dårligere, fordi købere kigger på sælgeren, før de byder. Skriv to linjer om dig selv: hvad du sælger, og hvor hurtigt du sender."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Din første annonce"
+        },
+        {
+          "type": "liste",
+          "ordnet": true,
+          "punkter": [
+            "Vælg et stykke tøj i god stand fra et mærke, folk kender.",
+            "Tag fotos i dagslys: helhed, bagside, label og eventuelle fejl.",
+            "Skriv titlen som en søgning: mærke, type, farve, størrelse.",
+            "Sæt prisen en anelse over det, du vil have — købere elsker at prutte 10-20 kr.",
+            "Send samme dag eller dagen efter. Hurtige sælgere får bedre anmeldelser."
+          ]
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Begynderfejlene"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Mørke aftenbilleder på et rodet gulv, titler som \"fin trøje\", og priser sat efter hvad tøjet kostede fra nyt. Ingen af delene sælger. Tøjet er det værd, som lignende annoncer faktisk sælges for — tjek de solgte annoncer i søgningen, før du sætter din pris."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Den hurtige genvej"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Selja gør fotoarbejdet og skriver annoncen for dig: du tager 2-4 mobilfotos, og få minutter senere har du rensede billeder, tøjet vist båret og en færdig tekst med prisforslag bygget på ægte Vinted-priser. Første annonce er den sværeste — gør den nem."
+        }
+      ]
+    },
+    {
+      "slug": "hvad-saelger-bedst",
+      "titel": "Hvad sælger bedst på Vinted?",
+      "beskrivelse": "Mærkerne og kategorierne, der faktisk bliver solgt — og dem, du skal lade hænge.",
+      "raekkefoelge": 10,
+      "blokke": [
+        {
+          "type": "afsnit",
+          "tekst": "Ikke alt tøj er lige nemt at sælge. Følger man danske Vinted-annoncer over tid, tegner der sig et tydeligt mønster i, hvad der ryger hurtigt — og hvad der ligger i månedsvis."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Mærkerne der trækker"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Skandinaviske mærker i mellemklassen er Vinteds sweet spot: Ganni, Samsøe Samsøe, Won Hundred, Norse Projects, Wood Wood. Dertil klassikerne Levi's, Carhartt, Ralph Lauren og The North Face med stabile søgninger året rundt. Fast fashion sælger kun til meget lave priser — ofte under portoen værd."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Kategorierne"
+        },
+        {
+          "type": "liste",
+          "ordnet": false,
+          "punkter": [
+            "Jeans i gode mærker sælger altid — især Levi's i klassiske pasforme.",
+            "Strik og cardigans flyver afsted fra september til februar.",
+            "Kjoler topper april til august med konfirmationer og bryllupper.",
+            "Overtøj i kvalitet har den højeste stykpris — sælg i september-november.",
+            "Tasker og accessories har lav porto og god margin."
+          ]
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Stand betyder mere end mærke"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "En H&M-trøje i perfekt stand sælger bedre end en Ganni med huller. Vær ærlig om standen — Vinteds standskala er fast, og en skuffet køber kan åbne en tvist, der koster dig både salget og anmeldelsen."
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Abonnenter på Selja får Garderobe-radaren: en løbende liste over hvilke mærker og kategorier der er mest værd lige nu, vægtet efter sæsonen — direkte på oversigten."
+        }
+      ]
+    },
+    {
+      "slug": "skriv-annoncer-der-saelger",
+      "titel": "Skriv Vinted-annoncer der sælger",
+      "beskrivelse": "Titlen er en søgning, beskrivelsen er svar på køberens tvivl — sådan skriver du begge dele.",
+      "raekkefoelge": 11,
+      "blokke": [
+        {
+          "type": "afsnit",
+          "tekst": "Købere finder dit tøj gennem søgefeltet. Din titel er derfor ikke en overskrift — den er en søgestreng. Og din beskrivelse er ikke en salgstale — den er svarene på de spørgsmål, køberen ellers ville stille."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Titlen: mærke + type + farve + størrelse"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "\"Levi's 501 jeans mørkeblå W32\" bliver fundet. \"Fede bukser sælges billigt\" bliver det ikke. Brug de ord, en køber ville taste, og drop udråbstegn og versaler — det signalerer useriøs sælger."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Beskrivelsen: svar på tvivlen"
+        },
+        {
+          "type": "liste",
+          "ordnet": false,
+          "punkter": [
+            "Mål: brystvidde og længde for overdele, livvidde og indvendig benlængde for bukser.",
+            "Materiale fra vaskemærket — \"100 % uld\" sælger bedre end \"lækker kvalitet\".",
+            "Stand og eventuelle fejl, ærligt. Uoplyste fejl giver køber ret til retur.",
+            "Hvorfor du sælger — én linje gør annoncen menneskelig.",
+            "Røgfrit hjem, hvis det gælder — mange købere filtrerer på det."
+          ]
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Prisen i teksten"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Skriv aldrig \"BYD!\" — det flytter arbejdet over på køberen og trækker lave bud. Sæt en fast, realistisk pris og lad Vinteds prutte-funktion om resten."
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Selja skriver hele annoncen for dig ud fra dine fotos og fakta: titel bygget som en søgning, beskrivelse med mål og ærlig stand, og et prisforslag fra ægte markedspriser. Du retter bare til og sætter ind."
+        }
+      ]
+    },
+    {
+      "slug": "undgaa-svindel",
+      "titel": "Undgå svindel på Vinted",
+      "beskrivelse": "De fire mest udbredte fup-numre — og reglen, der beskytter dig mod dem alle.",
+      "raekkefoelge": 12,
+      "blokke": [
+        {
+          "type": "afsnit",
+          "tekst": "Vinted er grundlæggende sikkert, når handlen bliver inde i appen. Næsten al svindel har samme opskrift: at lokke dig UD af Vinteds betalings- og beskedsystem. Kender du mønstrene, er du svær at ramme."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "De fire klassikere"
+        },
+        {
+          "type": "liste",
+          "ordnet": true,
+          "punkter": [
+            "\"Betal udenom, så slipper vi for gebyret\" — al beskyttelse forsvinder i samme sekund. Nej tak, altid.",
+            "Phishing-links på mail eller sms om at \"bekræfte din betaling\" — Vinted beder aldrig om kortoplysninger via link.",
+            "Køberen der påstår, varen aldrig kom — send altid sporbart, og gem kvittering og fotos.",
+            "\"Vinted-support\" i beskeder — support kontakter dig kun gennem appens hjælpecenter."
+          ]
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Én regel dækker det hele"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Hold penge, beskeder og forsendelse inde i Vinted. Alle, der beder dig gå udenom — uanset begrundelsen — er enten ligeglade med din sikkerhed eller ude på at snyde dig."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Som sælger: dokumentér"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Dine annoncefotos ER din dokumentation. Skarpe billeder af helhed, label og de fejl, du har oplyst, gør en uberettiget tvist nem at vinde. Endnu en grund til at billederne skal være i orden, før annoncen ryger op."
+        }
+      ]
+    },
+    {
+      "slug": "vinted-og-skat",
+      "titel": "Vinted og skat: hvornår skal du betale?",
+      "beskrivelse": "Privat oprydning er skattefri, videresalg er ikke — og Vinted indberetter til Skat. Her er grænserne.",
+      "raekkefoelge": 13,
+      "blokke": [
+        {
+          "type": "afsnit",
+          "tekst": "Det korte svar: sælger du dit eget brugte tøj, som du selv har købt og brugt, er fortjenesten normalt skattefri. Køber du ind for at sælge videre, driver du virksomhed — og så skal der betales skat af overskuddet. Grænsen ligger i formålet med købet."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Vinted indberetter til Skat"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "EU-reglerne (DAC7) betyder, at Vinted automatisk indberetter sælgere, der når cirka 30 salg eller cirka 2.000 euro på et år. Indberetning er ikke det samme som skattepligt — dit eget aflagte tøj er stadig skattefrit at sælge — men Skat kan spørge, og så skal din forklaring hænge sammen."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Tommelfingerreglerne"
+        },
+        {
+          "type": "liste",
+          "ordnet": false,
+          "punkter": [
+            "Eget brugt tøj, købt til dig selv: skattefrit, uanset beløb.",
+            "Køb på kilosalg eller loppemarked med salg for øje: skattepligtigt overskud.",
+            "Systematisk aktivitet med mange salg og indkøb ligner virksomhed.",
+            "Gem dokumentation: er tøjet dit eget, er billeder af dig i det guld værd."
+          ]
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Hvis du er på vej over grænsen"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Reseller-livet er helt legitimt — det skal bare registreres. Læs guiden om Vinted Pro, og tal med Skat eller en revisor, før beløbene bliver store. Denne guide er generel vejledning, ikke skatterådgivning."
+        }
+      ]
+    },
+    {
+      "slug": "annoncen-saelger-ikke",
+      "titel": "Annoncen sælger ikke? Sådan får du gang i den",
+      "beskrivelse": "Liggetid er ikke skæbne: pris, billeder, timing — og hvornår du skal lægge annoncen op igen.",
+      "raekkefoelge": 14,
+      "blokke": [
+        {
+          "type": "afsnit",
+          "tekst": "En annonce, der har ligget tre uger uden interesse, sælger sjældent sig selv i uge fire. Men den er ikke død — den mangler bare én af tre ting: rigtig pris, bedre billeder eller bedre timing."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "1. Tjek prisen mod virkeligheden"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Søg på dit mærke og din kategori, og se hvad solgte annoncer gik for — ikke hvad andre håber at få. Ligger du over midten af markedet, er det næsten altid dér, problemet bor. En nedsættelse på 15-20 % sender samtidig et prisfalds-signal til alle, der har liket annoncen."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "2. Skift det første billede"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Billede 1 afgør, om nogen overhovedet klikker. Mørkt, skævt eller rodet baggrund giver ingen klik, uanset prisen. Et rent, lyst helhedsfoto — eller et billede af tøjet båret — kan fordoble visningerne på samme annonce."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "3. Ram sæsonen"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Strik i maj og shorts i november ligger stille, uanset hvor godt de er sat op. Er tøjet ude af sæson, så vent — og læg det op igen, når sæsonen nærmer sig. En frisk annonce ligger øverst i søgningerne; en gammel synker."
+        },
+        {
+          "type": "rubrik",
+          "tekst": "Gør det systematisk"
+        },
+        {
+          "type": "afsnit",
+          "tekst": "Seljas Smart Salgsplan holder øje for dig: hvilke annoncer har ligget for længe og over markedsprisen, hvad er i sæson nu, og hvad skal vente. Abonnenter får planen på oversigten og på mail hver mandag — så \"den sælger nok på et tidspunkt\" bliver til konkrete ryk."
+        }
+      ]
+    }
 ];

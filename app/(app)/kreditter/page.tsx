@@ -14,10 +14,10 @@ export const dynamic = "force-dynamic";
 const formaterDato = (dato: Date): string =>
   dato.toLocaleDateString("da-DK", { day: "numeric", month: "long", year: "numeric" });
 
-// Kreditside (E-2, pricing v3.0 + ejer-ordre 2026-08-16): abonnementet er
-// standardvejen og fører siden; top-up vises KUN når man er løbet tør.
-// Pakkerne er ude af UI'et. Administration (kort/fakturaer/opsigelse) via
-// Stripes kundeportal.
+// Kreditside (E-2, pricing v3.0): abonnementet er standardvejen og fører
+// siden; top-up vises KUN når man er løbet tør. Pakkerne er TILBAGE som
+// engangskøb for alle (ejer-ordre 21/8: lav indgang, "skal have omsætning").
+// Administration (kort/fakturaer/opsigelse) via Stripes kundeportal.
 export default async function Kreditter({
   searchParams,
 }: {
@@ -100,6 +100,42 @@ export default async function Kreditter({
         </p>
         <AbonnementValg koebAktiv tone="lys" className="mt-6" />
         <PortalKnap className="mt-6" />
+      </section>
+
+      {/* Engangskøb (ejer-ordre 21/8: pakkerne tilbage i UI — lav indgang
+          uden abonnement; abonnementet står stadig først) */}
+      <section className="mt-10" aria-label={da.kreditter.pakkeTitel}>
+        <h2 className="font-display text-titel font-bold">
+          {da.kreditter.pakkeTitel}
+        </h2>
+        <p className="mt-2 max-w-laesbar text-detalje text-tekst/80">
+          {da.kreditter.pakkeForklaring}
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {kreditter.pakker.map((pakke) => (
+            <Card key={pakke.id} className="flex items-center justify-between gap-4">
+              <div>
+                <p className="font-display font-semibold">
+                  {da.kreditter.pakkeNavne[pakke.id] ?? pakke.id}
+                  {pakke.id === kreditter.anbefaletPakkeId ? (
+                    <span className="ml-2 font-mono text-detalje font-normal uppercase tracking-wide text-gran">
+                      {da.kreditter.anbefalet}
+                    </span>
+                  ) : null}
+                </p>
+                <p className="mt-1 font-mono font-bold">
+                  {da.kreditter.pakkeLinje(pakke.antal, pakke.prisDkk)}
+                </p>
+                <p className="mt-0.5 font-mono text-detalje text-tekst/70">
+                  {da.kreditter.prisPrStk(
+                    (pakke.prisDkk / pakke.antal).toFixed(2).replace(".", ","),
+                  )}
+                </p>
+              </div>
+              <KoebKnap pakkeId={pakke.id} />
+            </Card>
+          ))}
+        </div>
       </section>
 
       {/* Saldo og forklaring — under abonnementet (ejer-ordre 20/8:

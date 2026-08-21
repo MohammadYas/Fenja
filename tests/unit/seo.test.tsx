@@ -126,7 +126,7 @@ describe("llms.txt: findbarhed for sprogmodeller", () => {
       );
     }
     expect(txt).toContain(
-      `Top-up (kun ved tom saldo): ${kreditter.topUp.antal} looks for ${kreditter.topUp.prisDkk} kr.`,
+      `Top-up (kun for abonnenter med tom saldo): ${kreditter.topUp.antal} looks for ${kreditter.topUp.prisDkk} kr.`,
     );
     expect(txt).toContain("Uden binding");
     expect(txt).not.toContain("gratis annoncer");
