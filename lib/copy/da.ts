@@ -70,7 +70,16 @@ export const da = {
       knap: "Jeg har bekræftet",
       ikkeEndnu:
         "Vi kan ikke se bekræftelsen endnu. Vent et øjeblik, efter du har trykket på linket i mailen, og prøv igen.",
+      sendIgen: "Send mailen igen",
+      sendtIgen: "Vi har sendt en ny mail. Kig i indbakken om et øjeblik.",
+      sendIgenFejl:
+        "Vi kunne ikke sende en ny mail lige nu. Vent et minut, og prøv igen.",
     },
+    // Mail-link der ikke kunne bruges (udløbet, brugt, eller åbnet af mail-
+    // programmets linkscanner før dig). Ærlig forklaring i stedet for en tom
+    // login-væg — er kontoen allerede bekræftet, virker login med det samme.
+    linkUdloebet:
+      "Linket fra mailen er udløbet eller allerede brugt. Log ind herunder: er din konto allerede bekræftet, virker det med det samme, og ellers sender vi dig en frisk mail.",
     fejlLogin: "Forkert e-mail eller adgangskode. Prøv igen.",
     fejlSignup:
       "Kontoen kunne ikke oprettes. Måske findes e-mailen allerede — prøv at logge ind i stedet.",

@@ -25,6 +25,9 @@ function LogIndIndhold() {
   const router = useRouter();
   const params = useSearchParams();
   const videre = params.get("videre") ?? "/oversigt";
+  // Sat af auth-ruterne ved udløbet/brugt mail-link (ejer 22/8): forklar
+  // ærligt i stedet for en tom login-væg
+  const linkUdloebet = params.get("besked") === "link-udloebet";
 
   const [fane, setFane] = useState<Fane>("login");
   const [email, setEmail] = useState("");
@@ -37,6 +40,33 @@ function LogIndIndhold() {
   const [glemtSendt, setGlemtSendt] = useState(false);
   const [tjekker, setTjekker] = useState(false);
   const [ikkeBekraeftetEndnu, setIkkeBekraeftetEndnu] = useState(false);
+  const [senderIgen, setSenderIgen] = useState(false);
+  const [sendtIgen, setSendtIgen] = useState<"sendt" | "fejl" | null>(null);
+
+  // Gensend bekræftelsesmailen (ejer 22/8: en død mail må aldrig koste en
+  // kunde). Supabase svarer identisk for kendte/ukendte adresser, og
+  // rate-limiter selv til én mail i minuttet — fejlen siger det ærligt.
+  async function sendMailIgen(): Promise<void> {
+    if (!email) return;
+    setSenderIgen(true);
+    setSendtIgen(null);
+    try {
+      const { opretBrowserKlient } = await import("@/lib/supabase/client");
+      const supabase = opretBrowserKlient();
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?videre=${encodeURIComponent(videre)}`,
+        },
+      });
+      setSendtIgen(error ? "fejl" : "sendt");
+    } catch {
+      setSendtIgen("fejl");
+    } finally {
+      setSenderIgen(false);
+    }
+  }
 
   // "Tjek din indbakke"-tilstanden venter selv (ejer-ordre 22/8): vi HAR
   // e-mail og kode, så et stille login-forsøg afslører, om linket i mailen
@@ -267,14 +297,28 @@ function LogIndIndhold() {
         <p className="mt-4 max-w-laesbar text-detalje text-tekst/80">
           {da.logInd.bekraeftMail.autoTjek}
         </p>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap gap-3">
           <Button travl={tjekker} onClick={() => void proevBekraeftet(true)}>
             {da.logInd.bekraeftMail.knap}
+          </Button>
+          <Button
+            variant="sekundaer"
+            travl={senderIgen}
+            onClick={() => void sendMailIgen()}
+          >
+            {da.logInd.bekraeftMail.sendIgen}
           </Button>
         </div>
         {ikkeBekraeftetEndnu ? (
           <p role="status" className="mt-3 max-w-laesbar text-detalje text-tekst/70">
             {da.logInd.bekraeftMail.ikkeEndnu}
+          </p>
+        ) : null}
+        {sendtIgen ? (
+          <p role="status" className="mt-3 max-w-laesbar text-detalje text-tekst/70">
+            {sendtIgen === "sendt"
+              ? da.logInd.bekraeftMail.sendtIgen
+              : da.logInd.bekraeftMail.sendIgenFejl}
           </p>
         ) : null}
       </main>
@@ -286,6 +330,17 @@ function LogIndIndhold() {
   return (
     <main className="mx-auto max-w-md px-4 py-16">
       <h1 className="font-display text-display">{da.logInd.titel}</h1>
+
+      {/* Udløbet/brugt mail-link (fx mail-scannerens forhåndsklik): ærlig
+          forklaring — er kontoen allerede bekræftet, virker login straks */}
+      {linkUdloebet ? (
+        <p
+          role="status"
+          className="mt-4 max-w-laesbar rounded-bloed border border-kant bg-flade p-3 text-detalje text-tekst/80"
+        >
+          {da.logInd.linkUdloebet}
+        </p>
+      ) : null}
 
       {/* Faner: log ind / opret konto */}
       <div

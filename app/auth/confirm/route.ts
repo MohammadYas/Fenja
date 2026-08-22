@@ -42,9 +42,11 @@ export async function GET(request: NextRequest) {
   }
 
   if (!bruger) {
-    // Udløbet/brugt link → log ind-siden (ny-adgangskode-siden forklarer selv
-    // "linket er udløbet", hvis det var en nulstilling)
-    return NextResponse.redirect(new URL("/log-ind", origin));
+    // Udløbet/brugt link (dobbeltklik, mail-scanner der har "klikket" først)
+    // → log ind-siden MED forklaring, ikke en tom login-væg (ejer 22/8:
+    // besværlig indgang dræner omsætning). Er kontoen allerede bekræftet af
+    // scanneren, virker et almindeligt login med det samme.
+    return NextResponse.redirect(new URL("/log-ind?besked=link-udloebet", origin));
   }
 
   // Kun interne stier — aldrig eksterne redirects fra et mail-link

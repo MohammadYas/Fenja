@@ -24,7 +24,9 @@ export async function GET(request: NextRequest) {
   const supabase = await opretServerKlient();
   const { data, error } = await supabase.auth.exchangeCodeForSession(kode);
   if (error || !data.user) {
-    return NextResponse.redirect(new URL("/log-ind", origin));
+    // Fejlet veksling (udløbet/forkert browser) → log ind-siden MED
+    // forklaring i stedet for en tom login-væg (ejer 22/8)
+    return NextResponse.redirect(new URL("/log-ind?besked=link-udloebet", origin));
   }
 
   // E-mail-signup bærer alderen i user_metadata; Google kan ikke bære
