@@ -98,9 +98,6 @@ export default async function Konto() {
         <p className="mt-2 max-w-laesbar text-detalje text-tekst/80">
           {da.konto.hjem.forklaring}
         </p>
-        <p className="mt-3 font-mono text-detalje uppercase tracking-wide text-tekst/70">
-          {da.konto.hjem.nuvaerende(effektivtHjemNavn)}
-        </p>
         <HjemVaelger
           navn={effektivtHjemNavn}
           tilbage={Math.max(0, hjemRotation.maks - rotationerBrugt)}
