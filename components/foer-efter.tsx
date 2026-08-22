@@ -42,33 +42,14 @@ export function FoerEfter() {
         })}
       </div>
 
-      {/* key-skiftet lader panelet rulle ind ved skift (pris-rul) */}
+      {/* key-skiftet lader panelet rulle ind ved skift (pris-rul).
+          Ejer-ordre 22/8: EFTER står FØRST (tøjet båret er det, man skal se
+          først — på telefon øverst, på desktop til venstre); FØR er beviset
+          bagefter. Kolonnebredderne fulgte med i byttet (EFTER er bredest). */}
       <div
         key={par.id}
-        className="pris-rul grid overflow-hidden rounded-bloed border border-kant sm:grid-cols-[1fr_auto_1.2fr]"
+        className="pris-rul grid overflow-hidden rounded-bloed border border-kant sm:grid-cols-[1.2fr_auto_1fr]"
       >
-        <div className="bg-flade p-5">
-          <span className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/70">
-            {copy.foerLabel}
-          </span>
-          <Image
-            src={par.foerBillede}
-            alt={par.foerAlt}
-            width={900}
-            height={1350}
-            sizes="(min-width: 640px) 240px, 80vw"
-            className="mt-3 w-full rounded-bloed border border-kant"
-            priority
-          />
-          <p className="mt-3 font-mono text-detalje lowercase leading-snug text-tekst/80">
-            {par.foerTekst}
-          </p>
-          <p className="mt-1 font-mono text-detalje lowercase text-tekst/80">
-            {par.foerPris}
-          </p>
-        </div>
-        <div className="soem-vandret sm:hidden" aria-hidden="true" />
-        <div className="soem hidden sm:block" aria-hidden="true" />
         <div className="bg-baggrund p-5">
           <span className="font-mono text-detalje font-medium uppercase tracking-wide text-gran">
             {copy.efterLabel}
@@ -100,6 +81,28 @@ export function FoerEfter() {
               egne eksempeltal, FØR-prisen står lige ved siden af */}
           <p className="mt-1 font-mono text-detalje text-ravDyb">
             {par.foerPris} → {par.efterPris.replace("Prisforslag: ", "")}
+          </p>
+        </div>
+        <div className="soem-vandret sm:hidden" aria-hidden="true" />
+        <div className="soem hidden sm:block" aria-hidden="true" />
+        <div className="bg-flade p-5">
+          <span className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/70">
+            {copy.foerLabel}
+          </span>
+          <Image
+            src={par.foerBillede}
+            alt={par.foerAlt}
+            width={900}
+            height={1350}
+            sizes="(min-width: 640px) 240px, 80vw"
+            className="mt-3 w-full rounded-bloed border border-kant"
+            priority
+          />
+          <p className="mt-3 font-mono text-detalje lowercase leading-snug text-tekst/80">
+            {par.foerTekst}
+          </p>
+          <p className="mt-1 font-mono text-detalje lowercase text-tekst/80">
+            {par.foerPris}
           </p>
         </div>
       </div>
