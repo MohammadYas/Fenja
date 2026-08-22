@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { klientNoegle, tjekRateLimit } from "@/lib/sikkerhed/ratelimit";
 import { opretServiceKlient } from "@/lib/supabase/service";
 
 // Cookieløs besøgs-registrering (21/8 nat). Gemmer ALDRIG IP eller identitet
