@@ -81,6 +81,7 @@ hvert deploy.
 - `lib/betaling/` — webhook.ts (Stripe-events → kreditter; læser BÅDE gammel og
   ny API-form!), abonnement.ts (harAktivtAbonnement + hentAbonnementsTier)
 - `lib/pipeline/hjem-generator.ts` — 100 genererede hjem (+5 oprindelige)
+- `lib/pipeline/hjem-generator.ts` — 100 genererede hjem (+5 oprindelige)
 - `lib/salg/` — smart-plan.ts, saeson.ts, radar.ts, statistik.ts, kalender.ts,
   konkurrent.ts (alle RENE funktioner, fuldt testede)
 - `lib/copy/da.ts` + `lib/copy/vinted.ts` — AL brugervendt tekst (aldrig i komponenter)
@@ -89,7 +90,7 @@ hvert deploy.
 - `lib/auth/admin.ts` — erAdmin(): ADMIN_EMAIL er kommasepareret liste
 - `trigger/` — Trigger.dev-tasks
 - `supabase/migrations/` — 15 migrations, ALLE kørt mod cloud
-- `tests/` — 396 tests (vitest). Copy-vagter håndhæver ærlighedsregler
+- `tests/` — 407 tests (vitest). Copy-vagter håndhæver ærlighedsregler
   (fx maks 4 tankestreger på forsiden, 2-minutters-løftet skal være afgrænset)
 - `scripts/` — katalog-generering, markedsanalyse (høst → `lib/data/markedspriser.ts`),
   indexnow-ping, gate1-fidelity-test
