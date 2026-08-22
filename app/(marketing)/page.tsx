@@ -57,7 +57,7 @@ export default async function Forside() {
       {/* Hero: before/after-panelet er omdrejningspunktet (signatur-elementet,
           HANDOFF §2.2.3) */}
       <section className="border-b border-kant">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:py-24 lg:grid lg:grid-cols-[1fr_1.2fr] lg:items-center lg:gap-14">
+        <div className="mx-auto max-w-6xl px-4 py-16 md:py-24 lg:grid lg:grid-cols-[1fr_1.2fr] lg:items-center lg:gap-x-14">
           <div className="indgang">
             <h1 className="max-w-2xl font-display text-plakat font-bold">
               {vinted.hero.rubrik}
@@ -72,16 +72,18 @@ export default async function Forside() {
             <p className="mt-2 text-detalje text-tekst/60">
               {vinted.hero.friktion}
             </p>
-            {/* Anmeldelserne bor i venstre kolonne, så heroen balancerer
-                (ejer-ordre 2026-08-20: begge skal med, men siden var skæv) */}
-            <div className="mt-10">
-              <Anmeldelser />
-            </div>
           </div>
-          <div className="mt-12 lg:mt-0">
+          <div className="mt-12 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:mt-0">
             <Reveal>
               <FoerEfter />
             </Reveal>
+          </div>
+          {/* Anmeldelserne bor på desktop i venstre kolonne under teksten, så
+              heroen balancerer (ejer-ordre 2026-08-20) — men på telefon UNDER
+              før/efter-eksemplet (ejer-ordre 22/8: eksemplet først), derfor
+              egen grid-celle i stedet for at bo inde i tekstkolonnen */}
+          <div className="mt-10 lg:col-start-1 lg:row-start-2">
+            <Anmeldelser />
           </div>
         </div>
       </section>
