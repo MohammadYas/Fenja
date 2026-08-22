@@ -1,11 +1,17 @@
-// EJER-BESLUTNING 2026-08-20 (overstyrer C-4/manifest §2.1.7): billedfilen
-// bærer HVERKEN synlig badge ELLER egen metadata. AI-mærkningen bor i
-// UI'et/på forsiden — og Googles egen C2PA-signatur fra genereringen sidder
-// stadig i filen fra deres side. Funktionen normaliserer kun til JPEG.
+// EJER-BESLUTNING 2026-08-20 (overstyrer C-4/manifest §2.1.7), SKÆRPET 22/8:
+// billedfilen bærer HVERKEN synlig badge ELLER nogen metadata. AI-mærkningen
+// bor udelukkende i UI'et/på forsiden (art. 50-oplysningen). Googles egen
+// C2PA-provenance fra genereringen skal OGSÅ væk nu — det var tidligere
+// bevidst efterladt ("vi styrer det ikke"), men ejeren har omgjort den
+// beslutning. Denne re-encode fjerner den allerede (JUMBF/APP11-segmenter
+// overlever ikke en gen-kodning med sharp), og gemBillede (supabase-db.ts)
+// kører desuden fjernMetadata() som en uafhængig sikkerhedsspærre på alt,
+// der lander i storage. Låst med testen for det fiktive C2PA-segment i
+// metadata.test.ts. Funktionen normaliserer i øvrigt kun til JPEG.
 
 import sharp from "sharp";
 
-/** Normaliserer leverancen til JPEG (Vinted-venligt) — ingen mærkning i filen */
+/** Normaliserer leverancen til JPEG (Vinted-venligt) — ingen mærkning eller metadata i filen */
 export async function paafoerBadge(billede: Buffer): Promise<Buffer> {
   return sharp(billede).jpeg({ quality: 88 }).toBuffer();
 }

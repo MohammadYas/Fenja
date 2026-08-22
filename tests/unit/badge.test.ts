@@ -24,6 +24,24 @@ describe("leverance-billede (ejer-beslutning 20/8: ingen mærkning i filen)", ()
     expect(exif).not.toContain("Selja");
   });
 
+  it("fjerner Googles C2PA-provenance-segment (skærpet 22/8 — ikke længere efterladt bevidst)", async () => {
+    const raa = await testBillede();
+    const payload = Buffer.concat([
+      Buffer.from("JP", "ascii"),
+      Buffer.from([0x00, 0x00, 0x00, 0x00]),
+      Buffer.from("jumbc2pamanifestFAKEC2PAPROVENANCEDATA", "ascii"),
+    ]);
+    const laengde = Buffer.alloc(2);
+    laengde.writeUInt16BE(payload.length + 2, 0);
+    const segment = Buffer.concat([Buffer.from([0xff, 0xeb]), laengde, payload]);
+    const medC2pa = Buffer.concat([raa.subarray(0, 2), segment, raa.subarray(2)]);
+
+    const output = await paafoerBadge(medC2pa);
+    const tekst = output.toString("latin1").toLowerCase();
+    expect(tekst).not.toContain("c2pa");
+    expect(tekst).not.toContain("jumb");
+  });
+
   it("sætter ALDRIG synlig tekst på billedet (ejer-ordre 20/8)", async () => {
     const foer = await testBillede();
     const efter = await paafoerBadge(foer);

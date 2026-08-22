@@ -1,6 +1,27 @@
 # STATUS
 Sidst opdateret: 2026-08-22 af Claude Code
 
+## Denne session (22/8, runde 3) — Googles C2PA-signatur fjernes også (arabisk platform)
+
+**Ejer-beslutning 22/8 (omgør 20/8-beslutningen):** tidligere stod det
+noteret at "Googles egen C2PA-signatur ... sidder stadig i filen, som vi
+ikke styrer" (badge.ts, STATUS 20/8-runde 9). Ejeren har nu omgjort det —
+i forbindelse med den arabiske platform-version skal AL egen og
+tredjeparts-provenance væk, C2PA inklusive. Ingen kode ændrede sig reelt
+(både `paafoerBadge` og `fjernMetadata` gen-koder allerede via sharp, hvilket
+allerede droppede JUMBF/APP11-segmenter), men det var hidtil en antagelse —
+nu er det bekræftet og låst med rigtige tests:
+- `tests/unit/metadata.test.ts`: bygger et ægte APP11/JUMBF-segment med
+  C2PA-content-type (ikke bare ordet "c2pa" et sted i filen) og verificerer
+  at `fjernMetadata` fjerner det.
+- `tests/unit/badge.test.ts`: samme verifikation for `paafoerBadge`.
+- `lib/pipeline/badge.ts`s kommentar rettet — hævder ikke længere at C2PA
+  bevidst efterlades.
+
+Uændret: den SYNLIGE AI-mærkning i produktet (art. 50-oplysningen) og
+Geminis SynthID-vandmærke (sidder i pixels, kan ikke fjernes uden at ændre
+billedet — ejeren bad kun om C2PA-metadata, ikke om vandmærket).
+
 ## Denne session (22/8, runde 2) — cardigan først, forside-angreb, TESTPLAN.md
 
 Ejer-ordrer 22/8 (fortsat): cardigan-eksemplet skal stå først, forsiden skal
