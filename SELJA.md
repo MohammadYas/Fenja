@@ -107,7 +107,7 @@ package.json). `syncEnvVars` skubber nøgler til jobmiljøet ved hvert deploy.
   **validering.ts** (skema, kasserer ukendte felter)
 - `lib/copy/da.ts` + `vinted.ts` — AL brugervendt tekst
 - `lib/config.ts` — priser, kvoter, misbrugsværn, modeller. ÉN kilde
-- `tests/` — 421 tests (vitest). **Copy-vagter håndhæver ærlighedsregler**
+- `tests/` — 441 tests (vitest). **Copy-vagter håndhæver ærlighedsregler**
   (maks 4 tankestreger på forsiden, 2-minutters-løftet skal være afgrænset)
 
 ## 5. Hjemmet på billederne (vigtigt koncept)
