@@ -29,6 +29,54 @@ Sidst opdateret: 2026-08-21 (launch-dag). Kritisk vej øverst — tages oppefra.
    sendt og leveret til ejerens gmail (id 182ce635…). OBS: Resend-kontoen
    er oprettet på krausesigne@gmail.com.
 
+## OMSÆTNINGS-AUDIT 21/8 nat (fundet under natte-runden)
+
+**Rettet med det samme (småt):**
+- Abonnements-teaseren på oversigten sendte indloggede til den offentlige
+  /priser — det ligner at være logget ud. Peger nu på /kreditter.
+- Shorts blev genereret som lange bukser (matchede bukser-skabelonen, hvis
+  regler forbød "shorts" og "bare legs"). Egen skabelon nu — dårlige
+  billeder er direkte tabt salg.
+- Wizardens afsend-knap kunne ikke rammes på mobil (bund-nav'en opfangede
+  klikket) — scroll-margin tilføjet.
+
+**VÆSENTLIGT — kræver din beslutning:**
+
+1. **Pakkerne er usynlige for ikke-indloggede. Største omsætnings-dræber.**
+   `app/(marketing)/priser/page.tsx` viser KUN abonnement (59/119 kr./md.).
+   Engangspakkerne (Prøv 5/49 … Lager 100/349) findes kun på /kreditter,
+   altså BAG login. En ny besøgende ser derfor kun "bind dig månedligt" og
+   skal oprette konto for at opdage, at der findes en 49-kroners indgang.
+   FIX: vis pakkerne på /priser under abonnementet, med samme ærlige
+   ramme ("abonnement er billigst pr. kredit — pakker hvis du sælger
+   sjældnere"). Én sides ændring, ingen ny logik: AbonnementValg står
+   allerede der, og checkout kan pakkerne i forvejen.
+
+2. **Abonnements-opslag hænger på e-mail-match mod Stripe.**
+   `harAktivtAbonnement`/`hentAbonnementsTier` slår kunden op på e-mail.
+   Betaler en kunde med en ANDEN mail end sin Selja-konto (typisk ved
+   Apple/Google-relay eller familie-kort), mister de alle abonnent-fordele,
+   selvom pengene er trukket. Set i praksis: dagens køb er registreret på
+   kekee@gmail.com, og den adresse BOUNCER i Resend.
+   FIX: gem `stripe_customer_id` på profilen ved checkout og slå op på
+   den i stedet — e-mailen bliver da kun en fallback.
+
+3. **Udløbne kreditter kommunikeres kun på kreditsiden.**
+   Kreditter udløber efter 12 måneder; der findes ingen advarsels-mail før
+   udløb. En bruger, der mister kreditter uden varsel, kommer ikke tilbage.
+   FIX: udvid mandags-jobbet (`trigger/salgsplan-digest.ts`) med en linje
+   når noget udløber inden 30 dage.
+
+4. **Ingen win-back ved opsigelse.**
+   Kundeportalen opsiger uden modspil, og `customer.subscription.deleted`
+   udløser intet. FIX: send én ærlig mail ("din kvote gælder perioden ud —
+   dine kreditter bortfalder ikke") ved den event.
+
+5. **Ingen social proof fra rigtige brugere.**
+   Bevidst valg (ingen fabrikeret proof), men nu hvor der ER brugere:
+   bed de første om lov til at citere dem. Det er den billigste
+   konverterings-løftestang, der findes.
+
 ## EFTER LAUNCH (vigtigst først)
 - [x] **E-mail-bekræftelse er TÆNDT og E2E-VERIFICERET 21/8 (nat):** ejerens
       dashboard-toggle havde ikke bidt på — sat via management-API'et.
