@@ -14,6 +14,13 @@ function klip(vaerdi: unknown, maks: number): string | null {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit (OWASP API4): beacon-ruten er helt åben, så en enkelt klient
+  // ikke skal kunne pumpe statistikken fuld. 120/time rækker rigeligt til
+  // normal browsing. Afvises der, svarer vi stadig 204 — måleren må aldrig
+  // forstyrre brugeren.
+  const graense = await tjekRateLimit("besoeg", klientNoegle(request), 120, 3600);
+  if (!graense.tilladt) return new NextResponse(null, { status: 204 });
+
   try {
     const krop = (await request.json()) as Record<string, unknown>;
     const sti = typeof krop.sti === "string" ? krop.sti : "";

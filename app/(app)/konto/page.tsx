@@ -3,7 +3,6 @@ import { KontaktForm } from "@/components/kontakt-form";
 import { Card } from "@/components/ui/card";
 import { hjemRotation } from "@/lib/config";
 import { da } from "@/lib/copy/da";
-import { hentHjem, vaelgHjem } from "@/lib/pipeline/skabeloner";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { HjemVaelger } from "./hjem-vaelger";
 import { KoenVaelger } from "./koen-vaelger";
@@ -43,15 +42,11 @@ export default async function Konto() {
 
   const saldo = (saldoRaekke?.balance as number | undefined) ?? 0;
 
-  // S31 · effektivt hjem: et gyldigt selvvalg vises som det; ellers det
-  // deterministiske. Navnene kommer fra da.ts (NFR-12).
-  const hjemAnker = (profil?.home_anchor as string | null | undefined) ?? null;
-  const effektivtHjem = hentHjem(hjemAnker) ?? vaelgHjem(user!.id);
+  // S31 · hjemmet vises IKKE ved navn (ejer-ordre 22/8: stedets navn siger
+  // sælgeren intet). Kun antallet af skift tilbage er brugervendt.
   const rotationerBrugt = Number(
     (profil?.hjem_rotationer as number | null | undefined) ?? 0,
   );
-  const effektivtHjemNavn =
-    da.konto.hjem.navne[effektivtHjem.id] ?? effektivtHjem.navn;
 
   return (
     <main className="py-6">
