@@ -385,10 +385,13 @@ export default function NytItem() {
                       : valgt
                         ? da.nytItem.skiftFoto
                         : da.nytItem.tagFoto}
+                    {/* INGEN capture-attribut (ejer 22/8): capture tvang
+                        kameraet frem på telefonen, så man ikke kunne vælge
+                        fra fotobiblioteket. Uden den viser telefonen selv
+                        valget: Tag billede / Fotobibliotek / Vælg fil. */}
                     <input
                       type="file"
                       accept="image/*"
-                      capture="environment"
                       className="sr-only"
                       onChange={(e) => vaelgFoto(rolle, e.target.files?.[0])}
                     />
