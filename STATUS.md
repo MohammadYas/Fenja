@@ -1,5 +1,38 @@
 # STATUS
-Sidst opdateret: 2026-08-20 (natten, runde 13) af Claude Code
+Sidst opdateret: 2026-08-22 af Claude Code
+
+## Denne session (22/8) — to nye abonnent-funktioner, opsagt-kreditkøb-fix, Suppliers rykket op
+
+**Ejer-ordre 22/8 (via screenshot af Garderobe-radar/Sæson-kalender):** byg
+flere pengeværdige abonnent-funktioner — én til Plus, én til Pro, Pro har
+begge. Fortolkning (handlet på rimeligste læsning): de to nye funktioner er
+bygget i samme mønster som de to på screenshottet.
+
+1. **Pris-trappe (alle abonnenter)** — `lib/salg/pristrappe.ts` + sektion på
+   oversigten: en konkret nedtrapningsplan pr. aktiv annonce (egen pris →
+   median fra dag 14 → p25 fra dag 28, kun strengt faldende trin), med det
+   aktuelle trin fremhævet ud fra liggetiden. Supplement til Smart Salgsplan:
+   planen siger hvad du gør I DAG, trappen viser hele prisforløbet.
+2. **Flip-beregner (KUN Pro)** — `lib/salg/flip.ts` + sektion på oversigten:
+   radarens storebror. Maks indkøbspris i genbrug (40 % af medianen, rundet
+   ned til nærmeste 5 kr.) + forventet gevinst ved salg til medianen, i sæson
+   først. Ærlig note: pejling, ingen garanti.
+3. **Opsagt abonnement kan stadig købe kreditter perioden ud (ejer-ordre):**
+   `hentAbonnementsTier` tjekkede kun `active`/`trialing` — en
+   straks-opsigelse (status `canceled` med resterende betalt periode) blev
+   afvist i checkout-gaten og på kreditsiden, selvom måneden VAR betalt. Ny
+   ren funktion `giverAdgang`: opsagt tæller med, indtil den betalte periode
+   udløber; udløb læses i BÅDE gammel (subscription.current_period_end) og ny
+   Basil-form (items.data[].current_period_end) — samme lektie som webhookens
+   root cause 10. Pro vinder nu over Plus, hvis begge findes. Låst med
+   `tests/unit/abonnement-opsagt.test.ts`.
+4. **Suppliers-kortet rykket én plads op** på oversigten: står nu FØR
+   Garderobe-radaren (før: mellem radar og kalender).
+5. Copy: Pris-trappe tilføjet i "Med i begge", Flip-beregner i Pro-listen på
+   /priser. SELJA.md §2 opdateret.
+
+**Tests:** nye i `pristrappe-flip.test.ts` + `abonnement-opsagt.test.ts`;
+hele pakken kørt grøn før push.
 
 ## Denne session (20/8 nat, runde 13) — billedkvalitet, Google-login, publish-vej
 **PUSHET TIL GITHUB** (13 commits) efter ejer-ordre. Historikken scannet for

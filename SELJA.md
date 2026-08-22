@@ -45,13 +45,20 @@ B2B-delen er parkeret på `/studio` (noindex).
 - **Opsigelse tager ALDRIG kreditter.** Stripe holder abonnementet `active`
   til periodens udløb (lovkrav), og webhooken rører aldrig ledgeren ved
   `customer.subscription.deleted`. Låst med test.
+- **Opsigelse lukker heller ikke for kreditkøb før periodens udløb** (ejer
+  22/8, 2. runde): også et abonnement, der står som `canceled` hos Stripe
+  (straks-opsigelse), tæller som abonnent, indtil den betalte periode er
+  udløbet — `giverAdgang` i `lib/betaling/abonnement.ts`, låst med test.
 - Ingen gratis kreditter ved signup (misbrugsværn).
 - Regenerering af én del: ½ kredit.
 
 **Abonnent-fordele (alle):** Smart Salgsplan på oversigten, Ugens Salgsplan på
-mail (mandag 06 UTC), Garderobe-radar, Sæson-kalender, salgsstatistik.
-**Kun Pro:** Konkurrent-tjek (pris mod markedets p25/median/p75) og
-Bundle-bygger (2–4 annoncer → én pakke-annonce).
+mail (mandag 06 UTC), Garderobe-radar, Sæson-kalender, Pris-trappe
+(nedtrapningsplan pr. annonce, 22/8), salgsstatistik.
+**Kun Pro:** Konkurrent-tjek (pris mod markedets p25/median/p75),
+Flip-beregner (maks indkøbspris i genbrug + forventet gevinst, 22/8) og
+Bundle-bygger (2–4 annoncer → én pakke-annonce). Pro har OGSÅ alle
+Plus-fordele.
 Favorit-overvågning er LOVET i copy, men IKKE bygget (S35).
 
 ## 3. Teknisk arkitektur

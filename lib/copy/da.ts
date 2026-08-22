@@ -532,6 +532,25 @@ export const da = {
       sourcingTitel: "Værd at source lige nu",
       note: "Priser er medianer fra ægte Vinted-annoncer — brug dem som pejling, når du køber ind til videresalg.",
     },
+    // Pris-trappe (alle abonnenter, 22/8): nedtrapningsplanen pr. annonce
+    pristrappe: {
+      titel: "Pris-trappe",
+      lead: "Hvornår sætter du ned, og til hvad? Trappen viser prisplanen for hver annonce — følg den, til den er solgt.",
+      trinFra: (dag: number) => (dag === 0 ? "fra start" : `fra dag ${dag}`),
+      trinNu: "her er du",
+      liggetid: (dage: number) =>
+        dage === 1 ? "har ligget 1 dag" : `har ligget ${dage} dage`,
+      note: "Trinnene er markedets øvre kvartil, median og nedre kvartil fra ægte Vinted-annoncer for samme mærke og kategori.",
+    },
+    // Flip-beregner (kun Pro, 22/8): maks indkøbspris + forventet gevinst
+    flip: {
+      titel: "Flip-beregner",
+      stempel: "Kun Pro",
+      lead: "Hvad må du højst give for det i genbrug? Loftet giver margen til porto, liggetid og forhandling — resten er din gevinst, hvis du sælger til medianen.",
+      koebMaks: (kr: number) => `køb maks ${kr} kr.`,
+      gevinst: (kr: number) => `~${kr} kr. gevinst`,
+      note: "Loftet er 40 % af medianen fra ægte Vinted-annoncer. En pejling til indkøbet — ingen garanti for salg.",
+    },
   },
   suppliers: {
     titel: "Suppliers",
@@ -679,6 +698,7 @@ export const da = {
         "Ugens salgsplan på mail hver mandag morgen",
         "Garderobe-radar — hvad din garderobe er værd, og hvad der er værd at source lige nu",
         "Sæson-kalender — hvornår hvert stykke tøj i din garderobe topper",
+        "Pris-trappe — en konkret nedtrapningsplan for hver annonce, til den er solgt",
         "Salgsstatistik",
         "Prioriteret kø — dine annoncer laves først",
       ],
@@ -688,6 +708,7 @@ export const da = {
         ],
         pro: [
           "Konkurrent-tjek: din pris mod markedets kvartiler pr. annonce",
+          "Flip-beregner: hvad du højst må give i genbrug, og hvad gevinsten cirka er",
           "Favorit-overvågning uden loft, opdateret løbende, med dynamisk prisanbefaling",
           "Besked når lignende annoncer ændrer pris",
           "Ret prisen på flere annoncer ad gangen",

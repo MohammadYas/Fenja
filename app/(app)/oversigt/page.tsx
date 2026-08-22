@@ -2,8 +2,10 @@ import Link from "next/link";
 import { BundleBygger } from "@/components/bundle-bygger";
 import { Taeller } from "@/components/taeller";
 import { da } from "@/lib/copy/da";
+import { bygFlipBeregner } from "@/lib/salg/flip";
 import { bygSaesonKalender } from "@/lib/salg/kalender";
 import { bygKonkurrentTjek } from "@/lib/salg/konkurrent";
+import { bygPrisTrappe } from "@/lib/salg/pristrappe";
 import { bygRadar } from "@/lib/salg/radar";
 import { bygSalgsplan, type SalgsPunkt } from "@/lib/salg/smart-plan";
 import { bygSalgsstatistik } from "@/lib/salg/statistik";
@@ -159,6 +161,25 @@ export default async function Oversigt() {
     ? bygSaesonKalender(planInput).filter((m) => m.erNu || m.titler.length > 0)
     : [];
   const konkurrent = erAbonnent && tier === "pro" ? bygKonkurrentTjek(planInput) : [];
+  // Pris-trappe (alle abonnenter, 22/8): nedtrapningsplanen pr. aktiv annonce
+  const trapper = erAbonnent
+    ? bygPrisTrappe(
+        items.map((item) => ({
+          id: item.id,
+          titel: item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
+          maerke: item.brand ?? "",
+          kategori: item.category ?? "",
+          status: (item.status === "failed" ? "draft" : item.status) as
+            | "draft"
+            | "active"
+            | "sold",
+          leveretAt: item.leveret_at,
+          prisTilDkk: item.pris_til_dkk,
+        })),
+      )
+    : [];
+  // Flip-beregner (KUN Pro, 22/8): maks indkøbspris + forventet gevinst
+  const flip = erAbonnent && tier === "pro" ? bygFlipBeregner() : [];
 
   const solgte = items.filter((i) => i.status === "sold");
   const samletVaerdi = solgte.reduce((sum, i) => sum + (i.sold_price_dkk ?? 0), 0);
@@ -255,6 +276,10 @@ export default async function Oversigt() {
         </section>
       ) : null}
 
+      {/* Suppliers-kortet (ejer-ordre 22/8: rykket én plads op — det står nu
+          FØR Garderobe-radaren i stedet for efter) */}
+      <SupplierKommerSnartKort />
+
       {/* Garderobe-radar (abonnent-fordel, 21/8): garderobens forventede
           værdi + hvad der er værd at source lige nu, vægtet med sæsonen */}
       {erAbonnent ? (
@@ -311,7 +336,50 @@ export default async function Oversigt() {
         </section>
       ) : null}
 
-      <SupplierKommerSnartKort />
+      {/* Flip-beregner (KUN Pro, 22/8): radarens storebror — hvad du højst
+          må give i genbrug, og hvad gevinsten cirka bliver */}
+      {flip.length > 0 ? (
+        <section
+          className="mt-6 rounded-bloed border border-kant bg-flade p-5"
+          aria-label={da.oversigt.flip.titel}
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="font-mono text-detalje font-bold tracking-wide text-gran">
+              {da.oversigt.flip.titel}
+            </p>
+            <p className="font-mono text-detalje uppercase tracking-wide text-tekst/50">
+              {da.oversigt.flip.stempel}
+            </p>
+          </div>
+          <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+            {da.oversigt.flip.lead}
+          </p>
+          <ul className="mt-2 grid gap-x-8 gap-y-1 md:grid-cols-2">
+            {flip.map((punkt) => (
+              <li
+                key={`${punkt.maerke}-${punkt.kategori}`}
+                className="flex items-baseline justify-between gap-4 border-b border-kant py-2.5 text-detalje"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="font-medium">
+                    {punkt.maerke} {punkt.kategori}
+                  </span>{" "}
+                  <span className={punkt.iSaeson ? "text-gran" : "text-tekst/60"}>
+                    · {punkt.saesonTekst}
+                  </span>
+                </span>
+                <span className="shrink-0 font-mono">
+                  {da.oversigt.flip.koebMaks(punkt.maksKoebDkk)} ·{" "}
+                  {da.oversigt.flip.gevinst(punkt.gevinstDkk)}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-detalje text-tekst/60">
+            {da.oversigt.flip.note}
+          </p>
+        </section>
+      ) : null}
 
       {/* Sæson-kalender (alle abonnenter, 21/8): garderobens 12 måneder */}
       {erAbonnent && kalender.length > 0 ? (
@@ -346,6 +414,62 @@ export default async function Oversigt() {
               </li>
             ))}
           </ul>
+        </section>
+      ) : null}
+
+      {/* Pris-trappe (alle abonnenter, 22/8): hvornår sætter du ned, og til
+          hvad? Konkrete trin pr. annonce — det aktuelle trin er fremhævet */}
+      {erAbonnent && trapper.length > 0 ? (
+        <section
+          className="mt-6 rounded-bloed border border-kant bg-flade p-5"
+          aria-label={da.oversigt.pristrappe.titel}
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="font-mono text-detalje font-bold tracking-wide text-gran">
+              {da.oversigt.pristrappe.titel}
+            </p>
+            <p className="font-mono text-detalje uppercase tracking-wide text-tekst/50">
+              {da.oversigt.salgplanStempel}
+            </p>
+          </div>
+          <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+            {da.oversigt.pristrappe.lead}
+          </p>
+          <ul className="mt-3 flex flex-col gap-3">
+            {trapper.map((punkt) => (
+              <li key={punkt.itemId} className="border-b border-kant pb-3 text-detalje">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <span className="font-medium">{punkt.titel}</span>
+                  {punkt.dagePaaTrappen != null ? (
+                    <span className="text-tekst/60">
+                      {da.oversigt.pristrappe.liggetid(punkt.dagePaaTrappen)}
+                    </span>
+                  ) : null}
+                </div>
+                <p className="mt-1 font-mono text-tekst/80">
+                  {punkt.trin.map((trin, i) => (
+                    <span key={trin.fraDag}>
+                      {i > 0 ? " → " : ""}
+                      <span
+                        className={
+                          i === punkt.aktueltTrin ? "font-bold text-gran" : undefined
+                        }
+                      >
+                        {trin.prisDkk} kr. ({da.oversigt.pristrappe.trinFra(trin.fraDag)}
+                        {i === punkt.aktueltTrin
+                          ? ` · ${da.oversigt.pristrappe.trinNu}`
+                          : ""}
+                        )
+                      </span>
+                    </span>
+                  ))}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-detalje text-tekst/60">
+            {da.oversigt.pristrappe.note}
+          </p>
         </section>
       ) : null}
 
