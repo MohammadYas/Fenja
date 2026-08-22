@@ -1,8 +1,8 @@
 // Genererer public/og-billede.jpg (1200×630) — delebilledet der vises, når
 // selja.dk-links deles (TikTok-bio, DM'er, iMessage, Slack osv.). Motivet er
-// produktets signatur: cardigan-eksemplets EFTER (båret) til venstre — det
-// man ser først (ejer-ordre 22/8) — og FØR til højre, adskilt af en tynd søm.
-// Kør ved motiv-skift og commit resultatet:
+// produktets signatur: cardigan-eksemplets FØR til venstre og EFTER (båret)
+// til højre, adskilt af en tynd søm. (EFTER-først gælder KUN mobil-panelet
+// på forsiden — ejer-præcisering 22/8.) Kør ved motiv-skift og commit:
 //   npx tsx scripts/lav-og-billede.ts
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -26,9 +26,9 @@ async function panel(kilde: string, bredde: number): Promise<Buffer> {
 
 async function main(): Promise<void> {
   const panelBredde = Math.floor((BREDDE - SOEM) / 2);
-  const [efter, foer] = await Promise.all([
-    panel(EFTER, panelBredde),
-    panel(FOER, BREDDE - SOEM - panelBredde),
+  const [foer, efter] = await Promise.all([
+    panel(FOER, panelBredde),
+    panel(EFTER, BREDDE - SOEM - panelBredde),
   ]);
 
   const billede = await sharp({
@@ -40,8 +40,8 @@ async function main(): Promise<void> {
     },
   })
     .composite([
-      { input: efter, left: 0, top: 0 },
-      { input: foer, left: panelBredde + SOEM, top: 0 },
+      { input: foer, left: 0, top: 0 },
+      { input: efter, left: panelBredde + SOEM, top: 0 },
     ])
     .jpeg({ quality: 82, mozjpeg: true })
     .toBuffer();
