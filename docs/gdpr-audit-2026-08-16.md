@@ -90,7 +90,11 @@ er allerede rene; det er leverandørernes egne logfrister, der skal tjekkes.
 
 - **AI-mærkning (AI-forordningen art. 50 + markedsføringsloven):** synlig
   mærkat på forsidens genererede billeder er midlertidigt fjernet (ejerordre).
-  App-leverancen mærker stadig synligt + EXIF (C-4) — det er den vigtige del.
+  App-leverancen mærker stadig synligt i UI'et — det er den vigtige del.
+  [Rettet 22/8: her stod fejlagtigt "synligt + EXIF". Ejer-beslutning 22/8
+  fjerner AL metadata fra leverede billeder (EXIF, XMP, IPTC, ICC og Googles
+  C2PA-provenance, se lib/pipeline/metadata.ts + badge.ts) — art. 50-oplysningen
+  ligger derfor UDELUKKENDE i UI'et/på forsiden, aldrig i filen.]
   Marketing-billeder uden mærkning er **Forbrugerombudsmandens** bord.
   "Sleek løsning" skal leveres FØR launch.
 - **Forbrugeraftaleloven (abonnement):** dækket — 14 dages fortrydelse,

@@ -278,8 +278,11 @@ compliance-rækkefølge opdateret). Lint + typecheck + build grønne.
 ## Denne session (20/8 sen aften, runde 9) — metadata væk, migrations kørt
 - **EJER-BESLUTNING: INGEN metadata i billedfilerne** (overstyrer C-4 og
   manifest §2.1.7 helt): paafoerBadge normaliserer kun til JPEG. AI-mærkning
-  findes nu KUN i UI'et/på forsiden (+ Googles egen C2PA-signatur, som vi
-  ikke styrer). Tests vendt (asserter ingen egen EXIF).
+  findes nu KUN i UI'et/på forsiden. Tests vendt (asserter ingen egen EXIF).
+  [Rettet 22/8, runde 3: parentesen her hævdede at Googles C2PA-signatur
+  "sad stadig i filen, som vi ikke styrer" — det var forkert/en antagelse,
+  ikke en verificeret grænse. C2PA fjernes rent faktisk allerede af samme
+  gen-kodning, og er nu låst med test — se runde 3 øverst i filen.]
 - **Begge ventende migrations KØRT mod cloud via Composio (ejer-ordre)** og
   verificeret: items.kladde_id + visninger + unik-indeks (idempotent
   oprettelse + genoptag med gemte valg gælder nu FULDT), profiles.koen +
@@ -296,8 +299,10 @@ compliance-rækkefølge opdateret). Lint + typecheck + build grønne.
   svævende, props fjernes), og troskabstjekket giver ALTID score 0 for
   ikke-båret tøj.
 - **"VISUALISERING" er VÆK fra billedet** (ejer-ordre: under ingen
-  omstændigheder synlig tekst): mærkningen er nu kun EXIF-metadata +
-  Googles C2PA + UI-noterne. Badge-testen vendt om (asserter INGEN pixels).
+  omstændigheder synlig tekst): mærkningen bor nu kun i UI'et. Badge-testen
+  vendt om (asserter INGEN pixels). [Rettet 22/8, runde 3: her stod
+  fejlagtigt "mærkningen er nu kun EXIF-metadata + Googles C2PA" — filen
+  bærer ingen af delene; mærkningen er UI-tekst, ikke noget i billedfilen.]
 - **Procent-konsistens:** oversigt og annonceside deler nu beregnProcent
   (lib/fremdrift.ts) — aldrig 86 % ét sted og 75 % et andet. Oversigten
   poller straks og viser også "Gik i stå".

@@ -42,7 +42,7 @@
 | FR-1 | Guidet foto-upload: 2–4 billeder pr. item med rolle (helhed/bagside/label/fejl); mobilkamera direkte; komprimering klientside | P0 |
 | FR-2 | Foto-rens: baggrundsrens til neutral flade + lys/farvekorrektion på ægte fotos. Må ALDRIG retouchere slid, pletter eller fejl — kun global korrektion | P0 |
 | FR-3 | On-model-generering: billedmodel med det ægte foto som styrende reference genererer 1–2 billeder af en AI-person i nordisk æstetik (præcis stil-preset, §9), der bærer det konkrete stykke tøj. Automatisk troskabs-tjek (K1) før levering; fejlede genereringer koster ikke brugerens kreditter | P0 |
-| FR-4 | AI-mærkning: synligt "AI-visualisering"-badge indlejret i hjørnet af alle genererede billeder + metadata. Kan ikke slås fra (EU AI-forordningen art. 50, i kraft 2/8-2026) | P0 |
+| FR-4 | AI-mærkning (EU AI-forordningen art. 50, i kraft 2/8-2026): oplysningen ligger UDELUKKENDE i UI'et/på forsiden. Billedfilen bærer intet badge og ingen metadata overhovedet (hverken egen mærkning, EXIF/XMP/IPTC/ICC eller leverandørens C2PA-provenance) — overstyrer den oprindelige ordlyd her, se ejer-beslutninger 20/8 og 22/8 i STATUS.md | P0 |
 | FR-5 | Annoncetekst: Claude genererer titel, beskrivelse (mærke/størrelse/stand/materiale fra felter + label-foto), søgeord og prisforslag. Fejl fra brugerens felter SKAL indgå i beskrivelsen | P0 |
 | FR-6 | Compliance-rækkefølge: output præsenteres altid som: ægte fotos først (med instruks "brug dette som billede 1 på Vinted"), AI-billeder efter. In-app tekst forklarer Vinteds regler kort | P0 |
 | FR-7 | Kreditsystem: INGEN gratis annoncer (ejer-beslutning 2026-08-15; S27 overvejer alternativ). Kreditpakker/top-up/abonnementer via Stripe Checkout — produkter og priser bor i `lib/config.ts` (pricing v3.0); kreditter trækkes kun ved leveret resultat | P0 |
@@ -77,7 +77,7 @@
   │       1. rens (baggrund + lys)  ──┐
   │       2. on-model-generering     ├── parallelle kald til ImageProvider (fal)
   │       3. troskabs-tjek (K1)      ──┘   (Seedream-klasse billedmodel + bg-removal)
-  │       4. AI-badge + eksportformater (sharp — ffmpeg IKKE nødvendig i fase A)
+  │       4. metadata-rens + eksportformater, INGEN badge (sharp — ffmpeg IKKE nødvendig i fase A)
   │       5. annoncetekst (Claude API)
   │       6. kredit-træk (kun ved succes)
   ├──> [Stripe]  Checkout til kreditpakker · webhooks → credits
@@ -105,7 +105,7 @@ Invariant: kreditter trækkes i samme transaktion som leverancen markeres komple
 - **Troskabs-tjek (K1):** automatisk sammenligning mellem ægte foto og on-model-billede (vision-model-kald: "samme print/farve/snit? fejl synlige der hvor de skal være?"). Under tærskel → 1 automatisk retry med strammere reference-vægt → ellers leveres kun rensede fotos + tekst, og on-model-kreditten refunderes. Et misvisende AI-billede er værre end intet AI-billede.
 ### 8.2 Compliance-regler (kodede, jf. Vinteds katalogregler + EU AI-forordning)
 1. Ægte foto altid først i leverancen med eksplicit "billede 1 på Vinted"-instruks (Vinted kræver at første foto viser hele den faktiske vare, taget af sælgeren selv).
-2. AI-billeder altid med synligt badge + metadata (AI-forordningens mærkningskrav, i kraft siden 2/8-2026).
+2. AI-billeder altid mærket i UI'et (AI-forordningens mærkningskrav, i kraft siden 2/8-2026) — aldrig som badge eller metadata i selve filen (ejer-beslutninger 20/8 og 22/8).
 3. Fejl/slid: brugerens fejl-foto og fejl-felt SKAL med i leverancen — uviste fejl giver køber returret som "ikke som beskrevet", så ærlighed er også salgsrådgivning.
 4. Ingen features der understøtter kommercielt salg på private konti (Vinteds forbud).
 5. In-app disclaimer: "Vinteds regler ændrer sig — Selja følger dem, det bør du også" + link.

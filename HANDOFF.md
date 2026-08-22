@@ -31,7 +31,7 @@ Dette er et P0-krav på linje med funktionalitet. Selja skal ligne et produkt by
 1. Lilla/blå gradient-heroes, glassmorphism, neon-glow, mesh-gradients
 2. Emojis som ikoner eller i UI-tekst; ✨🚀🔥-sprog overalt
 3. Ord som "Supercharge", "Unleash", "Revolutionér", "Boost", "10x", "Magisk", "på steroider" — og alle direkte oversættelser
-4. "AI-powered" / "drevet af AI" som salgsargument. Vi sælger resultatet (solgt tøj, bedre billeder, sparet tid) — aldrig teknologien. Ordet "AI" optræder på sitet kun hvor det er lovpligtigt eller ærligt nødvendigt (badge på visualiseringer, vilkår, forklaring af hvordan visualiseringen laves)
+4. "AI-powered" / "drevet af AI" som salgsargument. Vi sælger resultatet (solgt tøj, bedre billeder, sparet tid) — aldrig teknologien. Ordet "AI" optræder på sitet kun hvor det er lovpligtigt eller ærligt nødvendigt (mærkning i UI'et på visualiseringer — ikke som badge på selve billedet, se 2.2.6 — vilkår, forklaring af hvordan visualiseringen laves)
 5. Tre-kolonners feature-grid med generiske streg-ikoner; "How it works" med 1-2-3-cirkler som eneste struktur
 6. Falske testimonials, falske "as seen in"-logoer, opdigtede tal, countdown-timers, fake scarcity
 7. AI-genererede personer/stockbilleder som marketing-materiale. Marketing-billeder er ÆGTE produkt-output: rigtige before/after af rigtigt tøj. *(Midlertidig ejer-undtagelse indtil S12/S25: forsidens billedserie er AI-genereret efter reglerne i `docs/marketing-billeder.md` — spejl-selfies, aldrig "taget af en ven", p.t. uden synlig mærkat (ejer-ordre, deadline Gate 4). Udskiftes med ægte output efter første rigtige kørsel.)*
@@ -46,7 +46,7 @@ Dette er et P0-krav på linje med funktionalitet. Selja skal ligne et produkt by
 3. **Signatur-element:** before/after-visningen af rigtigt tøj er produktets stærkeste bevis — gør DEN til det visuelle omdrejningspunkt (landing page-hero er et ægte before/after, ikke en illustration)
 4. **Copy-regler:** dansk, konkret, ærlig, lavmælt selvsikker. Aktiv form. Tal frem for tillægsord ("færdig annonce på 2 minutter", ikke "lynhurtigt"). Knapper siger hvad de gør ("Lav min annonce", ikke "Kom i gang"). Fejlbeskeder forklarer hvad der skete og hvad man gør — uden undskyldnings-teater
 5. **Kvalitetsgulv uden at prale af det:** responsivt ned til 320 px, synligt keyboard-fokus, `prefers-reduced-motion` respekteret, rigtige alt-tekster, kontrast ≥ WCAG AA
-6. **Fotografisk ærlighed:** produktbilleder på sitet er uredigerede skærmbilleder/output. Visualiserings-badge ("Visualisering" + AI-mærkning i metadata) er lovpligtigt på genererede billeder og fjernes ALDRIG — det er ikke i konflikt med 2.1.4: brandet praler ikke af AI, men produktet skjuler den heller ikke hvor loven og ærligheden kræver mærkning
+6. **Fotografisk ærlighed:** produktbilleder på sitet er uredigerede skærmbilleder/output. AI-mærkningen (art. 50) er lovpligtig, men bor UDELUKKENDE i UI'et/på forsiden — ALDRIG som badge på billedet eller metadata i filen (overstyrer den oprindelige ordlyd her, som krævede badge + metadata i filen; se ejer-beslutninger 20/8 og 22/8 i STATUS.md). Det er ikke i konflikt med 2.1.4: brandet praler ikke af AI, men produktet skjuler den heller ikke hvor loven og ærligheden kræver mærkning
 ### 2.3 Slop-tjek (køres af hver UI-PR)
 Selvkritik i PR-beskrivelsen: "Hvilke 3 elementer i denne ændring kunne stamme fra en hvilken som helst AI-genereret SaaS — og hvad gjorde jeg ved dem?" Kan spørgsmålet ikke besvares konkret, er PR'en ikke klar.
 ---
@@ -90,7 +90,7 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | B-2 | Klientside-komprimering før upload (mobildata!); målstørrelse ≤ 1,5 MB/foto uden synligt kvalitetstab | P0 |
 | B-3 | Metadatafelter: mærke (autocomplete på kendte mærker), størrelse, stand (Vinteds standskala), fejlbeskrivelse (fri tekst), kategori, evt. købspris | P0 |
 | B-4 | Ét samlet "Lav min annonce"-tryk starter hele pipelinen; progress-visning med reelle trin (renser billeder → laver visualisering → skriver tekst) | P0 |
-| B-5 | Resultatside i ejerens rækkefølge (overstyret 2026-08-20): (1) visualisering(er) med badge, (2) titel/beskrivelse/prisforslag med kopiér-knap pr. element, (3) checkliste "sådan lægger du den på Vinted". **De rensede ægte fotos vises IKKE længere** — de er kun input til modellen (ejer-beslutning 2026-08-20, erstatter FR-6's "ægte fotos først") | P0 |
+| B-5 | Resultatside i ejerens rækkefølge (overstyret 2026-08-20): (1) visualisering(er) — AI-mærkning kun som UI-tekst, intet badge på selve billedet (overstyret yderligere 20/8 senere samme dag, se C-4), (2) titel/beskrivelse/prisforslag med kopiér-knap pr. element, (3) checkliste "sådan lægger du den på Vinted". **De rensede ægte fotos vises IKKE længere** — de er kun input til modellen (ejer-beslutning 2026-08-20, erstatter FR-6's "ægte fotos først") | P0 |
 | B-6 | Delvis leverance ved fejl: fejler visualiseringen, leveres rens + tekst alligevel, og visualiserings-kreditten refunderes automatisk | P0 |
 | B-7 | Item-bibliotek: alle items med status kladde/aktiv/solgt; gen-download; "markér som solgt" med salgspris | P0 |
 | B-8 | Regenerér enkeltdele (ny visualisering i andet preset, ny tekst) til reduceret kreditpris | P1 |
@@ -102,7 +102,7 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | C-1 | Baggrundsrens til neutral flade + global lys/farvekorrektion. ALDRIG lokal retouch — slid, pletter og fnuller SKAL bevares | P0 |
 | C-2 | On-model-generering: ægte foto som styrende reference; prompt styrer person/positur/setting — aldrig tøjets udseende. Præcise regler i `SPEC.md` §9 | P0 |
 | C-3 | Automatisk troskabs-tjek (vision-model): samme print/farve/snit? Score under tærskel → 1 retry med strammere reference → ellers B-6-fallback | P0 |
-| C-4 | Synligt "Visualisering"-badge + AI-metadata (EU AI-forordningen art. 50) indlejret via sharp; kan ikke fravælges | P0 |
+| C-4 | AI-mærkning (EU AI-forordningen art. 50) findes UDELUKKENDE i UI'et/på forsiden. Billedfilen bærer intet badge og ingen metadata overhovedet — hverken egen mærkning, EXIF/XMP/IPTC/ICC eller leverandørens C2PA-provenance; alt renses via sharp. Overstyrer den oprindelige ordlyd her ("badge + AI-metadata indlejret via sharp"), som var det stik modsatte — se ejer-beslutninger 20/8 og 22/8 i STATUS.md | P0 |
 | C-5 | 3 nordiske presets ved launch (fx lys minimalisme / københavnsk gade / hyggelig stue); versioneret med pass-rate-statistik | P1 |
 | C-6 | Person-diversitet i rotation; aldrig genkendelige/virkelige personer; ingen "forbedring" af hvordan tøjet sidder | P0 |
 | C-7 | Alle provider-kald bag `ImageProvider`-interface med mock-implementering til test/CI | P0 |

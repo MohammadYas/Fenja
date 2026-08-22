@@ -34,7 +34,7 @@ under "dataansvarlig", når virksomheden er registreret.
 - **Kategorier:** tøjfotos uploadet af brugeren (kan vise dele af brugerens hjem og krop), annoncedata (mærke, størrelse, stand, fejl, kategori, evt. købspris), genereret tekst og billede.
 - **Modtagere:** Supabase (lager, EU), Google/fal.ai (billedmodel, USA), Anthropic (tekstmodel + troskabstjek, USA), Trigger.dev (kun annonce-id).
 - **Sletning:** ved kontosletning, inden 24 timer; billeder fjernes fra privat bucket, rækker via cascade.
-- **Bemærk:** ingen træning på brugerdata; genererede billeder er mærket synligt og i EXIF (AI-forordningen art. 50).
+- **Bemærk:** ingen træning på brugerdata; genererede billeder er mærket synligt i UI'et (AI-forordningen art. 50). Leverede billedfiler bærer ingen metadata overhovedet — hverken egen mærkning, EXIF/XMP/IPTC/ICC eller leverandørens C2PA-provenance (ejer-beslutning 22/8, lib/pipeline/metadata.ts).
 
 ### 3. Kreditter, abonnement og betaling
 - **Formål:** sælge og afregne kreditter og abonnementer.
