@@ -107,6 +107,46 @@ export const da = {
     fejlBesked: "Skriv en besked på mellem 3 og 2000 tegn.",
     fejlLoft: "Du har sendt meget feedback i dag — prøv igen i morgen.",
   },
+  // Forhandlings-hjælper (abonnent-fordel, 21/8 nat)
+  forhandling: {
+    titel: "Forhandlings-hjælper",
+    stempel: "For abonnenter",
+    forklaring:
+      "Har en køber budt? Skriv buddet, og få tre svar du kan sende direkte — accept, modbud og venlig afvisning, regnet mod dit prisleje og markedet.",
+    budLabel: "Køberens bud (kr.)",
+    knap: "Foreslå svar",
+    kopierKnap: "Kopiér svar",
+    kopieret: "Kopieret ✓",
+    slags: {
+      accepter: "Accepter",
+      modbud: "Modbud",
+      afvis: "Afvis pænt",
+    } as Record<string, string>,
+    kunAbonnenter:
+      "Forhandlings-hjælperen er for abonnenter — vælg et abonnement på kreditsiden.",
+    fejlBud: "Skriv buddet som et beløb i kroner.",
+    fejlLoft: "Du har brugt hjælperen meget i dag — prøv igen i morgen.",
+  },
+  // Bundle-bygger (kun Pro, 21/8 nat)
+  bundleBygger: {
+    titel: "Bundle-bygger",
+    stempel: "Kun Pro",
+    forklaring:
+      "Vælg 2-4 aktive annoncer og få én samlet pakke-annonce med skarp pakkepris — pakker sælger flere stykker på én forsendelse.",
+    knap: (antal: number) => (antal < 2 ? "Vælg mindst 2" : `Byg pakke af ${antal}`),
+    forFaa: "Du skal have mindst to aktive annoncer for at bygge en pakke.",
+    prisLinje: (foer: number, nu: number) =>
+      `Samlet værdi ${foer} kr. → pakkepris ${nu} kr.`,
+    kopierTitel: "Kopiér titel",
+    kopierBeskrivelse: "Kopiér beskrivelse",
+    kopieret: "Kopieret ✓",
+    kunPro: "Bundle-byggeren er en Pro-funktion — opgradér på kreditsiden.",
+    fejlAntal: "Vælg mellem 2 og 4 annoncer.",
+    fejlItems:
+      "En eller flere af annoncerne kunne ikke bruges — de skal være aktive og dine.",
+    fejlPris: "Annoncerne mangler prisforslag — pakkeprisen kan ikke regnes.",
+    fejlLoft: "Du har bygget mange pakker i dag — prøv igen i morgen.",
+  },
   // Kontakt (ejer-ordre 21/8 nat): offentlig /kontakt + sektion på Konto
   kontaktSide: {
     titel: "Kontakt",

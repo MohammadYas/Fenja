@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BundleBygger } from "@/components/bundle-bygger";
 import { Taeller } from "@/components/taeller";
 import { da } from "@/lib/copy/da";
 import { bygSaesonKalender } from "@/lib/salg/kalender";
@@ -334,6 +335,31 @@ export default async function Oversigt() {
               </li>
             ))}
           </ul>
+        </section>
+      ) : null}
+
+      {/* Bundle-bygger (KUN Pro, 21/8 nat): pak 2-4 annoncer til én pakke */}
+      {erAbonnent && tier === "pro" ? (
+        <section
+          className="mt-6 rounded-bloed border border-kant bg-flade p-5"
+          aria-label={da.bundleBygger.titel}
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="font-mono text-detalje font-bold tracking-wide text-gran">
+              {da.bundleBygger.titel}
+            </p>
+            <p className="font-mono text-detalje uppercase tracking-wide text-tekst/50">
+              {da.bundleBygger.stempel}
+            </p>
+          </div>
+          <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+            {da.bundleBygger.forklaring}
+          </p>
+          <BundleBygger
+            items={planInput
+              .filter((i) => i.status === "active")
+              .map((i) => ({ id: i.id, titel: i.titel, prisTilDkk: i.prisTilDkk }))}
+          />
         </section>
       ) : null}
 

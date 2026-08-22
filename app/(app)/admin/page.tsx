@@ -56,6 +56,8 @@ export default async function Admin() {
   const { data: besoegData } = await service
     .from("besoeg")
     .select("sti, referrer_host, utm_source, utm_medium, utm_campaign, enhed, created_at")
+    // /intern/* er rate-limit-tællere (forhandling/bundle), ikke trafik
+    .not("sti", "like", "/intern%")
     .gte("created_at", trediveDageSiden)
     .order("created_at", { ascending: false })
     .limit(10_000);

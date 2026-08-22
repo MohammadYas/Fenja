@@ -171,6 +171,12 @@ export const misbrugsvaern = {
   dagligtBudgetloftDkk: Number(process.env.DAILY_BUDGET_CAP_DKK ?? 200),
 } as const;
 
+// Bundle-bygger (kun Pro, 21/8 nat): pakkepris = samlet værdi minus rabat
+export const bundle = {
+  maksItems: 4,
+  rabatPct: 12,
+} as const;
+
 export const vinted = {
   // Vinteds danske standskala 1:1 (ejer-ordre 2026-08-20; aflæst fra
   // vinted.dk samme dag) — labels må ikke omformuleres
