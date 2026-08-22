@@ -554,6 +554,16 @@ export const da = {
       sourcingTitel: "Værd at source lige nu",
       note: "Priser er medianer fra ægte Vinted-annoncer — brug dem som pejling, når du køber ind til videresalg.",
     },
+    // Annonce-doktor (alle abonnenter, 22/8): sundhedstjek pr. annonce.
+    // Plus ser de 3 der trænger mest; Pro ser alle.
+    doktor: {
+      titel: "Annonce-doktor",
+      lead: "Hver aktiv annonce tjekkes for det, der holder den fra at sælge: fotos, pris mod markedet, sæson, liggetid og titel. Lavest score først.",
+      score: (tal: number) => `${tal}/100`,
+      altOk: "Ingen råd — annoncen står skarpt.",
+      plusNote: "Plus viser de 3 annoncer, der trænger mest. Pro tjekker dem alle.",
+      note: "Pris-rådene bygger på ægte Vinted-annoncer for samme mærke og kategori.",
+    },
     // Pris-trappe (alle abonnenter, 22/8): nedtrapningsplanen pr. annonce
     pristrappe: {
       titel: "Pris-trappe",
@@ -721,6 +731,7 @@ export const da = {
         "Garderobe-radar — hvad din garderobe er værd, og hvad der er værd at source lige nu",
         "Sæson-kalender — hvornår hvert stykke tøj i din garderobe topper",
         "Pris-trappe — en konkret nedtrapningsplan for hver annonce, til den er solgt",
+        "Annonce-doktor — sundhedstjek med score og konkrete råd pr. annonce (de 3, der trænger mest)",
         "Salgsstatistik",
         "Prioriteret kø — dine annoncer laves først",
       ],
@@ -731,6 +742,7 @@ export const da = {
         pro: [
           "Konkurrent-tjek: din pris mod markedets kvartiler pr. annonce",
           "Flip-beregner: hvad du højst må give i genbrug, og hvad gevinsten cirka er",
+          "Annonce-doktor uden loft: alle dine annoncer tjekkes, ikke kun de 3 vigtigste",
           "Favorit-overvågning uden loft, opdateret løbende, med dynamisk prisanbefaling",
           "Besked når lignende annoncer ændrer pris",
           "Ret prisen på flere annoncer ad gangen",

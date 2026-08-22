@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BundleBygger } from "@/components/bundle-bygger";
 import { Taeller } from "@/components/taeller";
 import { da } from "@/lib/copy/da";
+import { bygAnnonceDoktor, DOKTOR_PLUS_ANTAL } from "@/lib/salg/doktor";
 import { bygFlipBeregner } from "@/lib/salg/flip";
 import { bygSaesonKalender } from "@/lib/salg/kalender";
 import { bygKonkurrentTjek } from "@/lib/salg/konkurrent";
@@ -198,6 +199,27 @@ export default async function Oversigt() {
     : [];
   // Flip-beregner (KUN Pro, 22/8): maks indkøbspris + forventet gevinst
   const flip = erAbonnent && tier === "pro" ? bygFlipBeregner() : [];
+  // Annonce-doktor (22/8): sundhedstjek pr. aktiv annonce — Plus ser de 3,
+  // der trænger mest, Pro ser alle
+  const doktorAlle = erAbonnent
+    ? bygAnnonceDoktor(
+        items.map((item) => ({
+          id: item.id,
+          titel: item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
+          maerke: item.brand ?? "",
+          kategori: item.category ?? "",
+          status: (item.status === "failed" ? "draft" : item.status) as
+            | "draft"
+            | "active"
+            | "sold",
+          leveretAt: item.leveret_at,
+          prisTilDkk: item.pris_til_dkk,
+          fotoRoller: (item.item_photos ?? []).map((foto) => foto.role),
+        })),
+      )
+    : [];
+  const doktor =
+    tier === "pro" ? doktorAlle : doktorAlle.slice(0, DOKTOR_PLUS_ANTAL);
 
   const solgte = items.filter((i) => i.status === "sold");
   const samletVaerdi = solgte.reduce((sum, i) => sum + (i.sold_price_dkk ?? 0), 0);
@@ -385,6 +407,70 @@ export default async function Oversigt() {
         </details>
       ) : null}
 
+      {/* Annonce-doktor (22/8, ejer: "en meget bedre funktion"): sundhedstjek
+          pr. annonce med score og konkrete råd — Plus ser de 3 der trænger
+          mest, Pro ser alle. Lige efter salgsplanen: det er handlingslaget. */}
+      {erAbonnent && doktor.length > 0 ? (
+        <details
+          className="group mt-4 rounded-bloed border border-kant bg-flade"
+          aria-label={da.oversigt.doktor.titel}
+        >
+          <summary className={summaryKlasse}>
+            <p className="font-mono text-detalje font-bold tracking-wide text-gran">
+              {da.oversigt.doktor.titel}
+            </p>
+            <Pil />
+          </summary>
+          <div className="px-5 pb-5">
+            <p className="max-w-laesbar text-detalje text-tekst/70">
+              {da.oversigt.doktor.lead}
+            </p>
+            <ul className="mt-3 flex flex-col gap-4">
+              {doktor.map((punkt) => (
+                <li key={punkt.itemId} className="border-b border-kant pb-3 text-detalje">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="font-medium">{punkt.titel}</span>
+                    <span
+                      className={`font-mono font-bold ${
+                        punkt.score >= 80
+                          ? "text-gran"
+                          : punkt.score >= 50
+                            ? "text-ravDyb"
+                            : "text-fejl"
+                      }`}
+                    >
+                      {da.oversigt.doktor.score(punkt.score)}
+                    </span>
+                  </div>
+                  {punkt.raad.length > 0 ? (
+                    <ul className="mt-1.5 flex flex-col gap-1 text-tekst/80">
+                      {punkt.raad.map((raad) => (
+                        <li key={raad} className="flex gap-2">
+                          <span aria-hidden="true" className="text-tekst/40">
+                            —
+                          </span>
+                          {raad}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-1.5 text-tekst/70">{da.oversigt.doktor.altOk}</p>
+                  )}
+                </li>
+              ))}
+            </ul>
+            {tier !== "pro" && doktorAlle.length > doktor.length ? (
+              <p className="mt-3 text-detalje text-tekst/60">
+                {da.oversigt.doktor.plusNote}
+              </p>
+            ) : null}
+            <p className="mt-3 text-detalje text-tekst/60">
+              {da.oversigt.doktor.note}
+            </p>
+          </div>
+        </details>
+      ) : null}
+
       {/* Garderobe-radar (abonnent-fordel, 21/8): garderobens forventede
           værdi + hvad der er værd at source lige nu, vægtet med sæsonen */}
       {erAbonnent ? (
@@ -463,24 +549,26 @@ export default async function Oversigt() {
           <p className="max-w-laesbar text-detalje text-tekst/70">
             {da.oversigt.flip.lead}
           </p>
+          {/* To linjer pr. række (ejer 22/8: så det holder på en telefon):
+              mærke + sæson øverst, køb/gevinst-tallene på egen mono-linje */}
           <ul className="mt-2 grid gap-x-8 gap-y-1 md:grid-cols-2">
             {flip.map((punkt) => (
               <li
                 key={`${punkt.maerke}-${punkt.kategori}`}
-                className="flex items-baseline justify-between gap-4 border-b border-kant py-2.5 text-detalje"
+                className="border-b border-kant py-2.5 text-detalje"
               >
-                <span className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4">
                   <span className="font-medium">
                     {punkt.maerke} {punkt.kategori}
-                  </span>{" "}
-                  <span className={punkt.iSaeson ? "text-gran" : "text-tekst/60"}>
-                    · {punkt.saesonTekst}
                   </span>
-                </span>
-                <span className="shrink-0 font-mono">
+                  <span className={punkt.iSaeson ? "text-gran" : "text-tekst/60"}>
+                    {punkt.saesonTekst}
+                  </span>
+                </div>
+                <p className="mt-0.5 font-mono text-tekst/80">
                   {da.oversigt.flip.koebMaks(punkt.maksKoebDkk)} ·{" "}
                   {da.oversigt.flip.gevinst(punkt.gevinstDkk)}
-                </span>
+                </p>
               </li>
             ))}
           </ul>

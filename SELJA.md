@@ -54,11 +54,17 @@ B2B-delen er parkeret på `/studio` (noindex).
 
 **Abonnent-fordele (alle):** Smart Salgsplan på oversigten, Ugens Salgsplan på
 mail (mandag 06 UTC), Garderobe-radar, Sæson-kalender, Pris-trappe
-(nedtrapningsplan pr. annonce, 22/8), salgsstatistik.
+(nedtrapningsplan pr. annonce, 22/8), Annonce-doktor (sundhedstjek med score
+0-100 og konkrete råd pr. annonce, 22/8 — Plus ser de 3 der trænger mest),
+salgsstatistik.
 **Kun Pro:** Konkurrent-tjek (pris mod markedets p25/median/p75),
-Flip-beregner (maks indkøbspris i genbrug + forventet gevinst, 22/8) og
-Bundle-bygger (2–4 annoncer → én pakke-annonce). Pro har OGSÅ alle
-Plus-fordele.
+Flip-beregner (maks indkøbspris i genbrug + forventet gevinst, 22/8),
+Annonce-doktor uden loft (alle annoncer) og Bundle-bygger (2–4 annoncer →
+én pakke-annonce). Pro har OGSÅ alle Plus-fordele.
+**Oversigtens layout (22/8):** annoncerne og statistikken står ØVERST;
+alle værktøjs-paneler er sammenklappelige `<details>` under overskriften
+"Salgsværktøjer" (kun Smart Salgsplan åben som standard); Suppliers-kortet
+nederst.
 Favorit-overvågning er LOVET i copy, men IKKE bygget (S35).
 
 ## 3. Teknisk arkitektur
@@ -95,8 +101,8 @@ package.json). `syncEnvVars` skubber nøgler til jobmiljøet ved hvert deploy.
 - `lib/credits/ledger.ts` — AL kreditlogik, idempotent
 - `lib/betaling/` — webhook.ts (læser BÅDE gammel og ny Stripe-API-form!),
   abonnement.ts (slår op på **stripe_customer_id**, e-mail som fallback)
-- `lib/salg/` — smart-plan, saeson, radar, statistik, kalender, konkurrent
-  (rene funktioner, fuldt testede)
+- `lib/salg/` — smart-plan, saeson, radar, statistik, kalender, konkurrent,
+  pristrappe, flip, doktor (rene funktioner, fuldt testede)
 - `lib/sikkerhed/` — **ratelimit.ts** (DB-baseret, hashet IP),
   **validering.ts** (skema, kasserer ukendte felter)
 - `lib/copy/da.ts` + `vinted.ts` — AL brugervendt tekst
@@ -160,6 +166,9 @@ Hver sælger får **ét fast sted**, så alle deres annoncer ligner samme hjem.
   beslutnings-sektion registrerer ejerens overstyringer (der er mange)
 - `MANGLER.md` = hvad der mangler før/efter launch
 - `BACKLOG.md` = nummererede opgaver (S12, S35, S39…)
+- `TESTPLAN.md` = prioriteret tjekliste FØR TikTok-trafik og rigtige brugere
+- `docs/supabase-mail-skabeloner.md` = mail-skabelonerne SKAL pege på
+  /auth/confirm med token_hash (glemt-kode-fejlen 22/8; kræver dashboardet)
 - `SELJA.md` (denne) = samlet overblik
 
 Stående regler: kun ÉN branch (`main`), ingen PRs; al copy i `lib/copy`;
