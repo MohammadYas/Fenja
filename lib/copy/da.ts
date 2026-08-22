@@ -187,6 +187,7 @@ export const da = {
           : `Du har ${antal} skift tilbage.`,
       opbrugt: (_maks?: number) =>
         "Du har brugt alle dine skift — hjemmet er nu fast, så dine annoncer bliver ved med at ligne det samme sted.",
+      altOptaget: "Alle hjem er optaget lige nu — dit nuværende beholdes.",
       roterKnap: "Skift til et andet hjem",
       bekraeftTekst: (tilbage: number) =>
         tilbage === 1
@@ -583,9 +584,9 @@ export const da = {
       "fyld-op": "Fyld op",
     } as Record<string, string>,
     // Engangskøb (ejer-ordre 21/8: pakkerne tilbage i UI — lav indgang)
-    pakkeTitel: "Eller køb kreditter enkeltvis",
+    pakkeTitel: "Køb flere kreditter",
     pakkeForklaring:
-      "Ingen abonnement nødvendigt — køb en pakke, og brug kreditterne når det passer dig. De gælder 12 måneder.",
+      "Løbet tør før månedens kvote fyldes op? Køb ekstra kreditter her — de lægges oven i din saldo og gælder 12 måneder fra køb.",
     anbefalet: "Anbefalet",
     pakkeLinje: (antal: number, pris: number) => `${antal} kreditter · ${pris} kr.`,
     pakkeAntal: (antal: number) => `${antal} kreditter`,
@@ -618,6 +619,13 @@ export const da = {
       linje: (antal: number, pris: number) => `${antal} kreditter mere · ${pris} kr.`,
       forklaring:
         "Din kvote er brugt. Fyld op med det samme — din månedskvote kommer stadig som normalt.",
+      // Genvej øverst på kreditsiden (ejer-ordre 22/8): man skal kunne se
+      // med det samme, at man kan købe mere — og hoppe direkte derned.
+      bannerToem: (saldo: number) =>
+        saldo <= 0
+          ? "Du er løbet tør for kreditter — køb flere her"
+          : `Du har kun ${saldo} kreditter tilbage — køb flere her`,
+      bannerNormal: "Løbet tør? Du kan altid købe flere kreditter",
       // Ejer-ordre 2026-08-20: top-up er kun for abonnenter
       kunAbonnenter:
         "Fyld op er for abonnenter. Vælg et abonnement, så er du i gang.",

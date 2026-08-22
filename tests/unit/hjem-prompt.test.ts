@@ -6,10 +6,13 @@ import { HJEM } from "@/lib/pipeline/skabeloner";
 // "så avancerede som dem på forsiden ... der må ik være flaws").
 const hjem = genererHjem();
 
-describe("de 100 genererede hjem", () => {
-  it("er 100 og har entydige id'er og navne-kombinationer", () => {
-    expect(hjem).toHaveLength(100);
-    expect(new Set(hjem.map((h) => h.id)).size).toBe(100);
+describe("de genererede hjem", () => {
+  it("har entydige id'er OG entydige beskrivelser — ingen deler sted", () => {
+    expect(hjem.length).toBeGreaterThanOrEqual(1000);
+    expect(new Set(hjem.map((h) => h.id)).size).toBe(hjem.length);
+    // Eksklusivitet kræver at selve BESKRIVELSEN er unik, ikke kun id'et
+    const beskrivelser = hjem.map((h) => h.spejlrum + "|" + h.stue + "|" + h.gade);
+    expect(new Set(beskrivelser).size).toBe(hjem.length);
   });
 
   it("beskriver hvert sted udførligt nok til at styre modellen", () => {
@@ -53,7 +56,7 @@ describe("de 100 genererede hjem", () => {
   });
 
   it("indgår i HJEM sammen med de fem oprindelige", () => {
-    expect(HJEM.length).toBe(105);
+    expect(HJEM.length).toBe(hjem.length + 5);
     expect(HJEM.slice(5).map((h) => h.id)).toEqual(hjem.map((h) => h.id));
   });
 });

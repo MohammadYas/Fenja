@@ -63,10 +63,13 @@ export async function POST(request: NextRequest) {
     : kreditter.pakker.find((p) => p.id === krop.pakkeId);
   if (!pakke) return NextResponse.json({ fejl: "ukendt pakke" }, { status: 400 });
 
-  // Ejer-ordre 2026-08-20: top-up er KUN for abonnenter
-  if (erTopUp && user.email) {
+  // Ejer-ordre 22/8: ABONNEMENT KRÆVES for alle kreditkøb. Pakkerne er
+  // top-up for abonnenter, ikke en vej udenom abonnementet — og tjekket
+  // ligger HER på serveren, ikke kun i UI'et, så ruten ikke kan kaldes
+  // direkte af en ikke-abonnent.
+  {
     const { harAktivtAbonnement } = await import("@/lib/betaling/abonnement");
-    if (!(await harAktivtAbonnement(user.email))) {
+    if (!user.email || !(await harAktivtAbonnement(user.email))) {
       return NextResponse.json(
         { fejl: da.kreditter.topUp.kunAbonnenter },
         { status: 403 },

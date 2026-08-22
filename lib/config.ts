@@ -37,6 +37,9 @@ export const kreditter = {
   // er standardvejen; top-up først når saldoen ikke rækker til én hel annonce.
   topUp: { id: "fyld-op", antal: 10, prisDkk: 69 },
   topUpVedSaldoHoejst: 0.5,
+  // "Snart tør" (ejer-ordre 22/8): under 3 kreditter vises top-up øverst,
+  // så man opdager det FØR man står midt i en annonce uden dækning.
+  snartToemUnder: 3,
   // Alle købte kreditter (pakker, top-up og abonnementskvoter) gælder 12
   // måneder fra købsdatoen; udløbne kreditter bortfalder i saldo-beregningen.
   udloebMdr: 12,

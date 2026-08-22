@@ -180,6 +180,17 @@ export default async function Oversigt() {
         {da.oversigt.titel}
       </h1>
 
+      {/* Tom tilstand ØVERST (ejer-ordre 22/8): en ny bruger skal se
+          vejen i gang med det samme — ikke efter abonnent-panelerne */}
+      {items.length === 0 ? (
+        <div className="mt-6 rounded-bloed bg-gran p-6 text-kalk">
+          <p className="max-w-laesbar">{da.oversigt.tom}</p>
+          <Link href="/nyt-item" className="knap-link knap-link-lys mt-6 px-5">
+            {da.oversigt.foersteKnap}
+          </Link>
+        </div>
+      ) : null}
+
       <SupplierKommerSnartKort />
 
       {manglerOnboarding ? (
@@ -397,15 +408,7 @@ export default async function Oversigt() {
         </section>
       ) : null}
 
-      {items.length === 0 ? (
-        // Tom tilstand som gran-blok (REDESIGN §2.2)
-        <div className="mt-6 rounded-bloed bg-gran p-6 text-kalk">
-          <p className="max-w-laesbar">{da.oversigt.tom}</p>
-          <Link href="/nyt-item" className="knap-link knap-link-lys mt-6 px-5">
-            {da.oversigt.foersteKnap}
-          </Link>
-        </div>
-      ) : (
+      {items.length > 0 ? (
         <>
           {solgte.length > 0 ? (
             // Statistik som gran-blok med kæmpe mono-tal — "solgt for X kr." er
@@ -452,7 +455,7 @@ export default async function Oversigt() {
             }))}
           />
         </>
-      )}
+      ) : null}
     </main>
   );
 }

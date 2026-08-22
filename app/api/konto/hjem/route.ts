@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { hjemRotation } from "@/lib/config";
 import { da } from "@/lib/copy/da";
-import { HJEM, hentHjem, vaelgHjem } from "@/lib/pipeline/skabeloner";
+import { hentHjem, vaelgHjem } from "@/lib/pipeline/skabeloner";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
 
@@ -37,24 +37,24 @@ export async function POST() {
     );
   }
 
-  // Næste hjem i rækken efter det nuværende — deterministisk, ikke frit valg
+  // Eksklusiv tildeling (ejer-ordre 22/8: ét sted pr. sælger): vi går frem
+  // fra det nuværende hjem og tager det FØRSTE LEDIGE. Optagne hjem afvises
+  // af databasens unikke indeks, så to samtidige skift aldrig kan ende på
+  // samme sted — og ingen kan vælge et sted, en anden allerede har.
   const nuvaerende =
     hentHjem((profil?.home_anchor as string | null | undefined) ?? null) ??
     vaelgHjem(user.id);
-  const nuIndex = HJEM.findIndex((h) => h.id === nuvaerende.id);
-  const naeste = HJEM[(nuIndex + 1) % HJEM.length]!;
-
-  const { error } = await service
-    .from("profiles")
-    .update({ home_anchor: naeste.id, hjem_rotationer: brugt + 1 })
-    .eq("id", user.id);
-  if (error) {
-    return NextResponse.json({ fejl: error.message }, { status: 500 });
+  const { tildelLedigtHjem } = await import("@/lib/pipeline/hjem-tildeling");
+  const nyt = await tildelLedigtHjem(service as never, user.id, nuvaerende.id, {
+    hjem_rotationer: brugt + 1,
+  });
+  if (!nyt) {
+    return NextResponse.json({ fejl: da.konto.hjem.altOptaget }, { status: 409 });
   }
 
   return NextResponse.json({
     ok: true,
-    hjem: { id: naeste.id, navn: da.konto.hjem.navne[naeste.id] ?? naeste.navn },
+    hjem: { id: nyt.id, navn: da.konto.hjem.navne[nyt.id] ?? nyt.navn },
     tilbage: hjemRotation.maks - (brugt + 1),
   });
 }

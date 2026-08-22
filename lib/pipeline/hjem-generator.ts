@@ -198,20 +198,36 @@ const STUER = [
   "a two-seater in oatmeal fabric with visible weave texture, a low sideboard with post and keys on it and a paper lantern",
 ] as const;
 
-const ANTAL_HJEM = 100;
+const ANTAL_HJEM = 1000;
 
-/** 100 hjem — indeks 0-99 giver altid nøjagtig samme hjem */
+// Mixed-radix: hvert indeks 0..N-1 oversættes til ÉN entydig kombination af
+// byggeklodser. Blokkenes længder (10·5·7·11·9·13) giver 450.450 mulige
+// hjem, så eksklusivitet (ét sted pr. sælger, ejer-ordre 22/8) kan holdes
+// længe efter de første tusind brugere — uden at to hjem nogensinde bliver
+// ens. Kombinationen er ren indeks-aritmetik: samme indeks giver ALTID
+// samme hjem, også efter en genstart eller et retry.
+function kombination(i: number) {
+  let rest = i;
+  const by = BYER[rest % BYER.length]!;
+  rest = Math.floor(rest / BYER.length);
+  const bolig = BOLIGER[rest % BOLIGER.length]!;
+  rest = Math.floor(rest / BOLIGER.length);
+  const spejl = SPEJLE[rest % SPEJLE.length]!;
+  rest = Math.floor(rest / SPEJLE.length);
+  const gulv = GULVE[rest % GULVE.length]!;
+  rest = Math.floor(rest / GULVE.length);
+  const lys = LYS[rest % LYS.length]!;
+  rest = Math.floor(rest / LYS.length);
+  const stue = STUER[rest % STUER.length]!;
+  return { by, bolig, spejl, gulv, lys, stue };
+}
+
+/** Alle hjem — indeks giver altid nøjagtig samme hjem (deterministisk) */
 export function genererHjem(): GenereretHjem[] {
   return Array.from({ length: ANTAL_HJEM }, (_, i) => {
-    // Forskellige skridtlængder pr. blok, så kombinationerne ikke gentager
-    // sig i takt hen over de 100 hjem
-    const by = BYER[i % BYER.length]!;
-    const bolig = BOLIGER[i % BOLIGER.length]!;
-    const spejl = SPEJLE[(i * 3) % SPEJLE.length]!;
-    const gulv = GULVE[(i * 7) % GULVE.length]!;
-    const lys = LYS[(i * 5) % LYS.length]!;
-    const stue = STUER[(i * 11) % STUER.length]!;
-    const nr = String(i + 1).padStart(3, "0");
+    const { by, bolig, spejl, gulv, lys, stue } = kombination(i);
+    const nr = String(i + 1).padStart(4, "0");
+
 
     return {
       id: `hjem-${nr}`,
