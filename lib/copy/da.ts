@@ -63,6 +63,13 @@ export const da = {
       brod: (email: string) =>
         `Vi har sendt et bekræftelseslink til ${email}. Tryk på linket, så er din konto klar.`,
       spam: "Ingen mail? Kig i spam, eller prøv igen om et øjeblik.",
+      // Ejer-ordre 22/8: siden venter selv — tjekker løbende og sender videre,
+      // og en knap til den utålmodige, der lige HAR klikket på linket
+      autoTjek:
+        "Du kan blive på denne side: vi tjekker selv løbende og sender dig videre, så snart du har bekræftet.",
+      knap: "Jeg har bekræftet",
+      ikkeEndnu:
+        "Vi kan ikke se bekræftelsen endnu. Vent et øjeblik, efter du har trykket på linket i mailen, og prøv igen.",
     },
     fejlLogin: "Forkert e-mail eller adgangskode. Prøv igen.",
     fejlSignup:

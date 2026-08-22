@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -35,6 +35,63 @@ function LogIndIndhold() {
   const [travl, setTravl] = useState(false);
   const [bekraeftMail, setBekraeftMail] = useState(false);
   const [glemtSendt, setGlemtSendt] = useState(false);
+  const [tjekker, setTjekker] = useState(false);
+  const [ikkeBekraeftetEndnu, setIkkeBekraeftetEndnu] = useState(false);
+
+  // "Tjek din indbakke"-tilstanden venter selv (ejer-ordre 22/8): vi HAR
+  // e-mail og kode, så et stille login-forsøg afslører, om linket i mailen
+  // er fulgt — det fejler med "ikke bekræftet" indtil da og lykkes derefter.
+  // Lykkes det, sendes brugeren videre. Kadencen (15 s) holder sig under
+  // Supabase-rate-limitet på token-endpointet.
+  const proevBekraeftet = useCallback(
+    async (manuel: boolean): Promise<void> => {
+      if (!email || !kode) return;
+      if (manuel) {
+        setTjekker(true);
+        setIkkeBekraeftetEndnu(false);
+      }
+      try {
+        const { opretBrowserKlient } = await import("@/lib/supabase/client");
+        const supabase = opretBrowserKlient();
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password: kode,
+        });
+        if (!error) {
+          try {
+            await fetch("/api/auth/efter-login", { method: "POST" });
+          } catch {
+            // ignoreres bevidst — brugeren er stadig logget ind
+          }
+          router.replace(videre);
+          router.refresh();
+          return;
+        }
+        if (manuel) setIkkeBekraeftetEndnu(true);
+      } catch {
+        if (manuel) setIkkeBekraeftetEndnu(true);
+      } finally {
+        if (manuel) setTjekker(false);
+      }
+    },
+    [email, kode, router, videre],
+  );
+
+  useEffect(() => {
+    if (!bekraeftMail) return;
+    // Skift til "Tjek din indbakke" sker typisk mens man står nede ved
+    // knappen — op til toppen, så beskeden faktisk kan ses (ejer-ordre 22/8)
+    window.scrollTo(0, 0);
+    const interval = window.setInterval(() => {
+      void proevBekraeftet(false);
+    }, 15_000);
+    // Stop det stille tjek efter 10 minutter — knappen virker stadig
+    const stop = window.setTimeout(() => window.clearInterval(interval), 600_000);
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(stop);
+    };
+  }, [bekraeftMail, proevBekraeftet]);
 
   // Glemt adgangskode (S39, ublokeret 21/8 da Resend-SMTP kom på): linket i
   // mailen lander i callback-ruten, der veksler koden til en session og
@@ -205,6 +262,19 @@ function LogIndIndhold() {
         <p className="mt-2 max-w-laesbar text-detalje text-koks/70">
           {da.logInd.bekraeftMail.spam}
         </p>
+        <p className="mt-4 max-w-laesbar text-detalje text-tekst/80">
+          {da.logInd.bekraeftMail.autoTjek}
+        </p>
+        <div className="mt-6">
+          <Button travl={tjekker} onClick={() => void proevBekraeftet(true)}>
+            {da.logInd.bekraeftMail.knap}
+          </Button>
+        </div>
+        {ikkeBekraeftetEndnu ? (
+          <p role="status" className="mt-3 max-w-laesbar text-detalje text-tekst/70">
+            {da.logInd.bekraeftMail.ikkeEndnu}
+          </p>
+        ) : null}
       </main>
     );
   }
