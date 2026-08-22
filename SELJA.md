@@ -30,11 +30,10 @@ B2B-delen (UGC/hjemmesider) er parkeret på `/studio` (noindex).
   - **Plus: 59 kr./md. eller 590 kr./år** — 12 kreditter/md.
   - **Pro: 119 kr./md. eller 1190 kr./år** — 30 kreditter/md.
   - Rollover: ubrugt kvote følger med, loftet er 2× månedskvoten.
-- **Engangspakker (tilbage i UI 21/8, ejer-ordre "skal have omsætning"):**
-  Prøv 5/49 kr. · Sælger 15/89 kr. (anbefalet) · Bunke 40/169 kr. · Lager
-  100/349 kr. — købes af alle på kreditsiden, ingen abonnement nødvendigt.
-- **Top-up** (10 kreditter/69 kr.) kan KUN købes af aktive abonnenter, og kun
-  når saldoen er under 0,5 kredit.
+- **ABONNEMENT KRÆVES for kreditter** (ejer 22/8). Pakkerne (Prøv 5/49 …
+  Lager 100/349) er top-up og vises KUN for abonnenter på kreditsiden;
+  gaten sidder i checkout-ruten, ikke kun i UI. Top-up-kortet vises når
+  saldoen er under 3.
 - Ingen gratis kreditter ved signup (misbrugsværn, ejer-beslutning).
 - Regenerering af én del (ny visualisering/tekst): ½ kredit.
 
@@ -80,7 +79,8 @@ hvert deploy.
   `tilfoej_kreditter`-SQL-funktionen), supabase.ts
 - `lib/betaling/` — webhook.ts (Stripe-events → kreditter; læser BÅDE gammel og
   ny API-form!), abonnement.ts (harAktivtAbonnement + hentAbonnementsTier)
-- `lib/pipeline/hjem-generator.ts` — 100 genererede hjem (+5 oprindelige)
+- `lib/pipeline/hjem-generator.ts` — 1000 genererede hjem (+5 oprindelige);
+  `hjem-tildeling.ts` sikrer ÉT sted pr. sælger via unikt DB-indeks
 - `lib/pipeline/hjem-generator.ts` — 100 genererede hjem (+5 oprindelige)
 - `lib/salg/` — smart-plan.ts, saeson.ts, radar.ts, statistik.ts, kalender.ts,
   konkurrent.ts (alle RENE funktioner, fuldt testede)
@@ -90,7 +90,7 @@ hvert deploy.
 - `lib/auth/admin.ts` — erAdmin(): ADMIN_EMAIL er kommasepareret liste
 - `trigger/` — Trigger.dev-tasks
 - `supabase/migrations/` — 15 migrations, ALLE kørt mod cloud
-- `tests/` — 407 tests (vitest). Copy-vagter håndhæver ærlighedsregler
+- `tests/` — 414 tests (vitest). Copy-vagter håndhæver ærlighedsregler
   (fx maks 4 tankestreger på forsiden, 2-minutters-løftet skal være afgrænset)
 - `scripts/` — katalog-generering, markedsanalyse (høst → `lib/data/markedspriser.ts`),
   indexnow-ping, gate1-fidelity-test
