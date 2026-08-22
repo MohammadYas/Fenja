@@ -43,16 +43,37 @@ export function FoerEfter() {
       </div>
 
       {/* key-skiftet lader panelet rulle ind ved skift (pris-rul).
-          Ejer-ordre 22/8 (præciseret: KUN på telefon): i den stablede
-          mobil-visning står EFTER øverst — tøjet båret er det, man skal se
-          først — mens desktop beholder FØR til venstre og EFTER til højre.
-          Derfor: EFTER først i DOM'en (mobil-rækkefølgen), og fra sm: sættes
-          panelerne på plads med eksplicitte grid-kolonner. */}
+          Ejer-ordre 22/8 (3. runde): traditionel rækkefølge (FØR til venstre,
+          EFTER til højre) og side om side PÅ ALLE skærme — også telefon, hvor
+          panelet før stablede. Sammenligningen ER pointen, så billederne står
+          altid ved siden af hinanden: ens kolonner på mobil (samme
+          billedstørrelse), 1.2fr til EFTER fra sm hvor der er plads. */}
       <div
         key={par.id}
-        className="pris-rul grid overflow-hidden rounded-bloed border border-kant sm:grid-cols-[1fr_auto_1.2fr]"
+        className="pris-rul grid grid-cols-[1fr_auto_1fr] overflow-hidden rounded-bloed border border-kant sm:grid-cols-[1fr_auto_1.2fr]"
       >
-        <div className="bg-baggrund p-5 sm:col-start-3 sm:row-start-1">
+        <div className="bg-flade p-3 sm:p-5">
+          <span className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/70">
+            {copy.foerLabel}
+          </span>
+          <Image
+            src={par.foerBillede}
+            alt={par.foerAlt}
+            width={900}
+            height={1350}
+            sizes="(min-width: 640px) 240px, 45vw"
+            className="mt-3 w-full rounded-bloed border border-kant"
+            priority
+          />
+          <p className="mt-3 font-mono text-detalje lowercase leading-snug text-tekst/80">
+            {par.foerTekst}
+          </p>
+          <p className="mt-1 font-mono text-detalje lowercase text-tekst/80">
+            {par.foerPris}
+          </p>
+        </div>
+        <div className="soem" aria-hidden="true" />
+        <div className="bg-baggrund p-3 sm:p-5">
           <span className="font-mono text-detalje font-medium uppercase tracking-wide text-gran">
             {copy.efterLabel}
           </span>
@@ -61,11 +82,13 @@ export function FoerEfter() {
             alt={par.efterAlt}
             width={900}
             height={1350}
-            sizes="(min-width: 640px) 280px, 80vw"
+            sizes="(min-width: 640px) 280px, 45vw"
             className="mt-3 w-full rounded-bloed border border-kant"
             priority
           />
-          <p className="mt-3 font-display text-titel font-bold">{par.efterTitel}</p>
+          <p className="mt-3 font-display text-detalje font-bold sm:text-titel">
+            {par.efterTitel}
+          </p>
           <ul className="mt-2 flex flex-col gap-1 text-detalje text-tekst/80">
             {copy.punkter.map((punkt) => (
               <li key={punkt} className="flex gap-2">
@@ -83,28 +106,6 @@ export function FoerEfter() {
               egne eksempeltal, FØR-prisen står lige ved siden af */}
           <p className="mt-1 font-mono text-detalje text-ravDyb">
             {par.foerPris} → {par.efterPris.replace("Prisforslag: ", "")}
-          </p>
-        </div>
-        <div className="soem-vandret sm:hidden" aria-hidden="true" />
-        <div className="soem hidden sm:col-start-2 sm:row-start-1 sm:block" aria-hidden="true" />
-        <div className="bg-flade p-5 sm:col-start-1 sm:row-start-1">
-          <span className="font-mono text-detalje font-medium uppercase tracking-wide text-tekst/70">
-            {copy.foerLabel}
-          </span>
-          <Image
-            src={par.foerBillede}
-            alt={par.foerAlt}
-            width={900}
-            height={1350}
-            sizes="(min-width: 640px) 240px, 80vw"
-            className="mt-3 w-full rounded-bloed border border-kant"
-            priority
-          />
-          <p className="mt-3 font-mono text-detalje lowercase leading-snug text-tekst/80">
-            {par.foerTekst}
-          </p>
-          <p className="mt-1 font-mono text-detalje lowercase text-tekst/80">
-            {par.foerPris}
           </p>
         </div>
       </div>
