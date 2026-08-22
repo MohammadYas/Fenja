@@ -19,6 +19,10 @@ mangler — ikke hvad der er lavet (se `SELJA.md` for produktet).
 3. **Rotér nøgler der har været i chat**: Google OAuth client secret,
    TRIGGER_SECRET_KEY, RESEND_API_KEY, Stripe webhook-secret,
    testkonto-passwords.
+3b. **Læg nulstillings-mailens skabelon om til token_hash** (22/8: "glemt
+   adgangskode virker ikke") — følg `docs/supabase-mail-skabeloner.md`.
+   Koden tager nu begge link-former, men på tværs af browsere (Gmail-appens
+   indbyggede browser!) virker kun token_hash-linket.
 
 ## SYNLIGHED (kræver dine logins)
 

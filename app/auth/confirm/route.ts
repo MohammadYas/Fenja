@@ -19,15 +19,29 @@ export async function GET(request: NextRequest) {
   const origin = process.env.NODE_ENV === "production" ? site.baseUrl : url.origin;
   const tokenHash = url.searchParams.get("token_hash");
   const type = url.searchParams.get("type") as EmailOtpType | null;
-  const videre = url.searchParams.get("videre") ?? "/oversigt";
-
-  if (!tokenHash || !type || !TILLADTE_TYPER.includes(type)) {
-    return NextResponse.redirect(new URL("/log-ind", origin));
-  }
+  const kode = url.searchParams.get("code");
+  // Nulstilling SKAL ende på ny-adgangskode-siden, også hvis mail-skabelonen
+  // ikke sender videre-parameteren med (glemt-kode-fejlen 22/8)
+  const videre =
+    url.searchParams.get("videre") ??
+    (type === "recovery" ? "/ny-adgangskode" : "/oversigt");
 
   const supabase = await opretServerKlient();
-  const { data, error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
-  if (error || !data.user) {
+  let bruger: { id: string; email?: string; user_metadata?: Record<string, unknown> } | null = null;
+
+  if (tokenHash && type && TILLADTE_TYPER.includes(type)) {
+    const { data, error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
+    if (!error && data.user) bruger = data.user;
+  } else if (kode) {
+    // Fallback (glemt-kode-fejlen 22/8): peger mail-skabelonen stadig på
+    // ConfirmationURL, kommer linket retur som PKCE-?code i stedet for
+    // token_hash. Veksl den her, så flowet virker i afsender-browseren,
+    // mens skabelonen lægges om (docs/supabase-mail-skabeloner.md).
+    const { data, error } = await supabase.auth.exchangeCodeForSession(kode);
+    if (!error && data.user) bruger = data.user;
+  }
+
+  if (!bruger) {
     // Udløbet/brugt link → log ind-siden (ny-adgangskode-siden forklarer selv
     // "linket er udløbet", hvis det var en nulstilling)
     return NextResponse.redirect(new URL("/log-ind", origin));
@@ -37,9 +51,9 @@ export async function GET(request: NextRequest) {
   const sikkerVidere = videre.startsWith("/") && !videre.startsWith("//") ? videre : "/oversigt";
 
   await koerEfterBekraeftelse({
-    userId: data.user.id,
-    email: data.user.email,
-    alderBekraeftet: data.user.user_metadata?.age_confirmed === true,
+    userId: bruger.id,
+    email: bruger.email,
+    alderBekraeftet: bruger.user_metadata?.age_confirmed === true,
     origin: origin,
   });
 

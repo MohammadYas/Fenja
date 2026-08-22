@@ -92,6 +92,7 @@ export const da = {
     knap: "Gem ny adgangskode",
     ingenSession:
       "Linket er udløbet eller allerede brugt. Bed om et nyt fra log ind-siden.",
+    tilLogInd: "Til log ind-siden",
     fejl: "Adgangskoden kunne ikke gemmes. Prøv igen.",
   },
   // Feedback (ejer-ordre 21/8): kort formular på Konto, læses i admin

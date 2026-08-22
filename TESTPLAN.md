@@ -31,7 +31,10 @@ af alt. Brug et rigtigt kort og et rigtigt stykke tøj.
   fixet skal holde), og land logget ind.
 - [ ] **B2. Google-login**: opret via Google på en frisk konto; tjek at
   onboardingen spørger om 18+ og køn.
-- [ ] **B3. Glemt kode**: /ny-adgangskode-flowet ende-til-ende.
+- [ ] **B3. Glemt kode**: FØRST: læg nulstillings-mailens skabelon om til
+  token_hash (`docs/supabase-mail-skabeloner.md` — 2 minutter i Supabase-
+  dashboardet). SÅ: bed om nulstilling i én browser, åbn mail-linket i en
+  ANDEN, sæt ny kode, og log ind med den.
 - [ ] **B4. Log ud/ind igen** på telefonen, og tjek at /oversigt husker alt.
 
 ## C. Penge og annoncer (det, der IKKE må fejle med rigtige brugere)

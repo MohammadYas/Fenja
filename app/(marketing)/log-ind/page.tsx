@@ -107,8 +107,10 @@ function LogIndIndhold() {
     try {
       const { opretBrowserKlient } = await import("@/lib/supabase/client");
       const supabase = opretBrowserKlient();
+      // Lander i /auth/confirm, som tager BÅDE token_hash (skabelon-linket)
+      // og PKCE-?code (ConfirmationURL) — glemt-kode-fejlen 22/8
       await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback?videre=${encodeURIComponent("/ny-adgangskode")}`,
+        redirectTo: `${window.location.origin}/auth/confirm?videre=${encodeURIComponent("/ny-adgangskode")}`,
       });
       setGlemtSendt(true);
     } catch {

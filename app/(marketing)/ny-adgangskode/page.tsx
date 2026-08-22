@@ -5,8 +5,9 @@
 // updateUser direkte. Uden session vises en ærlig besked i stedet for en
 // formular der alligevel ville fejle.
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { da } from "@/lib/copy/da";
@@ -16,6 +17,29 @@ export default function NyAdgangskode() {
   const [kode, setKode] = useState("");
   const [fejl, setFejl] = useState<string | null>(null);
   const [travl, setTravl] = useState(false);
+  const [harSession, setHarSession] = useState<boolean | null>(null);
+
+  // Tjek sessionen med det samme (glemt-kode-fejlen 22/8): et udløbet/brugt
+  // link skal give den ærlige besked STRAKS — ikke først efter man har
+  // tastet en ny kode, som alligevel ikke kunne gemmes
+  useEffect(() => {
+    let aktiv = true;
+    (async () => {
+      try {
+        const { opretBrowserKlient } = await import("@/lib/supabase/client");
+        const supabase = opretBrowserKlient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (aktiv) setHarSession(user != null);
+      } catch {
+        if (aktiv) setHarSession(false);
+      }
+    })();
+    return () => {
+      aktiv = false;
+    };
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,6 +71,20 @@ export default function NyAdgangskode() {
     } finally {
       setTravl(false);
     }
+  }
+
+  if (harSession === false) {
+    return (
+      <main className="mx-auto max-w-md px-4 py-16">
+        <h1 className="font-display text-display">{da.nyAdgangskode.titel}</h1>
+        <p className="mt-4 max-w-laesbar text-tekst/80">
+          {da.nyAdgangskode.ingenSession}
+        </p>
+        <Link href="/log-ind" className="knap-link mt-6">
+          {da.nyAdgangskode.tilLogInd}
+        </Link>
+      </main>
+    );
   }
 
   return (
