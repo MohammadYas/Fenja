@@ -20,6 +20,7 @@
 // referencebilledet styrer. C-6 gælder: aldrig genkendelige personer.
 // Alt er deterministisk (ingen Math.random/Date.now) — retries er stabile.
 
+import { genererHjem } from "./hjem-generator";
 import type { Preset } from "./presets";
 import type { VisningsType } from "./visninger";
 
@@ -209,7 +210,7 @@ export type Hjem = {
   steder: Readonly<Record<string, string>>;
 };
 
-export const HJEM: readonly Hjem[] = [
+const OPRINDELIGE_HJEM: readonly Hjem[] = [
   {
     id: "vesterbro-lejlighed",
     version: 2,
@@ -276,6 +277,23 @@ export const HJEM: readonly Hjem[] = [
     },
   },
 ] as const;
+
+// 100 hjem (ejer-ordre 22/8): med kun 5 hjem delte hver 200. sælger nøjagtig
+// samme baggrund ved 1000 brugere. De oprindelige fem beholdes FØRST, så
+// gemte home_anchor-valg stadig virker; de 100 genererede lægges efter.
+export const HJEM: readonly Hjem[] = [
+  ...OPRINDELIGE_HJEM,
+  ...genererHjem().map((h) => ({
+    id: h.id,
+    version: 1,
+    navn: h.navn,
+    steder: {
+      "lys-minimalisme": h.spejlrum,
+      "hyggelig-stue": h.stue,
+      "koebenhavnsk-gade": h.gade,
+    },
+  })),
+];
 
 function stabilHash(tekst: string): number {
   let hash = 0;

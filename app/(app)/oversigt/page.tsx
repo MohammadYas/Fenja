@@ -276,13 +276,13 @@ export default async function Oversigt() {
             </p>
           ) : null}
           <p className="mt-3 font-medium">{da.oversigt.radar.sourcingTitel}</p>
-          <ul className="mt-2 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+          <ul className="mt-2 grid gap-x-8 gap-y-1 md:grid-cols-2">
             {radar.map((punkt) => (
               <li
                 key={`${punkt.maerke}-${punkt.kategori}`}
-                className="flex items-baseline justify-between gap-4 border-b border-kant py-2 text-detalje"
+                className="flex items-baseline justify-between gap-4 border-b border-kant py-2.5 text-detalje"
               >
-                <span className="min-w-0">
+                <span className="min-w-0 flex-1">
                   <span className="font-medium">
                     {punkt.maerke} {punkt.kategori}
                   </span>{" "}
@@ -319,7 +319,7 @@ export default async function Oversigt() {
           <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
             {da.oversigt.kalender.lead}
           </p>
-          <ul className="mt-3 grid gap-x-8 gap-y-2 sm:grid-cols-2">
+          <ul className="mt-3 grid gap-x-8 gap-y-1 md:grid-cols-2">
             {kalender.map((m) => (
               <li key={m.maaned} className="border-b border-kant py-2 text-detalje">
                 <span className={`font-mono font-bold ${m.erNu ? "text-gran" : "text-tekst/70"}`}>

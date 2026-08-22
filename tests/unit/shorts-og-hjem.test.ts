@@ -28,17 +28,18 @@ describe("shorts-skabelonen", () => {
 // Ejer-bekymring 21/8 nat: "Selja vælger"-hjemmet SKAL sprede brugerne, så
 // alle ikke ender med samme baggrund på deres annoncer.
 describe("hjem-fordelingen spreder brugerne", () => {
-  it("100 forskellige user-ids fordeler sig over ALLE hjem, nogenlunde jævnt", () => {
+  it("1000 brugere spreder sig bredt over hjemmene — ingen dominans", () => {
+    // Ejer-spørgsmål 22/8: "kan 1000 have forskellige baggrunde?" Med 105 hjem
+    // er svaret ja i praksis: ingen enkelt baggrund må dominere.
     const taelling = new Map<string, number>();
-    for (let i = 0; i < 100; i++) {
-      // Realistisk uuid-agtig variation
+    for (let i = 0; i < 1000; i++) {
       const userId = `bruger-${i}-${(i * 2654435761).toString(16)}`;
       const hjem = vaelgHjem(userId);
       taelling.set(hjem.id, (taelling.get(hjem.id) ?? 0) + 1);
     }
-    // Alle hjem er i brug…
-    expect(taelling.size).toBe(HJEM.length);
-    // …og intet hjem har over halvdelen af brugerne (jævn nok spredning)
+    // Mindst halvdelen af alle hjem er i brug…
+    expect(taelling.size).toBeGreaterThanOrEqual(Math.floor(HJEM.length / 2));
+    // …og intet hjem tager mere end 5 % af brugerne
     for (const [, antal] of taelling) {
       expect(antal).toBeLessThan(50);
     }

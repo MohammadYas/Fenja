@@ -37,6 +37,24 @@ export async function POST(request: NextRequest) {
   const ledger = new SupabaseLedgerDb(service);
   const udfald = await haandterStripeEvent(ledger, event as StripeCheckoutEvent);
 
+  // Gem Stripe-kunden på profilen (omsætnings-audit, punkt 2), så senere
+  // abonnements-opslag ikke afhænger af at betalings-mailen matcher konto-
+  // mailen. Best-effort: en fejl her må aldrig påvirke krediteringen.
+  if (udfald.haandteret) {
+    const objekt = (event as unknown as { data?: { object?: { customer?: unknown } } })
+      .data?.object;
+    const kundeId =
+      typeof objekt?.customer === "string"
+        ? objekt.customer
+        : (objekt?.customer as { id?: string } | undefined)?.id;
+    if (kundeId) {
+      await bedstMuligt(async () => {
+        const { gemStripeKunde } = await import("@/lib/betaling/abonnement");
+        await gemStripeKunde(udfald.userId, kundeId);
+      });
+    }
+  }
+
   // S32: kvitterings-supplement (Stripe sender selve kvitteringen). Best-effort:
   // ruten svarer 200 uanset mailen, så Stripe ikke gentager pga. den. Bemærk:
   // haandterStripeEvent returnerer haandteret=true også for en dublet-event

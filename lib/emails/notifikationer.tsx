@@ -9,6 +9,7 @@ import { KreditRefunderetMail } from "@/emails/kredit-refunderet";
 import { KvitteringMail } from "@/emails/kvittering";
 import { renderMailHtml } from "@/emails/render";
 import { SalgsplanMail } from "@/emails/salgsplan";
+import { UdloebsvarselMail } from "@/emails/udloebsvarsel";
 import { VelkomstMail } from "@/emails/velkomst";
 import { emails as kopi } from "@/lib/copy/emails";
 import type { SalgsPunkt } from "@/lib/salg/smart-plan";
@@ -95,6 +96,25 @@ export async function sendSalgsplan(
     html: await renderMailHtml(
       emne,
       <SalgsplanMail punkter={args.punkter} oversigtUrl={args.oversigtUrl} />,
+    ),
+  });
+}
+
+export async function sendUdloebsvarsel(
+  afsender: EmailAfsender,
+  args: { til: string; antal: number; dato: string; kreditUrl: string },
+): Promise<EmailKvittering> {
+  const emne = kopi.udloebsvarsel.emne;
+  return afsender.send({
+    til: args.til,
+    emne,
+    html: await renderMailHtml(
+      emne,
+      <UdloebsvarselMail
+        antal={args.antal}
+        dato={args.dato}
+        kreditUrl={args.kreditUrl}
+      />,
     ),
   });
 }

@@ -298,13 +298,19 @@ describe("hjem-anker som brugervalg (S31)", () => {
     expect(prompt).not.toContain(vaelgHjem("bruger-a").steder[preset.id]!);
   });
 
-  it("da.ts har et brugervendt navn for hvert hjem, og kun for dem (NFR-12)", () => {
+  it("hvert hjem har et brugervendt navn (NFR-12)", () => {
+    // 22/8: de fem oprindelige hjem har oversatte navne i da.ts; de 100
+    // genererede bærer deres eget navn fra hjem-generatoren. Kravet er, at
+    // INGEN hjem ender med et rå id i UI'et.
     for (const hjem of HJEM) {
-      expect(da.konto.hjem.navne[hjem.id], `mangler navn for ${hjem.id}`).toBeTruthy();
+      const vist = da.konto.hjem.navne[hjem.id] ?? hjem.navn;
+      expect(vist, `mangler navn for ${hjem.id}`).toBeTruthy();
+      expect(vist).not.toBe(hjem.id);
     }
-    expect(Object.keys(da.konto.hjem.navne).sort()).toEqual(
-      HJEM.map((h) => h.id).sort(),
-    );
+    // da.ts må kun navngive hjem der findes
+    for (const id of Object.keys(da.konto.hjem.navne)) {
+      expect(HJEM.some((h) => h.id === id), `ukendt hjem-navn: ${id}`).toBe(true);
+    }
   });
 });
 

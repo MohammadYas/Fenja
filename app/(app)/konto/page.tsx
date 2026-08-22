@@ -97,7 +97,11 @@ export default async function Konto() {
         <p className="mt-3 font-mono text-detalje uppercase tracking-wide text-tekst/70">
           {da.konto.hjem.nuvaerende(effektivtHjemNavn)}
         </p>
-        <HjemVaelger valgt={hjemAnker} hjemIder={HJEM.map((h) => h.id)} />
+        <HjemVaelger
+          valgt={hjemAnker}
+          hjem={HJEM.map((h) => ({ id: h.id, navn: da.konto.hjem.navne[h.id] ?? h.navn }))}
+          effektivtHjemId={effektivtHjem.id}
+        />
       </Card>
 
       <h2 className="mt-8 text-titel font-medium">{da.konto.koebshistorik}</h2>

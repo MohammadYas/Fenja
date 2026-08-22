@@ -37,43 +37,6 @@ async function kaldJson<T>(system: string, bruger: string, mock: T): Promise<T> 
   return JSON.parse(indhold) as T;
 }
 
-export type ForhandlingsInput = {
-  titel: string;
-  prisFraDkk: number | null;
-  prisTilDkk: number | null;
-  budDkk: number;
-  medianDkk: number | null;
-};
-
-export type ForhandlingsSvar = {
-  vurdering: string;
-  svar: { slags: "accepter" | "modbud" | "afvis"; tekst: string; prisDkk?: number }[];
-};
-
-/** Tre klar-til-at-sende svar på et købers bud, forankret i markedstal */
-export async function foreslaaForhandlingssvar(
-  input: ForhandlingsInput,
-): Promise<ForhandlingsSvar> {
-  const anker = input.prisTilDkk ?? input.medianDkk ?? input.budDkk;
-  const modbud = Math.max(input.budDkk, Math.round((input.budDkk + anker) / 2 / 5) * 5);
-  const mock: ForhandlingsSvar = {
-    vurdering: "Buddet ligger under dit prisleje — et modbud på midten plejer at lande handlen.",
-    svar: [
-      { slags: "accepter", tekst: `Deal! ${input.budDkk} kr. — jeg sender i morgen.`, prisDkk: input.budDkk },
-      { slags: "modbud", tekst: `Tak for buddet! Jeg kan gå med til ${modbud} kr., så har vi en aftale.`, prisDkk: modbud },
-      { slags: "afvis", tekst: "Tak for interessen — dér kan jeg desværre ikke være med. Prisen står ved magt lidt endnu." },
-    ],
-  };
-  return kaldJson(
-    `En køber har budt på sælgerens Vinted-annonce. Vurder buddet mod prislejet og skriv PRÆCIS tre svar, sælgeren kan kopiere direkte ind i Vinted-chatten: ét der accepterer, ét modbud (rundt tal, deleligt med 5) og én venlig afvisning. Svar KUN med JSON: {"vurdering": string (én sætning), "svar": [{"slags": "accepter"|"modbud"|"afvis", "tekst": string, "prisDkk"?: number}]}`,
-    `Annonce: "${input.titel}"
-Sælgers prisleje: ${input.prisFraDkk ?? "?"}–${input.prisTilDkk ?? "?"} kr.
-Markedets median for lignende: ${input.medianDkk != null ? `${input.medianDkk} kr.` : "ukendt"}
-Køberens bud: ${input.budDkk} kr.`,
-    mock,
-  );
-}
-
 export type BundleInput = {
   items: { titel: string; kategori: string; prisTilDkk: number | null }[];
   samletFoerDkk: number;

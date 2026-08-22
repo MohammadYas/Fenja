@@ -107,26 +107,6 @@ export const da = {
     fejlBesked: "Skriv en besked på mellem 3 og 2000 tegn.",
     fejlLoft: "Du har sendt meget feedback i dag — prøv igen i morgen.",
   },
-  // Forhandlings-hjælper (abonnent-fordel, 21/8 nat)
-  forhandling: {
-    titel: "Forhandlings-hjælper",
-    stempel: "For abonnenter",
-    forklaring:
-      "Har en køber budt? Skriv buddet, og få tre svar du kan sende direkte — accept, modbud og venlig afvisning, regnet mod dit prisleje og markedet.",
-    budLabel: "Køberens bud (kr.)",
-    knap: "Foreslå svar",
-    kopierKnap: "Kopiér svar",
-    kopieret: "Kopieret ✓",
-    slags: {
-      accepter: "Accepter",
-      modbud: "Modbud",
-      afvis: "Afvis pænt",
-    } as Record<string, string>,
-    kunAbonnenter:
-      "Forhandlings-hjælperen er for abonnenter — vælg et abonnement på kreditsiden.",
-    fejlBud: "Skriv buddet som et beløb i kroner.",
-    fejlLoft: "Du har brugt hjælperen meget i dag — prøv igen i morgen.",
-  },
   // Bundle-bygger (kun Pro, 21/8 nat)
   bundleBygger: {
     titel: "Bundle-bygger",
@@ -198,11 +178,16 @@ export const da = {
     hjem: {
       titel: "Dit hjem på billederne",
       forklaring:
-        "Alle dine visualiseringer optages i det samme hjem, så din profil ligner ét sted. Vælg et fast hjem, eller lad Selja vælge for dig.",
+        "Alle dine visualiseringer optages i det samme hjem, så din profil ligner ét sted — ikke tusind tilfældige baggrunde. Der er 105 hjem at vælge mellem; Selja giver dig ét fast, og du kan bladre til et andet.",
       nuvaerende: (navn: string) => `Nu: ${navn}`,
       automatisk: "Selja vælger",
       automatiskHjaelp: "Vi vælger et fast hjem ud fra din konto.",
-      gem: "Gem hjem",
+      ditValg: "Dit hjem",
+      tael: (nr: number, ialt: number) => `Hjem ${nr} af ${ialt}`,
+      forrige: "Forrige hjem",
+      naeste: "Vis et andet hjem",
+      tilbageTilAutomatisk: "Lad Selja vælge igen",
+      gem: "Gem dette hjem",
       gemt: "Gemt",
       fejl: "Hjemmet kunne ikke gemmes. Prøv igen.",
       navne: {
@@ -689,6 +674,14 @@ export const da = {
           "Ret prisen på flere annoncer ad gangen",
         ],
       } as Record<string, readonly string[]>,
+    },
+    // Engangspakker offentligt (omsætnings-audit 21/8, punkt 1)
+    pakker: {
+      titel: "Eller køb kreditter uden abonnement",
+      lead:
+        "Sælger du sjældnere, kan du købe en pakke og bruge kreditterne, når det passer dig. Abonnementet er billigst pr. kredit — pakkerne er friheden til at slippe.",
+      note: "Kreditter fra pakker gælder 12 måneder fra køb. Ingen binding, ingen fornyelse.",
+      knap: "Kom i gang",
     },
     saadanTitel: "Sådan virker kreditter",
     punkter: [

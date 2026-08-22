@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { kreditter } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { AbonnementValg } from "@/components/abonnement-valg";
 import { JsonLd } from "@/components/json-ld";
@@ -49,6 +50,59 @@ export default function PriserSide() {
           </Reveal>
           <Reveal forsinkelseTrin={1}>
             <AbonnementValg koebAktiv={false} tone="gran" className="mt-8" />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Engangspakker OFFENTLIGT (omsætnings-audit 21/8, punkt 1): pakkerne
+          lå kun bag login, så en ny besøgende kun så "bind dig månedligt" og
+          aldrig opdagede 49-kroners-indgangen. De står nu her, under
+          abonnementet, med den ærlige ramme: abonnement er billigst pr.
+          kredit — pakker er for dig, der sælger sjældnere. */}
+      <section className="border-b border-kant" aria-label={da.priserSide.pakker.titel}>
+        <div className="mx-auto max-w-5xl px-4 py-16">
+          <Reveal>
+            <h2 className="font-display text-display font-bold">
+              {da.priserSide.pakker.titel}
+            </h2>
+            <p className="mt-3 max-w-laesbar text-tekst/80">
+              {da.priserSide.pakker.lead}
+            </p>
+          </Reveal>
+          <div className="mt-8 border-t border-kant">
+            {kreditter.pakker.map((pakke, i) => (
+              <Reveal key={pakke.id} forsinkelseTrin={i}>
+                <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-kant py-5">
+                  <div className="min-w-0">
+                    <p className="font-display text-titel font-semibold">
+                      {da.kreditter.pakkeNavne[pakke.id] ?? pakke.id}
+                      {pakke.id === kreditter.anbefaletPakkeId ? (
+                        <span className="ml-2 font-mono text-detalje font-normal uppercase tracking-wide text-gran">
+                          {da.kreditter.anbefalet}
+                        </span>
+                      ) : null}
+                    </p>
+                    <p className="mt-1 font-mono text-detalje text-tekst/70">
+                      {da.kreditter.pakkeAntal(pakke.antal)} ·{" "}
+                      {da.kreditter.prisPrStk(
+                        (pakke.prisDkk / pakke.antal).toFixed(2).replace(".", ","),
+                      )}
+                    </p>
+                  </div>
+                  <p className="shrink-0 font-mono text-titel font-bold">
+                    {da.kreditter.pakkePris(pakke.prisDkk)}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal>
+            <p className="mt-6 max-w-laesbar text-detalje text-tekst/70">
+              {da.priserSide.pakker.note}
+            </p>
+            <Link href="/log-ind?videre=/kreditter" className="knap-link mt-6">
+              {da.priserSide.pakker.knap}
+            </Link>
           </Reveal>
         </div>
       </section>

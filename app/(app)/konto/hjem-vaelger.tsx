@@ -1,93 +1,117 @@
 "use client";
 
+// S31 · dit faste hjem på billederne. Omlagt 22/8 (ejer-ordre "optimer Dit
+// hjem på billederne"): der findes nu 105 hjem, så en radioliste er ubrugelig.
+// I stedet vises DIT hjem, og man bladrer til et andet — som en shuffle,
+// indtil man kan lide stedet. Tom værdi = Selja vælger.
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { da } from "@/lib/copy/da";
 
-// S31 · vælg det faste hjem visualiseringerne optages i. Tom værdi = lad Selja
-// vælge (det deterministiske hjem). Navnene kommer fra da.ts (NFR-12); listen
-// af hjem-id'er er den samme kilde som pipelinen bruger, sendt fra siden.
 type HjemVaelgerProps = {
-  /** Nuværende valg (home_anchor); null/ukendt vises som "Selja vælger" */
+  /** Nuværende valg (home_anchor); null = "Selja vælger" */
   valgt: string | null;
-  /** Hjem-id'er i visningsrækkefølge (fra HJEM, serveret af siden) */
-  hjemIder: string[];
+  /** Alle hjem i visningsrækkefølge, sendt fra siden */
+  hjem: { id: string; navn: string }[];
+  /** Hjemmet sælgeren har lige nu (valgt eller automatisk tildelt) */
+  effektivtHjemId: string;
 };
 
-export function HjemVaelger({ valgt, hjemIder }: HjemVaelgerProps) {
-  const kendtValg = valgt && hjemIder.includes(valgt) ? valgt : "";
-  const [valg, setValg] = useState(kendtValg);
-  // Basislinjen er det senest gemte valg — opdateres efter en vellykket gemning,
-  // så "Gemt" vises og knappen slår fra, indtil sælgeren ændrer igen.
-  const [gemtValg, setGemtValg] = useState(kendtValg);
+export function HjemVaelger({ valgt, hjem, effektivtHjemId }: HjemVaelgerProps) {
+  const startIndex = Math.max(
+    0,
+    hjem.findIndex((h) => h.id === effektivtHjemId),
+  );
+  const [index, setIndex] = useState(startIndex);
+  const [gemtValg, setGemtValg] = useState<string | null>(valgt);
   const [travl, setTravl] = useState(false);
   const [status, setStatus] = useState<"ren" | "gemt" | "fejl">("ren");
+  const copy = da.konto.hjem;
 
-  const aendret = valg !== gemtValg;
+  const nuvaerende = hjem[index] ?? hjem[0]!;
+  const erAutomatisk = gemtValg === null;
+  const aendret = nuvaerende.id !== gemtValg;
 
-  async function gem() {
+  function bladre(retning: 1 | -1) {
+    setStatus("ren");
+    setIndex((i) => (i + retning + hjem.length) % hjem.length);
+  }
+
+  async function gem(vaerdi: string | null) {
     setStatus("ren");
     setTravl(true);
-    const svar = await fetch("/api/konto/hjem", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ hjem: valg === "" ? null : valg }),
-    });
-    setTravl(false);
-    if (svar.ok) {
-      setGemtValg(valg);
-      setStatus("gemt");
-    } else {
+    try {
+      const svar = await fetch("/api/konto/hjem", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hjem: vaerdi }),
+      });
+      if (svar.ok) {
+        setGemtValg(vaerdi);
+        setStatus("gemt");
+        if (vaerdi === null) setIndex(startIndex);
+      } else {
+        setStatus("fejl");
+      }
+    } catch {
       setStatus("fejl");
+    } finally {
+      setTravl(false);
     }
   }
 
-  const muligheder: { vaerdi: string; navn: string; hjaelp?: string }[] = [
-    { vaerdi: "", navn: da.konto.hjem.automatisk, hjaelp: da.konto.hjem.automatiskHjaelp },
-    ...hjemIder.map((id) => ({ vaerdi: id, navn: da.konto.hjem.navne[id] ?? id })),
-  ];
-
   return (
-    <div className="mt-4 flex flex-col gap-3">
-      <fieldset className="flex flex-col gap-2" aria-label={da.konto.hjem.titel}>
-        {muligheder.map((m) => (
-          <label
-            key={m.vaerdi || "auto"}
-            className="flex min-h-touch cursor-pointer items-center gap-3 text-basis"
+    <div className="mt-4">
+      <div className="rounded-bloed border border-kant bg-baggrund p-4">
+        <p className="font-mono text-detalje uppercase tracking-wide text-tekst/70">
+          {erAutomatisk ? copy.automatisk : copy.ditValg}
+        </p>
+        <p className="mt-1 font-display text-lead font-semibold">{nuvaerende.navn}</p>
+        <p className="mt-1 text-detalje text-tekst/70">
+          {copy.tael(index + 1, hjem.length)}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => bladre(-1)}
+            aria-label={copy.forrige}
+            className="inline-flex min-h-touch min-w-touch cursor-pointer items-center justify-center rounded-bloed border border-kant px-4 text-detalje font-medium transition hover:border-koks"
           >
-            <input
-              type="radio"
-              name="hjem"
-              value={m.vaerdi}
-              checked={valg === m.vaerdi}
-              onChange={() => {
-                setValg(m.vaerdi);
-                setStatus("ren");
-              }}
-              className="h-5 w-5 shrink-0 accent-primaer"
-            />
-            <span className="flex flex-col">
-              <span className="text-tekst">{m.navn}</span>
-              {m.hjaelp ? (
-                <span className="text-detalje text-tekst/70">{m.hjaelp}</span>
-              ) : null}
-            </span>
-          </label>
-        ))}
-      </fieldset>
+            ←
+          </button>
+          <button
+            type="button"
+            onClick={() => bladre(1)}
+            className="inline-flex min-h-touch cursor-pointer items-center justify-center rounded-bloed border border-kant px-4 text-detalje font-medium transition hover:border-koks"
+          >
+            {copy.naeste}
+          </button>
+        </div>
+      </div>
 
-      <div className="flex items-center gap-3">
-        <Button variant="sekundaer" travl={travl} disabled={!aendret} onClick={gem}>
-          {da.konto.hjem.gem}
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <Button onClick={() => void gem(nuvaerende.id)} travl={travl} disabled={!aendret}>
+          {copy.gem}
         </Button>
-        {status === "gemt" && !aendret ? (
-          <span role="status" className="text-detalje text-primaer">
-            {da.konto.hjem.gemt}
+        {!erAutomatisk ? (
+          <button
+            type="button"
+            onClick={() => void gem(null)}
+            disabled={travl}
+            className="min-h-touch cursor-pointer text-detalje text-tekst/70 underline underline-offset-4 hover:text-koks"
+          >
+            {copy.tilbageTilAutomatisk}
+          </button>
+        ) : null}
+        {status === "gemt" ? (
+          <span role="status" className="text-detalje text-gran">
+            {copy.gemt}
           </span>
         ) : null}
         {status === "fejl" ? (
           <span role="alert" className="text-detalje text-fejl">
-            {da.konto.hjem.fejl}
+            {copy.fejl}
           </span>
         ) : null}
       </div>

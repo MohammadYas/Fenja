@@ -5,7 +5,6 @@ import { KopierKnap } from "@/components/kopier-knap";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
-import { ForhandlingsHjaelper } from "@/components/forhandlings-hjaelper";
 import { KlageBoks } from "./klage-boks";
 import { Progress } from "./progress";
 import { Regenerer } from "./regenerer";
@@ -46,18 +45,6 @@ export default async function ItemSide({
     )
     .eq("id", id)
     .maybeSingle();
-
-  // Forhandlings-hjaelper (abonnent, 21/8 nat) - fejltolerant abonnent-tjek
-  let erAbonnent = false;
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user?.email) {
-      const { harAktivtAbonnement } = await import("@/lib/betaling/abonnement");
-      erAbonnent = await harAktivtAbonnement(user.email);
-    }
-  } catch {
-    erAbonnent = false;
-  }
 
   if (!item) {
     return (
@@ -278,28 +265,6 @@ export default async function ItemSide({
           />
         </div>
       </section>
-
-      {/* Forhandlings-hjaelper (abonnent-fordel, 21/8 nat) */}
-      {erAbonnent ? (
-        <section className="mt-8" aria-label={da.forhandling.titel}>
-          <div className="rounded-bloed border border-kant bg-flade p-5">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <p className="font-mono text-detalje font-bold tracking-wide text-gran">
-                {da.forhandling.titel}
-              </p>
-              <p className="font-mono text-detalje uppercase tracking-wide text-tekst/50">
-                {da.forhandling.stempel}
-              </p>
-            </div>
-            <p className="mt-1 max-w-laesbar text-detalje text-tekst/80">
-              {da.forhandling.forklaring}
-            </p>
-            <div className="mt-4">
-              <ForhandlingsHjaelper itemId={item.id as string} />
-            </div>
-          </div>
-        </section>
-      ) : null}
 
       {/* Klage/kredit retur (ejer-ordre 2026-08-20) — afgøres i admin */}
       <section className="mt-8" aria-label={da.klage.titel}>

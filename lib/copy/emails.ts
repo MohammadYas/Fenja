@@ -73,6 +73,22 @@ export const emails = {
       "Vil du have en visualisering alligevel, kan du prøve i et andet miljø fra annoncesiden.",
     knap: "Se min annonce",
   },
+  // Udløbsvarsel (ejer-ordre 22/8): kreditter gælder 12 måneder — sig til
+  // FØR de bortfalder. Ærligt, uden pres, med den konkrete dato.
+  udloebsvarsel: {
+    emne: "Dine kreditter udløber snart",
+    forhaandsvisning: "Brug dem, inden de bortfalder.",
+    overskrift: "Dine kreditter udløber snart",
+    brod: (antal: number, dato: string) =>
+      antal === 1
+        ? `Du har 1 kredit, der udløber ${dato}.`
+        : `Du har ${antal} kreditter, der udløber ${dato}.`,
+    forslag:
+      "Har du tøj liggende, du ikke bruger, er det et godt tidspunkt at lave annoncerne. En kredit svarer til ét færdigt billede.",
+    knap: "Se min saldo",
+    hvorfor:
+      "Du får denne mail, fordi kreditter gælder 12 måneder fra købet. Vi sender kun én påmindelse.",
+  },
   // Ugens Salgsplan (abonnent-fordel, 21/8): Smart Salgsplan-rådene fra
   // oversigten leveret på mail hver mandag morgen — abonnenten får værdien
   // uden at skulle åbne appen. Sendes kun når der ER råd at give.
