@@ -238,7 +238,7 @@ export default async function Oversigt() {
                 {da.oversigt.salgplanTeaserTekst}
               </p>
             </div>
-            <Link href="/priser" className="knap-link px-5">
+            <Link href="/kreditter" className="knap-link px-5">
               {da.oversigt.salgplanTeaserKnap}
             </Link>
           </div>

@@ -58,7 +58,7 @@ export const KATEGORI_SKABELONER: readonly KategoriSkabelon[] = [
     // hovedvinkel (ejer-rapport: billedet viste ryggen af en topløs person)
     version: 3,
     navn: "Bukser & jeans",
-    noegleord: ["bukser", "jeans", "chinos", "cargo", "shorts", "joggers"],
+    noegleord: ["bukser", "jeans", "chinos", "cargo", "joggers"],
     visninger: [
       "mirror selfie taken from the FRONT: the person faces the mirror directly, the phone is held vertically in front of the face and completely covers it, one hand relaxed at the side — the legs and the fit of the trousers are the focus of the image",
       "standing FRONT-ON facing the camera directly, with one hand in a pocket, framed from the chest down",
@@ -68,6 +68,24 @@ export const KATEGORI_SKABELONER: readonly KategoriSkabelon[] = [
       "Lower-body garment: the reference garment covers only the legs, so the person wears a simple, plain, neutral-colored top with it — never shirtless, never in underwear. The main view is ALWAYS the FRONT; a back view may appear only as an extra angle, never as the main photo.",
     fokus:
       "Preserve the exact fit and leg shape, waistband, pockets, buttons, belt loops and stitching; show realistic creases and tension at the hips, knees and ankles.",
+  },
+  {
+    // Egen shorts-skabelon (ejer-rapport 21/8 nat: shorts matchede bukser-
+    // skabelonen, hvis regler forbød "shorts" og "bare legs" — modellen
+    // forlængede derfor shortsene til lange bukser). Længden er HELE pointen.
+    id: "shorts",
+    version: 1,
+    navn: "Shorts",
+    noegleord: ["shorts", "bermuda"],
+    visninger: [
+      "mirror selfie taken from the FRONT: the person faces the mirror directly, the phone is held vertically in front of the face and completely covers it, one hand relaxed at the side — the shorts and the bare lower legs are the focus of the image",
+      "standing FRONT-ON facing the camera directly, one hand in a pocket, framed from the waist down so the full length of the shorts and the lower legs are visible",
+      "a natural mid-step walking shot coming TOWARD the camera, framed from the waist down",
+    ],
+    regel:
+      "The garment is SHORTS: it ends at or above the knee, and the lower legs are bare — that is correct and expected. NEVER extend the shorts into long trousers, never add tights or leggings under them. The person wears a simple, plain, neutral-colored top; the main view is ALWAYS the front.",
+    fokus:
+      "Preserve the EXACT length of the shorts — where the hem ends on the leg is the single most important detail. Preserve waistband, pockets and stitching; show realistic creases at the hips.",
   },
   {
     id: "jakke",

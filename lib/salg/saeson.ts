@@ -13,6 +13,7 @@ export type Saeson = {
 export const SAESON: Record<string, Saeson> = {
   kjole: { bedsteMaaneder: [4, 5, 6, 7, 8], navn: "forår og sommer" },
   bukser: { bedsteMaaneder: [8, 9, 10, 11, 12, 1], navn: "efterår og vinter" },
+  shorts: { bedsteMaaneder: [4, 5, 6, 7, 8], navn: "forår og sommer" },
   jakke: { bedsteMaaneder: [9, 10, 11, 12, 1, 2], navn: "efterår og vinter" },
   overdel: {
     bedsteMaaneder: [1, 2, 3, 4, 5, 9, 10, 11, 12],
