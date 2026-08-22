@@ -525,6 +525,10 @@ export const da = {
     salgplanTeaserTekst:
       "Salgsplan med konkrete råd, garderobe-radar med ægte markedspriser, sæson-kalender og ugens plan på mail hver mandag. Regnet ud fra dine annoncer, sæsonen og ægte salgspriser.",
     salgplanTeaserKnap: "Se abonnementer",
+    // Oprydning (ejer 22/8: "rodet, svært at nå sine annoncer"): annoncerne
+    // står øverst, og værktøjs-panelerne er foldet sammen under denne overskrift
+    vaerktoejTitel: "Salgsværktøjer",
+    vaerktoejLead: "Fold ud, når du skal bruge dem. Dine annoncer står øverst.",
     // Sæson-kalender (alle abonnenter, 21/8)
     kalender: {
       titel: "Sæson-kalender",
