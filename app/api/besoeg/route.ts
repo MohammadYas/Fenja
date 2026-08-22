@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { klientNoegle, tjekRateLimit } from "@/lib/sikkerhed/ratelimit";
 import { opretServiceKlient } from "@/lib/supabase/service";
@@ -6,6 +7,27 @@ import { opretServiceKlient } from "@/lib/supabase/service";
 // — kun sti, henvisnings-host, UTM og enhedsklasse. Svarer altid 204, så et
 // fejlet kald aldrig påvirker brugeren.
 const TILLADT_STI = /^\/[a-z0-9\-\/_%.]{0,299}$/i;
+
+/**
+ * Daglig, roterende besøgende-hash (22/8) — samme greb som Plausible, så vi
+ * kan tælle UNIKKE besøgende uden cookies, uden storage og uden at gemme en
+ * IP. Saltet indeholder datoen, så hashen skifter ved midnat: den samme
+ * person kan ikke følges fra dag til dag, og hashen kan ikke vendes tilbage
+ * til en IP. Derfor kræver den fortsat intet samtykke.
+ */
+function besoegendeHash(request: NextRequest): string {
+  const ip =
+    request.headers.get("x-nf-client-connection-ip") ??
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "ukendt";
+  const ua = request.headers.get("user-agent") ?? "";
+  const dag = new Date().toISOString().slice(0, 10);
+  const salt = process.env.BESOEG_SALT ?? "selja-besoeg";
+  return createHash("sha256")
+    .update(`${dag}|${salt}|${ip}|${ua}`)
+    .digest("hex")
+    .slice(0, 16);
+}
 
 function klip(vaerdi: unknown, maks: number): string | null {
   if (typeof vaerdi !== "string") return null;
@@ -46,7 +68,7 @@ export async function POST(request: NextRequest) {
     const enhed = /mobi|android|iphone|ipad/i.test(ua) ? "mobil" : ua ? "desktop" : "ukendt";
 
     const service = opretServiceKlient();
-    await service.from("besoeg").insert({
+    const raekke = {
       sti: sti.slice(0, 300),
       referrer_host: referrerHost,
       utm_source: klip(krop.utm_source, 120),
@@ -54,7 +76,13 @@ export async function POST(request: NextRequest) {
       utm_campaign: klip(krop.utm_campaign, 160),
       utm_content: klip(krop.utm_content, 160),
       enhed,
-    });
+    };
+    // Besøgende-kolonnen kommer med migration 20260822180000. Er den ikke
+    // kørt endnu, må målingen ALDRIG stoppe: så skrives rækken uden den.
+    const { error } = await service
+      .from("besoeg")
+      .insert({ ...raekke, besoegende: besoegendeHash(request) });
+    if (error) await service.from("besoeg").insert(raekke);
   } catch {
     // stille — statistik må aldrig vælte noget
   }

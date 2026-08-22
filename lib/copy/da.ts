@@ -1170,13 +1170,24 @@ export const da = {
     },
     // Trafik (21/8 nat): cookieløs statistik
     trafik: {
-      titel: "Trafik (30 dage)",
+      titel: "Trafik",
       forklaring: "Cookieløs — ingen IP, ingen identitet, kun side, kilde, UTM og enhed.",
+      // Unikke besøgende (22/8): daglig roterende hash, samme greb som Plausible
+      unikForklaring:
+        "Unikke tælles med en hash, der skifter hver nat: kommer nogen igen i morgen, tælles de som ny. Vi kan aldrig følge en person over tid.",
+      migrationMangler:
+        "Unikke besøgende kræver migration 20260822180000 — kør den i Supabase, så begynder tallet at tælle.",
       mobilAndel: (pct: number) => `${pct} % af besøgene er fra mobil.`,
-      tom: "Ingen besøg registreret endnu.",
-      prDag: "Visninger pr. dag",
+      tom: "Ingen besøg i den valgte periode.",
+      periode: { 1: "I dag", 7: "7 dage", 30: "30 dage" } as Record<number, string>,
+      alleKilder: "Alle kilder",
+      unikke: "Unikke",
+      visninger: "Visninger",
+      prBesoegende: "Sider pr. besøg",
+      mobil: "Mobil",
+      prDag: "Pr. dag (unikke / visninger)",
       topSider: "Mest viste sider",
-      topKilder: "Kilder (referrers)",
+      topKilder: "Kilder (unikke / visninger)",
       topKampagner: "UTM-kampagner",
     },
     // Forside-billeder (21/8 nat): upload uden deploy

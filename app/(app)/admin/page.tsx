@@ -15,7 +15,12 @@ export const metadata = { title: `${da.admin.titel} · ${da.site.navn}` };
 
 // Admin-side (G-1) — kun for admins (ADMIN_EMAIL, kommasepareret liste).
 // Alle andre får 404.
-export default async function Admin() {
+export default async function Admin({
+  searchParams,
+}: {
+  searchParams: Promise<{ dage?: string; kilde?: string }>;
+}) {
+  const filtre = await searchParams;
   const supabase = await opretServerKlient();
   const {
     data: { user },
@@ -51,17 +56,20 @@ export default async function Admin() {
         .order("created_at", { ascending: false })
         .limit(30),
     ]);
-  // Trafik (21/8 nat, cookieløs): sidste 30 dage — pr. dag, top-sider,
-  // kilder, UTM-kampagner og enheds-split. Fejler harmløst før migrationen.
-  const trediveDageSiden = new Date(Date.now() - 30 * 86_400_000).toISOString();
-  const { data: besoegData } = await service
-    .from("besoeg")
-    .select("sti, referrer_host, utm_source, utm_medium, utm_campaign, enhed, created_at")
-    // /intern/* er rate-limit-tællere (forhandling/bundle), ikke trafik
-    .not("sti", "like", "/intern%")
-    .gte("created_at", trediveDageSiden)
-    .order("created_at", { ascending: false })
-    .limit(10_000);
+  // Trafik (21/8 nat, cookieløs — udvidet 22/8 med UNIKKE besøgende og
+  // filtre til TikTok-lanceringen). Perioden og kilden styres af ?dage= og
+  // ?kilde=, så tallene kan skæres uden at forlade siden.
+  const PERIODER = [1, 7, 30] as const;
+  const valgtDage = PERIODER.includes(Number(filtre.dage) as 1 | 7 | 30)
+    ? (Number(filtre.dage) as 1 | 7 | 30)
+    : 7;
+  const valgtKilde = (filtre.kilde ?? "").trim().toLowerCase();
+  const periodeStart = new Date(
+    valgtDage === 1
+      ? new Date().setHours(0, 0, 0, 0)
+      : Date.now() - valgtDage * 86_400_000,
+  ).toISOString();
+
   type BesoegRaekke = {
     sti: string;
     referrer_host: string | null;
@@ -70,27 +78,108 @@ export default async function Admin() {
     utm_campaign: string | null;
     enhed: string;
     created_at: string;
+    besoegende?: string | null;
   };
-  const besoeg = (besoegData ?? []) as BesoegRaekke[];
+
+  // Besøgende-kolonnen kommer med migration 20260822180000 — er den ikke kørt
+  // endnu, henter vi de gamle felter, og unik-tallet vises som ukendt.
+  const besoegSelect =
+    "sti, referrer_host, utm_source, utm_medium, utm_campaign, enhed, created_at";
+  const besoegQuery = (felter: string) =>
+    service
+      .from("besoeg")
+      .select(felter)
+      // /intern/* er rate-limit-tællere (forhandling/bundle), ikke trafik
+      .not("sti", "like", "/intern%")
+      .gte("created_at", periodeStart)
+      .order("created_at", { ascending: false })
+      .limit(20_000);
+  const foersteForsoeg = await besoegQuery(`${besoegSelect}, besoegende`);
+  let besoegData = foersteForsoeg.data;
+  let harUnik = !foersteForsoeg.error;
+  if (foersteForsoeg.error) {
+    ({ data: besoegData } = await besoegQuery(besoegSelect));
+    harUnik = false;
+  }
+  const alleBesoeg = (besoegData ?? []) as unknown as BesoegRaekke[];
+
+  // Kilde-normalisering: UTM vinder over referrer. OBS: TikToks in-app-browser
+  // sender sjældent en referrer, så uden ?utm_source=tiktok lander trafikken
+  // i "direkte" — derfor er UTM-linket i bio afgørende.
+  const kildeAf = (b: BesoegRaekke): string => {
+    if (b.utm_source) return b.utm_source.toLowerCase();
+    const host = (b.referrer_host ?? "").toLowerCase().replace(/^www\./, "");
+    if (host === "") return "direkte";
+    if (host.includes("tiktok")) return "tiktok";
+    if (host.includes("google")) return "google";
+    if (host.includes("instagram")) return "instagram";
+    if (host.includes("facebook") || host.includes("fb.")) return "facebook";
+    if (host.includes("vinted")) return "vinted";
+    return host;
+  };
+
+  const besoeg = valgtKilde
+    ? alleBesoeg.filter((b) => kildeAf(b) === valgtKilde)
+    : alleBesoeg;
+
   const talOp = (vaerdier: (string | null)[]): [string, number][] => {
     const m = new Map<string, number>();
     for (const v of vaerdier) if (v) m.set(v, (m.get(v) ?? 0) + 1);
     return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
   };
-  const besoegPrDag = talOp(besoeg.map((b) => b.created_at.slice(0, 10))).sort((a, b) =>
-    a[0].localeCompare(b[0]),
+  // Unikke = antal forskellige besøgende-hashes. Hashen roterer ved midnat,
+  // så en der kommer igen i morgen tælles som ny — det siger copy'en ærligt.
+  const unikke = (raekker: BesoegRaekke[]): number | null =>
+    harUnik
+      ? new Set(raekker.map((b) => b.besoegende).filter(Boolean) as string[]).size
+      : null;
+  const unikkeIAlt = unikke(besoeg);
+
+  const dage = [...new Set(besoeg.map((b) => b.created_at.slice(0, 10)))].sort();
+  const prDagRaekker: [string, string][] = dage.map((dag) => {
+    const paaDagen = besoeg.filter((b) => b.created_at.slice(0, 10) === dag);
+    const u = unikke(paaDagen);
+    return [dag, u != null ? `${u} / ${paaDagen.length}` : String(paaDagen.length)];
+  });
+
+  // Kilder med BÅDE unikke og visninger, så man kan se hvad TikTok reelt gav
+  const kildeNavne = [...new Set(besoeg.map(kildeAf))];
+  const kildeRaekker: [string, string][] = kildeNavne
+    .map((navn) => {
+      const raekker = besoeg.filter((b) => kildeAf(b) === navn);
+      const u = unikke(raekker);
+      return {
+        navn,
+        antal: raekker.length,
+        tekst: u != null ? `${u} / ${raekker.length}` : String(raekker.length),
+      };
+    })
+    .sort((a, b) => b.antal - a.antal)
+    .slice(0, 10)
+    .map((k) => [k.navn, k.tekst]);
+
+  const topSider = talOp(besoeg.map((b) => b.sti)).map(
+    ([n, a]) => [n, String(a)] as [string, string],
   );
-  const topSider = talOp(besoeg.map((b) => b.sti));
-  const topKilder = talOp(besoeg.map((b) => b.referrer_host));
   const topKampagner = talOp(
     besoeg.map((b) =>
       b.utm_source ? [b.utm_source, b.utm_medium, b.utm_campaign].filter(Boolean).join(" / ") : null,
     ),
-  );
+  ).map(([n, a]) => [n, String(a)] as [string, string]);
   const mobilAndel =
     besoeg.length > 0
       ? Math.round((besoeg.filter((b) => b.enhed === "mobil").length / besoeg.length) * 100)
       : null;
+  // Filter-links bevarer den anden parameter
+  const filterHref = (nyeVaerdier: { dage?: number; kilde?: string }): string => {
+    const p = new URLSearchParams();
+    const d = nyeVaerdier.dage ?? valgtDage;
+    const k = nyeVaerdier.kilde !== undefined ? nyeVaerdier.kilde : valgtKilde;
+    if (d !== 7) p.set("dage", String(d));
+    if (k) p.set("kilde", k);
+    const q = p.toString();
+    return `/admin${q ? `?${q}` : ""}#trafik`;
+  };
 
   // Kontakt-henvendelser (21/8 nat) — navn+email står i rækken selv
   const { data: henvendelserData } = await service
@@ -333,21 +422,96 @@ export default async function Admin() {
       <h2 className="mt-8 text-titel font-medium">{da.admin.klagerTitel}</h2>
       <KlageListe klager={klager} />
 
-      {/* Trafik (21/8 nat): cookieløs statistik — sider, kilder, UTM, enhed */}
-      <h2 className="mt-8 text-titel font-medium">{da.admin.trafik.titel}</h2>
+      {/* Trafik: cookieløs statistik med filtre og unikke besøgende (22/8,
+          TikTok-lancering) — perioden og kilden styres af ?dage=/?kilde= */}
+      <h2 id="trafik" className="mt-8 scroll-mt-4 text-titel font-medium">
+        {da.admin.trafik.titel}
+      </h2>
       <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
         {da.admin.trafik.forklaring}
-        {mobilAndel != null ? ` ${da.admin.trafik.mobilAndel(mobilAndel)}` : ""}
+        {harUnik ? ` ${da.admin.trafik.unikForklaring}` : ` ${da.admin.trafik.migrationMangler}`}
       </p>
+
+      {/* Periode */}
+      <div className="mt-3 flex flex-wrap gap-2">
+        {([1, 7, 30] as const).map((d) => (
+          <a
+            key={d}
+            href={filterHref({ dage: d })}
+            aria-current={valgtDage === d ? "true" : undefined}
+            className={`inline-flex min-h-touch items-center rounded-bloed border px-3 text-detalje font-medium ${
+              valgtDage === d
+                ? "border-gran bg-gran text-kalk"
+                : "border-kant bg-baggrund text-tekst/80 hover:border-koks"
+            }`}
+          >
+            {da.admin.trafik.periode[d]}
+          </a>
+        ))}
+      </div>
+
+      {/* Kilde-filter */}
+      <div className="mt-2 flex flex-wrap gap-2">
+        <a
+          href={filterHref({ kilde: "" })}
+          aria-current={valgtKilde === "" ? "true" : undefined}
+          className={`inline-flex min-h-touch items-center rounded-bloed border px-3 text-detalje ${
+            valgtKilde === ""
+              ? "border-koks bg-flade font-medium"
+              : "border-kant bg-baggrund text-tekst/70 hover:border-koks"
+          }`}
+        >
+          {da.admin.trafik.alleKilder}
+        </a>
+        {[...new Set(alleBesoeg.map(kildeAf))].slice(0, 8).map((k) => (
+          <a
+            key={k}
+            href={filterHref({ kilde: k })}
+            aria-current={valgtKilde === k ? "true" : undefined}
+            className={`inline-flex min-h-touch items-center rounded-bloed border px-3 text-detalje ${
+              valgtKilde === k
+                ? "border-koks bg-flade font-medium"
+                : "border-kant bg-baggrund text-tekst/70 hover:border-koks"
+            }`}
+          >
+            {k}
+          </a>
+        ))}
+      </div>
+
+      {/* Nøgletal */}
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {(
+          [
+            [da.admin.trafik.unikke, unikkeIAlt != null ? String(unikkeIAlt) : "—"],
+            [da.admin.trafik.visninger, String(besoeg.length)],
+            [
+              da.admin.trafik.prBesoegende,
+              unikkeIAlt && unikkeIAlt > 0
+                ? (besoeg.length / unikkeIAlt).toFixed(1).replace(".", ",")
+                : "—",
+            ],
+            [da.admin.trafik.mobil, mobilAndel != null ? `${mobilAndel} %` : "—"],
+          ] as const
+        ).map(([navn, vaerdi]) => (
+          <div key={navn} className="rounded-bloed border border-kant bg-flade p-3">
+            <p className="font-mono text-detalje uppercase tracking-wide text-tekst/60">
+              {navn}
+            </p>
+            <p className="mt-1 font-mono text-titel font-bold">{vaerdi}</p>
+          </div>
+        ))}
+      </div>
+
       {besoeg.length === 0 ? (
-        <p className="mt-2 text-detalje text-tekst/70">{da.admin.trafik.tom}</p>
+        <p className="mt-3 text-detalje text-tekst/70">{da.admin.trafik.tom}</p>
       ) : (
-        <div className="mt-3 grid gap-6 sm:grid-cols-2">
+        <div className="mt-5 grid gap-6 sm:grid-cols-2">
           {(
             [
-              [da.admin.trafik.prDag, besoegPrDag],
+              [da.admin.trafik.prDag, prDagRaekker],
+              [da.admin.trafik.topKilder, kildeRaekker],
               [da.admin.trafik.topSider, topSider],
-              [da.admin.trafik.topKilder, topKilder],
               [da.admin.trafik.topKampagner, topKampagner],
             ] as const
           ).map(([titel, raekker]) => (
