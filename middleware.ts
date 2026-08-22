@@ -22,6 +22,29 @@ export async function middleware(request: NextRequest) {
   // middleware ingenting — app-siderne håndhæver selv login.
   if (!url || !anonNoegle) return respons;
 
+  const kraeverLoginSti = BESKYTTEDE_PRAEFIKSER.some((praefiks) =>
+    request.nextUrl.pathname.startsWith(praefiks),
+  );
+
+  // Hastighed (ejer 22/8: "siden føles langsom fra menu til menu"): auth-
+  // roundtrippet til Supabase kostede på HVERT klik — også for anonyme
+  // besøgende på statiske marketing-sider. Uden auth-cookies er der ingen
+  // session at forny: spring netkaldet helt over, og send beskyttede ruter
+  // direkte til log ind.
+  const harAuthCookie = request.cookies
+    .getAll()
+    .some((cookie) => cookie.name.startsWith("sb-"));
+  if (!harAuthCookie) {
+    if (kraeverLoginSti) {
+      const til = request.nextUrl.clone();
+      til.pathname = "/log-ind";
+      til.search = "";
+      til.searchParams.set("videre", request.nextUrl.pathname);
+      return NextResponse.redirect(til);
+    }
+    return respons;
+  }
+
   const supabase = createServerClient(
     url,
     anonNoegle,
@@ -47,11 +70,7 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const kraeverLogin = BESKYTTEDE_PRAEFIKSER.some((praefiks) =>
-    request.nextUrl.pathname.startsWith(praefiks),
-  );
-
-  if (kraeverLogin && !user) {
+  if (kraeverLoginSti && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/log-ind";
     url.searchParams.set("videre", request.nextUrl.pathname);

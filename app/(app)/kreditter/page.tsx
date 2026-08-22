@@ -28,18 +28,24 @@ export default async function Kreditter({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { data: saldoRaekke } = await supabase
-    .from("credit_balances")
-    .select("balance")
-    .eq("user_id", user!.id)
-    .maybeSingle();
-  const saldo = (saldoRaekke?.balance as number | undefined) ?? 0;
 
-  // Tidligste udløb — vises kun når der faktisk er noget, der udløber.
-  // I demo-tilstand (uden rigtig Supabase) svarer rpc'en tomt, og linjen udelades.
-  const { data: statusData } = await supabase.rpc("beregn_kredit_status", {
-    p_user_id: user!.id,
-  });
+  // Hastighed (ejer 22/8): saldo, udløb og abonnementsstatus er uafhængige
+  // opslag — de hentes parallelt i stedet for i serie. Ejer-ordre 2026-08-20:
+  // top-up er KUN for abonnenter (og kun ved lav saldo).
+  const { harAktivtAbonnement } = await import("@/lib/betaling/abonnement");
+  const [saldoSvar, statusSvar, erAbonnent] = await Promise.all([
+    supabase
+      .from("credit_balances")
+      .select("balance")
+      .eq("user_id", user!.id)
+      .maybeSingle(),
+    // Tidligste udløb — vises kun når der faktisk er noget, der udløber. I
+    // demo-tilstand (uden rigtig Supabase) svarer rpc'en tomt, og linjen udelades.
+    supabase.rpc("beregn_kredit_status", { p_user_id: user!.id }),
+    user?.email ? harAktivtAbonnement(user.email) : Promise.resolve(false),
+  ]);
+  const saldo = (saldoSvar?.data?.balance as number | undefined) ?? 0;
+  const statusData = statusSvar?.data;
   const statusRaekke = (Array.isArray(statusData) ? statusData[0] : statusData) as
     | { naeste_udloeb: string | null; naeste_udloeb_antal: number }
     | null
@@ -50,10 +56,6 @@ export default async function Kreditter({
         antal: Number(statusRaekke.naeste_udloeb_antal),
       }
     : null;
-
-  // Ejer-ordre 2026-08-20: top-up er KUN for abonnenter (og kun ved lav saldo)
-  const { harAktivtAbonnement } = await import("@/lib/betaling/abonnement");
-  const erAbonnent = user?.email ? await harAktivtAbonnement(user.email) : false;
   // Ejer-ordre 22/8: abonnement KRÆVES for kreditter — pakkerne er top-up
   // for abonnenter, ikke en indgang udenom. "Snart tør" tæller også, så man
   // ikke først opdager problemet midt i en annonce.

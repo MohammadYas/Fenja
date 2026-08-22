@@ -60,74 +60,92 @@ export default async function Oversigt() {
     user = null;
   }
 
+  // Hastighed (ejer 22/8: "langsomt fra menu til menu"): profil-tjek,
+  // annonce-listen og kreditstatus er uafhængige opslag — de hentes
+  // PARALLELT i stedet for i serie. Fejltolerancen pr. opslag er bevaret:
+  // mock-kæder i tests og demo-tilstand falder stille tilbage.
+
   // Onboarding-banner (ejer-ordre 20/8): indtil køn er valgt, mind om det —
   // fejltolerant før migration 20260820110000 (banner vises da bare ikke)
-  let manglerOnboarding = false;
-  if (user) {
-    try {
-      const { data: profil, error } = await supabase
-        .from("profiles")
-        .select("koen")
-        .eq("id", user.id)
-        .maybeSingle();
-      manglerOnboarding = !error && profil != null && !profil.koen;
-    } catch {
-      // Ingen auth i konteksten (fx tests) — så heller intet banner
-    }
-  }
-  const { data } = await supabase
-    .from("items")
-    .select(
-      "id, brand, titel, category, status, sold_price_dkk, leveret_at, solgt_at, created_at, pris_fra_dkk, pris_til_dkk, generations(status), item_photos(role, original_url, cleaned_url)",
-    )
-    .order("created_at", { ascending: false });
-  const items = (data ?? []) as ItemRaekke[];
-  const miniaturer = await Promise.all(
-    items.map((item) => miniatureUrl(item.item_photos ?? [])),
-  );
+  const profilLoefte: Promise<boolean> = user
+    ? (async () => {
+        try {
+          const { data: profil, error } = await supabase
+            .from("profiles")
+            .select("koen")
+            .eq("id", user.id)
+            .maybeSingle();
+          return !error && profil != null && !profil.koen;
+        } catch {
+          // Ingen auth i konteksten (fx tests) — så heller intet banner
+          return false;
+        }
+      })()
+    : Promise.resolve(false);
 
-  // Smart Salgsplan (ejer-ordre 20/8) — KUN for abonnenter. Fejltolerant:
-  // kan abonnementsstatus ikke læses (demo/nedbrud), skjules blokken.
-  // Server-only-moduler importeres dynamisk, så oversigt-siden også kan
-  // evalueres i klient-test-kæder uden service-klienten.
-  let salgplan: SalgsPunkt[] = [];
-  let erAbonnent = false;
+  // Abonnent-status fra ledgeren. Server-only-moduler importeres dynamisk,
+  // så oversigt-siden også kan evalueres i klient-test-kæder uden service-klienten.
+  const ledgerLoefte: Promise<boolean> = user
+    ? (async () => {
+        try {
+          const { SupabaseLedgerDb } = await import("@/lib/credits/supabase");
+          const { opretServiceKlient } = await import("@/lib/supabase/service");
+          const ledger = new SupabaseLedgerDb(opretServiceKlient());
+          const status = await ledger.hentStatus(user.id);
+          return status.prKilde.subscription > 0;
+        } catch {
+          return false;
+        }
+      })()
+    : Promise.resolve(false);
+
+  const [manglerOnboarding, itemsSvar, erAbonnent] = await Promise.all([
+    profilLoefte,
+    supabase
+      .from("items")
+      .select(
+        "id, brand, titel, category, status, sold_price_dkk, leveret_at, solgt_at, created_at, pris_fra_dkk, pris_til_dkk, generations(status), item_photos(role, original_url, cleaned_url)",
+      )
+      .order("created_at", { ascending: false }),
+    ledgerLoefte,
+  ]);
+  const items = ((itemsSvar?.data ?? []) as ItemRaekke[]);
+
+  // Miniaturer (signerede URLs) og Stripe-tieren er også uafhængige — parallelt.
   // Tier styrer Pro-funktioner (konkurrent-tjek). Ledger siger "abonnent",
   // Stripe siger hvilken — kan tieren ikke læses, behandles man som plus.
-  let tier: "plus" | "pro" = "plus";
-  if (user) {
-    try {
-      const { SupabaseLedgerDb } = await import("@/lib/credits/supabase");
-      const { opretServiceKlient } = await import("@/lib/supabase/service");
-      const ledger = new SupabaseLedgerDb(opretServiceKlient());
-      const status = await ledger.hentStatus(user.id);
-      erAbonnent = status.prKilde.subscription > 0;
-      if (erAbonnent && user.email) {
+  const [miniaturer, tier] = await Promise.all([
+    Promise.all(items.map((item) => miniatureUrl(item.item_photos ?? []))),
+    (async (): Promise<"plus" | "pro"> => {
+      if (!erAbonnent || !user?.email) return "plus";
+      try {
         const { hentAbonnementsTier } = await import("@/lib/betaling/abonnement");
-        tier = (await hentAbonnementsTier(user.email)) ?? "plus";
+        return (await hentAbonnementsTier(user.email)) ?? "plus";
+      } catch {
+        return "plus";
       }
-      if (erAbonnent) {
-        salgplan = bygSalgsplan(
-          items.map((item) => ({
-            id: item.id,
-            titel: item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
-            maerke: item.brand ?? "",
-            kategori: item.category ?? "",
-            status: item.status === "failed" ? "draft" : item.status,
-            leveretAt: item.leveret_at,
-            prisTilDkk: item.pris_til_dkk,
-            // Kladde med kørende pipeline rådgives ikke — den er ikke klar endnu
-            paaVej:
-              item.status === "draft" &&
-              !item.leveret_at &&
-              (item.generations ?? []).length > 0,
-          })),
-        );
-      }
-    } catch {
-      salgplan = [];
-      erAbonnent = false;
-    }
+    })(),
+  ]);
+
+  // Smart Salgsplan (ejer-ordre 20/8) — KUN for abonnenter
+  let salgplan: SalgsPunkt[] = [];
+  if (erAbonnent) {
+    salgplan = bygSalgsplan(
+      items.map((item) => ({
+        id: item.id,
+        titel: item.titel ?? `${item.brand ?? ""} ${item.category ?? ""}`.trim(),
+        maerke: item.brand ?? "",
+        kategori: item.category ?? "",
+        status: item.status === "failed" ? "draft" : item.status,
+        leveretAt: item.leveret_at,
+        prisTilDkk: item.pris_til_dkk,
+        // Kladde med kørende pipeline rådgives ikke — den er ikke klar endnu
+        paaVej:
+          item.status === "draft" &&
+          !item.leveret_at &&
+          (item.generations ?? []).length > 0,
+      })),
+    );
   }
 
   // Garderobe-radar + statistik (abonnent, 21/8) — rene funktioner over

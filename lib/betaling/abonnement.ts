@@ -19,8 +19,7 @@ import { opretServiceKlient } from "@/lib/supabase/service";
 // betalte periode SKAL respekteres — et opsagt abonnement tæller derfor med,
 // indtil den betalte periode er udløbet. Først derefter er man ikke-abonnent.
 const AKTIVE_STATUS = ["active", "trialing"] as const;
-// "canceled" tjekkes OGSÅ, men kun med resterende betalt periode (se giverAdgang)
-const OPSLAG_STATUS = [...AKTIVE_STATUS, "canceled"] as const;
+// "canceled" tæller OGSÅ, men kun med resterende betalt periode (se giverAdgang)
 
 /** Det, giverAdgang behøver at kende til et Stripe-abonnement */
 export type AbonnementsPeriode = {
@@ -51,9 +50,11 @@ export function giverAdgang(abonnement: AbonnementsPeriode, nuMs: number): boole
   return slut != null && slut > nuMs;
 }
 
-/** Kunde-id fra profilen (primær), ellers e-mail-opslag hos Stripe */
+/** Kunde-id fra profilen (primær), ellers e-mail-opslag hos Stripe.
+ *  Hastighed (ejer 22/8): findes det gemte kunde-id, springes Stripes
+ *  e-mail-opslag helt over — id'et gemmes ved hvert køb, så det er aktuelt.
+ *  E-mail-vejen er KUN fallback for konti fra før kolonnen fandtes. */
 async function hentKundeIder(stripe: Stripe, email: string): Promise<string[]> {
-  const ider: string[] = [];
   try {
     const service = opretServiceKlient();
     const { data } = await service
@@ -62,18 +63,18 @@ async function hentKundeIder(stripe: Stripe, email: string): Promise<string[]> {
       .eq("email", email)
       .maybeSingle();
     const gemt = data?.stripe_customer_id as string | null | undefined;
-    if (gemt) ider.push(gemt);
+    if (gemt) return [gemt];
   } catch {
     // Kolonnen findes ikke endnu, eller service-klienten mangler — fald
     // tilbage til e-mail-opslaget nedenfor
   }
   try {
     const { data: kunder } = await stripe.customers.list({ email, limit: 5 });
-    for (const kunde of kunder) if (!ider.includes(kunde.id)) ider.push(kunde.id);
+    return kunder.map((kunde) => kunde.id);
   } catch {
-    // Stripe nede — arbejd videre med det, vi har
+    // Stripe nede — hellere nægte end at gætte
+    return [];
   }
-  return ider;
 }
 
 /** Gemmer kunde-id'et på profilen, så senere opslag ikke afhænger af e-mail */
@@ -106,23 +107,33 @@ export async function hentAbonnementsTier(
     const stripe = new Stripe(noegle);
     const kundeIder = await hentKundeIder(stripe, email);
     const nuMs = Date.now();
-    let fundetPlus = false;
-    for (const kundeId of kundeIder) {
-      for (const status of OPSLAG_STATUS) {
-        const { data: abonnementer } = await stripe.subscriptions.list({
-          customer: kundeId,
-          status,
-          limit: 3,
-          expand: ["data.items.data.price"],
-        });
-        for (const abonnement of abonnementer) {
-          if (!giverAdgang(abonnement as unknown as AbonnementsPeriode, nuMs)) {
-            continue;
-          }
-          const lookup = abonnement.items.data[0]?.price?.lookup_key ?? "";
-          if (lookup.startsWith("selja_pro")) return "pro";
-          if (lookup.startsWith("selja_plus")) fundetPlus = true;
+    // Hastighed (ejer 22/8): ÉT listekald pr. kunde (status "all" dækker
+    // aktive, prøver OG opsagte — giverAdgang sorterer) i stedet for et
+    // serielt kald pr. status. Flere kunder slås op parallelt.
+    const lister = await Promise.all(
+      kundeIder.map(async (kundeId) => {
+        try {
+          const { data } = await stripe.subscriptions.list({
+            customer: kundeId,
+            status: "all",
+            limit: 10,
+            expand: ["data.items.data.price"],
+          });
+          return data;
+        } catch {
+          return [];
         }
+      }),
+    );
+    let fundetPlus = false;
+    for (const abonnementer of lister) {
+      for (const abonnement of abonnementer) {
+        if (!giverAdgang(abonnement as unknown as AbonnementsPeriode, nuMs)) {
+          continue;
+        }
+        const lookup = abonnement.items.data[0]?.price?.lookup_key ?? "";
+        if (lookup.startsWith("selja_pro")) return "pro";
+        if (lookup.startsWith("selja_plus")) fundetPlus = true;
       }
     }
     return fundetPlus ? "plus" : null;

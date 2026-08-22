@@ -24,6 +24,7 @@ export const da = {
     konto: "Konto",
     logInd: "Log ind",
     logUd: "Log ud",
+    indlaeser: "Indlæser …",
     // Ejer-ordre 2026-08-20: tælleordet er kreditter, ikke annoncer
     saldo: (antal: number) =>
       antal === 1
