@@ -30,7 +30,9 @@ export type LedgerAarsag =
   | "delivery"
   | "refund"
   | "regen"
-  | "subscription";
+  | "subscription"
+  // Manuel tildeling fra admin-panelet (support/kompensation/kampagne, 22/8)
+  | "admin";
 
 // Tyndt db-interface så logikken kan testes uden Supabase (NFR-5)
 export interface LedgerDb {

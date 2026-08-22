@@ -140,6 +140,7 @@ export const da = {
     beskedPladsholder: "Skriv hvad det drejer sig om — gerne med detaljer.",
     knap: "Send besked",
     tak: "Tak for din besked — vi svarer på din e-mail hurtigst muligt.",
+    skrivIgen: "Skriv en besked mere",
     fejlNavn: "Skriv dit navn.",
     fejlEmail: "Skriv en rigtig e-mailadresse — det er dér, vi svarer.",
     fejlBesked: "Skriv en besked på mellem 3 og 4000 tegn.",
@@ -178,7 +179,7 @@ export const da = {
     hjem: {
       titel: "Dit hjem på billederne",
       forklaring:
-        "Alle dine visualiseringer optages i det samme hjem, så din profil ligner ét sted — ikke tusind tilfældige baggrunde. Selja tildeler dig et hjem blandt 105; passer det slet ikke, kan du rotere det op til tre gange.",
+        "Alle dine visualiseringer optages samme sted, så din profil ligner ét hjem og ikke tusind tilfældige baggrunde. Stedet er dit alene — ingen anden sælger får det. Passer det slet ikke til dig, kan du skifte op til tre gange.",
       ditHjem: "Dit hjem",
       nuvaerende: (navn: string) => `Nu: ${navn}`,
       tilbage: (antal: number) =>
@@ -188,6 +189,7 @@ export const da = {
       opbrugt: (_maks?: number) =>
         "Du har brugt alle dine skift — hjemmet er nu fast, så dine annoncer bliver ved med at ligne det samme sted.",
       altOptaget: "Alle hjem er optaget lige nu — dit nuværende beholdes.",
+      skiftet: "Du har fået et nyt sted. Det gælder fra din næste annonce — færdige billeder er uændrede.",
       roterKnap: "Skift til et andet hjem",
       bekraeftTekst: (tilbage: number) =>
         tilbage === 1
@@ -608,6 +610,9 @@ export const da = {
       "Skift kort, se fakturaer eller opsig — du bliver sendt til Stripe.",
     abonnementIngen: "Vi fandt intet abonnement på din e-mail endnu.",
     // Udløb vises ærligt: den generelle regel + den konkrete næste dato
+    // Ejer-ordre 22/8: opsigelse må aldrig tage kreditter fra nogen
+    beholderVedOpsigelse:
+      "Du har ikke et aktivt abonnement lige nu, men dine kreditter er dine — de kan bruges, indtil de udløber. Vil du købe flere, skal du have et abonnement igen.",
     udloebNote: "Kreditter gælder 12 måneder fra køb.",
     udloebNaeste: (antal: number, dato: string) =>
       antal === 1
@@ -1131,6 +1136,24 @@ export const da = {
       fejlIngenFil: "Vælg mindst én billedfil.",
       fejlForStor: "Billedet er over 8 MB — gør det mindre først.",
       fejlUgyldig: "Filen kunne ikke læses som et billede.",
+    },
+    // Manuel kredittildeling (ejer-ordre 22/8)
+    tildel: {
+      titel: "Tildel kreditter",
+      forklaring:
+        "Giv en bruger kreditter — til support, kompensation ved fejl, testbrugere eller kampagner. Negativt tal trækker fra. Tildelingen står i brugerens historik som alle andre.",
+      emailLabel: "Brugerens e-mail",
+      antalLabel: "Antal kreditter",
+      noteLabel: "Begrundelse",
+      notePladsholder: "Fx: kompensation for fejlet generering 22/8",
+      knap: "Tildel",
+      ok: (antal: number, email: string, saldo: number) =>
+        `${antal > 0 ? "Tildelte" : "Trak"} ${Math.abs(antal)} kreditter ${antal > 0 ? "til" : "fra"} ${email}. Ny saldo: ${saldo}.`,
+      fejlEmail: "Skriv brugerens e-mail.",
+      fejlAntal: (maks: number) => `Antal skal være mellem -${maks} og ${maks} og ikke 0.`,
+      fejlNote: "Skriv en kort begrundelse — den gemmes i historikken.",
+      fejlUkendt: "Ingen bruger med den e-mail.",
+      fejlSaldo: "Kunne ikke trække så mange — brugeren har ikke saldo nok.",
     },
     henvendelserTitel: "Kontakt-henvendelser",
     henvendelserTom: "Ingen henvendelser endnu.",

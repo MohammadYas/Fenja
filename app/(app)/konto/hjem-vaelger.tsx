@@ -1,24 +1,18 @@
 "use client";
 
-// S31 · dit faste hjem på billederne. Ejer-ordre 22/8: IKKE et gavebord —
-// man får ét tildelt og kan rotere det højst tre gange. Derfor ingen liste
-// at browse i: kun dit hjem, hvor mange skift du har tilbage, og én knap.
+// S31 · dit faste hjem på billederne. Ejer-ordre 22/8: sælgeren skal IKKE se
+// hjemmets navn ("Rørkjær, Esbjerg · lejlighed" siger dem intet og virker
+// underligt) — de skal blot kunne skifte til et andet, højst tre gange.
+// Stedet er ægte og fast bag kulissen; navnet er et internt id.
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { da } from "@/lib/copy/da";
 
-type HjemVaelgerProps = {
-  /** Hjemmets brugervendte navn lige nu */
-  navn: string;
-  /** Antal rotationer tilbage */
-  tilbage: number;
-};
-
-export function HjemVaelger({ navn, tilbage }: HjemVaelgerProps) {
-  const [nuNavn, setNuNavn] = useState(navn);
+export function HjemVaelger({ tilbage }: { tilbage: number }) {
   const [nuTilbage, setNuTilbage] = useState(tilbage);
   const [travl, setTravl] = useState(false);
+  const [skiftet, setSkiftet] = useState(false);
   const [fejl, setFejl] = useState<string | null>(null);
   const [bekraeft, setBekraeft] = useState(false);
   const copy = da.konto.hjem;
@@ -28,17 +22,13 @@ export function HjemVaelger({ navn, tilbage }: HjemVaelgerProps) {
     setTravl(true);
     try {
       const svar = await fetch("/api/konto/hjem", { method: "POST" });
-      const data = (await svar.json()) as {
-        hjem?: { navn: string };
-        tilbage?: number;
-        fejl?: string;
-      };
-      if (!svar.ok || !data.hjem) {
+      const data = (await svar.json()) as { tilbage?: number; fejl?: string };
+      if (!svar.ok) {
         setFejl(data.fejl ?? da.fejl.generel);
         return;
       }
-      setNuNavn(data.hjem.navn);
       setNuTilbage(data.tilbage ?? 0);
+      setSkiftet(true);
       setBekraeft(false);
     } catch {
       setFejl(da.fejl.generel);
@@ -49,15 +39,15 @@ export function HjemVaelger({ navn, tilbage }: HjemVaelgerProps) {
 
   return (
     <div className="mt-4">
-      <div className="rounded-bloed border border-kant bg-baggrund p-4">
-        <p className="font-mono text-detalje uppercase tracking-wide text-tekst/70">
-          {copy.ditHjem}
+      <p className="text-detalje text-tekst/70">
+        {nuTilbage > 0 ? copy.tilbage(nuTilbage) : copy.opbrugt()}
+      </p>
+
+      {skiftet ? (
+        <p role="status" className="mt-2 max-w-laesbar text-detalje text-gran">
+          {copy.skiftet}
         </p>
-        <p className="mt-1 font-display text-lead font-semibold">{nuNavn}</p>
-        <p className="mt-2 text-detalje text-tekst/70">
-          {nuTilbage > 0 ? copy.tilbage(nuTilbage) : copy.opbrugt(0)}
-        </p>
-      </div>
+      ) : null}
 
       {nuTilbage > 0 ? (
         <div className="mt-3">

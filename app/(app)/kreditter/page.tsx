@@ -174,6 +174,14 @@ export default async function Kreditter({
       <section className="mt-10 border-t border-kant pt-6" aria-label={da.kreditter.titel}>
         <p className="max-w-laesbar text-tekst/80">{da.kreditter.forklaring}</p>
         <p className="mt-2 font-mono">{da.kreditter.saldoNu(saldo)}</p>
+        {/* Ejer-ordre 22/8: kreditter forsvinder ALDRIG ved opsigelse — de
+            bruges færdige. Sig det tydeligt til den, der ikke abonnerer nu,
+            men stadig har saldo tilbage. */}
+        {!erAbonnent && saldo > 0 ? (
+          <p className="mt-2 max-w-laesbar text-detalje text-tekst/80">
+            {da.kreditter.beholderVedOpsigelse}
+          </p>
+        ) : null}
         {naesteUdloeb && naesteUdloeb.antal > 0 ? (
           <p className="mt-1 text-detalje text-tekst/70">
             {da.kreditter.udloebNaeste(naesteUdloeb.antal, formaterDato(naesteUdloeb.dato))}

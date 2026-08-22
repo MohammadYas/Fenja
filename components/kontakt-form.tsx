@@ -48,8 +48,24 @@ export function KontaktForm({
     }
   }
 
+  // Ejer-ordre 22/8: formularen skal kunne bruges igen — skrev man forkert,
+  // skal man bare kunne sende en gang til uden at lede efter noget.
   if (sendt) {
-    return <p role="status">{copy.tak}</p>;
+    return (
+      <div>
+        <p role="status">{copy.tak}</p>
+        <button
+          type="button"
+          onClick={() => {
+            setBesked("");
+            setSendt(false);
+          }}
+          className="mt-3 min-h-touch cursor-pointer text-detalje text-tekst/70 underline underline-offset-4 hover:text-koks"
+        >
+          {copy.skrivIgen}
+        </button>
+      </div>
+    );
   }
 
   return (

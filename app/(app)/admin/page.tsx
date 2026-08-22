@@ -8,6 +8,7 @@ import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
 import { ContentVaerktoejer } from "./content-vaerktoejer";
 import { ForsideBilleder } from "./forside-billeder";
+import { TildelKreditter } from "./tildel-kreditter";
 import { KlageListe, type KlageRaekke } from "./klage-liste";
 
 export const metadata = { title: `${da.admin.titel} · ${da.site.navn}` };
@@ -368,6 +369,13 @@ export default async function Admin() {
           ))}
         </div>
       )}
+
+      {/* Tildel kreditter (22/8): support, kompensation, kampagner */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.tildel.titel}</h2>
+      <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+        {da.admin.tildel.forklaring}
+      </p>
+      <TildelKreditter />
 
       {/* Forside-billeder (21/8 nat): upload uden deploy */}
       <h2 className="mt-8 text-titel font-medium">{da.admin.forsideBilleder.titel}</h2>

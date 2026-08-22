@@ -98,10 +98,7 @@ export default async function Konto() {
         <p className="mt-2 max-w-laesbar text-detalje text-tekst/80">
           {da.konto.hjem.forklaring}
         </p>
-        <HjemVaelger
-          navn={effektivtHjemNavn}
-          tilbage={Math.max(0, hjemRotation.maks - rotationerBrugt)}
-        />
+        <HjemVaelger tilbage={Math.max(0, hjemRotation.maks - rotationerBrugt)} />
       </Card>
 
       <h2 className="mt-8 text-titel font-medium">{da.konto.koebshistorik}</h2>

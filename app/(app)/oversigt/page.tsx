@@ -191,8 +191,6 @@ export default async function Oversigt() {
         </div>
       ) : null}
 
-      <SupplierKommerSnartKort />
-
       {manglerOnboarding ? (
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-bloed border border-kant bg-flade p-4">
           <p className="max-w-laesbar text-tekst/80">{da.onboarding.bannerTekst}</p>
@@ -312,6 +310,8 @@ export default async function Oversigt() {
           </p>
         </section>
       ) : null}
+
+      <SupplierKommerSnartKort />
 
       {/* Sæson-kalender (alle abonnenter, 21/8): garderobens 12 måneder */}
       {erAbonnent && kalender.length > 0 ? (

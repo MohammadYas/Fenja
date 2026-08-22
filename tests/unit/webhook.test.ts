@@ -170,3 +170,24 @@ describe("Stripe-webhook: top-up og abonnementer (pricing v3.0)", () => {
     expect(status.prKilde.subscription).toBe(30); // Pro: 30 annoncer/md.
   });
 });
+
+// Ejer-krav 22/8: opsigelse må ALDRIG tage kreditter fra nogen. Adgangen til
+// abonnent-funktioner følger Stripes periode (et opsagt abonnement er
+// "active" til periodens udløb), men selve kreditterne er købt og betalt.
+describe("opsigelse rører aldrig kreditterne", () => {
+  it("ignorerer subscription.deleted uden at trække noget", async () => {
+    const ledger = new MemoryLedgerDb();
+    await haandterStripeEvent(ledger, fakturaEvent());
+    const foer = await ledger.hentStatus("u1");
+
+    const udfald = await haandterStripeEvent(ledger, {
+      id: "evt_cancel",
+      type: "customer.subscription.deleted",
+      data: { object: { status: "canceled" } },
+    });
+
+    expect(udfald.haandteret).toBe(false);
+    const efter = await ledger.hentStatus("u1");
+    expect(efter.saldo).toBe(foer.saldo);
+  });
+});
