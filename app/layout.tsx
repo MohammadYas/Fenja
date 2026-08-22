@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { BesoegsMaaler } from "@/components/besoegs-maaler";
 import { site } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { brod, display, mono } from "./fonts";
@@ -31,7 +32,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="da" className={`${display.variable} ${brod.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <BesoegsMaaler />
+        {children}
+      </body>
     </html>
   );
 }

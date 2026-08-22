@@ -6,7 +6,7 @@ import { FoerEfter } from "@/components/foer-efter";
 import { SkabRegner } from "@/components/skab-regner";
 import { StickyCta } from "@/components/sticky-cta";
 import { hentPopulaere, nyesteHoestDato } from "@/lib/eksperimenter";
-import { hentKatalogBilleder, hentKatalogRaekker } from "@/lib/katalog-server";
+import { hentAlleKatalogBilleder, hentAlleKatalogRaekker } from "@/lib/katalog-server";
 
 // Konservativ midterpris til drømme-regnestykket: medianen af høstens
 // medianpriser, rundet ned til nærmeste 25 kr. (regneeksempel, aldrig løfte)
@@ -38,13 +38,17 @@ export const metadata = {
   },
 };
 
-export default function Forside() {
+// Revalidér hvert 5. minut: ejer-uploadede forside-billeder (admin-panelet)
+// dukker op uden deploy
+export const revalidate = 300;
+
+export default async function Forside() {
   const hoestDato = nyesteHoestDato();
   const regneMedian = typiskMedianDkk();
   // Katalogbillederne findes automatisk fra public/eksempler/katalog/ —
   // nye filer kommer med i både slides og strøm uden kodeændring (ejer-ordre)
-  const katalogBilleder = hentKatalogBilleder();
-  const katalogRaekker = hentKatalogRaekker();
+  const katalogBilleder = await hentAlleKatalogBilleder();
+  const katalogRaekker = await hentAlleKatalogRaekker();
 
   return (
     <main>

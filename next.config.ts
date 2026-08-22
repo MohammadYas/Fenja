@@ -21,9 +21,15 @@ const nextConfig: NextConfig = {
     ],
   },
   images: {
-    // Billeder serveres fra Supabase Storage via signerede URLs (NFR-6);
-    // domænet tilføjes når ejeren har oprettet cloud-projektet (HANDOFF §6).
-    remotePatterns: [],
+    // Ejer-uploadede forside-billeder serveres fra Supabase Storage's
+    // offentlige bucket (21/8 nat) — next/image skal kende domænet
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cpqsmtaledmjzirfeztp.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
   },
   async redirects() {
     return [

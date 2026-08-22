@@ -1026,7 +1026,7 @@ export const da = {
       {
         overskrift: "Cookies",
         tekst: [
-          "Kun det nødvendige: en login-session, når du er logget ind. Ingen sporing, ingen annonce-cookies, ingen tredjeparts-statistik — derfor heller intet cookie-banner.",
+          "Kun det nødvendige: en login-session, når du er logget ind. Ingen annonce-cookies, ingen tredjeparts-statistik og intet cookie-banner. Vi fører vores egen cookieløse besøgsstatistik (hvilken side, hvilken kilde/kampagne og om enheden er mobil) — uden cookies, uden IP-adresser og uden noget, der kan identificere dig.",
         ],
       },
       {
@@ -1060,6 +1060,30 @@ export const da = {
       aktiveAnnoncer: "Aktive annoncer",
       solgte: "Solgte",
       solgtFor: "Solgt for i alt",
+    },
+    // Trafik (21/8 nat): cookieløs statistik
+    trafik: {
+      titel: "Trafik (30 dage)",
+      forklaring: "Cookieløs — ingen IP, ingen identitet, kun side, kilde, UTM og enhed.",
+      mobilAndel: (pct: number) => `${pct} % af besøgene er fra mobil.`,
+      tom: "Ingen besøg registreret endnu.",
+      prDag: "Visninger pr. dag",
+      topSider: "Mest viste sider",
+      topKilder: "Kilder (referrers)",
+      topKampagner: "UTM-kampagner",
+    },
+    // Forside-billeder (21/8 nat): upload uden deploy
+    forsideBilleder: {
+      titel: "Forside-billeder",
+      forklaring: "Upload billeder til forsidens serie og strøm — de er live inden for 5 minutter, uden deploy. Kun webp/jpg/png; de konverteres og skaleres automatisk.",
+      uploadKnap: "Upload billeder",
+      uploader: "Uploader…",
+      sletKnap: "Slet",
+      tom: "Ingen uploadede billeder endnu — forsiden viser den bundlede serie.",
+      note: "Billederne mærkes som resten af serien af forsidens fælles note.",
+      fejlIngenFil: "Vælg mindst én billedfil.",
+      fejlForStor: "Billedet er over 8 MB — gør det mindre først.",
+      fejlUgyldig: "Filen kunne ikke læses som et billede.",
     },
     henvendelserTitel: "Kontakt-henvendelser",
     henvendelserTom: "Ingen henvendelser endnu.",

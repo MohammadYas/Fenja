@@ -27,8 +27,8 @@ function alleTekster(vaerdi: unknown): string[] {
 }
 
 describe("forsidens forventningsafstemning", () => {
-  it("varsler om kreditter før signup uden at låse et kreditforhold", () => {
-    const html = renderToStaticMarkup(<Forside />);
+  it("varsler om kreditter før signup uden at låse et kreditforhold", async () => {
+    const html = renderToStaticMarkup(await Forside());
 
     expect(html).toContain("Du skal bruge kreditter for at lave en annonce.");
     // Ejer-ordre 2026-08-16: abonnementet er standardvejen — uden binding
@@ -37,8 +37,8 @@ describe("forsidens forventningsafstemning", () => {
     expect(html).not.toContain("Opret dig og lav din første annonce");
   });
 
-  it("afgrænser løftet om to minutter til selve annoncen", () => {
-    const html = renderToStaticMarkup(<Forside />);
+  it("afgrænser løftet om to minutter til selve annoncen", async () => {
+    const html = renderToStaticMarkup(await Forside());
 
     expect(html).toMatch(
       /Selve annoncen tager cirka 2 minutter[^.]*logget ind[^.]*kreditter/i,
@@ -55,14 +55,14 @@ describe("forsidens forventningsafstemning", () => {
     expect(html).not.toMatch(/magic|send mig et link/i);
   });
 
-  it("giver billedrækken en synlig overskrift med produktkontekst", () => {
-    const html = renderToStaticMarkup(<Forside />);
+  it("giver billedrækken en synlig overskrift med produktkontekst", async () => {
+    const html = renderToStaticMarkup(await Forside());
 
     expect(html).toMatch(/<h2[^>]*>Tøjet vist båret<\/h2>/);
   });
 
-  it("forklarer hvordan resultatet bruges på Vinted uden at gentage leverancen", () => {
-    const html = renderToStaticMarkup(<Forside />);
+  it("forklarer hvordan resultatet bruges på Vinted uden at gentage leverancen", async () => {
+    const html = renderToStaticMarkup(await Forside());
 
     expect(html).toContain("Sådan bruger du resultatet");
     expect(html).toMatch(/helhedsfoto[^.]*billede 1/i);
@@ -70,22 +70,22 @@ describe("forsidens forventningsafstemning", () => {
     expect(html).not.toContain("Det får du");
   });
 
-  it("bevarer gyldig listesemantik i det mørke Vinted-bånd", () => {
-    const html = renderToStaticMarkup(<Forside />);
+  it("bevarer gyldig listesemantik i det mørke Vinted-bånd", async () => {
+    const html = renderToStaticMarkup(await Forside());
 
     expect(html).toMatch(/<ul class="mt-6 flex max-w-2xl[^>]*"><li>/);
   });
 
-  it("holder sektionsoverskriften over trintitlerne i det visuelle hierarki", () => {
-    const html = renderToStaticMarkup(<Forside />);
+  it("holder sektionsoverskriften over trintitlerne i det visuelle hierarki", async () => {
+    const html = renderToStaticMarkup(await Forside());
     const overskrift = html.match(/<h2[^>]*>Sådan virker det<\/h2>/)?.[0] ?? "";
 
     expect(overskrift).toContain("font-display");
     expect(overskrift).toContain("text-display");
   });
 
-  it("viser redaktionelle numre med AA-egnet tekststyrke", () => {
-    const html = renderToStaticMarkup(<Forside />);
+  it("viser redaktionelle numre med AA-egnet tekststyrke", async () => {
+    const html = renderToStaticMarkup(await Forside());
     const numre = (html.match(/<span[^>]*>0[1-3]<\/span>/g) ?? []).filter(
       (nummer) => nummer.includes("text-tekst"),
     );

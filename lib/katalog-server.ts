@@ -36,8 +36,47 @@ export function hentKatalogBilleder(): KatalogBillede[] {
   }));
 }
 
+// Ejer-uploadede billeder (21/8 nat: admin-panelet kan tilføje forside-
+// billeder uden deploy). De ligger i den offentlige forside-billeder-bucket
+// og hentes ved sidens revalidering. Fejler kaldet (demo/lokalt uden nøgler),
+// vises blot de bundlede billeder.
+async function hentUploadedeBilleder(): Promise<KatalogBillede[]> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const noegle = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !noegle) return [];
+  try {
+    const { opretServiceKlient } = await import("@/lib/supabase/service");
+    const service = opretServiceKlient();
+    const { data, error } = await service.storage
+      .from("forside-billeder")
+      .list("", { limit: 200, sortBy: { column: "created_at", order: "desc" } });
+    if (error || !data) return [];
+    return data
+      .filter((f) => f.name.endsWith(".webp"))
+      .map((f) => ({
+        src: `${url}/storage/v1/object/public/forside-billeder/${f.name}`,
+        alt: FALLBACK_ALT,
+      }));
+  } catch {
+    return [];
+  }
+}
+
+/** Bundlede + ejer-uploadede billeder — uploadede sidst, så serien vokser */
+export async function hentAlleKatalogBilleder(): Promise<KatalogBillede[]> {
+  return [...hentKatalogBilleder(), ...(await hentUploadedeBilleder())];
+}
+
 /** To rækker til annonce-strømmen — skiftevis, så begge får nye billeder */
 export function hentKatalogRaekker(): [KatalogBillede[], KatalogBillede[]] {
   const alle = hentKatalogBilleder();
+  return [alle.filter((_, i) => i % 2 === 0), alle.filter((_, i) => i % 2 === 1)];
+}
+
+/** Som hentKatalogRaekker, men inkl. ejer-uploadede billeder */
+export async function hentAlleKatalogRaekker(): Promise<
+  [KatalogBillede[], KatalogBillede[]]
+> {
+  const alle = await hentAlleKatalogBilleder();
   return [alle.filter((_, i) => i % 2 === 0), alle.filter((_, i) => i % 2 === 1)];
 }

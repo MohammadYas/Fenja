@@ -7,6 +7,7 @@ import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
 import { ContentVaerktoejer } from "./content-vaerktoejer";
+import { ForsideBilleder } from "./forside-billeder";
 import { KlageListe, type KlageRaekke } from "./klage-liste";
 
 export const metadata = { title: `${da.admin.titel} · ${da.site.navn}` };
@@ -49,6 +50,45 @@ export default async function Admin() {
         .order("created_at", { ascending: false })
         .limit(30),
     ]);
+  // Trafik (21/8 nat, cookieløs): sidste 30 dage — pr. dag, top-sider,
+  // kilder, UTM-kampagner og enheds-split. Fejler harmløst før migrationen.
+  const trediveDageSiden = new Date(Date.now() - 30 * 86_400_000).toISOString();
+  const { data: besoegData } = await service
+    .from("besoeg")
+    .select("sti, referrer_host, utm_source, utm_medium, utm_campaign, enhed, created_at")
+    .gte("created_at", trediveDageSiden)
+    .order("created_at", { ascending: false })
+    .limit(10_000);
+  type BesoegRaekke = {
+    sti: string;
+    referrer_host: string | null;
+    utm_source: string | null;
+    utm_medium: string | null;
+    utm_campaign: string | null;
+    enhed: string;
+    created_at: string;
+  };
+  const besoeg = (besoegData ?? []) as BesoegRaekke[];
+  const talOp = (vaerdier: (string | null)[]): [string, number][] => {
+    const m = new Map<string, number>();
+    for (const v of vaerdier) if (v) m.set(v, (m.get(v) ?? 0) + 1);
+    return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
+  };
+  const besoegPrDag = talOp(besoeg.map((b) => b.created_at.slice(0, 10))).sort((a, b) =>
+    a[0].localeCompare(b[0]),
+  );
+  const topSider = talOp(besoeg.map((b) => b.sti));
+  const topKilder = talOp(besoeg.map((b) => b.referrer_host));
+  const topKampagner = talOp(
+    besoeg.map((b) =>
+      b.utm_source ? [b.utm_source, b.utm_medium, b.utm_campaign].filter(Boolean).join(" / ") : null,
+    ),
+  );
+  const mobilAndel =
+    besoeg.length > 0
+      ? Math.round((besoeg.filter((b) => b.enhed === "mobil").length / besoeg.length) * 100)
+      : null;
+
   // Kontakt-henvendelser (21/8 nat) — navn+email står i rækken selv
   const { data: henvendelserData } = await service
     .from("henvendelser")
@@ -289,6 +329,50 @@ export default async function Admin() {
       {/* Klager (ejer-ordre 2026-08-20): åbne anmodninger om kredit retur */}
       <h2 className="mt-8 text-titel font-medium">{da.admin.klagerTitel}</h2>
       <KlageListe klager={klager} />
+
+      {/* Trafik (21/8 nat): cookieløs statistik — sider, kilder, UTM, enhed */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.trafik.titel}</h2>
+      <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+        {da.admin.trafik.forklaring}
+        {mobilAndel != null ? ` ${da.admin.trafik.mobilAndel(mobilAndel)}` : ""}
+      </p>
+      {besoeg.length === 0 ? (
+        <p className="mt-2 text-detalje text-tekst/70">{da.admin.trafik.tom}</p>
+      ) : (
+        <div className="mt-3 grid gap-6 sm:grid-cols-2">
+          {(
+            [
+              [da.admin.trafik.prDag, besoegPrDag],
+              [da.admin.trafik.topSider, topSider],
+              [da.admin.trafik.topKilder, topKilder],
+              [da.admin.trafik.topKampagner, topKampagner],
+            ] as const
+          ).map(([titel, raekker]) => (
+            <div key={titel}>
+              <p className="font-medium">{titel}</p>
+              {raekker.length === 0 ? (
+                <p className="mt-1 text-detalje text-tekst/60">—</p>
+              ) : (
+                <ul className="mt-1 flex flex-col gap-1 font-mono text-detalje">
+                  {raekker.map(([navn, antal]) => (
+                    <li key={navn} className="flex justify-between gap-4">
+                      <span className="truncate">{navn}</span>
+                      <span className="shrink-0">{antal}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Forside-billeder (21/8 nat): upload uden deploy */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.forsideBilleder.titel}</h2>
+      <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+        {da.admin.forsideBilleder.forklaring}
+      </p>
+      <ForsideBilleder />
 
       {/* Content-værktøjer (21/8): prompts til Claude/ChatGPT + delebilleder */}
       <h2 className="mt-8 text-titel font-medium">{da.admin.content.titel}</h2>
