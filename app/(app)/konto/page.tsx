@@ -1,4 +1,5 @@
 import { FeedbackForm } from "@/components/feedback-form";
+import { KontaktForm } from "@/components/kontakt-form";
 import { Card } from "@/components/ui/card";
 import { da } from "@/lib/copy/da";
 import { HJEM, hentHjem, vaelgHjem } from "@/lib/pipeline/skabeloner";
@@ -120,6 +121,17 @@ export default async function Konto() {
       ) : (
         <p className="mt-3 max-w-laesbar text-tekst/80">{da.konto.ingenKoeb}</p>
       )}
+
+      {/* Kontakt (ejer-ordre 21/8 nat): direkte linje med svar på mail */}
+      <Card className="mt-8">
+        <h2 className="text-titel font-medium">{da.kontaktSide.titel}</h2>
+        <p className="mt-2 max-w-laesbar text-detalje text-tekst/80">
+          {da.kontaktSide.forklaring}
+        </p>
+        <div className="mt-4">
+          <KontaktForm startEmail={user?.email ?? ""} />
+        </div>
+      </Card>
 
       {/* Feedback (ejer-ordre 21/8): ris, ros og idéer — læses i admin */}
       <Card className="mt-8">

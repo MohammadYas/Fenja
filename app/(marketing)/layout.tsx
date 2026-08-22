@@ -54,6 +54,11 @@ export default function MarketingLayout({
                 </Link>
               </li>
               <li>
+                <Link href="/kontakt" className="soem-link inline-flex min-h-touch items-center">
+                  {da.kontaktSide.titel}
+                </Link>
+              </li>
+              <li>
                 <Link href="/log-ind" className="soem-link inline-flex min-h-touch items-center">
                   {da.nav.logInd}
                 </Link>

@@ -49,6 +49,21 @@ export default async function Admin() {
         .order("created_at", { ascending: false })
         .limit(30),
     ]);
+  // Kontakt-henvendelser (21/8 nat) — navn+email står i rækken selv
+  const { data: henvendelserData } = await service
+    .from("henvendelser")
+    .select("id, navn, email, besked, status, created_at")
+    .order("created_at", { ascending: false })
+    .limit(30);
+  type Henvendelse = {
+    id: string;
+    navn: string;
+    email: string;
+    besked: string;
+    status: string;
+    created_at: string;
+  };
+  const henvendelser = (henvendelserData ?? []) as Henvendelse[];
   const solgtSum = ((solgteRaekker.data ?? []) as { sold_price_dkk: number | null }[]).reduce(
     (sum, r) => sum + Number(r.sold_price_dkk ?? 0),
     0,
@@ -281,6 +296,28 @@ export default async function Admin() {
         {da.admin.content.forklaring}
       </p>
       <ContentVaerktoejer prompts={CONTENT_PROMPTS} />
+
+      {/* Kontakt-henvendelser (21/8 nat): seneste 30, nyeste øverst */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.henvendelserTitel}</h2>
+      {henvendelser.length === 0 ? (
+        <p className="mt-2 text-detalje text-tekst/70">{da.admin.henvendelserTom}</p>
+      ) : (
+        <ul className="mt-3 flex flex-col gap-3">
+          {henvendelser.map((h) => (
+            <li key={h.id}>
+              <Card>
+                <p className="font-mono text-detalje text-tekst/70">
+                  {new Date(h.created_at).toLocaleString("da-DK")} · {h.navn} ·{" "}
+                  <a className="underline" href={`mailto:${h.email}`}>
+                    {h.email}
+                  </a>
+                </p>
+                <p className="mt-2 max-w-laesbar whitespace-pre-wrap">{h.besked}</p>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {/* Feedback (21/8): seneste 30, nyeste øverst */}
       <h2 className="mt-8 text-titel font-medium">{da.admin.feedbackTitel}</h2>

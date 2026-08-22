@@ -107,6 +107,24 @@ export const da = {
     fejlBesked: "Skriv en besked på mellem 3 og 2000 tegn.",
     fejlLoft: "Du har sendt meget feedback i dag — prøv igen i morgen.",
   },
+  // Kontakt (ejer-ordre 21/8 nat): offentlig /kontakt + sektion på Konto
+  kontaktSide: {
+    titel: "Kontakt",
+    metaBeskrivelse:
+      "Skriv til Selja — spørgsmål, fejl eller idéer. Vi svarer hurtigst muligt.",
+    forklaring:
+      "Spørgsmål, problemer eller bare en tanke? Skriv her, så svarer vi på din e-mail hurtigst muligt.",
+    navnLabel: "Dit navn",
+    emailLabel: "Din e-mail",
+    beskedLabel: "Din besked",
+    beskedPladsholder: "Skriv hvad det drejer sig om — gerne med detaljer.",
+    knap: "Send besked",
+    tak: "Tak for din besked — vi svarer på din e-mail hurtigst muligt.",
+    fejlNavn: "Skriv dit navn.",
+    fejlEmail: "Skriv en rigtig e-mailadresse — det er dér, vi svarer.",
+    fejlBesked: "Skriv en besked på mellem 3 og 4000 tegn.",
+    fejlLoft: "Du har sendt flere beskeder i dag — vi vender tilbage på dem først.",
+  },
   konto: {
     titel: "Konto",
     emailLabel: "E-mail",
@@ -1043,6 +1061,8 @@ export const da = {
       solgte: "Solgte",
       solgtFor: "Solgt for i alt",
     },
+    henvendelserTitel: "Kontakt-henvendelser",
+    henvendelserTom: "Ingen henvendelser endnu.",
     feedbackTitel: "Feedback fra brugerne",
     feedbackTom: "Ingen feedback endnu.",
     // Content-værktøjer (21/8): prompts klar til Claude/ChatGPT
