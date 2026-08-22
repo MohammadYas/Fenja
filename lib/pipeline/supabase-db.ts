@@ -239,9 +239,20 @@ export class SupabasePipelineStorage implements PipelineStorage {
   }
 
   async gemBillede(sti: string, indhold: Buffer): Promise<string> {
+    // ALT hvad der lander i storage renses for metadata først (ejer 22/8):
+    // provider-filer bærer EXIF/XMP og C2PA-provenance, og intet af det må
+    // følge med ud til kunden. Fejler rensningen, gemmer vi originalen —
+    // et billede uden metadata er vigtigt, men en tabt leverance er værre.
+    let rent = indhold;
+    try {
+      const { fjernMetadata } = await import("./metadata");
+      rent = await fjernMetadata(indhold);
+    } catch {
+      // sharp kunne ikke læse formatet — gem som modtaget
+    }
     const { error } = await this.klient.storage
       .from(BUCKET)
-      .upload(sti, indhold, { contentType: "image/jpeg", upsert: true });
+      .upload(sti, rent, { contentType: "image/jpeg", upsert: true });
     if (error) throw new Error(`Upload fejlede for ${sti}: ${error.message}`);
     return sti;
   }

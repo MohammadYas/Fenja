@@ -138,6 +138,13 @@ Hver sælger får **ét fast sted**, så alle deres annoncer ligner samme hjem.
 - Security-headers via `next.config.ts` (rammer også SSR-svar)
 - GDPR: selvbetjent eksport + sletning; bilag 5 år; audit i
   `docs/gdpr-audit-2026-08-16.md` (P1+P2 åbne)
+- **0 metadata på leverede billeder** (ejer-beslutning 22/8): alt der gemmes
+  i storage gen-kodes med sharp i `lib/pipeline/metadata.ts`, så EXIF, XMP,
+  IPTC, ICC og C2PA-provenance forsvinder — ingen leverandør- eller
+  modelnavne i filerne. `.rotate()` bager orienteringen ind først, så
+  telefonbilleder ikke vender forkert. Den SYNLIGE AI-mærkning i produktet
+  består (art. 50 om oplysning), og Geminis SynthID-vandmærke sidder i
+  pixels og røres ikke. Låst med `tests/unit/metadata.test.ts`
 - E-mail-bekræftelse er **TIL** og E2E-verificeret
 - Ingen hardcodede nøgler; `.env` aldrig committet; `server-only` på alle
   moduler der rører service-nøglen
