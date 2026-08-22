@@ -1,8 +1,9 @@
 import { FeedbackForm } from "@/components/feedback-form";
 import { KontaktForm } from "@/components/kontakt-form";
 import { Card } from "@/components/ui/card";
+import { hjemRotation } from "@/lib/config";
 import { da } from "@/lib/copy/da";
-import { HJEM, hentHjem, vaelgHjem } from "@/lib/pipeline/skabeloner";
+import { hentHjem, vaelgHjem } from "@/lib/pipeline/skabeloner";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { HjemVaelger } from "./hjem-vaelger";
 import { KoenVaelger } from "./koen-vaelger";
@@ -35,7 +36,7 @@ export default async function Konto() {
         .order("ts", { ascending: false }),
       supabase
         .from("profiles")
-        .select("home_anchor, koen, haar_farve")
+        .select("home_anchor, koen, haar_farve, hjem_rotationer")
         .eq("id", user!.id)
         .maybeSingle(),
     ]);
@@ -46,6 +47,9 @@ export default async function Konto() {
   // deterministiske. Navnene kommer fra da.ts (NFR-12).
   const hjemAnker = (profil?.home_anchor as string | null | undefined) ?? null;
   const effektivtHjem = hentHjem(hjemAnker) ?? vaelgHjem(user!.id);
+  const rotationerBrugt = Number(
+    (profil?.hjem_rotationer as number | null | undefined) ?? 0,
+  );
   const effektivtHjemNavn =
     da.konto.hjem.navne[effektivtHjem.id] ?? effektivtHjem.navn;
 
@@ -98,9 +102,8 @@ export default async function Konto() {
           {da.konto.hjem.nuvaerende(effektivtHjemNavn)}
         </p>
         <HjemVaelger
-          valgt={hjemAnker}
-          hjem={HJEM.map((h) => ({ id: h.id, navn: da.konto.hjem.navne[h.id] ?? h.navn }))}
-          effektivtHjemId={effektivtHjem.id}
+          navn={effektivtHjemNavn}
+          tilbage={Math.max(0, hjemRotation.maks - rotationerBrugt)}
         />
       </Card>
 

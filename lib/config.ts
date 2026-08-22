@@ -171,6 +171,13 @@ export const misbrugsvaern = {
   dagligtBudgetloftDkk: Number(process.env.DAILY_BUDGET_CAP_DKK ?? 200),
 } as const;
 
+// Hjemmet på billederne (ejer-ordre 22/8): man får ét tildelt og kan
+// rotere det et begrænset antal gange — det er ikke et frit gavebord.
+// Formålet er konsistens: samme sælger = samme sted på alle annoncer.
+export const hjemRotation = {
+  maks: 3,
+} as const;
+
 // Bundle-bygger (kun Pro, 21/8 nat): pakkepris = samlet værdi minus rabat
 export const bundle = {
   maksItems: 4,

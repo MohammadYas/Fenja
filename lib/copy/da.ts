@@ -178,18 +178,24 @@ export const da = {
     hjem: {
       titel: "Dit hjem på billederne",
       forklaring:
-        "Alle dine visualiseringer optages i det samme hjem, så din profil ligner ét sted — ikke tusind tilfældige baggrunde. Der er 105 hjem at vælge mellem; Selja giver dig ét fast, og du kan bladre til et andet.",
+        "Alle dine visualiseringer optages i det samme hjem, så din profil ligner ét sted — ikke tusind tilfældige baggrunde. Selja tildeler dig et hjem blandt 105; passer det slet ikke, kan du rotere det op til tre gange.",
+      ditHjem: "Dit hjem",
       nuvaerende: (navn: string) => `Nu: ${navn}`,
-      automatisk: "Selja vælger",
-      automatiskHjaelp: "Vi vælger et fast hjem ud fra din konto.",
-      ditValg: "Dit hjem",
-      tael: (nr: number, ialt: number) => `Hjem ${nr} af ${ialt}`,
-      forrige: "Forrige hjem",
-      naeste: "Vis et andet hjem",
-      tilbageTilAutomatisk: "Lad Selja vælge igen",
-      gem: "Gem dette hjem",
+      tilbage: (antal: number) =>
+        antal === 1
+          ? "Du har 1 skift tilbage."
+          : `Du har ${antal} skift tilbage.`,
+      opbrugt: (_maks?: number) =>
+        "Du har brugt alle dine skift — hjemmet er nu fast, så dine annoncer bliver ved med at ligne det samme sted.",
+      roterKnap: "Skift til et andet hjem",
+      bekraeftTekst: (tilbage: number) =>
+        tilbage === 1
+          ? "Dette er dit sidste skift. Nye annoncer optages i det nye hjem; færdige billeder er uændrede."
+          : `Skift hjem? Du har ${tilbage} skift tilbage. Nye annoncer optages i det nye hjem; færdige billeder er uændrede.`,
+      bekraeftKnap: "Ja, skift hjem",
+      fortryd: "Fortryd",
       gemt: "Gemt",
-      fejl: "Hjemmet kunne ikke gemmes. Prøv igen.",
+      fejl: "Hjemmet kunne ikke skiftes. Prøv igen.",
       navne: {
         "vesterbro-lejlighed": "Lys lejlighed",
         "aarhus-raekkehus": "Rækkehus",
