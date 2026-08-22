@@ -6,7 +6,7 @@ export const vinted = {
   meta: {
     titel: "Selja til Vinted: færdig annonce på cirka 2 minutter",
     beskrivelse:
-      "Tag 2–4 mobilfotos af dit tøj. Selja renser billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag. Klar til at sætte ind på Vinted.",
+      "Tag ét mobilfoto af dit tøj. Selja renser billedet, viser tøjet båret og skriver titel, beskrivelse og prisforslag. Klar til at sætte ind på Vinted.",
   },
   // Ejer-godkendt drømme-pivot 2026-08-20: drømmen er MULIGHEDEN (skabet er
   // penge værd) — aldrig et indtjeningsløfte. Funktionsløftet støtter under.
@@ -15,7 +15,9 @@ export const vinted = {
     // Renset 21/8 (ejer: "det roder i toppen"): ét afsnit siger det hele —
     // tidsnoten er bagt ind, så heroen er rubrik → tekst → knap → friktion
     tekst:
-      "Tag 2–4 fotos, så renser Selja billederne, viser tøjet båret og skriver titel, beskrivelse og prisforslag — selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
+      // Ejer-ordre 22/8: "tag ET billede", ikke 2–4 — og det er ærligt:
+      // wizarden kræver kun helhedsfotoet, resten er valgfrit
+      "Tag ét billede af dit tøj, så renser Selja det, viser tøjet båret og skriver titel, beskrivelse og prisforslag — selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
     knap: "Lav din første annonce",
     friktion: "Uden binding · du betaler kun for leverede billeder · fejlede refunderes automatisk",
   },
@@ -146,7 +148,7 @@ export const vinted = {
     trin: [
       {
         titel: "Fotografér",
-        tekst: "Helhed, bagside, label og fejl. Dagslys er nok. Resten klarer Selja.",
+        tekst: "Ét helhedsfoto i dagslys er nok. Bagside, label og fejl er valgfrit ekstra. Resten klarer Selja.",
       },
       {
         titel: "Selja arbejder",
