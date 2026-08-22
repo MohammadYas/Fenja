@@ -16,6 +16,16 @@ export const metadata: Metadata = {
     locale: "da_DK",
     title: da.site.navn,
     description: da.site.beskrivelse,
+    // Delebillede (22/8): FØR/EFTER-collagen, så links delt i TikTok-bio,
+    // DM'er og beskeder viser produktet. Genereres af scripts/lav-og-billede.ts
+    images: [
+      {
+        url: "/og-billede.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Før og efter: sjusket aftenfoto af en cardigan, og samme cardigan vist båret på et billede genereret med Selja",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",

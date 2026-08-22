@@ -1,6 +1,33 @@
 # STATUS
 Sidst opdateret: 2026-08-22 af Claude Code
 
+## Denne session (22/8, runde 2) — cardigan først, forside-angreb, TESTPLAN.md
+
+Ejer-ordrer 22/8 (fortsat): cardigan-eksemplet skal stå først, forsiden skal
+angribes for mere konvertering, og der skal en testliste før TikTok-slides.
+
+1. **Cardigan-parret er flyttet øverst** i `vinted.foerEfter.par` — det er
+   dermed både første chip og standard-eksemplet i hero-panelet.
+2. **Forside-angreb (konvertering):**
+   - `priority` på FØR/EFTER-billederne (hero-LCP — panelet ER sidens LCP,
+     og billederne lazy-loadede før).
+   - Ny "Hvad koster det?"-sektion før slut-CTA'en: pris-spørgsmålet
+     besvares nu FØR signup-væggen, med tal direkte fra `lib/config`
+     (aldrig hårdkodet copy). OBS: skrevet UDEN nye tankestreger —
+     forsidens budget på 4 er brugt (marketing.test.tsx håndhæver).
+   - **Delebillede**: `public/og-billede.jpg` (1200×630, FØR/EFTER-collage af
+     cardigan-parret, genereret af `scripts/lav-og-billede.ts`) + OG/Twitter-
+     metadata i både rodlayoutet og forsiden (sidens openGraph ERSTATTER
+     layoutets — Next merger pr. toplevel-nøgle, derfor begge steder).
+     Links delt i TikTok-bio/DM'er viser nu produktet i stedet for ingenting.
+3. **`TESTPLAN.md`** (ny, repo-rod): prioriteret tjekliste før TikTok-slides
+   og rigtige brugere — blokerende (Gate 1-troskab, nøglerotation, S35-løftet),
+   konto/betaling/annonce-flow på telefon, mails, dagens nye funktioner,
+   TikTok-in-app-browser-testen, sikkerhed og første uges drift.
+
+Fravalgt med vilje: FAQ- og guides-sektioner på forsiden (ejerens 21/8-ordre
+"forsiden er rodet" respekteres — pris-striben er den eneste nye sektion).
+
 ## Denne session (22/8) — to nye abonnent-funktioner, opsagt-kreditkøb-fix, Suppliers rykket op
 
 **Ejer-ordre 22/8 (via screenshot af Garderobe-radar/Sæson-kalender):** byg

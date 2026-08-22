@@ -47,6 +47,20 @@ export const vinted = {
       "Fejl oplyst ærligt i teksten",
     ],
     par: [
+      // Ejer-ordre 22/8: cardigan-eksemplet står FØRST (og er dermed det
+      // valgte standard-eksempel i panelet)
+      {
+        id: "cardigan",
+        navn: "Cardigan",
+        foerBillede: "/eksempler/katalog/p18-foer-cardigan.webp",
+        foerAlt: "Sjusket aftenfoto af taupegrå cardigan smidt på en seng",
+        foerTekst: "grå cardigan str s, næsten ikke brugt",
+        foerPris: "60 kr.",
+        efterBillede: "/eksempler/katalog/p2-entre-cardigan.webp",
+        efterAlt: "Spejlselfie i dagslys med den taupegrå cardigan båret",
+        efterTitel: "Taupegrå fintstrikket cardigan · str. S",
+        efterPris: "Prisforslag: 140–200 kr.",
+      },
       {
         id: "strik",
         navn: "Strik",
@@ -84,18 +98,6 @@ export const vinted = {
         efterTitel: "Mellemblå straight-leg jeans · W32",
         efterPris: "Prisforslag: 100–150 kr.",
       },
-      {
-        id: "cardigan",
-        navn: "Cardigan",
-        foerBillede: "/eksempler/katalog/p18-foer-cardigan.webp",
-        foerAlt: "Sjusket aftenfoto af taupegrå cardigan smidt på en seng",
-        foerTekst: "grå cardigan str s, næsten ikke brugt",
-        foerPris: "60 kr.",
-        efterBillede: "/eksempler/katalog/p2-entre-cardigan.webp",
-        efterAlt: "Spejlselfie i dagslys med den taupegrå cardigan båret",
-        efterTitel: "Taupegrå fintstrikket cardigan · str. S",
-        efterPris: "Prisforslag: 140–200 kr.",
-      },
     ],
   },
   billedserie: {
@@ -116,6 +118,21 @@ export const vinted = {
     // ægte bruger-anmeldelser findes; så kan linjen skiftes her.
     undertekst:
       "Sådan bedømmes sælgere på Vinted — gode billeder og ærlige annoncer er vejen til stjernerne.",
+  },
+  // Pris-transparens på forsiden (konvertering 22/8): pris-spørgsmålet er
+  // en topindvending og blev først besvaret bag signup-væggen. Tallene kommer
+  // fra lib/config (aldrig hårdkodet her). OBS: ingen nye tankestreger,
+  // forsidens budget på 4 er brugt (marketing.test.tsx).
+  pris: {
+    titel: "Hvad koster det?",
+    linje: (
+      plusAntal: number,
+      plusPris: number,
+      proAntal: number,
+      proPris: number,
+    ) =>
+      `Plus giver ${plusAntal} billeder for ${plusPris} kr. om måneden, Pro giver ${proAntal} for ${proPris} kr. Uden binding, opsig når som helst.`,
+    knap: "Se alle priser",
   },
   // Ærligheds-blokken genplaceret (MANGLER §4; original fra 14/8 omskrevet
   // til Selja-æraen: ingen gratis-tier, mærkningen er de stille noter)

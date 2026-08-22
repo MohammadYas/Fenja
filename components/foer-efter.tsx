@@ -58,6 +58,7 @@ export function FoerEfter() {
             height={1350}
             sizes="(min-width: 640px) 240px, 80vw"
             className="mt-3 w-full rounded-bloed border border-kant"
+            priority
           />
           <p className="mt-3 font-mono text-detalje lowercase leading-snug text-tekst/80">
             {par.foerTekst}
@@ -79,6 +80,7 @@ export function FoerEfter() {
             height={1350}
             sizes="(min-width: 640px) 280px, 80vw"
             className="mt-3 w-full rounded-bloed border border-kant"
+            priority
           />
           <p className="mt-3 font-display text-titel font-bold">{par.efterTitel}</p>
           <ul className="mt-2 flex flex-col gap-1 text-detalje text-tekst/80">

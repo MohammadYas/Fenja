@@ -5,6 +5,7 @@ import { Billedstroem } from "@/components/billedstroem";
 import { FoerEfter } from "@/components/foer-efter";
 import { SkabRegner } from "@/components/skab-regner";
 import { StickyCta } from "@/components/sticky-cta";
+import { abonnementer } from "@/lib/config";
 import { hentPopulaere, nyesteHoestDato } from "@/lib/eksperimenter";
 import { hentAlleKatalogBilleder, hentAlleKatalogRaekker } from "@/lib/katalog-server";
 
@@ -35,6 +36,16 @@ export const metadata = {
     description: vinted.meta.beskrivelse,
     locale: "da_DK",
     type: "website",
+    // Sidens openGraph ERSTATTER layoutets (Next merger pr. toplevel-nøgle),
+    // så delebilledet skal også med her
+    images: [
+      {
+        url: "/og-billede.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Før og efter: sjusket aftenfoto af en cardigan, og samme cardigan vist båret på et billede genereret med Selja",
+      },
+    ],
   },
 };
 
@@ -208,6 +219,32 @@ export default async function Forside() {
       </section>
 
 
+
+      {/* Pris-transparens (konvertering 22/8): pris-spørgsmålet besvares på
+          forsiden FØR signup-væggen — tallene kommer direkte fra config */}
+      <section className="border-b border-kant" aria-label={vinted.pris.titel}>
+        <div className="mx-auto max-w-6xl px-4 py-14 md:py-20">
+          <Reveal>
+            <h2 className="font-display text-display font-bold">
+              {vinted.pris.titel}
+            </h2>
+            <p className="mt-3 max-w-laesbar text-tekst/80">
+              {vinted.pris.linje(
+                abonnementer.tiers[0].annoncerPrMd,
+                abonnementer.tiers[0].prisDkkPrMd,
+                abonnementer.tiers[1].annoncerPrMd,
+                abonnementer.tiers[1].prisDkkPrMd,
+              )}
+            </p>
+            <Link
+              href="/priser"
+              className="soem-link mt-4 inline-flex min-h-touch items-center font-medium"
+            >
+              {vinted.pris.knap} →
+            </Link>
+          </Reveal>
+        </div>
+      </section>
 
       {/* Slut-CTA: taler kun til sælgere — vejen til studioet bor i footeren */}
       <section className="border-b border-kant">
