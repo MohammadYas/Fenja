@@ -1,8 +1,16 @@
-# SELJA — komplet overblik (til mennesker og fremtidige chatbots)
+# SELJA — komplet overblik
 
-Sidst opdateret: 2026-08-21. Dette dokument beskriver HELE produktet: hvad det
-er, hvordan det er bygget, hvilke konti det kører på, og hvad ejeren mangler
-at gøre. Giv det til enhver AI-assistent, der skal arbejde på Selja.
+Sidst opdateret: 2026-08-22. Dette dokument beskriver HELE produktet: hvad det
+er, hvordan det er bygget, hvilke konti det kører på, og hvad der mangler.
+**Giv dette dokument til enhver AI-assistent, der skal arbejde på Selja** — det
+er skrevet til at kunne læses koldt.
+
+> **Til assistenter:** ejeren (mo) skriver kort, dansk og i høj kadence, ofte
+> med nye ordrer midt i en igangværende opgave — og han **omgør tit tidligere
+> beslutninger**. Læs ALTID hans seneste besked som facit; dette dokument og
+> `MANGLER.md` kan være timer bagud. Han vil have handling frem for afklarende
+> spørgsmål: handl på rimeligste fortolkning, og skriv fortolkningen i
+> opsummeringen, så han kan korrigere.
 
 ---
 
@@ -11,174 +19,142 @@ at gøre. Giv det til enhver AI-assistent, der skal arbejde på Selja.
 **Selja** (selja.dk) er en dansk web-app til private Vinted-sælgere. Brugeren
 tager 2–4 mobilfotos af et stykke tøj og får på ca. 2 minutter:
 
-1. **Rensede salgsfotos** (baggrund/lys fikset — bruges som billede 1 på Vinted)
-2. **En AI-visualisering af tøjet båret** (altid tydeligt mærket som genereret;
-   må kun bruges som supplement, aldrig billede 1)
+1. **Rensede salgsfotos** (bruges som billede 1 på Vinted)
+2. **En AI-visualisering af tøjet båret** — altid tydeligt mærket som
+   genereret; må kun bruges som supplement, aldrig billede 1
 3. **Færdig annoncetekst**: titel, beskrivelse, søgeord og prisforslag bygget
    på ægte Vinted-markedspriser — klar til copy-paste
 
 Navnet er oldnordisk for "at sælge". Brandet er **ærlighed**: fejl/slid nævnes
 altid, ingen fabrikerede anmeldelser, AI-mærkning følger EU AI-forordningen
-art. 50. Tone: dansk, konkret, lavmælt selvsikker (defineret i HANDOFF §2.2.4).
-B2B-delen (UGC/hjemmesider) er parkeret på `/studio` (noindex).
+art. 50. Tone: dansk, konkret, lavmælt selvsikker (HANDOFF §2.2.4).
+B2B-delen er parkeret på `/studio` (noindex).
 
 ## 2. Forretningsmodel
 
-- **1 kredit = 1 genereret billede.** Kreditter reserveres når generering
-  startes; fejlede billeder refunderes automatisk. Kreditter udløber efter 12 mdr.
-- **Abonnement er standardvejen** (ejer-beslutning):
-  - **Plus: 59 kr./md. eller 590 kr./år** — 12 kreditter/md.
-  - **Pro: 119 kr./md. eller 1190 kr./år** — 30 kreditter/md.
-  - Rollover: ubrugt kvote følger med, loftet er 2× månedskvoten.
-- **ABONNEMENT KRÆVES for kreditter** (ejer 22/8). Pakkerne (Prøv 5/49 …
-  Lager 100/349) er top-up og vises KUN for abonnenter på kreditsiden;
-  gaten sidder i checkout-ruten, ikke kun i UI. Top-up-kortet vises når
-  saldoen er under 3.
-- Ingen gratis kreditter ved signup (misbrugsværn, ejer-beslutning).
-- Regenerering af én del (ny visualisering/tekst): ½ kredit.
+- **1 kredit = 1 genereret billede.** Kreditter reserveres når genereringen
+  startes; fejlede billeder refunderes automatisk. Udløber efter 12 måneder.
+- **ABONNEMENT KRÆVES for at købe kreditter** (ejer-beslutning 22/8 — denne
+  er blevet vendt frem og tilbage; dette er den gældende):
+  - **Plus: 59 kr./md. / 590 kr./år** — 12 kreditter/md.
+  - **Pro: 119 kr./md. / 1190 kr./år** — 30 kreditter/md.
+  - Rollover: ubrugt kvote følger med, loft = 2× månedskvoten.
+- **Ekstra kreditter** (Prøv 5/49 · Sælger 15/89 · Bunke 40/169 · Lager
+  100/349) og top-up (10/69) kan **kun købes af abonnenter** — gaten sidder i
+  `app/api/stripe/checkout/route.ts`, ikke kun i UI.
+- **Opsigelse tager ALDRIG kreditter.** Stripe holder abonnementet `active`
+  til periodens udløb (lovkrav), og webhooken rører aldrig ledgeren ved
+  `customer.subscription.deleted`. Låst med test.
+- Ingen gratis kreditter ved signup (misbrugsværn).
+- Regenerering af én del: ½ kredit.
 
-**Abonnent-fordele (alle):** Smart Salgsplan (sælg nu/sæt ned/vent) på
-oversigten, Ugens Salgsplan på mail hver mandag 06 UTC (Trigger.dev-schedule),
-Garderobe-radar (garderobens værdi + hvad der er værd at source, sæsonvægtet),
-Sæson-kalender (12 måneder frem: hvornår topper hvert stykke), salgsstatistik.
-**Kun Pro:** Konkurrent-tjek (din pris mod markedets p25/median/p75 pr. annonce).
-Favorit-overvågning er LOVET i copy men IKKE bygget (kræver Vinted-data, S35).
+**Abonnent-fordele (alle):** Smart Salgsplan på oversigten, Ugens Salgsplan på
+mail (mandag 06 UTC), Garderobe-radar, Sæson-kalender, salgsstatistik.
+**Kun Pro:** Konkurrent-tjek (pris mod markedets p25/median/p75) og
+Bundle-bygger (2–4 annoncer → én pakke-annonce).
+Favorit-overvågning er LOVET i copy, men IKKE bygget (S35).
 
 ## 3. Teknisk arkitektur
 
 | Lag | Teknologi | Detaljer |
 |---|---|---|
-| Frontend/backend | **Next.js 15** (App Router, TypeScript) | Ét repo, dansk kodebase (funktioner/variabler på dansk) |
-| Hosting | **Netlify**, site `selja` | GitHub-koblet: push til `main` auto-deployer. Domæner: selja.dk, www.selja.dk, selja.netlify.app |
-| Database/Auth/Storage | **Supabase** projekt `cpqsmtaledmjzirfeztp` (eu-west-1) | Postgres + RLS, e-mail/kode + Google OAuth, privat bucket `item-photos` med signerede URLs |
-| Tunge jobs | **Trigger.dev** projekt "Selja" (`proj_zmmrdmvkjhnxepwlxssi`, org SDu) | Tasks: `item-pipeline`, `item-regen`, `salgsplan-digest` (mandag 06 UTC), `udloebsvarsel` (dagligt 07 UTC). Netlify-functions kan ikke køre 150+ sek. |
-| Betaling | **Stripe** (LIVE, konto `acct_1U55tgQu1PV9huwJ`) | Checkout + kundeportal + webhook `https://selja.dk/api/webhooks/stripe` (4 events). Priser via lookup keys `selja_plus_md/aar`, `selja_pro_md/aar` |
-| Mails | **Resend** (domæne selja.dk verificeret, region eu-west-1) | Transaktionsmails fra `Selja <post@selja.dk>` + Supabase auth-mails via SMTP (smtp.resend.com:465). OBS: Resend-kontoen er oprettet på krausesigne@gmail.com |
-| Billed-AI | **Google Gemini** | Rens: `gemini-3.1-flash-image` (0,28 kr.), visualisering: `gemini-3-pro-image-preview` (0,95 kr.), vision/troskabstjek: flash. Konfigureret i `lib/config.ts` |
-| Tekst-AI | DeepSeek (`lib/providers/deepseek.ts`) | Skriver annonceteksten. **MÅ IKKE nævnes udadtil** (ejer-ordre) — privatpolitikken siger "ekstern sprogmodel-leverandør" og at den kun modtager indtastede tøjfakta, aldrig billeder/identitet |
-| Domæne | selja.dk hos dansk registrar (Punktum dk/MitID-aktiveret) | A `@`→75.2.60.5, CNAME `www`→selja.netlify.app + Resend-records (MX/SPF/DKIM på send/resend._domainkey) |
+| Frontend/backend | **Next.js 15** (App Router, TypeScript) | Dansk kodebase (funktioner/variabler på dansk) |
+| Hosting | **Netlify**, site `selja` | GitHub-koblet: push til `main` auto-deployer (~4–5 min). Domæner: selja.dk, www, selja.netlify.app |
+| Database/Auth/Storage | **Supabase** `cpqsmtaledmjzirfeztp` (eu-west-1) | Postgres + RLS, e-mail/kode + Google OAuth, privat bucket `item-photos`, offentlig `forside-billeder` |
+| Tunge jobs | **Trigger.dev** `proj_zmmrdmvkjhnxepwlxssi` (org SDu) | `item-pipeline`, `item-regen`, `salgsplan-digest` (mandag 06 UTC), `udloebsvarsel` (dagligt 07 UTC) |
+| Betaling | **Stripe** LIVE `acct_1U55tgQu1PV9huwJ` | Checkout + portal + webhook `https://selja.dk/api/webhooks/stripe`. Priser via lookup keys `selja_plus_md/aar`, `selja_pro_md/aar` |
+| Mails | **Resend** (selja.dk verificeret) | Transaktionsmails fra `Selja <post@selja.dk>` + Supabase auth-mails via SMTP. OBS: Resend-kontoen er oprettet på krausesigne@gmail.com |
+| Billed-AI | **Google Gemini** | Rens `gemini-3.1-flash-image` (0,28 kr.), visualisering `gemini-3-pro-image-preview` (0,95 kr.), vision flash |
+| Tekst-AI | DeepSeek | **MÅ IKKE nævnes udadtil** (ejer-ordre) — privatpolitikken siger "ekstern sprogmodel-leverandør" |
 
-**Deploy:** `git push` til main → Netlify bygger i skyen (linux). Trigger.dev
-deployes separat: `npx trigger.dev@4.5.12 deploy` (versionen SKAL matche
-`@trigger.dev/*` i package.json — deploy nægter ved mismatch). `syncEnvVars` i
-`trigger.config.ts` skubber nøgler fra lokal `.env.local` til jobmiljøet ved
-hvert deploy.
+**Deploy:** `git push` → Netlify bygger i skyen. Trigger.dev deployes separat:
+`npx trigger.dev@4.5.12 deploy` (versionen SKAL matche `@trigger.dev/*` i
+package.json). `syncEnvVars` skubber nøgler til jobmiljøet ved hvert deploy.
 
-## 4. Kodestruktur (vigtigste stier)
+## 4. Kodestruktur
 
-- `app/(marketing)/` — forside, /priser, /laer (guides som TS-data i
-  `lib/guides-indhold.ts`), /log-ind, /ny-adgangskode, /vilkaar, /privatliv
+- `app/(marketing)/` — forside, /priser, /laer (14 guides i
+  `lib/guides-indhold.ts`), /kontakt, /log-ind, /ny-adgangskode, /vilkaar,
+  /privatliv
 - `app/(app)/` — /oversigt, /nyt-item (5-trins wizard), /items/[id],
   /kreditter, /konto, /onboarding, /admin
-- `app/api/` — items (opret/genoptag/regenerer/delebillede), stripe
-  (checkout/portal), webhooks/stripe, auth (efter-login, callback i
-  `app/auth/callback`), upload-signering, feedback, konto (eksport/slet), admin/klager
-- `lib/pipeline/` — run.ts (kørslen), start.ts (Trigger.dev eller in-proces),
-  skabeloner.ts (kategori→prompt), markedspriser.ts, visninger.ts, badge/share (sharp)
-- `lib/credits/` — ledger.ts (AL kreditlogik, idempotent via
-  `tilfoej_kreditter`-SQL-funktionen), supabase.ts
-- `lib/betaling/` — webhook.ts (Stripe-events → kreditter; læser BÅDE gammel og
-  ny API-form!), abonnement.ts (harAktivtAbonnement + hentAbonnementsTier)
-- `lib/pipeline/hjem-generator.ts` — 1000 genererede hjem (+5 oprindelige);
-  `hjem-tildeling.ts` sikrer ÉT sted pr. sælger via unikt DB-indeks
-- `lib/pipeline/hjem-generator.ts` — 100 genererede hjem (+5 oprindelige)
-- `lib/salg/` — smart-plan.ts, saeson.ts, radar.ts, statistik.ts, kalender.ts,
-  konkurrent.ts (alle RENE funktioner, fuldt testede)
-- `lib/copy/da.ts` + `lib/copy/vinted.ts` — AL brugervendt tekst (aldrig i komponenter)
+- `app/api/` — items, stripe (checkout/portal), webhooks/stripe, auth
+  (callback + **confirm** = token_hash-flow), upload-signering, feedback,
+  kontakt, besoeg (tracking), bundle, konto (eksport/slet/hjem), admin
+  (klager, kreditter, forside-billeder)
+- `lib/pipeline/` — run.ts, start.ts, **skabeloner.ts** (kategori→prompt),
+  **hjem-generator.ts** (1000 hjem), **hjem-tildeling.ts** (ét sted pr.
+  sælger), markedspriser.ts, visninger.ts, badge/share (sharp)
+- `lib/credits/ledger.ts` — AL kreditlogik, idempotent
+- `lib/betaling/` — webhook.ts (læser BÅDE gammel og ny Stripe-API-form!),
+  abonnement.ts (slår op på **stripe_customer_id**, e-mail som fallback)
+- `lib/salg/` — smart-plan, saeson, radar, statistik, kalender, konkurrent
+  (rene funktioner, fuldt testede)
+- `lib/sikkerhed/` — **ratelimit.ts** (DB-baseret, hashet IP),
+  **validering.ts** (skema, kasserer ukendte felter)
+- `lib/copy/da.ts` + `vinted.ts` — AL brugervendt tekst
 - `lib/config.ts` — priser, kvoter, misbrugsværn, modeller. ÉN kilde
-- `lib/emails/` + `emails/` — transaktionsmails (tabel-layout, inline styles)
-- `lib/auth/admin.ts` — erAdmin(): ADMIN_EMAIL er kommasepareret liste
-- `trigger/` — Trigger.dev-tasks
-- `supabase/migrations/` — 15 migrations, ALLE kørt mod cloud
-- `tests/` — 414 tests (vitest). Copy-vagter håndhæver ærlighedsregler
-  (fx maks 4 tankestreger på forsiden, 2-minutters-løftet skal være afgrænset)
-- `scripts/` — katalog-generering, markedsanalyse (høst → `lib/data/markedspriser.ts`),
-  indexnow-ping, gate1-fidelity-test
+- `tests/` — 421 tests (vitest). **Copy-vagter håndhæver ærlighedsregler**
+  (maks 4 tankestreger på forsiden, 2-minutters-løftet skal være afgrænset)
 
-## 5. Sikkerhed & compliance
+## 5. Hjemmet på billederne (vigtigt koncept)
 
-- Admin: 404 for alle ikke-admins; `ADMIN_EMAIL`-liste (begge ejer-mails)
-- Webhook: signatur verificeres altid; kreditering idempotent pr. event/faktura
-- Upload: signerede URLs, sti låst til brugerens mappe; privat bucket
-- Misbrugsværn: 15 annoncer/bruger/dag, globalt dagligt budgetloft 200 kr.
-  (kill-switch), maks 4 genereringer pr. del, feedback maks 10/dag
-- Origin-headeren valideres mod allowlist i checkout/portal
-- Security-headers (HSTS, X-Frame-Options DENY, nosniff m.fl.) via next.config
-- GDPR: selvbetjent indsigt/eksport + sletning på /konto; bilag 5 år
-  (bogføringsloven); audit i `docs/gdpr-audit-2026-08-16.md` (P1+P2 åbne)
-- **E-mail-bekræftelse er TÆNDT og E2E-verificeret** (21/8): mail-links kører token_hash-flowet via /auth/confirm (virker på tværs af enheder); glemt adgangskode fuldt verificeret med rigtige mails
-- 18+-gate ved signup OG i onboarding (OAuth kan ikke bære metadata)
+Hver sælger får **ét fast sted**, så alle deres annoncer ligner samme hjem.
 
-## 6. Kendte root causes (lærdom — gentag dem ikke)
+- **1000 hjem** genereres deterministisk fra byggeklodser (by × bolig × spejl
+  × gulv × lys × stue = 450.450 mulige kombinationer) i `hjem-generator.ts`
+- **Eksklusivt**: unikt DB-indeks på `profiles.home_anchor`. Tildelingen
+  SKRIVER for at kræve stedet og går videre ved unique_violation — atomisk,
+  ingen race. To sælgere kan aldrig dele sted.
+- **Højst 3 skift** (`hjemRotation.maks`), tælles i `profiles.hjem_rotationer`,
+  skrevet med service-rollen så klienten ikke kan nulstille
+- Serveren vælger hvad man skifter TIL. Sælgeren ser **ikke** stedets navn
+- Prompt-kvalitet: hvert spejl har en defekt, gulve har slid, lyset navngiver
+  retning + hvidbalance + skygger og slutter altid "no flash", hvert rum har
+  hverdagsrod. Låst med `tests/unit/hjem-prompt.test.ts`
+
+## 6. Sikkerhed & compliance
+
+- **Rate limiting** på offentlige ruter (DB-baseret, bruger-id eller hashet IP)
+- **Skema-validering** kasserer ukendte felter (mod massetildeling)
+- Admin: 404 for alle ikke-admins; `ADMIN_EMAIL` = kommasepareret liste
+- Webhook: signatur verificeres altid; kreditering idempotent
+- Upload: signerede URLs, sti låst til brugerens mappe
+- Misbrugsværn: 15 annoncer/bruger/dag, dagligt budgetloft 200 kr.
+- Origin-header valideres mod allowlist i checkout/portal
+- Security-headers via `next.config.ts` (rammer også SSR-svar)
+- GDPR: selvbetjent eksport + sletning; bilag 5 år; audit i
+  `docs/gdpr-audit-2026-08-16.md` (P1+P2 åbne)
+- E-mail-bekræftelse er **TIL** og E2E-verificeret
+- Ingen hardcodede nøgler; `.env` aldrig committet; `server-only` på alle
+  moduler der rører service-nøglen
+
+## 7. Kendte root causes (gentag dem ikke)
 
 1. Gemini leverer data-URLs, ikke storage-stier
 2. `generations.preset_id` uuid vs. tekst-id
 3. Tekstvalidering krævede størrelse ordret
 4. Google nedlagde gemini-2.5-flash (404)
 5. Provider-reference var storage-sti, ikke data-URL
-6. Vision-503 væltede hele leverancen (nu retry + isolation)
-7. Troskabs-spørgsmålet kasserede produkt-visninger (bøjle/gulv) som "ikke båret"
+6. Vision-503 væltede hele leverancen
+7. Troskabs-spørgsmålet kasserede produkt-visninger som "ikke båret"
 8. Produkt-prompten arvede on-model-negativlisten → floatende tøj
-9. Lokal Windows-deploy manglede linux-sharp → ALLE oprettelser 500'ede
-   (løst; irrelevant nu hvor Netlify bygger på linux)
-10. **Stripe-webhooken læste kun den gamle API-form** — det første rigtige køb
-    blev betalt uden kreditering (`invoice.parent.subscription_details` +
-    `line.pricing.price_details.price` i 2025+-versionerne). Fixet + regressionstest
+9. Lokal Windows-deploy manglede linux-sharp → alle oprettelser 500'ede
+10. **Stripe-webhooken læste kun den gamle API-form** — første rigtige køb blev
+    betalt uden kreditering (`invoice.parent.subscription_details`)
+11. **PKCE-bekræftelseslink virkede kun i signup-browseren** → token_hash-flow
+12. Redirects brugte `url.origin`, som bag Netlify kan være branch-domænet
+13. **Shorts matchede bukser-skabelonen**, hvis regler forbød "shorts" og
+    "bare legs" → modellen forlængede dem til lange bukser
 
-## 7. Dokument-hierarki
+## 8. Dokumenter
 
 - `SPEC.md` v0.2 + `HANDOFF.md` v1.0 = "loven" — MEN `STATUS.md`s
   beslutnings-sektion registrerer ejerens overstyringer (der er mange)
-- `MANGLER.md` = publish-tjeklisten (tages oppefra)
+- `MANGLER.md` = hvad der mangler før/efter launch
 - `BACKLOG.md` = nummererede opgaver (S12, S35, S39…)
-- `SELJA.md` (denne fil) = samlet overblik
+- `SELJA.md` (denne) = samlet overblik
 
-Stående regler: kun ÉN branch (`main`), ingen PRs; al copy i lib/copy;
-provider-nøgler KUN i gitignoret `.env.local`; nye features følger v6-designet
-"Klar & nordisk" (sentence case, luft, hairlines).
-
----
-
-## 8. EJERENS TO-DO (prioriteret)
-
-### Før du lukker rigtige brugere ind
-1. ~~Tænd e-mail-bekræftelse~~ GJORT og E2E-verificeret 21/8 (nat)
-2. **Kør Gate 1-troskabstesten** (`npx tsx scripts/gate1-fidelity-test.ts
-   <mappe med ~20 egne tøjfotos> --live`) — mål ≥70 % troskab. Visualiseringen
-   dumpede kvalitetstjekket i vores ene produktions-E2E; kalibrér
-   `pipeline.troskabsTaerskel` efter resultatet
-3. **Verificér abonnements-fornyelse** når næste faktura trækkes (~21/9):
-   kreditsiden skal vise ny kvote. Webhook-fixet er testet, men fornyelsen er
-   første naturlige gentagelse
-
-### Synlighed (kræver dine logins)
-4. **Google Search Console**: search.google.com/search-console → Add property
-   → Domain → selja.dk → DNS TXT-record hos registraren → verificér →
-   indsend `https://selja.dk/sitemap.xml`
-5. **Bing Webmaster Tools**: bing.com/webmasters → importér fra GSC (nemmest)
-6. **DMARC-record** hos registraren (mail-leveringsevne): TXT `_dmarc.selja.dk`
-   = `v=DMARC1; p=none; rua=mailto:post@selja.dk`
-
-### Drift & konti
-7. **Rotér nøgler der har været i chat**: Google OAuth client secret,
-   TRIGGER_SECRET_KEY, RESEND_API_KEY, Stripe webhook-secret, testkonto-passwords
-8. **Trigger.dev-nøglens udløb**: oprettet med 90 dages udløb → dør 19/11-2026
-   og ALLE annoncer hænger. Sæt kalenderpåmindelse eller opret permanent nøgle
-9. **Resend-kontoen** ligger på krausesigne@gmail.com — flyt/dokumentér ejerskab
-10. **Modtage-mail på post@selja.dk**: opsæt postkasse/videresendelse hos
-    registraren, så svar på dine mails ikke ryger i ingenting; skift derefter
-    `kontakt.email` i `lib/config.ts` fra gmail til post@selja.dk
-11. **Momsregistrering**: Stripe opkræver med `automatic_tax` og dansk B2C-moms
-    — tjek med revisor at CVR/momsforhold er på plads ved omsætning
-12. **GDPR P1+P2** fra audit: databehandleraftale-dokumentation + verifikation
-    af tredjelandsoverførsler pr. leverandør
-
-### Vækst-forslag (kræver din beslutning — IKKE implementeret)
-13. **Omsætnings-dræber #1: ingen lille indgang.** En ny bruger med 0 kreditter
-    kan KUN komme i gang ved at tegne abonnement (59 kr./md.) før de har set ét
-    resultat. Forslag: vis "Prøv"-pakken (5 annoncer/49 kr., findes allerede i
-    config og checkout) som engangskøb for ikke-abonnenter — lav tærskel ind,
-    abonnementet sælger sig selv via Salgsplan-teaseren bagefter. Alternativt:
-    1 gratis preview (config `preview` findes). Din beslutning — det overstyrer
-    din egen "abonnement er standardvejen"-ordre
-14. Favorit-overvågning (lovet i Pro-copy) kræver Vinted-data — byg eller fjern løftet
+Stående regler: kun ÉN branch (`main`), ingen PRs; al copy i `lib/copy`;
+nøgler kun i gitignoret `.env.local`; v6-designet "Klar & nordisk".
+**Kør altid `npm test` FØR commit** — copy-vagterne fanger ærlighedsbrud.
