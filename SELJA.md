@@ -52,7 +52,7 @@ Favorit-overvågning er LOVET i copy men IKKE bygget (kræver Vinted-data, S35).
 | Frontend/backend | **Next.js 15** (App Router, TypeScript) | Ét repo, dansk kodebase (funktioner/variabler på dansk) |
 | Hosting | **Netlify**, site `selja` | GitHub-koblet: push til `main` auto-deployer. Domæner: selja.dk, www.selja.dk, selja.netlify.app |
 | Database/Auth/Storage | **Supabase** projekt `cpqsmtaledmjzirfeztp` (eu-west-1) | Postgres + RLS, e-mail/kode + Google OAuth, privat bucket `item-photos` med signerede URLs |
-| Tunge jobs | **Trigger.dev** projekt "Selja" (`proj_zmmrdmvkjhnxepwlxssi`, org SDu) | Tasks: `item-pipeline`, `item-regen`, `salgsplan-digest` (cron mandag 06 UTC). Netlify-functions kan ikke køre 150+ sek. |
+| Tunge jobs | **Trigger.dev** projekt "Selja" (`proj_zmmrdmvkjhnxepwlxssi`, org SDu) | Tasks: `item-pipeline`, `item-regen`, `salgsplan-digest` (mandag 06 UTC), `udloebsvarsel` (dagligt 07 UTC). Netlify-functions kan ikke køre 150+ sek. |
 | Betaling | **Stripe** (LIVE, konto `acct_1U55tgQu1PV9huwJ`) | Checkout + kundeportal + webhook `https://selja.dk/api/webhooks/stripe` (4 events). Priser via lookup keys `selja_plus_md/aar`, `selja_pro_md/aar` |
 | Mails | **Resend** (domæne selja.dk verificeret, region eu-west-1) | Transaktionsmails fra `Selja <post@selja.dk>` + Supabase auth-mails via SMTP (smtp.resend.com:465). OBS: Resend-kontoen er oprettet på krausesigne@gmail.com |
 | Billed-AI | **Google Gemini** | Rens: `gemini-3.1-flash-image` (0,28 kr.), visualisering: `gemini-3-pro-image-preview` (0,95 kr.), vision/troskabstjek: flash. Konfigureret i `lib/config.ts` |
@@ -80,6 +80,7 @@ hvert deploy.
   `tilfoej_kreditter`-SQL-funktionen), supabase.ts
 - `lib/betaling/` — webhook.ts (Stripe-events → kreditter; læser BÅDE gammel og
   ny API-form!), abonnement.ts (harAktivtAbonnement + hentAbonnementsTier)
+- `lib/pipeline/hjem-generator.ts` — 100 genererede hjem (+5 oprindelige)
 - `lib/salg/` — smart-plan.ts, saeson.ts, radar.ts, statistik.ts, kalender.ts,
   konkurrent.ts (alle RENE funktioner, fuldt testede)
 - `lib/copy/da.ts` + `lib/copy/vinted.ts` — AL brugervendt tekst (aldrig i komponenter)

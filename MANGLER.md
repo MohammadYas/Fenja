@@ -40,6 +40,11 @@ Sidst opdateret: 2026-08-21 (launch-dag). Kritisk vej øverst — tages oppefra.
 - Wizardens afsend-knap kunne ikke rammes på mobil (bund-nav'en opfangede
   klikket) — scroll-margin tilføjet.
 
+**RETTET 22/8 (ejer-ordre):** pakkerne står nu på offentlig /priser (punkt 1);
+abonnement slås op på stripe_customer_id, ikke e-mail (punkt 2);
+udløbsvarsel kører dagligt 30 dage før (punkt 3). Tilbage: win-back ved
+opsigelse (punkt 4) og social proof fra rigtige brugere (punkt 5).
+
 **VÆSENTLIGT — kræver din beslutning:**
 
 1. **Pakkerne er usynlige for ikke-indloggede. Største omsætnings-dræber.**
