@@ -164,9 +164,10 @@ export const billedModeller: readonly BilledModel[] = [
     model: "fal-ai/flux-2-pro/edit",
     costDkk: 0.35,
     vandmaerke: "Ingen SynthID. C2PA i metadata — fjernes af metadata-rensen",
-    // Målt 23/8 på 3 plagg: 3/3 fotorealistiske og på model. Én fejl
-    // (gulvlang kjole blev knælang), og denim-vasken trækker mørkere.
-    note: "Testet 23/8: den eneste af fal-modellerne der leverer. 3/3 på model, 1 længdefejl.",
+    // Målt 23/8 med pipelinens EGEN spejl-prompt: 3/3 godkendt. Ægte
+    // spejlbilleder i forsidens stil, farverne rammer, kjolelængden holder.
+    // Rest: snoede stropper blev glatte, denim-vasken en anelse dybere.
+    note: "Testet 23/8: 3/3 godkendt på spejlbilleder. Den eneste fal-model der leverer.",
     ekstraInput: { output_format: "jpeg" },
   },
   {
@@ -176,10 +177,12 @@ export const billedModeller: readonly BilledModel[] = [
     model: "fal-ai/qwen-image-edit-plus",
     costDkk: 0.3,
     vandmaerke: "Ingen — åbne vægte, fal hoster selv",
-    // Målt 23/8: 0/3. Ignorerede on-model-instruksen helt (soveværelset
-    // blev stående) og ÆNDREDE tøjets farve — den værst tænkelige fejl
-    // for en genbrugsannonce. Ét kald blev en flad vektortegning.
-    note: "FRARÅDES — testet 23/8: 0/3. Laver ikke on-model og ændrer tøjets farve.",
+    // Målt 23/8, to gange, også med pipelinens rigtige spejl-prompt: 0/3
+    // begge gange. Laver ikke spejlbillede, og DIGTER tryk der ikke findes
+    // (et solansigt med tekst på cardiganet, heldækkende tegneserietryk på
+    // jeansene). Et opdigtet tryk er den værst tænkelige fejl på en
+    // genbrugsannonce — køberen får noget helt andet end på billedet.
+    note: "FRARÅDES — testet 23/8: 0/3. Laver ikke spejlbillede og digter tryk på tøjet.",
     ekstraInput: { output_format: "jpeg", num_images: 1 },
   },
   {
@@ -189,10 +192,12 @@ export const billedModeller: readonly BilledModel[] = [
     model: "fal-ai/bytedance/seedream/v4.5/edit",
     costDkk: 0.25,
     vandmaerke: "Ingen SynthID (kinesisk mærkning ligger i metadata og renses væk)",
-    // Målt 23/8: 0/3 leveringsklare. Smukt lys, men ændrer plagget
-    // (knapper, strik), digter skader der ikke findes, og satte et par
-    // jeans på som stropløs kjole.
-    note: "FRARÅDES — testet 23/8: 0/3. Ændrer plagget og digter skader.",
+    // Målt 23/8, to gange. Markant bedre med pipelinens rigtige spejl-prompt
+    // — flotte spejlbilleder — men stadig 0/3: cardigan båret på bare ben
+    // (bryder "aldrig bare ben"), lige ankeljeans blev vide flared, og den
+    // lange kjole blev sat uden på et par jeans, så den læses som top +
+    // bukser. Snit og påklædningsregler er dét, den ikke holder.
+    note: "FRARÅDES — testet 23/8: 0/3. Pæne billeder, men ændrer snittet og bryder påklædningsreglerne.",
     ekstraInput: { num_images: 1 },
   },
 ] as const;

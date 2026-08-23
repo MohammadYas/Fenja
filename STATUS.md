@@ -45,29 +45,37 @@ ikke leverandøren.
 - **`scripts/model-tvekamp.ts`** (ny): samme foto, samme prompt, én kolonne
   pr. model + originalen, målt cost og svartid, billederne indlejret i arket.
   `--mock` kører tørt uden nøgler. Gate 1 er stadig den formelle dom.
-- **TVEKAMPEN ER KØRT (23/8)** — 3 plagg (cardigan, jeans, kjole fra repoets
-  FØR-billeder) × 3 fal-modeller × preset lys-minimalisme, referencevægt 0,65.
-  Alle 9 kald gik igennem i første forsøg; ingen skema-fejl på nogen endpoint.
-  Målt 2,70 kr. i alt.
-  - **FLUX.2 [pro]: 2 godkendt, 1 troskabsfejl.** Holder plagget — melering,
-    perlemorsknapper, buet kant, ankellængde på jeans. Fejlen: en GULVLANG
-    kjole blev knælang, og længde er præcis det, K1 måler på. Denim-vasken
-    trækker desuden mørkere end originalen.
-  - **Qwen Image Edit Plus: 0/3.** Laver slet ikke on-model — soveværelset
-    bliver stående — og ÆNDRER tøjets farve (beige cardigan → lyseblå,
-    salviegrøn kjole → mint). Ét kald kom tilbage som flad vektortegning.
-  - **Seedream 4.5: 0/3 leveringsklare.** Smukt lys, men ændrer plagget
-    (knapper, strik), digter brune pletter og huller på en kjole der ikke har
-    nogen — og satte et par jeans på som STROPLØS KJOLE med linningen over
-    brystet.
-  - Katalogets `note`-felter er rettet efter målingen, så admin ikke lokker
-    med en model der farver tøjet om. Qwen og Seedream er IKKE fjernet fra
-    kataloget — det er ejerens beslutning.
-- **TIL EJEREN:** (1) fotoene var repoets AI-genererede FØR-billeder, ikke
-  rigtige telefonfotos — den rigtige dom kræver dine egne; (2) troskabs-tjekket
-  (K1) kørte ikke, det var mit øje; (3) C-3-retryen med strammere vægt blev
-  aldrig prøvet, og det er netop det greb der kunne fange kjolelængden;
-  (4) Nano Banana Pro var ikke med, da GEMINI_API_KEY ikke var i miljøet.
+- **TVEKAMPEN ER KØRT — TO GANGE (23/8).** Første kørsel var på et FORKERT
+  grundlag: `scripts/model-tvekamp.ts` brugte `bygOnModelPrompt` (Gate 1-
+  scriptets preset-prompt, ~800 tegn) i stedet for pipelinens egen
+  `bygOnModelPromptMedSkabelon` (4529 tegn med spejl-framing, kategori-
+  skabelon, hjem-anker og eksplicit farve-/længdekrav). Resultatet blev rene
+  studiebilleder i stedet for SPEJLBILLEDER — ejeren fangede det med det
+  samme: "det ligner intet af det på forsiden, det skal jo være
+  spejlbilleder". **Scriptet er rettet** og kalder nu pipelinens bygger med
+  `--visning spejl` som standard (+ `--kategorier`, `--vaegt`).
+  Anden kørsel, 3 plagg × 3 modeller, visning spejl, vægt 0,65:
+  - **FLUX.2 [pro]: 3/3 godkendt.** Ægte spejlbilleder i forsidens stil —
+    parket, garderobeskab, ansigtet skjult bag telefonen. Farverne rammer nu,
+    og **kjolelængden holder** (den fejlede i første kørsel). Rest: kjolens
+    snoede stropper blev glatte, denim-vasken trækker en anelse dybere.
+  - **Seedream 4.5: 0/3, men markant bedre.** Flotte spejlbilleder. Falder på
+    snit og påklædningsregler: cardigan båret på BARE BEN (bryder "aldrig bare
+    ben"), lige ankeljeans blev vide flared, og den lange kjole blev sat uden
+    på et par jeans, så den læses som top + bukser.
+  - **Qwen Image Edit Plus: 0/3, værre end før.** Laver stadig ikke
+    spejlbillede — og DIGTER tryk: et farvet solansigt med teksten
+    "ENKER'NES" på cardiganet, heldækkende tegneserietryk på jeansene, sorte
+    kruseduller på kjolen. Diskvalificeret.
+  - 18 kald i alt, alle igennem i første forsøg, 5,40 kr. målt på fal.
+  - Katalogets `note`-felter er rettet efter ANDEN kørsel.
+- **LÆRING (gentag den ikke):** et testscript skal kalde den prompt-bygger,
+  pipelinen bruger — ikke en simplere nabo. Den første dom var uretfærdig mod
+  alle tre modeller, og den kostede 2,70 kr. og en runde hos ejeren.
+- **TIL EJEREN:** (1) fotoene er stadig repoets AI-genererede FØR-billeder —
+  rigtige telefonfotos er den eneste rigtige dom; (2) K1 kørte ikke, det var
+  mit øje; (3) C-3-retryen med strammere vægt er stadig uprøvet;
+  (4) Nano Banana Pro var ikke med (ingen GEMINI_API_KEY i miljøet).
 
 ## Denne session (22/8, runde 2) — cardigan først, forside-angreb, TESTPLAN.md
 

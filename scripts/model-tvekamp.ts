@@ -8,9 +8,19 @@
 // pass-rate og 2 reference-vægte. Denne her er den hurtige "kan modellen
 // overhovedet holde tøjet?"-test på 1-3 prompts.
 //
+// Prompten er pipelinens EGEN (bygOnModelPromptMedSkabelon) — samme
+// kategori-skabelon, samme hjem-anker, samme visning som en rigtig annonce.
+// Standardvisningen er SPEJLBILLEDE, som i produktet (STANDARD_VISNING_ID).
+// Kategorien udledes af filnavnet ("…-cardigan.webp" rammer jakke/cardigan-
+// skabelonen), og kan overstyres med --kategorier i samme rækkefølge som
+// fotoene.
+//
 //   npx tsx scripts/model-tvekamp.ts <foto.jpg|mappe> \
 //     [--modeller gemini-pro,flux-2-pro] \
 //     [--presets lys-minimalisme,hyggelig-stue] \
+//     [--visning spejl|gulv|stativ|detalje] \
+//     [--kategorier Cardigan,Jeans,Kjole] \
+//     [--vaegt 0.85] \
 //     [--ud <mappe>]
 //
 // Kræver nøglen til hver valgt models leverandør: GEMINI_API_KEY og/eller
@@ -20,7 +30,9 @@
 import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { basename, extname, join, resolve } from "node:path";
 import { billedModeller, hentBilledModel, pipeline as cfg } from "../lib/config";
-import { PRESETS, bygOnModelPrompt, hentPreset } from "../lib/pipeline/presets";
+import { PRESETS, hentPreset } from "../lib/pipeline/presets";
+import { bygOnModelPromptMedSkabelon } from "../lib/pipeline/skabeloner";
+import { STANDARD_VISNING_ID, hentVisningsType } from "../lib/pipeline/visninger";
 import { opretImageProvider } from "../lib/providers";
 import type { BilledModel } from "../lib/config";
 
@@ -33,6 +45,10 @@ const MIME: Record<string, string> = {
 };
 
 const STANDARD_MODELLER = ["gemini-pro", "flux-2-pro"];
+
+// Fast bruger-id: hjem-ankeret (S31) skal være DET SAMME for alle modeller,
+// ellers sammenligner vi to forskellige lejligheder i stedet for to modeller.
+const TVEKAMP_BRUGER = "tvekamp";
 
 type Felt = {
   foto: string;
@@ -221,13 +237,20 @@ async function main() {
 
   const modeller = vaelgModeller();
   const presets = vaelgPresets();
+  const visningId = flag("--visning") ?? STANDARD_VISNING_ID;
+  const visning = hentVisningsType(visningId);
+  if (!visning) fejlOgAfslut(`Ukendt visning "${visningId}" (spejl|gulv|stativ|detalje)`);
+  const kategorier = (flag("--kategorier") ?? "").split(",").map((k) => k.trim());
+  const kategoriFor = (foto: string): string =>
+    kategorier[fotos.indexOf(foto)] || basename(foto);
+  const vaegt = Number(flag("--vaegt") ?? cfg.normalReferenceVaegt);
   const udMappe = resolve(flag("--ud") ?? "tvekamp-ud");
   mkdirSync(udMappe, { recursive: true });
 
   console.log(
     `Tvekamp: ${fotos.length} foto(s) × ${modeller.length} modeller × ${presets.length} preset(s) = ${
       fotos.length * modeller.length * presets.length
-    } billeder`,
+    } billeder · visning: ${visning.navn} · referencevægt: ${vaegt}`,
   );
   console.log(`Skøn: ${kr(
     fotos.length *
@@ -252,7 +275,15 @@ async function main() {
   for (const foto of fotos) {
     const reference = dataUrl(foto);
     for (const presetId of presets) {
-      const prompt = bygOnModelPrompt(hentPreset(presetId), basename(foto));
+      const prompt = bygOnModelPromptMedSkabelon({
+        preset: hentPreset(presetId),
+        itemId: basename(foto),
+        userId: TVEKAMP_BRUGER,
+        // Filnavnet fungerer som kategoritekst: vaelgSkabelon matcher på
+        // nøgleord ("cardigan", "jeans", "kjole"), præcis som på et rigtigt item
+        kategori: kategoriFor(foto),
+        visning,
+      });
       // Modellerne kører parallelt på samme prompt — det er hele pointen
       const runde = await Promise.all(
         modeller.map(async (model): Promise<Felt> => {
@@ -267,7 +298,7 @@ async function main() {
             const svar = await providere.get(model.id)!.genererOnModel({
               referenceUrl: reference,
               prompt,
-              referenceVaegt: cfg.normalReferenceVaegt,
+              referenceVaegt: vaegt,
             });
             const { bytes, endelse } = await hentBytes(svar.url);
             const filnavn = `${basename(foto, extname(foto))}--${presetId}--${model.id}${endelse}`;
