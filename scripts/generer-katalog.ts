@@ -1,4 +1,7 @@
-// Generér katalog-/marketingbilleder med Gemini (ejer-ordre 2026-08-19).
+// Generér katalog-/marketingbilleder fra prompts i katalog-prompts-data.
+// Kan køre på BÅDE Gemini og fal (ejer-ordre 23/8: samme prompt, forskellig
+// model — så forsideserien kan laves om uden SynthID, og så vi kan se om en
+// fal-model rammer forsidens stil).
 // 1 billede = 1 kald = 1 credit — scriptet tæller og rapporterer PRÆCIST
 // antal genererede billeder, så ejeren kan beregne cost pr. billede.
 //
@@ -7,9 +10,12 @@
 //   npx tsx scripts/generer-katalog.ts --alle                  # 1 billede pr. prompt
 //   npx tsx scripts/generer-katalog.ts p4-sovevaerelse-kjole --antal 3
 //   npx tsx scripts/generer-katalog.ts kjole-gulv jeans-stativ --antal 2
+//   npx tsx scripts/generer-katalog.ts p15-efter-spejl-strik --model fal-ai/flux-2-pro
 // Valgfrit: --ud <mappe> (default public/eksempler/katalog) --model <id>
 //
-// Kræver GEMINI_API_KEY i miljøet. Billeder gemmes som <id>-<n>.png.
+// Modellen afgør leverandøren: et id der starter med "fal-ai/" kalder fal
+// (kræver FAL_KEY), alt andet er en Gemini-model (kræver GEMINI_API_KEY).
+// Billeder gemmes som <id>-<n>.png.
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -49,6 +55,25 @@ async function generer(prompt: string, noegle: string, model: string): Promise<B
   return Buffer.from(billede.data, "base64");
 }
 
+/** fal's tekst-til-billede — samme 2:3 som Gemini-grenen */
+async function genererFal(prompt: string, model: string): Promise<Buffer> {
+  const { fal } = await import("@fal-ai/client");
+  fal.config({ credentials: process.env.FAL_KEY! });
+  const resultat = await fal.subscribe(model, {
+    input: {
+      prompt,
+      image_size: { width: 1024, height: 1536 },
+      output_format: "jpeg",
+    },
+  });
+  const data = resultat.data as { images?: { url?: string }[] };
+  const url = data.images?.[0]?.url;
+  if (!url) throw new Error("intet billede i fal-svaret");
+  const svar = await fetch(url);
+  if (!svar.ok) throw new Error(`kunne ikke hente output (HTTP ${svar.status})`);
+  return Buffer.from(await svar.arrayBuffer());
+}
+
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
@@ -58,18 +83,19 @@ async function main(): Promise<void> {
     return;
   }
 
-  const noegle = process.env.GEMINI_API_KEY;
-  if (!noegle) {
-    console.error("GEMINI_API_KEY mangler i miljøet.");
-    process.exit(1);
-  }
-
   const antalIndeks = args.indexOf("--antal");
   const antal = antalIndeks >= 0 ? Number(args[antalIndeks + 1]) : 1;
   const udIndeks = args.indexOf("--ud");
   const ud = resolve(udIndeks >= 0 ? args[udIndeks + 1]! : "public/eksempler/katalog");
   const modelIndeks = args.indexOf("--model");
   const model = modelIndeks >= 0 ? args[modelIndeks + 1]! : MODEL;
+  const erFal = model.startsWith("fal-ai/");
+
+  const noegle = process.env[erFal ? "FAL_KEY" : "GEMINI_API_KEY"];
+  if (!noegle) {
+    console.error(`${erFal ? "FAL_KEY" : "GEMINI_API_KEY"} mangler i miljøet.`);
+    process.exit(1);
+  }
 
   const flagVaerdier = new Set(
     [antalIndeks, udIndeks, modelIndeks].filter((i) => i >= 0).map((i) => i + 1),
@@ -103,10 +129,12 @@ async function main(): Promise<void> {
     for (let n = 1; n <= antal; n++) {
       const fil = join(ud, `${p.id}-${n}.png`);
       try {
-        const png = await generer(p.prompt, noegle, model);
-        writeFileSync(fil, png);
+        const billede = erFal
+          ? await genererFal(p.prompt, model)
+          : await generer(p.prompt, noegle, model);
+        writeFileSync(fil, billede);
         ok++;
-        console.log(`  OK   ${p.id}-${n}.png (${Math.round(png.length / 1024)} KB)`);
+        console.log(`  OK   ${p.id}-${n}.png (${Math.round(billede.length / 1024)} KB)`);
       } catch (e) {
         fejl++;
         console.log(`  FEJL ${p.id}-${n}: ${e instanceof Error ? e.message : e}`);

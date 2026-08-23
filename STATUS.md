@@ -69,6 +69,21 @@ ikke leverandøren.
     kruseduller på kjolen. Diskvalificeret.
   - 18 kald i alt, alle igennem i første forsøg, 5,40 kr. målt på fal.
   - Katalogets `note`-felter er rettet efter ANDEN kørsel.
+- **FORSIDENS EGNE PROMPTS KØRT PÅ FLUX (23/8).** `scripts/generer-katalog.ts`
+  er gjort model-uafhængig: et `--model` der starter med `fal-ai/` kalder fal's
+  tekst-til-billede, alt andet er Gemini som før. Tre af forsidens prompts
+  (p15 spejl-strik, p2 entré-cardigan, p4 soveværelse-kjole) kørt uændret:
+  - **P15: FLUX slår Gemini på realisme.** Dansk lyskontakt, radiator,
+    plankegulv, tissue på gulvet, kabel langs fodpanelet. MEN prompten bad om
+    "bright, tidy" og "neatly made bed" — FLUX gav rodet og dæmpet.
+  - **P2: Gemini vinder.** Prompten har "a deep neckline" på forbudslisten;
+    FLUX gav en dybere udskæring, mere stylet hår, smallere mørkere gang.
+  - **P4: dødt løb.** Begge overbevisende; FLUX igen en anelse dybere hals.
+  - **MØNSTER:** FLUX er på Geminis niveau på LOOK, men følger de negative
+    instrukser mindre stramt — den glider mod "influencer". Netop dét er, hvad
+    KROP_OG_POSITUR-reglerne findes for at forhindre. Bruges FLUX til
+    marketingserien, skal forbudslisterne skærpes eller billederne håndplukkes.
+  - Sidegevinst: forsideserien kan nu genereres UDEN SynthID, hvis den skal om.
 - **LÆRING (gentag den ikke):** et testscript skal kalde den prompt-bygger,
   pipelinen bruger — ikke en simplere nabo. Den første dom var uretfærdig mod
   alle tre modeller, og den kostede 2,70 kr. og en runde hos ejeren.
