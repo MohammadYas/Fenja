@@ -131,6 +131,15 @@ ikke leverandøren.
   default er gemini-3-pro-image-preview. `scripts/model-tvekamp.ts` er
   SLETTET på ejer-ordre — modeltest kører fremover gennem
   `scripts/generer-katalog.ts` med --model (marketing) og Gate 1 (produkt).
+- **FIX 23/8 aften: /admin var langsom på mobil (499 i Netlify-loggen).**
+  Ejeren så en byge af 499 GET /admin og / fra telefonen (lavt batteri, 5G).
+  499 = klienten opgav før svaret — ingen serverfejl i loggen, og databasen
+  er næsten tom (202 besøg). Root cause: /admin lavede SEKS database-rundture
+  i rækkefølge efter det første parallelle batch (besøg, modelvalg,
+  henvendelser, feedback-profiler, generations, klager) — oven på et
+  Netlify-koldstart (~3 s målt) blev det for meget for en telefon der giver
+  op. Alle seks kører nu i ÉN Promise.all. Forsiden var allerede cachet
+  (revalidate 300) og fejlede kun som del af samme genindlæsnings-byge.
 - **LÆRING (gentag den ikke):** et testscript skal kalde den prompt-bygger,
   pipelinen bruger — ikke en simplere nabo. Den første dom var uretfærdig mod
   alle tre modeller, og den kostede 2,70 kr. og en runde hos ejeren.
