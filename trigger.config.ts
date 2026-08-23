@@ -15,6 +15,9 @@ const NOEGLER_TIL_JOBBET = [
   "NEXT_PUBLIC_SITE_URL",
   "GEMINI_API_KEY",
   "GEMINI_VISION_MODEL",
+  // Uden denne ville et fal-modelvalg i admin fejle stille i jobbet: koden
+  // falder tilbage til Gemini, og billederne ville stadig bære SynthID
+  "FAL_KEY",
   "DEEPSEEK_API_KEY",
   "DEEPSEEK_TEKST_MODEL",
   "RESEND_API_KEY",

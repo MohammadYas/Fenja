@@ -35,10 +35,18 @@ ikke leverandøren.
   standarden er `gemini-pro` mod `flux-2-pro` (`--modeller a,b` vælger selv).
 - **461 tests grønne** (15 nye: `fal.test.ts`, `billedmodel.test.ts`),
   lint + typecheck rene.
-- **TIL EJEREN:** migrationen skal køres i Supabase, og `FAL_KEY` sættes i
-  Netlify, før en fal-model kan vælges (`MANGLER.md` punkt 1b). Anbefaling:
-  kør Gate 1 live på gemini-pro mod flux-2-pro FØR skiftet — pass-raten på
-  dine egne fotos er den eneste rigtige dom.
+- **Migrationen ER kørt** (23/8, via Composio mod projekt cpqsmtaledmjzirfeztp):
+  `indstillinger` findes, RLS til, 0 policies — kun service-rollen kommer til.
+- **`FAL_KEY` tilføjet til `trigger.config.ts`**. Fanget inden skiftet: uden
+  den ville et fal-valg i admin fejle STILLE i jobbet (pipelinen kører på
+  Trigger.dev's egne maskiner), koden falde tilbage til Gemini, og
+  billederne stadig bære SynthID. Nøglen skal sættes i `.env.local` +
+  deployes til Trigger.dev, og i Netlify.
+- **`scripts/model-tvekamp.ts`** (ny): samme foto, samme prompt, én kolonne
+  pr. model + originalen, målt cost og svartid, billederne indlejret i arket.
+  `--mock` kører tørt uden nøgler. Gate 1 er stadig den formelle dom.
+- **TIL EJEREN:** kør tvekampen på 1-3 EGNE tøjfotos, før modellen skiftes —
+  pass-raten på dine egne plagg er den eneste rigtige dom.
 
 ## Denne session (22/8, runde 2) — cardigan først, forside-angreb, TESTPLAN.md
 
