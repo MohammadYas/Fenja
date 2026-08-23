@@ -1260,6 +1260,12 @@ export const da = {
     prDag: "Forbrug pr. dag (7 dage)",
     prBruger: "Forbrug pr. bruger (7 dage)",
     senesteGenereringer: "Seneste genereringer",
+    // Fejl ved billedgenerering (23/8): årsagen vises, ikke kun status
+    genFejl: {
+      titel: "Fejl ved generering (7 dage)",
+      tom: "Ingen fejlede genereringer — alt er leveret.",
+      udenTekst: "Ingen fejltekst gemt (før 23/8-opdateringen).",
+    },
     klagerTitel: "Klager (kredit retur)",
     ingenKlager: "Ingen åbne klager.",
     godkendKnap: "Godkend + refundér",

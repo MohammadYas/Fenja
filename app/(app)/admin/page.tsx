@@ -121,7 +121,7 @@ export default async function Admin({
       })(),
       service
         .from("generations")
-        .select("kind, status, cost_dkk, created_at, items(user_id)")
+        .select("kind, status, cost_dkk, created_at, fejl, items(user_id)")
         .gte("created_at", syvDageSiden)
         .order("created_at", { ascending: false }),
       // Åbne klager (ejer-ordrer 2026-08-20): admin får ALT relevant, så
@@ -265,6 +265,7 @@ export default async function Admin({
     status: string;
     cost_dkk: number | null;
     created_at: string;
+    fejl?: string | null;
     items: { user_id: string } | null;
   };
   const raekker = (data ?? []) as unknown as Raekke[];
@@ -426,6 +427,29 @@ export default async function Admin({
             </li>
           ))}
       </ul>
+
+      {/* Fejl ved billedgenerering (ejer-ordre 23/8): årsagen skal kunne
+          ses her — ikke kun i serverloggen */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.genFejl.titel}</h2>
+      {raekker.filter((r) => r.status === "failed").length === 0 ? (
+        <p className="mt-2 text-detalje text-tekst/70">{da.admin.genFejl.tom}</p>
+      ) : (
+        <ul className="mt-2 flex flex-col gap-2 font-mono text-detalje">
+          {raekker
+            .filter((r) => r.status === "failed")
+            .slice(0, 15)
+            .map((r, i) => (
+              <li key={i} className="rounded-bloed border border-kant bg-flade p-2">
+                <span className="text-fejl">
+                  {r.created_at.slice(5, 16).replace("T", " ")} · {r.kind}
+                </span>
+                <span className="block break-words text-tekst/80">
+                  {r.fejl ?? da.admin.genFejl.udenTekst}
+                </span>
+              </li>
+            ))}
+        </ul>
+      )}
 
       <h2 className="mt-8 text-titel font-medium">{da.admin.senesteGenereringer}</h2>
       <ul className="mt-2 flex flex-col gap-1 font-mono text-detalje">

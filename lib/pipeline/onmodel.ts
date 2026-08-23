@@ -21,6 +21,8 @@ export type OnModelUdfald = {
   costDkk: number;
   /** Seneste scores til statistik/kalibrering (FR-15) */
   scores: number[];
+  /** Ved billede: null — årsagen når intet billede kunne leveres (admin, 23/8) */
+  fejlTekst: string | null;
 };
 
 function sov(ms: number): Promise<void> {
@@ -61,6 +63,7 @@ export async function genererOnModelMedTroskab(args: {
 
   let cost = 0;
   const scores: number[] = [];
+  let sidsteFejl: string | null = null;
 
   for (let forsoeg = 0; forsoeg < cfg.onModelForsoeg; forsoeg++) {
     let genereret;
@@ -77,6 +80,7 @@ export async function genererOnModelMedTroskab(args: {
       // fra ét efter ét (ejer-rapport 20/8: 1-2 ud af 4 leveret). Andre fejl
       // (fx autentificering) heler ikke af ventetid og fejler hurtigt.
       const fejlTekst = String(fejl);
+      sidsteFejl = `provider-kald fejlede (forsøg ${forsoeg + 1}): ${fejlTekst}`;
       if (/429|503|500|rate|quota|overloaded/i.test(fejlTekst)) {
         const vent = Math.min(1500 * 2 ** forsoeg, 20_000) + Math.random() * 800;
         await sov(vent);
@@ -113,6 +117,7 @@ export async function genererOnModelMedTroskab(args: {
           forsoeg: forsoeg + 1,
           costDkk: cost,
           scores,
+          fejlTekst: null,
         };
       }
     }
@@ -129,9 +134,21 @@ export async function genererOnModelMedTroskab(args: {
         forsoeg: forsoeg + 1,
         costDkk: cost,
         scores,
+        fejlTekst: null,
       };
     }
   }
 
-  return { billede: null, forsoeg: cfg.onModelForsoeg, costDkk: cost, scores };
+  return {
+    billede: null,
+    forsoeg: cfg.onModelForsoeg,
+    costDkk: cost,
+    scores,
+    // Var der scores, blev billeder genereret men kasseret af troskabs-
+    // tjekket — det er en anden fejl end at provideren aldrig svarede
+    fejlTekst:
+      scores.length > 0
+        ? `troskab under tærsklen ${cfg.troskabsTaerskel} (scores: ${scores.map((s) => s.toFixed(2)).join(", ")})`
+        : (sidsteFejl ?? "provideren leverede intet billede"),
+  };
 }

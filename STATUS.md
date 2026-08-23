@@ -186,6 +186,21 @@ ikke leverandøren.
   OVER. Cookien bruges ALDRIG til autorisation (ingen signatur-tjek) — kun
   til "skal vi forny nu?"; siderne verificerer selv brugeren. Låst med 9
   tests i `tests/unit/session-cookie.test.ts` (478 grønne i alt).
+- **FEJL VED BILLEDGENERERING VISES NU I ADMIN (ejer-ordre 23/8 aften).**
+  Hidtil fik generations-rækken kun status failed — selve årsagen forsvandt
+  i serverloggen. Nu:
+  - Migration `20260823200000_generations_fejl` (KØRT i produktion via
+    Composio, kolonne verificeret): nullable `fejl text` på generations.
+  - Hele kæden skriver årsagen: onmodel skelner mellem "provider-kald
+    fejlede" og "troskab under tærsklen (scores: …)"; run.ts mærker rens,
+    lagring/eksport og annoncetekst med hver sit præfiks. Afkortes til 500
+    tegn ét sted (supabase-db).
+  - `/admin` har fået sektionen "Fejl ved generering (7 dage)" ØVERST ved
+    genererings-tallene: tidspunkt, type og fejltekst pr. fejlet række.
+    Gamle rækker uden tekst vises som "Ingen fejltekst gemt (før 23/8)".
+  - Låst med `tests/unit/generering-fejl.test.ts` (3 tests — provider-fejl,
+    troskabs-kasseret med scores, og at succeser ALDRIG har fejltekst).
+    481 grønne i alt.
 - **EJER-BESLUTNING 23/8 (aften, bekræftet): Gemini forbliver modellen —
   valgmulighederne står åbne i /admin-kataloget.** Standard er
   gemini-flash/gemini-pro; fal-modellerne kan vælges når ejeren vil.

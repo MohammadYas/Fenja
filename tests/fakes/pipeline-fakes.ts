@@ -36,6 +36,7 @@ type Generering = {
   costDkk: number;
   fidelityScore?: number;
   promptVersion?: string;
+  fejl?: string;
   createdAt?: string;
 };
 
@@ -78,6 +79,7 @@ export class FakePipelineDb implements PipelineDb {
     gen.costDkk = slut.costDkk;
     gen.fidelityScore = slut.fidelityScore;
     gen.promptVersion = slut.promptVersion;
+    gen.fejl = slut.fejl;
   }
 
   async gemRensetFoto(fotoId: string, cleanedUrl: string): Promise<void> {
