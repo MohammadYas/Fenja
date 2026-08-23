@@ -181,8 +181,27 @@ describe("kategori-skabeloner (ejer-princip 2026-08-15)", () => {
       visning: hentVisningsType("spejl"),
     });
     expect(prompt).toContain("Scandinavian everyday jeans");
-    expect(prompt).toContain("straight or slim fit but never skinny");
+    // Ejer-ordre 23/8: "drop de stramme bukser" — straight og afslappet,
+    // og forbuddet gentages i den negative blok
+    expect(prompt).toContain("STRAIGHT, relaxed leg");
+    expect(prompt).toContain("NEVER slim-fit, NEVER skinny");
+    expect(prompt).toContain("skinny jeans, tight or skin-tight trousers");
+    expect(prompt).not.toContain("slim fit but never skinny");
     expect(prompt).toContain("so the reference garment stays the focus");
+  });
+
+  // Ejer-ordre 23/8: "kun iphones"
+  it("telefonen i spejlet er ALTID en iPhone", () => {
+    const prompt = bygOnModelPromptMedSkabelon({
+      preset,
+      itemId: "item-1",
+      userId: "bruger-a",
+      kategori: "Striktrøje",
+      visning: hentVisningsType("spejl"),
+    });
+    expect(prompt).toContain("ALWAYS an iPhone");
+    expect(prompt).toContain("never an Android phone");
+    expect(prompt).toContain("an Android or generic non-iPhone phone");
   });
 
   it("krops- og positurblokken hører KUN til on-model, ikke produktvisninger", () => {

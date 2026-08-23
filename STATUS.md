@@ -108,6 +108,23 @@ ikke leverandøren.
     fal's id'er hedder også `openai/…`, `xai/…`, `bytedance/…`), skemaet
     falder tilbage til bare prompten ved 422, og `--ekstra '{...}'` sender
     model-specifikke felter (fx Grok's `aspect_ratio`/`resolution`).
+- **EJER-ORDRE 23/8: ingen stramme bukser, kun iPhones.** Skrevet ind BEGGE
+  steder, så forsiden og brugernes annoncer følger samme regler:
+  - `scripts/katalog-prompts-data.ts`: `SELFIE_KERNE` siger nu "ALWAYS an
+    iPhone" (tidligt i prompten = højest vægt), `REALISME` siger iPhone i
+    stedet for "mid-range phone", alle otte telefon-beskrivelser er
+    normaliseret til iPhone, de to prompts med "fairly slim fit"/"fitted at
+    hips and thighs" er lavet om til STRAIGHT relaxed leg, og
+    `UNDGAA_FAELLES` forbyder nu skinny/tight/jegging/legging + non-iPhone —
+    så reglen også gælder prompts der skrives i fremtiden.
+  - `lib/pipeline/skabeloner.ts`: `SKANDINAVISK_BUNDDEL` er straight/relaxed
+    (var "straight or slim fit but never skinny"), iPhone-reglen er tilføjet
+    til on-model-prompten, og `ONMODEL_NEGATIV` forbyder begge dele.
+  - Låst med to tests i `tests/unit/skabeloner.test.ts` (462 grønne).
+  - **Verificeret på Grok:** bukserne er nu lige med plads over låret, og
+    telefonen er tydeligt en iPhone. **ÅBENT SPØRGSMÅL til ejeren:** på ét af
+    billederne er coveret gennemsigtigt, så Apple-logoet ses — det er
+    realistisk, men forbudslisten siger "NO logo, NO emblem" på coveret.
 - **LÆRING (gentag den ikke):** et testscript skal kalde den prompt-bygger,
   pipelinen bruger — ikke en simplere nabo. Den første dom var uretfærdig mod
   alle tre modeller, og den kostede 2,70 kr. og en runde hos ejeren.
