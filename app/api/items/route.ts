@@ -7,6 +7,7 @@ import {
 } from "@/lib/credits/ledger";
 import { SupabaseLedgerDb } from "@/lib/credits/supabase";
 import { STANDARD_PRESET_ID, PRESETS } from "@/lib/pipeline/presets";
+import { GENERISK_SKABELON_ID, vaelgSkabelon } from "@/lib/pipeline/skabeloner";
 import { startPipeline } from "@/lib/pipeline/start";
 import { normaliserVisningsvalg } from "@/lib/pipeline/visninger";
 import { opretServerKlient } from "@/lib/supabase/server";
@@ -95,6 +96,13 @@ export async function POST(request: NextRequest) {
   const visninger = normaliserVisningsvalg(krop.visninger ?? ["spejl"]);
   if (visninger.length === 0) {
     return NextResponse.json({ fejl: da.nytItem.fejlVisningMangler }, { status: 400 });
+  }
+
+  // Generisk-skabelonen fejlede 4 af 5 onmodel-koersler (dataanalyse 23/8) og
+  // braendte API-budget uden leverance — ukendte varetyper afvises FOER
+  // kreditterne reserveres, med en besked der viser vejen videre.
+  if (vaelgSkabelon(krop.kategori).id === GENERISK_SKABELON_ID) {
+    return NextResponse.json({ fejl: da.nytItem.fejlUkendtKategori }, { status: 400 });
   }
 
   // Saldo-tjek før noget oprettes (ejer-ordre 20/8: kreditterne RESERVERES

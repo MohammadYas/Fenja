@@ -365,6 +365,10 @@ export const da = {
       n === 1 ? "1 billede · 1 kredit" : `${n} billeder · ${n} kreditter`,
     visningLabel: "Billeder",
     fejlVisningMangler: "Vælg mindst ét billede.",
+    // Dataanalyse 23/8: generisk-skabelonen fejlede 4 af 5 onmodel-kørsler —
+    // ukendte varetyper afvises FØR brugeren betaler, med en vej videre.
+    fejlUkendtKategori:
+      "Vi kan ikke lave billeder af den varetype endnu. Vælg en af typerne i listen — eller beskriv varen med et ord vi kender, fx kjole, jeans, shorts, jakke, skjorte, trøje eller taske.",
     fejlForFaaKreditter: (n: number) =>
       `Du skal bruge ${n} kreditter til ${n} billeder. Fyld op, eller vælg færre billeder.`,
   },

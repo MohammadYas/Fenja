@@ -18,7 +18,7 @@ import { genererValideretAnnonceTekst } from "./listing-text";
 import { findMarkedsinterval } from "./markedspriser";
 import { genererOnModelMedTroskab } from "./onmodel";
 import { STANDARD_PRESET_ID, hentPreset } from "./presets";
-import { byggPromptVersion } from "./skabeloner";
+import { GENERISK_SKABELON_ID, byggPromptVersion, vaelgSkabelon } from "./skabeloner";
 import {
   STANDARD_VISNING_ID,
   hentVisningsType,
@@ -143,6 +143,21 @@ async function visualiseringsTrin(
     console.error(`Kunne ikke starte generering for ${item.id}:`, fejl);
     return null;
   }
+
+  // Sikkerhedsnet (dataanalyse 23/8: generisk fejlede 4/5 og braendte 17 kr):
+  // items skabt foer kategori-valideringen kan stadig regenerere/genoptage —
+  // men aldrig mod generisk-skabelonen. Fejler som 0 kr FOER provider-kaldet,
+  // saa refund-flowet rydder op og budgettet aldrig roeres.
+  if (vaelgSkabelon(item.kategori).id === GENERISK_SKABELON_ID) {
+    await deps.db.afslutGenerering(genId, {
+      status: "failed",
+      costDkk: 0,
+      promptVersion,
+      fejl: `kategori "${item.kategori}" matcher ingen skabelon — onmodel springes over`,
+    }).catch(() => {});
+    return null;
+  }
+
   let udfald;
   try {
     udfald = await genererOnModelMedTroskab({
