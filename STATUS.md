@@ -158,6 +158,27 @@ ikke leverandøren.
   - Seedream fik ikke sin genkørsel (ejeren afbrød — Netlify-499'erne kom
     imellem); står stadig som 0/3 fra runde 1.
   - Forbrug i alt på fal-nøglen i dag: ca. 17 kr. (~$2,60 af $10).
+- **KRITISK FIX 23/8 aften: sitet hang for indloggede brugere.** Ejer-rapport:
+  inkognito virkede, men logget ind = "This edge function has crashed — the
+  edge function timed out". Målt udefra: Supabase svarede fint (0,4-0,6 s),
+  men selja.dk/ hang i 30+ s ved ISR-regenerering. Root cause: INGEN
+  tidsgrænse på Supabase-kaldene — et hængende kald kaster ikke, så
+  try/catch hjalp ikke, og middleware ventede på `auth.getUser()` til
+  Netlify dræbte edge-funktionen. Fix i tre lag:
+  - `lib/supabase/tidsgraense.ts`: fetch med AbortSignal-tidsgrænse (8 s
+    server, 5 s middleware) — givet til ALLE tre Supabase-klienter.
+  - `middleware.ts`: getUser i try/catch og FAIL-OPEN ved fejl/timeout —
+    et fejlet kald sender ikke længere hele sitet i edge-timeout, og det
+    logger heller ikke folk ud (kun et RIGTIGT nej fra Supabase
+    redirecter til log-ind). App-siderne håndhæver selv login.
+  - Rute-logikken udskilt til `lib/auth/ruter.ts` (beskyttede stier +
+    åben-omdirigerings-værnet) og LÅST med tests sammen med tidsgrænsen:
+    `tests/unit/tidsgraense.test.ts` tester bl.a. at et fetch der ALDRIG
+    svarer, afbrydes hurtigt. 469 tests grønne.
+  - /admin-parallelliseringen fra tidligere i aften hører til samme sag.
+- **EJER-BESLUTNING 23/8 (aften, bekræftet): Gemini forbliver modellen —
+  valgmulighederne står åbne i /admin-kataloget.** Standard er
+  gemini-flash/gemini-pro; fal-modellerne kan vælges når ejeren vil.
 - **LÆRING (gentag den ikke):** et testscript skal kalde den prompt-bygger,
   pipelinen bruger — ikke en simplere nabo. Den første dom var uretfærdig mod
   alle tre modeller, og den kostede 2,70 kr. og en runde hos ejeren.

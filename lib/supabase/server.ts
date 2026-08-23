@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { fetchMedTidsgraense } from "./tidsgraense";
 
 // Demo-tilstand (ejer-ordre 2026-08-15): uden Supabase-env — og aldrig i
 // production — serveres app-fladerne med en demo-bruger og faste
@@ -141,6 +142,9 @@ export async function opretServerKlient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
     {
+      // Hård tidsgrænse på alle rundture (23/8: hængende kald holdt hele
+      // renderingen som gidsel — se lib/supabase/tidsgraense.ts)
+      global: { fetch: fetchMedTidsgraense() },
       cookies: {
         getAll() {
           return cookieStore.getAll();
