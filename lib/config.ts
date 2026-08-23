@@ -164,7 +164,9 @@ export const billedModeller: readonly BilledModel[] = [
     model: "fal-ai/flux-2-pro/edit",
     costDkk: 0.35,
     vandmaerke: "Ingen SynthID. C2PA i metadata — fjernes af metadata-rensen",
-    note: "Nærmeste erstatning for Nano Banana Pro: op til 9 referencer, stærk troskab.",
+    // Målt 23/8 på 3 plagg: 3/3 fotorealistiske og på model. Én fejl
+    // (gulvlang kjole blev knælang), og denim-vasken trækker mørkere.
+    note: "Testet 23/8: den eneste af fal-modellerne der leverer. 3/3 på model, 1 længdefejl.",
     ekstraInput: { output_format: "jpeg" },
   },
   {
@@ -174,7 +176,10 @@ export const billedModeller: readonly BilledModel[] = [
     model: "fal-ai/qwen-image-edit-plus",
     costDkk: 0.3,
     vandmaerke: "Ingen — åbne vægte, fal hoster selv",
-    note: "Det eneste garanteret umærkede valg. Stærk på 'bevar motivet, skift baggrund'.",
+    // Målt 23/8: 0/3. Ignorerede on-model-instruksen helt (soveværelset
+    // blev stående) og ÆNDREDE tøjets farve — den værst tænkelige fejl
+    // for en genbrugsannonce. Ét kald blev en flad vektortegning.
+    note: "FRARÅDES — testet 23/8: 0/3. Laver ikke on-model og ændrer tøjets farve.",
     ekstraInput: { output_format: "jpeg", num_images: 1 },
   },
   {
@@ -184,7 +189,10 @@ export const billedModeller: readonly BilledModel[] = [
     model: "fal-ai/bytedance/seedream/v4.5/edit",
     costDkk: 0.25,
     vandmaerke: "Ingen SynthID (kinesisk mærkning ligger i metadata og renses væk)",
-    note: "Billigst af de stærke. Var fal-benet i Gate 1-rapporten.",
+    // Målt 23/8: 0/3 leveringsklare. Smukt lys, men ændrer plagget
+    // (knapper, strik), digter skader der ikke findes, og satte et par
+    // jeans på som stropløs kjole.
+    note: "FRARÅDES — testet 23/8: 0/3. Ændrer plagget og digter skader.",
     ekstraInput: { num_images: 1 },
   },
 ] as const;

@@ -45,8 +45,29 @@ ikke leverandøren.
 - **`scripts/model-tvekamp.ts`** (ny): samme foto, samme prompt, én kolonne
   pr. model + originalen, målt cost og svartid, billederne indlejret i arket.
   `--mock` kører tørt uden nøgler. Gate 1 er stadig den formelle dom.
-- **TIL EJEREN:** kør tvekampen på 1-3 EGNE tøjfotos, før modellen skiftes —
-  pass-raten på dine egne plagg er den eneste rigtige dom.
+- **TVEKAMPEN ER KØRT (23/8)** — 3 plagg (cardigan, jeans, kjole fra repoets
+  FØR-billeder) × 3 fal-modeller × preset lys-minimalisme, referencevægt 0,65.
+  Alle 9 kald gik igennem i første forsøg; ingen skema-fejl på nogen endpoint.
+  Målt 2,70 kr. i alt.
+  - **FLUX.2 [pro]: 2 godkendt, 1 troskabsfejl.** Holder plagget — melering,
+    perlemorsknapper, buet kant, ankellængde på jeans. Fejlen: en GULVLANG
+    kjole blev knælang, og længde er præcis det, K1 måler på. Denim-vasken
+    trækker desuden mørkere end originalen.
+  - **Qwen Image Edit Plus: 0/3.** Laver slet ikke on-model — soveværelset
+    bliver stående — og ÆNDRER tøjets farve (beige cardigan → lyseblå,
+    salviegrøn kjole → mint). Ét kald kom tilbage som flad vektortegning.
+  - **Seedream 4.5: 0/3 leveringsklare.** Smukt lys, men ændrer plagget
+    (knapper, strik), digter brune pletter og huller på en kjole der ikke har
+    nogen — og satte et par jeans på som STROPLØS KJOLE med linningen over
+    brystet.
+  - Katalogets `note`-felter er rettet efter målingen, så admin ikke lokker
+    med en model der farver tøjet om. Qwen og Seedream er IKKE fjernet fra
+    kataloget — det er ejerens beslutning.
+- **TIL EJEREN:** (1) fotoene var repoets AI-genererede FØR-billeder, ikke
+  rigtige telefonfotos — den rigtige dom kræver dine egne; (2) troskabs-tjekket
+  (K1) kørte ikke, det var mit øje; (3) C-3-retryen med strammere vægt blev
+  aldrig prøvet, og det er netop det greb der kunne fange kjolelængden;
+  (4) Nano Banana Pro var ikke med, da GEMINI_API_KEY ikke var i miljøet.
 
 ## Denne session (22/8, runde 2) — cardigan først, forside-angreb, TESTPLAN.md
 
