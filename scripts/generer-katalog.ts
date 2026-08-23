@@ -12,9 +12,10 @@
 //   npx tsx scripts/generer-katalog.ts kjole-gulv jeans-stativ --antal 2
 //   npx tsx scripts/generer-katalog.ts p15-efter-spejl-strik --model fal-ai/flux-2-pro
 // Valgfrit: --ud <mappe> (default public/eksempler/katalog) --model <id>
+//   --ekstra '{"aspect_ratio":"2:3"}'  (model-specifikke felter til fal)
 //
-// Modellen afgør leverandøren: et id der starter med "fal-ai/" kalder fal
-// (kræver FAL_KEY), alt andet er en Gemini-model (kræver GEMINI_API_KEY).
+// Modellen afgør leverandøren: "gemini-…" kalder Google (kræver
+// GEMINI_API_KEY), alt andet er et fal-endpoint (kræver FAL_KEY).
 // Billeder gemmes som <id>-<n>.png.
 
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -55,20 +56,44 @@ async function generer(prompt: string, noegle: string, model: string): Promise<B
   return Buffer.from(billede.data, "base64");
 }
 
-/** fal's tekst-til-billede — samme 2:3 som Gemini-grenen */
-async function genererFal(prompt: string, model: string): Promise<Buffer> {
+/**
+ * fal's tekst-til-billede. Endpointsene deler ikke skema: nogle tager
+ * image_size som objekt, andre kun som enum, og ikke alle kender
+ * output_format. Derfor prøves den fulde form først, og falder vi på et
+ * validerings-svar, gentages kaldet med bare prompten — så en ny model kan
+ * afprøves uden at dens skema skal slås op først.
+ */
+async function genererFal(
+  prompt: string,
+  model: string,
+  ekstra: Record<string, unknown>,
+): Promise<Buffer> {
   const { fal } = await import("@fal-ai/client");
   fal.config({ credentials: process.env.FAL_KEY! });
-  const resultat = await fal.subscribe(model, {
-    input: {
+
+  const kald = async (input: Record<string, unknown>) => {
+    const resultat = await fal.subscribe(model, { input });
+    const data = resultat.data as { images?: { url?: string }[]; image?: { url?: string } };
+    const url = data.images?.[0]?.url ?? data.image?.url;
+    if (!url) throw new Error("intet billede i fal-svaret");
+    return url;
+  };
+
+  let url: string;
+  try {
+    // 2:3 som Gemini-grenen
+    url = await kald({
       prompt,
       image_size: { width: 1024, height: 1536 },
       output_format: "jpeg",
-    },
-  });
-  const data = resultat.data as { images?: { url?: string }[] };
-  const url = data.images?.[0]?.url;
-  if (!url) throw new Error("intet billede i fal-svaret");
+      ...ekstra,
+    });
+  } catch (fejl) {
+    if (!/422|validation|unprocessable|unknown field/i.test(String(fejl))) throw fejl;
+    console.log(`       (${model} afviste de valgfrie felter — prøver igen med bare prompten)`);
+    url = await kald({ prompt, ...ekstra });
+  }
+
   const svar = await fetch(url);
   if (!svar.ok) throw new Error(`kunne ikke hente output (HTTP ${svar.status})`);
   return Buffer.from(await svar.arrayBuffer());
@@ -87,9 +112,17 @@ async function main(): Promise<void> {
   const antal = antalIndeks >= 0 ? Number(args[antalIndeks + 1]) : 1;
   const udIndeks = args.indexOf("--ud");
   const ud = resolve(udIndeks >= 0 ? args[udIndeks + 1]! : "public/eksempler/katalog");
+  const ekstraIndeks = args.indexOf("--ekstra");
+  // Model-specifikke felter som JSON, fx Grok's aspect_ratio:
+  //   --ekstra '{"aspect_ratio":"2:3","resolution":"2k"}'
+  const ekstra: Record<string, unknown> =
+    ekstraIndeks >= 0 ? JSON.parse(args[ekstraIndeks + 1]!) : {};
   const modelIndeks = args.indexOf("--model");
   const model = modelIndeks >= 0 ? args[modelIndeks + 1]! : MODEL;
-  const erFal = model.startsWith("fal-ai/");
+  // Gemini-modeller hedder "gemini-…"; ALT andet er et fal-endpoint. Vendt
+  // om med vilje: fal's id'er har ikke ét fælles præfiks — de hedder både
+  // "fal-ai/…", "openai/gpt-image-2", "xai/…" og "bytedance/…".
+  const erFal = !model.startsWith("gemini");
 
   const noegle = process.env[erFal ? "FAL_KEY" : "GEMINI_API_KEY"];
   if (!noegle) {
@@ -98,7 +131,9 @@ async function main(): Promise<void> {
   }
 
   const flagVaerdier = new Set(
-    [antalIndeks, udIndeks, modelIndeks].filter((i) => i >= 0).map((i) => i + 1),
+    [antalIndeks, udIndeks, modelIndeks, ekstraIndeks]
+      .filter((i) => i >= 0)
+      .map((i) => i + 1),
   );
   const idArgs = args.filter(
     (a, i) => !a.startsWith("--") && !flagVaerdier.has(i),
@@ -130,7 +165,7 @@ async function main(): Promise<void> {
       const fil = join(ud, `${p.id}-${n}.png`);
       try {
         const billede = erFal
-          ? await genererFal(p.prompt, model)
+          ? await genererFal(p.prompt, model, ekstra)
           : await generer(p.prompt, noegle, model);
         writeFileSync(fil, billede);
         ok++;

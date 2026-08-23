@@ -84,6 +84,30 @@ ikke leverandøren.
     KROP_OG_POSITUR-reglerne findes for at forhindre. Bruges FLUX til
     marketingserien, skal forbudslisterne skærpes eller billederne håndplukkes.
   - Sidegevinst: forsideserien kan nu genereres UDEN SynthID, hvis den skal om.
+- **BEDRE FAL-MODEL FUNDET TIL MARKETING: Grok Imagine Pro** (ejer 23/8:
+  "Gemini er meget bedre, undersøg om der er en fal-model der gør det bedre").
+  Fire kandidater kørt på P2-prompten (den hvor FLUX tydeligst tabte):
+  - `bytedance/seedream/v5/pro/text-to-image` — teknisk fremragende, men dyb
+    udskæring + stram pasform. Bryder promptens forbudsliste.
+  - `openai/gpt-image-2` — den mest kropsfokuserede af alle fire. Værst.
+  - `fal-ai/flux-2-lora-gallery/realism` — ingen bedring over almindelig FLUX.2.
+  - **`xai/grok-imagine-image/quality/text-to-image` — VINDEREN.** Moderat
+    udskæring, afslappet pasform, komplet scene. Kørt på alle tre prompts:
+    P15 rammer hver detalje (ribkant, hvid t-shirt-krave, uldsokker,
+    potteplante, radiator, opslået bog); P4 ligner et ægte telefonfoto med
+    tøj over stoleryggen og sokker på gulvet. **0,45 kr. i 2K mod Geminis
+    0,95 kr., ingen SynthID.** Forbehold: ét billede pr. prompt — indikation,
+    ikke dom.
+  - **MØNSTER:** glam-driften er ikke en FLUX-fejl. Seedream, GPT Image 2 og
+    FLUX-realism gør det samme. Forbudslisten (`Also avoid: … a deep
+    neckline`) står som blødt suffiks til sidst i prompten, og alle modeller
+    UNDTAGEN Gemini og Grok overser den. Skal andre modeller bruges, skal
+    kravet stå positivt formuleret og TIDLIGT i prompten.
+  - `scripts/generer-katalog.ts` kan nu køre alle fal-endpoints:
+    leverandør-tjekket er vendt om (`gemini-…` = Google, alt andet = fal —
+    fal's id'er hedder også `openai/…`, `xai/…`, `bytedance/…`), skemaet
+    falder tilbage til bare prompten ved 422, og `--ekstra '{...}'` sender
+    model-specifikke felter (fx Grok's `aspect_ratio`/`resolution`).
 - **LÆRING (gentag den ikke):** et testscript skal kalde den prompt-bygger,
   pipelinen bruger — ikke en simplere nabo. Den første dom var uretfærdig mod
   alle tre modeller, og den kostede 2,70 kr. og en runde hos ejeren.
