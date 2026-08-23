@@ -142,9 +142,12 @@ Hver sælger får **ét fast sted**, så alle deres annoncer ligner samme hjem.
   i storage gen-kodes med sharp i `lib/pipeline/metadata.ts`, så EXIF, XMP,
   IPTC, ICC og C2PA-provenance forsvinder — ingen leverandør- eller
   modelnavne i filerne. `.rotate()` bager orienteringen ind først, så
-  telefonbilleder ikke vender forkert. Den SYNLIGE AI-mærkning i produktet
-  består (art. 50 om oplysning), og Geminis SynthID-vandmærke sidder i
-  pixels og røres ikke. Låst med `tests/unit/metadata.test.ts`
+  telefonbilleder ikke vender forkert. Låst med `tests/unit/metadata.test.ts`
+- **0 vandmærke i filerne** (ejer-beslutning 23/8): mærkning i billedfilerne
+  er droppet som krav (FR-4/C-4 udgået). Vælges en Gemini-model i admin,
+  følger Googles SynthID stadig med i pixels — det kan kun undgås ved at
+  vælge en fal-model uden SynthID. UI-teksten siger fortsat at
+  visualiseringerne er genererede
 - E-mail-bekræftelse er **TIL** og E2E-verificeret
 - Ingen hardcodede nøgler; `.env` aldrig committet; `server-only` på alle
   moduler der rører service-nøglen

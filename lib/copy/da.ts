@@ -1203,6 +1203,24 @@ export const da = {
       fejlForStor: "Billedet er over 8 MB — gør det mindre først.",
       fejlUgyldig: "Filen kunne ikke læses som et billede.",
     },
+    // Billedmodel-valg (ejer-ordre 23/8): modellen vælges her, ikke i koden
+    billedmodel: {
+      titel: "Billedmodel",
+      forklaring:
+        "Vælg hvilken model brugernes billeder køres på. Skiftet gælder fra næste annonce — ingen deploy. Rens er det billige trin; visualiseringen er det dyre, og det er dér kvaliteten mærkes.",
+      rens: "Baggrundsrens",
+      visualisering: "Visualisering (on-model)",
+      pris: (kr: number) => `${kr.toFixed(2).replace(".", ",")} kr. pr. billede (skøn)`,
+      vandmaerke: (tekst: string) => `Vandmærke: ${tekst}`,
+      note: "Googles modeller lægger SynthID i pixels, og det kan ikke slås fra. Skal der være nul vandmærke, skal begge trin stå på en fal-model.",
+      knap: "Gem valg",
+      gemmer: "Gemmer…",
+      ok: (rens: string, visualisering: string) =>
+        `Gemt. Rens: ${rens}. Visualisering: ${visualisering}.`,
+      fejlUkendtModel: "Ukendt model — vælg en fra listen.",
+      fejlGem:
+        "Kunne ikke gemme valget. Er migration 20260823100000_indstillinger kørt i Supabase?",
+    },
     // Manuel kredittildeling (ejer-ordre 22/8)
     tildel: {
       titel: "Tildel kreditter",

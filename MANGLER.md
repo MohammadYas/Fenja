@@ -13,6 +13,11 @@ mangler — ikke hvad der er lavet (se `SELJA.md` for produktet).
    Mål: troskab ≥ 70 % for mindst ét preset. Visualiseringen dumpede
    kvalitetstjekket i vores ene produktions-E2E, så tærsklen
    (`pipeline.troskabsTaerskel`) skal kalibreres efter et rigtigt resultat.
+1b. **Kør migration `20260823100000_indstillinger`** i Supabase — uden den
+   kan admin-panelets modelvalg ikke gemmes (appen kører videre på
+   standardvalget: Gemini flash til rens, Gemini Pro til visualisering).
+   Skal brugerne væk fra SynthID, sæt også `FAL_KEY` i Netlify og vælg en
+   fal-model begge steder i `/admin` → Billedmodel.
 2. **Verificér abonnements-fornyelse** ved næste faktura (~21/9): kreditsiden
    skal vise ny kvote. Webhook-fixet er testet, men fornyelsen er første
    naturlige gentagelse.

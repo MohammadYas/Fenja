@@ -1,5 +1,44 @@
 # STATUS
-Sidst opdateret: 2026-08-22 af Claude Code
+Sidst opdateret: 2026-08-23 af Claude Code
+
+## Denne session (23/8) — billedmodellen vælges i admin, mærkningskravet ude
+
+**EJER-BESLUTNING 23/8 (a): 0 mærkning i de leverede billedfiler.** FR-4
+(SPEC §4) og C-4 (HANDOFF §4) er UDGÅET — hverken synligt badge, metadata
+eller vandmærke i filerne. Ejeren har taget beslutningen bevidst og udskudt
+mærkningen til en senere selvstændig opgave. Fjernet i `SPEC.md` (FR-4,
+K2-målet, §8.2-reglen, flow-trin 4, §11, §12), `HANDOFF.md` (C-4, §2.2.6) og
+`SELJA.md`. UI-teksten siger fortsat, at visualiseringerne er genererede —
+den er ikke rørt, for det er oplysning, ikke vandmærke.
+
+**EJER-BESLUTNING 23/8 (b): billedmodellen vælges i ADMIN-PANELET.** Ordren
+kom af, at Googles SynthID sidder i pixels og følger med uanset leverandør —
+også hvis nano-banana køres via fal. Skal SynthID væk, skal modellen skiftes,
+ikke leverandøren.
+- **Katalog i `lib/config.ts`** (`billedModeller`): gemini-flash, gemini-pro,
+  flux-2-pro, qwen-edit-plus, seedream-45 — hver med pris-skøn, note og en
+  ærlig vandmærke-linje. Providerne hårdkoder ALDRIG en model.
+- **Valget bor i databasen** (`indstillinger`-tabellen, migration
+  `20260823100000`), læses af `lib/admin/billedmodel-valg.ts` med 30 sek.
+  cache. Fejler opslaget (migration ikke kørt, DB nede) bruges standarden —
+  en tabt leverance er værre end et forkert modelvalg.
+- **`/admin` → Billedmodel**: radioliste pr. formål (rens/visualisering) med
+  pris og vandmærke ved hver model. Skift virker uden deploy.
+- **`lib/providers/fal.ts` skrevet om**: tager model+cost udefra som
+  Gemini-provideren, kalder edit-endpoints med `{ prompt, image_urls,
+  image_size }`, uploader data-URL-referencer til fal's lager først (fal kan
+  ikke læse vores private storage), og oversætter C-3-retryens strammere
+  vægt til en skærpet prompt — edit-endpoints har ingen `strength`.
+- **`hentImageProvider` falder tilbage**, hvis nøglen til den valgte
+  leverandør mangler i miljøet, og logger det.
+- **Gate 1-scriptet** kører nu tvekamp mellem to katalogmodeller;
+  standarden er `gemini-pro` mod `flux-2-pro` (`--modeller a,b` vælger selv).
+- **461 tests grønne** (15 nye: `fal.test.ts`, `billedmodel.test.ts`),
+  lint + typecheck rene.
+- **TIL EJEREN:** migrationen skal køres i Supabase, og `FAL_KEY` sættes i
+  Netlify, før en fal-model kan vælges (`MANGLER.md` punkt 1b). Anbefaling:
+  kør Gate 1 live på gemini-pro mod flux-2-pro FØR skiftet — pass-raten på
+  dine egne fotos er den eneste rigtige dom.
 
 ## Denne session (22/8, runde 2) — cardigan først, forside-angreb, TESTPLAN.md
 

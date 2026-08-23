@@ -1,6 +1,8 @@
-// Gate 1 (SPEC §12, HANDOFF §6.4): troskabs-eksperimentet. Ejer-beslutning
-// 2026-08-19: kun Gemini — TVEKAMP mellem Nano Banana Pro (gemini final) og
-// Nano Banana (gemini preview), × alle presets × 2 reference-styrker.
+// Gate 1 (SPEC §12, HANDOFF §6.4): troskabs-eksperimentet. TVEKAMP mellem to
+// modeller fra kataloget (lib/config.ts) × alle presets × 2 reference-styrker.
+// Standard-tvekampen er den beslutning, der ligger på bordet 23/8: Nano Banana
+// Pro (SynthID) mod FLUX.2 [pro] (intet SynthID). Vælg selv med
+//   --modeller gemini-pro,qwen-edit-plus
 // Troskabs-scores skrives til preset_stats med provider-dimension via
 // PresetStatsStore, og rapporten viser pass-rate OG målt cost pr. billede
 // side om side pr. provider. Manuel scoring pr. billede er stadig dommen
@@ -8,14 +10,15 @@
 //
 // Kørsel uden nøgler (mock-providers, deterministiske scores):
 //   npx tsx scripts/gate1-fidelity-test.ts <mappe-med-toejfotos>
-// Mod rigtige providers — KUN ejeren, kræver GEMINI_API_KEY +
-// DEEPSEEK_API_KEY (og Supabase-env hvis stats skal i databasen):
+// Mod rigtige providers — KUN ejeren, kræver DEEPSEEK_API_KEY plus nøglen
+// til de valgte modellers leverandør (GEMINI_API_KEY og/eller FAL_KEY, og
+// Supabase-env hvis stats skal i databasen):
 //   npx tsx scripts/gate1-fidelity-test.ts <mappe-med-toejfotos> --live
 // Valgfrit: --ud <sti.html> (default: <mappe>/gate1-rapport.html)
 
 import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { extname, join, resolve } from "node:path";
-import { billedProvidere, pipeline as cfg } from "../lib/config";
+import { billedModeller, hentBilledModel, pipeline as cfg } from "../lib/config";
 import {
   MockPresetStatsStore,
   PRESETS,
@@ -87,36 +90,41 @@ function kr(beloeb: number): string {
   return `${beloeb.toFixed(2).replace(".", ",")} kr.`;
 }
 
-async function opretDeltagere(live: boolean): Promise<Deltager[]> {
-  const { gemini } = billedProvidere;
+const STANDARD_TVEKAMP = ["gemini-pro", "flux-2-pro"];
+
+/** --modeller a,b vælger deltagerne; ukendt id stopper kørslen med det samme */
+function valgteModeller(argv: string[]) {
+  const i = argv.indexOf("--modeller");
+  const ids = i >= 0 && argv[i + 1] ? argv[i + 1]!.split(",") : STANDARD_TVEKAMP;
+  return ids.map((id) => {
+    const model = hentBilledModel(id.trim());
+    if (!model) {
+      throw new Error(
+        `Ukendt model "${id}". Kataloget: ${billedModeller.map((m) => m.id).join(", ")}`,
+      );
+    }
+    return model;
+  });
+}
+
+async function opretDeltagere(live: boolean, argv: string[]): Promise<Deltager[]> {
+  const modeller = valgteModeller(argv);
   if (!live) {
-    // Mock spejler hver providers cost-skøn, så cost-kolonnen er meningsfuld
-    return [
-      {
-        id: "gemini-final",
-        navn: `Nano Banana Pro (${gemini.final.model})`,
-        image: new MockImageProvider({ onModelCostDkk: gemini.final.costDkk }),
-      },
-      {
-        id: "gemini-preview",
-        navn: `Nano Banana (${gemini.preview.model})`,
-        image: new MockImageProvider({ onModelCostDkk: gemini.preview.costDkk }),
-      },
-    ];
+    // Mock spejler hver models cost-skøn, så cost-kolonnen er meningsfuld
+    return modeller.map((model) => ({
+      id: model.id,
+      navn: `${model.navn} (${model.model})`,
+      image: new MockImageProvider({ onModelCostDkk: model.costDkk }),
+    }));
   }
-  const { GeminiImageProvider } = await import("../lib/providers/gemini");
-  return [
-    {
-      id: "gemini-final",
-      navn: `Nano Banana Pro (${gemini.final.model})`,
-      image: new GeminiImageProvider(gemini.final),
-    },
-    {
-      id: "gemini-preview",
-      navn: `Nano Banana (${gemini.preview.model})`,
-      image: new GeminiImageProvider(gemini.preview),
-    },
-  ];
+  const { opretImageProvider } = await import("../lib/providers");
+  return Promise.all(
+    modeller.map(async (model) => ({
+      id: model.id,
+      navn: `${model.navn} (${model.model})`,
+      image: await opretImageProvider(model),
+    })),
+  );
 }
 
 async function opretTekstProvider(
@@ -393,7 +401,7 @@ async function main(): Promise<void> {
     fejlOgAfslut(`Ingen tøjfotos (${BILLED_ENDELSER.join("/")}) i ${mappe}`);
   }
 
-  const deltagere = await opretDeltagere(live);
+  const deltagere = await opretDeltagere(live, process.argv);
   const tekstForKoersel = await opretTekstProvider(live);
   const stats = await opretStatsStore(live);
   const vaegte = [cfg.normalReferenceVaegt, cfg.strammereReferenceVaegt];

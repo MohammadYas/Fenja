@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
+import { hentModelValg } from "@/lib/admin/billedmodel-valg";
 import { CONTENT_PROMPTS } from "@/lib/admin/content-prompts";
 import { erAdmin } from "@/lib/auth/admin";
-import { misbrugsvaern } from "@/lib/config";
+import { billedModeller, misbrugsvaern } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
+import { BilledModelValg } from "./billedmodel";
 import { ContentVaerktoejer } from "./content-vaerktoejer";
 import { ForsideBilleder } from "./forside-billeder";
 import { TildelKreditter } from "./tildel-kreditter";
@@ -180,6 +182,9 @@ export default async function Admin({
     const q = p.toString();
     return `/admin${q ? `?${q}` : ""}#trafik`;
   };
+
+  // Billedmodel-valget (23/8): standarden hvis migrationen ikke er kørt
+  const modelValg = await hentModelValg();
 
   // Kontakt-henvendelser (21/8 nat) — navn+email står i rækken selv
   const { data: henvendelserData } = await service
@@ -533,6 +538,10 @@ export default async function Admin({
           ))}
         </div>
       )}
+
+      {/* Billedmodel (23/8): hvilken model brugerne kører på — uden deploy */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.billedmodel.titel}</h2>
+      <BilledModelValg modeller={billedModeller} valg={modelValg} />
 
       {/* Tildel kreditter (22/8): support, kompensation, kampagner */}
       <h2 className="mt-8 text-titel font-medium">{da.admin.tildel.titel}</h2>
