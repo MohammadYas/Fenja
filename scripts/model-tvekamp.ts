@@ -41,6 +41,8 @@ type Felt = {
   prompt: string;
   /** Filnavn i ud-mappen, eller null hvis kaldet fejlede */
   fil: string | null;
+  /** Samme billede som data-URL — arket skal kunne sendes som ÉN fil */
+  indlejret: string | null;
   fejl: string | null;
   costDkk: number;
   sekunder: number;
@@ -139,8 +141,8 @@ function bygArk(felter: Felt[], fotos: string[], modeller: BilledModel[]): strin
               const felt = raekker.find(
                 (f) => f.model.id === model.id && f.presetId === presetId,
               );
-              const indhold = felt?.fil
-                ? `<img src="${escapeHtml(felt.fil)}" alt="${escapeHtml(model.navn)}">`
+              const indhold = felt?.indlejret
+                ? `<img src="${escapeHtml(felt.indlejret)}" alt="${escapeHtml(model.navn)}">`
                 : `<p class="fejl">${escapeHtml(felt?.fejl ?? "ikke kørt")}</p>`;
               return `<figure>
         <figcaption>${escapeHtml(model.navn)} · ${
@@ -255,7 +257,7 @@ async function main() {
       const runde = await Promise.all(
         modeller.map(async (model): Promise<Felt> => {
           const start = Date.now();
-          const grund: Omit<Felt, "fil" | "fejl" | "costDkk" | "sekunder"> = {
+          const grund: Omit<Felt, "fil" | "indlejret" | "fejl" | "costDkk" | "sekunder"> = {
             foto,
             model,
             presetId,
@@ -270,6 +272,9 @@ async function main() {
             const { bytes, endelse } = await hentBytes(svar.url);
             const filnavn = `${basename(foto, extname(foto))}--${presetId}--${model.id}${endelse}`;
             writeFileSync(join(udMappe, filnavn), bytes);
+            const indlejret = `data:image/${
+              endelse === ".png" ? "png" : "jpeg"
+            };base64,${bytes.toString("base64")}`;
             const sekunder = (Date.now() - start) / 1000;
             console.log(
               `  ✓ ${basename(foto)} · ${presetId} · ${model.id} · ${kr(
@@ -279,6 +284,7 @@ async function main() {
             return {
               ...grund,
               fil: filnavn,
+              indlejret,
               fejl: null,
               costDkk: svar.costDkk,
               sekunder,
@@ -289,6 +295,7 @@ async function main() {
             return {
               ...grund,
               fil: null,
+              indlejret: null,
               fejl: tekst,
               costDkk: 0,
               sekunder: (Date.now() - start) / 1000,
