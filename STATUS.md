@@ -140,6 +140,24 @@ ikke leverandøren.
   Netlify-koldstart (~3 s målt) blev det for meget for en telefon der giver
   op. Alle seks kører nu i ÉN Promise.all. Forsiden var allerede cachet
   (revalidate 300) og fejlede kun som del af samme genindlæsnings-byge.
+- **RUNDE 2 (23/8 aften): stabilitetstest + realism-LoRA'ens fair chance.**
+  Ejer-hypotese: "måske er realism god?" — den fik kun ét billede i runde 1,
+  og det var på den gamle prompt. Nu: Grok og FLUX.2 realism-LoRA, 3 prompts
+  × 2 billeder hver, på de RETTEDE prompts (lige bukser, kun iPhones).
+  - **Grok: 6/6 uden en eneste brief-afvigelse** — og P2 er nu kørt TRE gange
+    i træk uden glam-drift. Det er stabilitet, ikke held. Stadig førstevalget.
+  - **Realism-LoRA'en ER et fund:** billigst (~0,21 kr./billede — $0.021/MP),
+    og den mest telefonægte tekstur i hele testen (P15-strikken, lyset,
+    plankegulvet). Fejlfri på P15 og P1. MEN den arver FLUX-familiens
+    svaghed: P2-cardiganen blev kort og tætsiddende i begge kørsler (briefen
+    siger "just above the hips"). 4/6 på snit.
+  - Brugsanvisning: realism er klar til herre-motiver, kjoler og
+    produktvinkler; til fitted dame-overdele (P2-typen) kræver den en
+    skarpere fit-linje TIDLIGT i prompten — eller man bruger Grok dér.
+  - iPhone-reglen og de lige bukser holdt 12/12 på tværs af begge modeller.
+  - Seedream fik ikke sin genkørsel (ejeren afbrød — Netlify-499'erne kom
+    imellem); står stadig som 0/3 fra runde 1.
+  - Forbrug i alt på fal-nøglen i dag: ca. 17 kr. (~$2,60 af $10).
 - **LÆRING (gentag den ikke):** et testscript skal kalde den prompt-bygger,
   pipelinen bruger — ikke en simplere nabo. Den første dom var uretfærdig mod
   alle tre modeller, og den kostede 2,70 kr. og en runde hos ejeren.
