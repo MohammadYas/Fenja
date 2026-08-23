@@ -108,29 +108,122 @@ export const kontakt = {
   email: "visual.studio.tuturials@gmail.com",
 } as const;
 
-// Billedprovider pr. formål. EJER-BESLUTNING 2026-08-19: kun Gemini — fal
-// bruges ikke (koden ligger stadig i lib/providers/fal.ts, men er ude af
-// valg og failover). Gemini-model-id'er og cost-skøn bor her som config —
-// providerne hårdkoder aldrig modeller. Cost-skøn kalibreres i S12 (G-1/NFR-11).
+// Billedmodeller (ejer-ordre 2026-08-23: "jeg skal på admin-panelet vælge
+// hvilken model brugerne skal have"). Kataloget her er de GODKENDTE modeller;
+// selve valget pr. formål bor i databasen og sættes i /admin → Billedmodel
+// (lib/admin/billedmodel-valg.ts). Providerne hårdkoder aldrig en model — de
+// får den udleveret. Cost-skøn kalibreres mod faktiske regninger (G-1/NFR-11).
+//
+// Alle fal-modeller i kataloget er edit-endpoints med SAMME inputform
+// ({ prompt, image_urls, image_size }) — det er betingelsen for at de kan
+// deles om én provider. Tilføjes en model med en anden inputform, skal
+// FalImageProvider udvides FØR den lægges her.
 export type BilledProviderNavn = "fal" | "gemini";
 export type BilledFormaal = "preview" | "final";
 
-export const billedProvidere: {
-  valg: Record<BilledFormaal, BilledProviderNavn>;
-  gemini: Record<BilledFormaal, { model: string; costDkk: number }>;
-} = {
-  valg: {
-    preview: "gemini",
-    final: "gemini",
-  },
-  gemini: {
-    // 20/8: 2.5-generationen nedlægges løbende af Google (2.5-flash gav 404)
-    // — preview kører nu på den stabile 3.1-flash-image. Bruges til
-    // baggrundsrens (økonomi: 0,28 vs. 0,95 kr. — ejer-ordre 20/8).
-    preview: { model: "gemini-3.1-flash-image", costDkk: 0.28 },
-    final: { model: "gemini-3-pro-image-preview", costDkk: 0.95 }, // Nano Banana Pro
-  },
+export type BilledModel = {
+  /** Stabilt id — gemmes i databasen, må aldrig ændres efter valg er truffet */
+  id: string;
+  navn: string;
+  provider: BilledProviderNavn;
+  /** Leverandørens model-id: Gemini-modelnavn eller fal-endpoint */
+  model: string;
+  costDkk: number;
+  /** Hvad leverandøren lægger i filen — vises råt i admin, så valget er oplyst */
+  vandmaerke: string;
+  /** Én linje til admin: hvad modellen er god til */
+  note: string;
+  /** Model-specifikke felter til fal-kaldet (ud over prompt/image_urls/image_size) */
+  ekstraInput?: Record<string, unknown>;
 };
+
+export const billedModeller: readonly BilledModel[] = [
+  {
+    id: "gemini-flash",
+    navn: "Nano Banana (Gemini 3.1 Flash Image)",
+    provider: "gemini",
+    // 20/8: 2.5-generationen nedlægges løbende af Google (2.5-flash gav 404)
+    model: "gemini-3.1-flash-image",
+    costDkk: 0.28,
+    vandmaerke: "SynthID i pixels — kan ikke slås fra",
+    note: "Billig og hurtig. Standardvalget til baggrundsrens.",
+  },
+  {
+    id: "gemini-pro",
+    navn: "Nano Banana Pro (Gemini 3 Pro Image)",
+    provider: "gemini",
+    model: "gemini-3-pro-image-preview",
+    costDkk: 0.95,
+    vandmaerke: "SynthID i pixels — kan ikke slås fra",
+    note: "Den dyre og stærkeste på tekst og detaljer. Var standard indtil 23/8.",
+  },
+  {
+    id: "flux-2-pro",
+    navn: "FLUX.2 [pro]",
+    provider: "fal",
+    model: "fal-ai/flux-2-pro/edit",
+    costDkk: 0.35,
+    vandmaerke: "Ingen SynthID. C2PA i metadata — fjernes af metadata-rensen",
+    // Målt 23/8 med pipelinens EGEN spejl-prompt: 3/3 godkendt. Ægte
+    // spejlbilleder i forsidens stil, farverne rammer, kjolelængden holder.
+    // Rest: snoede stropper blev glatte, denim-vasken en anelse dybere.
+    note: "Testet 23/8: 3/3 godkendt på spejlbilleder. Den eneste fal-model der leverer.",
+    ekstraInput: { output_format: "jpeg" },
+  },
+  {
+    id: "qwen-edit-plus",
+    navn: "Qwen Image Edit Plus",
+    provider: "fal",
+    model: "fal-ai/qwen-image-edit-plus",
+    costDkk: 0.3,
+    vandmaerke: "Ingen — åbne vægte, fal hoster selv",
+    // Målt 23/8, to gange, også med pipelinens rigtige spejl-prompt: 0/3
+    // begge gange. Laver ikke spejlbillede, og DIGTER tryk der ikke findes
+    // (et solansigt med tekst på cardiganet, heldækkende tegneserietryk på
+    // jeansene). Et opdigtet tryk er den værst tænkelige fejl på en
+    // genbrugsannonce — køberen får noget helt andet end på billedet.
+    note: "FRARÅDES — testet 23/8: 0/3. Laver ikke spejlbillede og digter tryk på tøjet.",
+    ekstraInput: { output_format: "jpeg", num_images: 1 },
+  },
+  {
+    id: "seedream-45",
+    navn: "Seedream 4.5",
+    provider: "fal",
+    model: "fal-ai/bytedance/seedream/v4.5/edit",
+    costDkk: 0.25,
+    vandmaerke: "Ingen SynthID (kinesisk mærkning ligger i metadata og renses væk)",
+    // Målt 23/8, to gange. Markant bedre med pipelinens rigtige spejl-prompt
+    // — flotte spejlbilleder — men stadig 0/3: cardigan båret på bare ben
+    // (bryder "aldrig bare ben"), lige ankeljeans blev vide flared, og den
+    // lange kjole blev sat uden på et par jeans, så den læses som top +
+    // bukser. Snit og påklædningsregler er dét, den ikke holder.
+    note: "FRARÅDES — testet 23/8: 0/3. Pæne billeder, men ændrer snittet og bryder påklædningsreglerne.",
+    ekstraInput: { num_images: 1 },
+  },
+] as const;
+
+/** Fallback når databasen ikke er nået (migration mangler, opslag fejler) */
+export const standardBilledModel: Record<BilledFormaal, string> = {
+  preview: "gemini-flash",
+  final: "gemini-pro",
+};
+
+export function hentBilledModel(id: string | null | undefined): BilledModel | null {
+  if (!id) return null;
+  return billedModeller.find((m) => m.id === id) ?? null;
+}
+
+/** Aldrig null: ukendt/slettet id falder tilbage til standarden for formålet */
+export function billedModelEllerStandard(
+  id: string | null | undefined,
+  formaal: BilledFormaal,
+): BilledModel {
+  return (
+    hentBilledModel(id) ??
+    hentBilledModel(standardBilledModel[formaal]) ??
+    billedModeller[0]!
+  );
+}
 
 // Vagthund på AI-omkostningen pr. komplet annonce (NFR-11: budget ≤ 2 kr.).
 // Overstiger det rullende gennemsnit tærsklen i vinduet, varsles ejeren på

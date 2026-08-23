@@ -190,9 +190,11 @@ const KROP_OG_POSITUR =
  * forside-serien: enkle, matte jeans i hvid/creme, lys blågrå eller mørk navy.
  */
 const SKANDINAVISK_BUNDDEL =
-  "the person wears simple, well-fitting Scandinavian everyday jeans in plain " +
-  "cream-white, pale washed blue-grey or dark navy denim: straight or slim fit " +
-  "but never skinny, low-to-mid rise, matte structured denim with a visible " +
+  "the person wears simple Scandinavian everyday jeans in plain " +
+  "cream-white, pale washed blue-grey or dark navy denim: a STRAIGHT, relaxed " +
+  "leg with room over the thigh, falling straight from the hip to the ankle — " +
+  "NEVER tight, NEVER slim-fit, NEVER skinny, never moulded to the leg. " +
+  "Mid rise, matte structured denim with a visible " +
   "waistband, belt loops and front pockets, no belt, and natural creases at the " +
   "hips and knees. The jeans are plain and quiet so the reference garment stays " +
   "the focus — no prints, no rips, no logos, no shorts, no leggings, no bare legs";
@@ -382,7 +384,9 @@ const ONMODEL_NEGATIV =
   "warped anatomy; plastic-looking skin; an exaggerated hourglass figure; a " +
   "fitness or model pose; high heels; a garment on a hanger or held up in " +
   "front of the body; an empty garment not worn by the person; visible hangers, " +
-  "clips or props.";
+  // Ejer-ordre 23/8
+  "clips or props; skinny jeans, tight or skin-tight trousers, jeggings or " +
+  "leggings, denim moulded to the thigh; an Android or generic non-iPhone phone.";
 
 // Kun produkt: her ER tøjet tomt og ubåret — det skal ligge/hænge SOLIDT et
 // sted, aldrig svæve frit i luften.
@@ -477,6 +481,9 @@ const framing =
 return [
   REFERENCE_INSTRUKS,
   `The person is ${bygPersonAnker({ itemId: args.itemId, koen: args.koen, haarFarve: args.haarFarve })} — an anonymous person, never a recognizable or real person; the face is always hidden by the phone or cropped out of frame.`,
+  // Ejer-ordre 23/8: KUN iPhones i spejlbillederne — samme regel som i
+  // forsideserien (scripts/katalog-prompts-data.ts)
+  "The phone held up to the mirror is ALWAYS an iPhone with its distinctive large square camera module in the corner, in a plain one-colour case with no logo or text — never an Android phone, never a generic handset.",
   // Ejer-ordre 20/8: TØJET bestemmer huden. En croptop SKAL vise mave — at
   // dække den til ville vise et andet stykke tøj end det, der sælges. Den
   // neutrale top gælder KUN, når referencetøjet slet ikke dækker overkroppen

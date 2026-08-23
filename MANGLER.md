@@ -13,6 +13,13 @@ mangler — ikke hvad der er lavet (se `SELJA.md` for produktet).
    Mål: troskab ≥ 70 % for mindst ét preset. Visualiseringen dumpede
    kvalitetstjekket i vores ene produktions-E2E, så tærsklen
    (`pipeline.troskabsTaerskel`) skal kalibreres efter et rigtigt resultat.
+1b. ~~Kør migration `20260823100000_indstillinger`~~ **KØRT 23/8** via
+   Composio (tabellen findes, RLS til, ingen policies). Tilbage før en
+   fal-model kan vælges: **sæt `FAL_KEY`** i Netlify OG i Trigger.dev
+   (pipelinen kører på Trigger.dev's maskiner — `trigger.config.ts` skubber
+   nøglen op ved deploy, så `.env.local` + `npx trigger.dev@latest deploy`
+   er nok). Uden den falder koden tilbage til Gemini, og billederne bærer
+   stadig SynthID.
 2. **Verificér abonnements-fornyelse** ved næste faktura (~21/9): kreditsiden
    skal vise ny kvote. Webhook-fixet er testet, men fornyelsen er første
    naturlige gentagelse.

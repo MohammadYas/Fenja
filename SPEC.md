@@ -27,7 +27,7 @@
 | ID | Kvalitetsmål | Målepunkt |
 |---|---|---|
 | K1 | Tøj-troskab: on-model-billedet viser det KONKRETE stykke tøj (print, farve, snit genkendeligt) | ≥ 70 % pass i blindtest på 20 stykker tøj; billeder under tærsklen leveres ikke |
-| K2 | Compliance: ingen leverance uden ægte foto som billede 1, AI-mærkning på, fejl nævnt i tekst | 100 % — håndhævet i kode, ikke i vejledning |
+| K2 | Compliance: ingen leverance uden ægte foto som billede 1, fejl nævnt i tekst | 100 % — håndhævet i kode, ikke i vejledning |
 | K3 | Annoncetekst-kvalitet | Stikprøve: 8/10 tekster kan bruges uden redigering |
 **Ikke-mål (30 dage):** mobilapp (web-first, mobiloptimeret), automatisk upload til Vinted (ingen offentlig API — copy-paste-flow i stedet), crosslisting til Trendsales/DBA (fase C), video, teams, engelsk marketing.
 ---
@@ -42,7 +42,6 @@
 | FR-1 | Guidet foto-upload: 2–4 billeder pr. item med rolle (helhed/bagside/label/fejl); mobilkamera direkte; komprimering klientside | P0 |
 | FR-2 | Foto-rens: baggrundsrens til neutral flade + lys/farvekorrektion på ægte fotos. Må ALDRIG retouchere slid, pletter eller fejl — kun global korrektion | P0 |
 | FR-3 | On-model-generering: billedmodel med det ægte foto som styrende reference genererer 1–2 billeder af en AI-person i nordisk æstetik (præcis stil-preset, §9), der bærer det konkrete stykke tøj. Automatisk troskabs-tjek (K1) før levering; fejlede genereringer koster ikke brugerens kreditter | P0 |
-| FR-4 | AI-mærkning: synligt "AI-visualisering"-badge indlejret i hjørnet af alle genererede billeder + metadata. Kan ikke slås fra (EU AI-forordningen art. 50, i kraft 2/8-2026) | P0 |
 | FR-5 | Annoncetekst: Claude genererer titel, beskrivelse (mærke/størrelse/stand/materiale fra felter + label-foto), søgeord og prisforslag. Fejl fra brugerens felter SKAL indgå i beskrivelsen | P0 |
 | FR-6 | Compliance-rækkefølge: output præsenteres altid som: ægte fotos først (med instruks "brug dette som billede 1 på Vinted"), AI-billeder efter. In-app tekst forklarer Vinteds regler kort | P0 |
 | FR-7 | Kreditsystem: INGEN gratis annoncer (ejer-beslutning 2026-08-15; S27 overvejer alternativ). Kreditpakker/top-up/abonnementer via Stripe Checkout — produkter og priser bor i `lib/config.ts` (pricing v3.0); kreditter trækkes kun ved leveret resultat | P0 |
@@ -54,6 +53,8 @@
 | FR-13 | Delbart resultat: auto-genereret before/after-billede optimeret til TikTok-slideshows (viral loop: brugernes resultater er din marketing) | P1 |
 | FR-14 | Statistik: solgt-markering, samlet salgsværdi ("du har solgt for X kr. med Selja") — retention + socialt bevis | P1 |
 | FR-15 | Prompt-/preset-versionering med pass-rate-statistik pr. version (genbrugt princip fra v0.1) | P1 |
+**Udgået — FR-4 (indlejret AI-mærkning i billedfilerne):** ejer-beslutning 2026-08-23: der skal være **0 mærkning i de leverede filer** — hverken synligt badge, metadata eller pixel-vandmærke. Nummeret FR-4 genbruges ikke. Mærkning tages op igen som selvstændig opgave senere; det er en bevidst udskudt beslutning, ikke en glemt.
+
 **Bevidst udeladt:** alt der opfordrer til kommercielt salg på private konti (dropshipping-suppliers, "bestillingsvarer", bulk-listing af nye varer) — det er brud på Vinteds vilkår og ville udsætte brugerne for bans. Sourcing-indholdet (FR-11) handler om brugt/vintage og om at skifte til Vinted Pro, når man krydser grænsen.
 ---
 ## 5. Ikke-funktionelle krav
@@ -77,7 +78,7 @@
   │       1. rens (baggrund + lys)  ──┐
   │       2. on-model-generering     ├── parallelle kald til ImageProvider (fal)
   │       3. troskabs-tjek (K1)      ──┘   (Seedream-klasse billedmodel + bg-removal)
-  │       4. AI-badge + eksportformater (sharp — ffmpeg IKKE nødvendig i fase A)
+  │       4. eksportformater (sharp — ffmpeg IKKE nødvendig i fase A)
   │       5. annoncetekst (Claude API)
   │       6. kredit-træk (kun ved succes)
   ├──> [Stripe]  Checkout til kreditpakker · webhooks → credits
@@ -100,15 +101,15 @@ Invariant: kreditter trækkes i samme transaktion som leverancen markeres komple
 ---
 ## 8. Billedpipeline & compliance (kernen)
 ### 8.1 Modelvalg
-- **Baggrundsrens:** dedikeret bg-removal-model (fal har flere) + let global lyskorrektion. Bevidst INGEN generativ retouch på ægte fotos — det holder FR-2's "vis varen som den er".
-- **On-model:** referencestyret billedmodel i Seedream/nano-banana-klassen via fal (samme leverandørforhold som Tillæg B's video). Det ægte foto er styrende reference; prompten styrer person, positur og nordisk setting — aldrig tøjets udseende.
+- **Modellen vælges i admin-panelet, ikke i koden** (ejer-ordre 2026-08-23): `/admin` → Billedmodel har ét katalog af godkendte edit-modeller (Gemini og fal), og der vælges én til rens (preview) og én til visualisering (final). Providerne hårdkoder aldrig modeller; kataloget bor i `lib/config.ts`, valget i databasen.
+- **Baggrundsrens:** den billige model i kataloget + let global lyskorrektion. Bevidst INGEN generativ retouch på ægte fotos — det holder FR-2's "vis varen som den er".
+- **On-model:** referencestyret edit-model (FLUX.2 [pro], Seedream eller nano-banana-klassen). Det ægte foto er styrende reference; prompten styrer person, positur og nordisk setting — aldrig tøjets udseende.
 - **Troskabs-tjek (K1):** automatisk sammenligning mellem ægte foto og on-model-billede (vision-model-kald: "samme print/farve/snit? fejl synlige der hvor de skal være?"). Under tærskel → 1 automatisk retry med strammere reference-vægt → ellers leveres kun rensede fotos + tekst, og on-model-kreditten refunderes. Et misvisende AI-billede er værre end intet AI-billede.
 ### 8.2 Compliance-regler (kodede, jf. Vinteds katalogregler + EU AI-forordning)
 1. Ægte foto altid først i leverancen med eksplicit "billede 1 på Vinted"-instruks (Vinted kræver at første foto viser hele den faktiske vare, taget af sælgeren selv).
-2. AI-billeder altid med synligt badge + metadata (AI-forordningens mærkningskrav, i kraft siden 2/8-2026).
-3. Fejl/slid: brugerens fejl-foto og fejl-felt SKAL med i leverancen — uviste fejl giver køber returret som "ikke som beskrevet", så ærlighed er også salgsrådgivning.
-4. Ingen features der understøtter kommercielt salg på private konti (Vinteds forbud).
-5. In-app disclaimer: "Vinteds regler ændrer sig — Selja følger dem, det bør du også" + link.
+2. Fejl/slid: brugerens fejl-foto og fejl-felt SKAL med i leverancen — uviste fejl giver køber returret som "ikke som beskrevet", så ærlighed er også salgsrådgivning.
+3. Ingen features der understøtter kommercielt salg på private konti (Vinteds forbud).
+4. In-app disclaimer: "Vinteds regler ændrer sig — Selja følger dem, det bør du også" + link.
 ### 8.3 Vinted-API-realitet
 Vinted har ingen offentlig API til oprettelse af annoncer, og scraping/automatisering af brugerkonti er vilkårsbrud. Derfor FR-9's polerede copy-paste-flow — og derfor er "automatisk upload" et permanent ikke-mål, indtil Vinted evt. åbner en API.
 ---
@@ -119,10 +120,10 @@ Hvert preset = fast promptskabelon med blokke: (1) reference-instruks ("personen
 Pr. komplet annonce: bg-rens ~0,05–0,15 kr. × 3 fotos + on-model 2 genereringer (inkl. retry-buffer) ~0,3–1 kr. + troskabs-tjek ~0,05 kr. + Claude-tekst < 0,2 kr. ≈ **0,7–1,7 kr. total** → M4 (≤ 2 kr.) holder. Kreditpakke 10 annoncer = 29 kr. → direkte cost ~7–17 kr. → bruttomargin 40–75 % på LAVESTE pakke, bedre på større. Gratis-tier (3 annoncer) koster dig ~2–5 kr. pr. signup — billig akkvisition, men FR-10's globale loft beskytter mod misbrug. Faste omkostninger: uændret under 500 kr./md.
 ---
 ## 11. Tech stack
-Uændret fra v0.1 og bekræftet: Next.js + TypeScript på **Netlify** (langvarige jobs i Trigger.dev, ikke Netlify Functions) · **Supabase via CLI** (migrations i git, genererede typer, lokal dev med `supabase start`) · Trigger.dev · fal.ai bag `ImageProvider` (Gemini tilføjes som alternativ provider bag samme interface; fal forbliver failover) · Claude API (tekst — API-forbrug er separat fra dit Claude Max-abonnement, men < 0,2 kr./annonce) · Stripe · Resend · Tailwind + egne tokens fra DESIGN.md (shadcn droppet) · sharp til badge/eksport. Railway/ffmpeg/ElevenLabs: først i fase B.
+Uændret fra v0.1 og bekræftet: Next.js + TypeScript på **Netlify** (langvarige jobs i Trigger.dev, ikke Netlify Functions) · **Supabase via CLI** (migrations i git, genererede typer, lokal dev med `supabase start`) · Trigger.dev · fal.ai og Gemini bag samme `ImageProvider` (modellen vælges pr. formål i admin-panelet, §8.1) · Claude API (tekst — API-forbrug er separat fra dit Claude Max-abonnement, men < 0,2 kr./annonce) · Stripe · Resend · Tailwind + egne tokens fra DESIGN.md (shadcn droppet) · sharp til eksport. Railway/ffmpeg/ElevenLabs: først i fase B.
 ---
 ## 12. 30-dages plan med gates
-**Uge 1 — Billedpipelinen (ingen UI).** Dag 1–3: on-model-eksperimentet — 20 stykker rigtigt tøj (lån/brug din egen garderobe) gennem referencestyret generering; mål troskab. **Gate G1 (dag 3): ≥ 70 % troskab opnåeligt med mindst ét preset — ellers omdefineres MVP til rens + tekst uden on-model (stadig et produkt!).** Dag 4–7: bg-rens, troskabs-tjek, tekstgenerering, badge — hele kæden fra terminalen. **Gate G2 (dag 7): 1 komplet annonce end-to-end på ≤ 2 min.**
+**Uge 1 — Billedpipelinen (ingen UI).** Dag 1–3: on-model-eksperimentet — 20 stykker rigtigt tøj (lån/brug din egen garderobe) gennem referencestyret generering; mål troskab. **Gate G1 (dag 3): ≥ 70 % troskab opnåeligt med mindst ét preset — ellers omdefineres MVP til rens + tekst uden on-model (stadig et produkt!).** Dag 4–7: bg-rens, troskabs-tjek, tekstgenerering — hele kæden fra terminalen. **Gate G2 (dag 7): 1 komplet annonce end-to-end på ≤ 2 min.**
 **Uge 2 — Appen.** Auth, upload-flow, kreditter, Stripe, copy-paste-UI, mobilpolering. **Gate G3 (dag 14): en ven uden instruktion gennemfører upload→Vinted-annonce på egen telefon.**
 **Uge 3 — Lancering + distribution.** Lær-sektion (FR-11), 3 presets (FR-12), before/after-delebilleder (FR-13). TikTok-motoren tændes: 2–3 daglige slideshows ("solgte denne trøje på 4 timer — se billederne før/efter", sourcing-tips, Vinted-strategi). **Gate G4 (dag 21): live med betaling + 10 første rigtige brugere (venner/padel-netværk/TikTok).**
 **Uge 4 — Vækst + B2B-cash.** Iterér på det brugerne faktisk gør; statistik (FR-14). Sideløbende: sælg 1–2 B2B-annoncepakker manuelt (leveret med billedpipelinen + manuel video/slideshow) for at nå M3's omsætningsmål. **Gate G5 (dag 30): M1–M5 evalueret; beslut om fase B (video-motor) eller mere B2C-vækst.**

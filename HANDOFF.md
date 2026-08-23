@@ -46,7 +46,7 @@ Dette er et P0-krav på linje med funktionalitet. Selja skal ligne et produkt by
 3. **Signatur-element:** before/after-visningen af rigtigt tøj er produktets stærkeste bevis — gør DEN til det visuelle omdrejningspunkt (landing page-hero er et ægte before/after, ikke en illustration)
 4. **Copy-regler:** dansk, konkret, ærlig, lavmælt selvsikker. Aktiv form. Tal frem for tillægsord ("færdig annonce på 2 minutter", ikke "lynhurtigt"). Knapper siger hvad de gør ("Lav min annonce", ikke "Kom i gang"). Fejlbeskeder forklarer hvad der skete og hvad man gør — uden undskyldnings-teater
 5. **Kvalitetsgulv uden at prale af det:** responsivt ned til 320 px, synligt keyboard-fokus, `prefers-reduced-motion` respekteret, rigtige alt-tekster, kontrast ≥ WCAG AA
-6. **Fotografisk ærlighed:** produktbilleder på sitet er uredigerede skærmbilleder/output. Visualiserings-badge ("Visualisering" + AI-mærkning i metadata) er lovpligtigt på genererede billeder og fjernes ALDRIG — det er ikke i konflikt med 2.1.4: brandet praler ikke af AI, men produktet skjuler den heller ikke hvor loven og ærligheden kræver mærkning
+6. **Fotografisk ærlighed:** produktbilleder på sitet er uredigerede skærmbilleder/output. Selve billedFILERNE bærer ingen mærkning (ejer-beslutning 2026-08-23: 0 vandmærke/metadata, se `SPEC.md` §4) — men produktet skjuler ikke, at visualiseringerne er genererede: det står i UI-teksten og i copy'en, og de linjer fjernes ikke uden en ny ejer-beslutning
 ### 2.3 Slop-tjek (køres af hver UI-PR)
 Selvkritik i PR-beskrivelsen: "Hvilke 3 elementer i denne ændring kunne stamme fra en hvilken som helst AI-genereret SaaS — og hvad gjorde jeg ved dem?" Kan spørgsmålet ikke besvares konkret, er PR'en ikke klar.
 ---
@@ -102,7 +102,7 @@ Stack (låst, se `SPEC.md` §11): Next.js (App Router) + TypeScript strict · Ne
 | C-1 | Baggrundsrens til neutral flade + global lys/farvekorrektion. ALDRIG lokal retouch — slid, pletter og fnuller SKAL bevares | P0 |
 | C-2 | On-model-generering: ægte foto som styrende reference; prompt styrer person/positur/setting — aldrig tøjets udseende. Præcise regler i `SPEC.md` §9 | P0 |
 | C-3 | Automatisk troskabs-tjek (vision-model): samme print/farve/snit? Score under tærskel → 1 retry med strammere reference → ellers B-6-fallback | P0 |
-| C-4 | Synligt "Visualisering"-badge + AI-metadata (EU AI-forordningen art. 50) indlejret via sharp; kan ikke fravælges | P0 |
+| C-4 | UDGÅET (ejer-beslutning 2026-08-23): ingen mærkning indlejret i billedfilerne — hverken badge, metadata eller vandmærke. Genoptages som selvstændig opgave senere | — |
 | C-5 | 3 nordiske presets ved launch (fx lys minimalisme / københavnsk gade / hyggelig stue); versioneret med pass-rate-statistik | P1 |
 | C-6 | Person-diversitet i rotation; aldrig genkendelige/virkelige personer; ingen "forbedring" af hvordan tøjet sidder | P0 |
 | C-7 | Alle provider-kald bag `ImageProvider`-interface med mock-implementering til test/CI | P0 |

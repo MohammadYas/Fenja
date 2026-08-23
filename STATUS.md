@@ -1,5 +1,191 @@
 # STATUS
-Sidst opdateret: 2026-08-22 af Claude Code
+Sidst opdateret: 2026-08-23 af Claude Code
+
+## Denne session (23/8) — billedmodellen vælges i admin, mærkningskravet ude
+
+**EJER-BESLUTNING 23/8 (a): 0 mærkning i de leverede billedfiler.** FR-4
+(SPEC §4) og C-4 (HANDOFF §4) er UDGÅET — hverken synligt badge, metadata
+eller vandmærke i filerne. Ejeren har taget beslutningen bevidst og udskudt
+mærkningen til en senere selvstændig opgave. Fjernet i `SPEC.md` (FR-4,
+K2-målet, §8.2-reglen, flow-trin 4, §11, §12), `HANDOFF.md` (C-4, §2.2.6) og
+`SELJA.md`. UI-teksten siger fortsat, at visualiseringerne er genererede —
+den er ikke rørt, for det er oplysning, ikke vandmærke.
+
+**EJER-BESLUTNING 23/8 (b): billedmodellen vælges i ADMIN-PANELET.** Ordren
+kom af, at Googles SynthID sidder i pixels og følger med uanset leverandør —
+også hvis nano-banana køres via fal. Skal SynthID væk, skal modellen skiftes,
+ikke leverandøren.
+- **Katalog i `lib/config.ts`** (`billedModeller`): gemini-flash, gemini-pro,
+  flux-2-pro, qwen-edit-plus, seedream-45 — hver med pris-skøn, note og en
+  ærlig vandmærke-linje. Providerne hårdkoder ALDRIG en model.
+- **Valget bor i databasen** (`indstillinger`-tabellen, migration
+  `20260823100000`), læses af `lib/admin/billedmodel-valg.ts` med 30 sek.
+  cache. Fejler opslaget (migration ikke kørt, DB nede) bruges standarden —
+  en tabt leverance er værre end et forkert modelvalg.
+- **`/admin` → Billedmodel**: radioliste pr. formål (rens/visualisering) med
+  pris og vandmærke ved hver model. Skift virker uden deploy.
+- **`lib/providers/fal.ts` skrevet om**: tager model+cost udefra som
+  Gemini-provideren, kalder edit-endpoints med `{ prompt, image_urls,
+  image_size }`, uploader data-URL-referencer til fal's lager først (fal kan
+  ikke læse vores private storage), og oversætter C-3-retryens strammere
+  vægt til en skærpet prompt — edit-endpoints har ingen `strength`.
+- **`hentImageProvider` falder tilbage**, hvis nøglen til den valgte
+  leverandør mangler i miljøet, og logger det.
+- **Gate 1-scriptet** kører nu tvekamp mellem to katalogmodeller;
+  standarden er `gemini-pro` mod `flux-2-pro` (`--modeller a,b` vælger selv).
+- **461 tests grønne** (15 nye: `fal.test.ts`, `billedmodel.test.ts`),
+  lint + typecheck rene.
+- **Migrationen ER kørt** (23/8, via Composio mod projekt cpqsmtaledmjzirfeztp):
+  `indstillinger` findes, RLS til, 0 policies — kun service-rollen kommer til.
+- **`FAL_KEY` tilføjet til `trigger.config.ts`**. Fanget inden skiftet: uden
+  den ville et fal-valg i admin fejle STILLE i jobbet (pipelinen kører på
+  Trigger.dev's egne maskiner), koden falde tilbage til Gemini, og
+  billederne stadig bære SynthID. Nøglen skal sættes i `.env.local` +
+  deployes til Trigger.dev, og i Netlify.
+- **`scripts/model-tvekamp.ts`** (ny): samme foto, samme prompt, én kolonne
+  pr. model + originalen, målt cost og svartid, billederne indlejret i arket.
+  `--mock` kører tørt uden nøgler. Gate 1 er stadig den formelle dom.
+- **TVEKAMPEN ER KØRT — TO GANGE (23/8).** Første kørsel var på et FORKERT
+  grundlag: `scripts/model-tvekamp.ts` brugte `bygOnModelPrompt` (Gate 1-
+  scriptets preset-prompt, ~800 tegn) i stedet for pipelinens egen
+  `bygOnModelPromptMedSkabelon` (4529 tegn med spejl-framing, kategori-
+  skabelon, hjem-anker og eksplicit farve-/længdekrav). Resultatet blev rene
+  studiebilleder i stedet for SPEJLBILLEDER — ejeren fangede det med det
+  samme: "det ligner intet af det på forsiden, det skal jo være
+  spejlbilleder". **Scriptet er rettet** og kalder nu pipelinens bygger med
+  `--visning spejl` som standard (+ `--kategorier`, `--vaegt`).
+  Anden kørsel, 3 plagg × 3 modeller, visning spejl, vægt 0,65:
+  - **FLUX.2 [pro]: 3/3 godkendt.** Ægte spejlbilleder i forsidens stil —
+    parket, garderobeskab, ansigtet skjult bag telefonen. Farverne rammer nu,
+    og **kjolelængden holder** (den fejlede i første kørsel). Rest: kjolens
+    snoede stropper blev glatte, denim-vasken trækker en anelse dybere.
+  - **Seedream 4.5: 0/3, men markant bedre.** Flotte spejlbilleder. Falder på
+    snit og påklædningsregler: cardigan båret på BARE BEN (bryder "aldrig bare
+    ben"), lige ankeljeans blev vide flared, og den lange kjole blev sat uden
+    på et par jeans, så den læses som top + bukser.
+  - **Qwen Image Edit Plus: 0/3, værre end før.** Laver stadig ikke
+    spejlbillede — og DIGTER tryk: et farvet solansigt med teksten
+    "ENKER'NES" på cardiganet, heldækkende tegneserietryk på jeansene, sorte
+    kruseduller på kjolen. Diskvalificeret.
+  - 18 kald i alt, alle igennem i første forsøg, 5,40 kr. målt på fal.
+  - Katalogets `note`-felter er rettet efter ANDEN kørsel.
+- **FORSIDENS EGNE PROMPTS KØRT PÅ FLUX (23/8).** `scripts/generer-katalog.ts`
+  er gjort model-uafhængig: et `--model` der starter med `fal-ai/` kalder fal's
+  tekst-til-billede, alt andet er Gemini som før. Tre af forsidens prompts
+  (p15 spejl-strik, p2 entré-cardigan, p4 soveværelse-kjole) kørt uændret:
+  - **P15: FLUX slår Gemini på realisme.** Dansk lyskontakt, radiator,
+    plankegulv, tissue på gulvet, kabel langs fodpanelet. MEN prompten bad om
+    "bright, tidy" og "neatly made bed" — FLUX gav rodet og dæmpet.
+  - **P2: Gemini vinder.** Prompten har "a deep neckline" på forbudslisten;
+    FLUX gav en dybere udskæring, mere stylet hår, smallere mørkere gang.
+  - **P4: dødt løb.** Begge overbevisende; FLUX igen en anelse dybere hals.
+  - **MØNSTER:** FLUX er på Geminis niveau på LOOK, men følger de negative
+    instrukser mindre stramt — den glider mod "influencer". Netop dét er, hvad
+    KROP_OG_POSITUR-reglerne findes for at forhindre. Bruges FLUX til
+    marketingserien, skal forbudslisterne skærpes eller billederne håndplukkes.
+  - Sidegevinst: forsideserien kan nu genereres UDEN SynthID, hvis den skal om.
+- **BEDRE FAL-MODEL FUNDET TIL MARKETING: Grok Imagine Pro** (ejer 23/8:
+  "Gemini er meget bedre, undersøg om der er en fal-model der gør det bedre").
+  Fire kandidater kørt på P2-prompten (den hvor FLUX tydeligst tabte):
+  - `bytedance/seedream/v5/pro/text-to-image` — teknisk fremragende, men dyb
+    udskæring + stram pasform. Bryder promptens forbudsliste.
+  - `openai/gpt-image-2` — den mest kropsfokuserede af alle fire. Værst.
+  - `fal-ai/flux-2-lora-gallery/realism` — ingen bedring over almindelig FLUX.2.
+  - **`xai/grok-imagine-image/quality/text-to-image` — VINDEREN.** Moderat
+    udskæring, afslappet pasform, komplet scene. Kørt på alle tre prompts:
+    P15 rammer hver detalje (ribkant, hvid t-shirt-krave, uldsokker,
+    potteplante, radiator, opslået bog); P4 ligner et ægte telefonfoto med
+    tøj over stoleryggen og sokker på gulvet. **0,45 kr. i 2K mod Geminis
+    0,95 kr., ingen SynthID.** Forbehold: ét billede pr. prompt — indikation,
+    ikke dom.
+  - **MØNSTER:** glam-driften er ikke en FLUX-fejl. Seedream, GPT Image 2 og
+    FLUX-realism gør det samme. Forbudslisten (`Also avoid: … a deep
+    neckline`) står som blødt suffiks til sidst i prompten, og alle modeller
+    UNDTAGEN Gemini og Grok overser den. Skal andre modeller bruges, skal
+    kravet stå positivt formuleret og TIDLIGT i prompten.
+  - `scripts/generer-katalog.ts` kan nu køre alle fal-endpoints:
+    leverandør-tjekket er vendt om (`gemini-…` = Google, alt andet = fal —
+    fal's id'er hedder også `openai/…`, `xai/…`, `bytedance/…`), skemaet
+    falder tilbage til bare prompten ved 422, og `--ekstra '{...}'` sender
+    model-specifikke felter (fx Grok's `aspect_ratio`/`resolution`).
+- **EJER-ORDRE 23/8: ingen stramme bukser, kun iPhones.** Skrevet ind BEGGE
+  steder, så forsiden og brugernes annoncer følger samme regler:
+  - `scripts/katalog-prompts-data.ts`: `SELFIE_KERNE` siger nu "ALWAYS an
+    iPhone" (tidligt i prompten = højest vægt), `REALISME` siger iPhone i
+    stedet for "mid-range phone", alle otte telefon-beskrivelser er
+    normaliseret til iPhone, de to prompts med "fairly slim fit"/"fitted at
+    hips and thighs" er lavet om til STRAIGHT relaxed leg, og
+    `UNDGAA_FAELLES` forbyder nu skinny/tight/jegging/legging + non-iPhone —
+    så reglen også gælder prompts der skrives i fremtiden.
+  - `lib/pipeline/skabeloner.ts`: `SKANDINAVISK_BUNDDEL` er straight/relaxed
+    (var "straight or slim fit but never skinny"), iPhone-reglen er tilføjet
+    til on-model-prompten, og `ONMODEL_NEGATIV` forbyder begge dele.
+  - Låst med to tests i `tests/unit/skabeloner.test.ts` (462 grønne).
+  - **Verificeret på Grok:** bukserne er nu lige med plads over låret, og
+    telefonen er tydeligt en iPhone. **ÅBENT SPØRGSMÅL til ejeren:** på ét af
+    billederne er coveret gennemsigtigt, så Apple-logoet ses — det er
+    realistisk, men forbudslisten siger "NO logo, NO emblem" på coveret.
+- **EJER-BESLUTNING 23/8 (aften): SIDEN BLIVER PÅ GEMINI, til ejeren har
+  besluttet sig.** Verificeret: standardvalget er gemini-flash/gemini-pro,
+  `indstillinger`-tabellen er tom (ingen overstyring), katalog-generatorens
+  default er gemini-3-pro-image-preview. `scripts/model-tvekamp.ts` er
+  SLETTET på ejer-ordre — modeltest kører fremover gennem
+  `scripts/generer-katalog.ts` med --model (marketing) og Gate 1 (produkt).
+- **FIX 23/8 aften: /admin var langsom på mobil (499 i Netlify-loggen).**
+  Ejeren så en byge af 499 GET /admin og / fra telefonen (lavt batteri, 5G).
+  499 = klienten opgav før svaret — ingen serverfejl i loggen, og databasen
+  er næsten tom (202 besøg). Root cause: /admin lavede SEKS database-rundture
+  i rækkefølge efter det første parallelle batch (besøg, modelvalg,
+  henvendelser, feedback-profiler, generations, klager) — oven på et
+  Netlify-koldstart (~3 s målt) blev det for meget for en telefon der giver
+  op. Alle seks kører nu i ÉN Promise.all. Forsiden var allerede cachet
+  (revalidate 300) og fejlede kun som del af samme genindlæsnings-byge.
+- **RUNDE 2 (23/8 aften): stabilitetstest + realism-LoRA'ens fair chance.**
+  Ejer-hypotese: "måske er realism god?" — den fik kun ét billede i runde 1,
+  og det var på den gamle prompt. Nu: Grok og FLUX.2 realism-LoRA, 3 prompts
+  × 2 billeder hver, på de RETTEDE prompts (lige bukser, kun iPhones).
+  - **Grok: 6/6 uden en eneste brief-afvigelse** — og P2 er nu kørt TRE gange
+    i træk uden glam-drift. Det er stabilitet, ikke held. Stadig førstevalget.
+  - **Realism-LoRA'en ER et fund:** billigst (~0,21 kr./billede — $0.021/MP),
+    og den mest telefonægte tekstur i hele testen (P15-strikken, lyset,
+    plankegulvet). Fejlfri på P15 og P1. MEN den arver FLUX-familiens
+    svaghed: P2-cardiganen blev kort og tætsiddende i begge kørsler (briefen
+    siger "just above the hips"). 4/6 på snit.
+  - Brugsanvisning: realism er klar til herre-motiver, kjoler og
+    produktvinkler; til fitted dame-overdele (P2-typen) kræver den en
+    skarpere fit-linje TIDLIGT i prompten — eller man bruger Grok dér.
+  - iPhone-reglen og de lige bukser holdt 12/12 på tværs af begge modeller.
+  - Seedream fik ikke sin genkørsel (ejeren afbrød — Netlify-499'erne kom
+    imellem); står stadig som 0/3 fra runde 1.
+  - Forbrug i alt på fal-nøglen i dag: ca. 17 kr. (~$2,60 af $10).
+- **KRITISK FIX 23/8 aften: sitet hang for indloggede brugere.** Ejer-rapport:
+  inkognito virkede, men logget ind = "This edge function has crashed — the
+  edge function timed out". Målt udefra: Supabase svarede fint (0,4-0,6 s),
+  men selja.dk/ hang i 30+ s ved ISR-regenerering. Root cause: INGEN
+  tidsgrænse på Supabase-kaldene — et hængende kald kaster ikke, så
+  try/catch hjalp ikke, og middleware ventede på `auth.getUser()` til
+  Netlify dræbte edge-funktionen. Fix i tre lag:
+  - `lib/supabase/tidsgraense.ts`: fetch med AbortSignal-tidsgrænse (8 s
+    server, 5 s middleware) — givet til ALLE tre Supabase-klienter.
+  - `middleware.ts`: getUser i try/catch og FAIL-OPEN ved fejl/timeout —
+    et fejlet kald sender ikke længere hele sitet i edge-timeout, og det
+    logger heller ikke folk ud (kun et RIGTIGT nej fra Supabase
+    redirecter til log-ind). App-siderne håndhæver selv login.
+  - Rute-logikken udskilt til `lib/auth/ruter.ts` (beskyttede stier +
+    åben-omdirigerings-værnet) og LÅST med tests sammen med tidsgrænsen:
+    `tests/unit/tidsgraense.test.ts` tester bl.a. at et fetch der ALDRIG
+    svarer, afbrydes hurtigt. 469 tests grønne.
+  - /admin-parallelliseringen fra tidligere i aften hører til samme sag.
+- **EJER-BESLUTNING 23/8 (aften, bekræftet): Gemini forbliver modellen —
+  valgmulighederne står åbne i /admin-kataloget.** Standard er
+  gemini-flash/gemini-pro; fal-modellerne kan vælges når ejeren vil.
+- **LÆRING (gentag den ikke):** et testscript skal kalde den prompt-bygger,
+  pipelinen bruger — ikke en simplere nabo. Den første dom var uretfærdig mod
+  alle tre modeller, og den kostede 2,70 kr. og en runde hos ejeren.
+- **TIL EJEREN:** (1) fotoene er stadig repoets AI-genererede FØR-billeder —
+  rigtige telefonfotos er den eneste rigtige dom; (2) K1 kørte ikke, det var
+  mit øje; (3) C-3-retryen med strammere vægt er stadig uprøvet;
+  (4) Nano Banana Pro var ikke med (ingen GEMINI_API_KEY i miljøet).
 
 ## Denne session (22/8, runde 2) — cardigan først, forside-angreb, TESTPLAN.md
 

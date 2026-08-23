@@ -2,6 +2,8 @@ import "server-only";
 
 import { createClient } from "@supabase/supabase-js";
 
+import { fetchMedTidsgraense } from "./tidsgraense";
+
 // Service-klient (omgår RLS) — KUN til server/jobs: webhooks, pipeline,
 // kontosletning. Må aldrig importeres fra klientkode ("server-only" håndhæver det).
 export function opretServiceKlient() {
@@ -14,5 +16,8 @@ export function opretServiceKlient() {
   }
   return createClient(url, noegle, {
     auth: { persistSession: false, autoRefreshToken: false },
+    // Hård tidsgrænse på alle rundture (23/8) — et hængende kald må aldrig
+    // holde en side eller et job som gidsel
+    global: { fetch: fetchMedTidsgraense() },
   });
 }

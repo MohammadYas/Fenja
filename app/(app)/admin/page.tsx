@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
+import { hentModelValg } from "@/lib/admin/billedmodel-valg";
 import { CONTENT_PROMPTS } from "@/lib/admin/content-prompts";
 import { erAdmin } from "@/lib/auth/admin";
-import { misbrugsvaern } from "@/lib/config";
+import { billedModeller, misbrugsvaern } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
+import { BilledModelValg } from "./billedmodel";
 import { ContentVaerktoejer } from "./content-vaerktoejer";
 import { ForsideBilleder } from "./forside-billeder";
 import { TildelKreditter } from "./tildel-kreditter";
@@ -94,7 +96,44 @@ export default async function Admin({
       .gte("created_at", periodeStart)
       .order("created_at", { ascending: false })
       .limit(20_000);
-  const foersteForsoeg = await besoegQuery(`${besoegSelect}, besoegende`);
+  // Resten af sidens data hentes i ÉN parallel runde — før lå der seks
+  // database-rundture i rækkefølge her, og oven på et koldstart blev siden
+  // så langsom på mobil, at telefonen opgav (499 i Netlify-loggen 23/8).
+  const [foersteForsoeg, modelValg, henvendelserSvar, feedbackProfilerSvar, generationsSvar, klageSvar] =
+    await Promise.all([
+      besoegQuery(`${besoegSelect}, besoegende`),
+      hentModelValg(),
+      service
+        .from("henvendelser")
+        .select("id, navn, email, besked, status, created_at")
+        .order("created_at", { ascending: false })
+        .limit(30),
+      // Feedback-afsendernes e-mails — bruger-id'erne kom i første runde
+      (() => {
+        const ids = [
+          ...new Set(
+            ((feedbackData.data ?? []) as { user_id: string }[]).map((f) => f.user_id),
+          ),
+        ];
+        return ids.length
+          ? service.from("profiles").select("id, email").in("id", ids)
+          : Promise.resolve({ data: [] });
+      })(),
+      service
+        .from("generations")
+        .select("kind, status, cost_dkk, created_at, items(user_id)")
+        .gte("created_at", syvDageSiden)
+        .order("created_at", { ascending: false }),
+      // Åbne klager (ejer-ordrer 2026-08-20): admin får ALT relevant, så
+      // afgørelsen kan træffes direkte i listen
+      service
+        .from("klager")
+        .select(
+          "id, begrundelse, oprettet_at, items(titel, brand, size, condition, category, color, label_text, defects_text, item_photos(role, original_url, cleaned_url), generations(kind, status, output_url, created_at))",
+        )
+        .eq("status", "aaben")
+        .order("oprettet_at", { ascending: true }),
+    ]);
   let besoegData = foersteForsoeg.data;
   let harUnik = !foersteForsoeg.error;
   if (foersteForsoeg.error) {
@@ -182,11 +221,7 @@ export default async function Admin({
   };
 
   // Kontakt-henvendelser (21/8 nat) — navn+email står i rækken selv
-  const { data: henvendelserData } = await service
-    .from("henvendelser")
-    .select("id, navn, email, besked, status, created_at")
-    .order("created_at", { ascending: false })
-    .limit(30);
+  const henvendelserData = henvendelserSvar.data;
   type Henvendelse = {
     id: string;
     navn: string;
@@ -211,10 +246,7 @@ export default async function Admin({
   };
   // Fejler harmløst før feedback-migrationen er kørt
   const feedbackRaa = (feedbackData.data ?? []) as unknown as FeedbackRaekke[];
-  const feedbackBrugere = [...new Set(feedbackRaa.map((f) => f.user_id))];
-  const { data: feedbackProfiler } = feedbackBrugere.length
-    ? await service.from("profiles").select("id, email").in("id", feedbackBrugere)
-    : { data: [] };
+  const feedbackProfiler = feedbackProfilerSvar.data;
   const emailPrBruger = new Map(
     ((feedbackProfiler ?? []) as { id: string; email: string | null }[]).map((p) => [
       p.id,
@@ -226,11 +258,7 @@ export default async function Admin({
     email: emailPrBruger.get(f.user_id) ?? null,
   }));
 
-  const { data } = await service
-    .from("generations")
-    .select("kind, status, cost_dkk, created_at, items(user_id)")
-    .gte("created_at", syvDageSiden)
-    .order("created_at", { ascending: false });
+  const { data } = generationsSvar;
 
   type Raekke = {
     kind: string;
@@ -264,16 +292,7 @@ export default async function Admin({
   ).length;
   const kostPrKredit = leveredeBilleder > 0 ? totalCost / leveredeBilleder : null;
 
-  // Åbne klager (ejer-ordrer 2026-08-20) — service-rollen ser alle, og admin
-  // får ALT relevant: genererede billeder, brugerens fotos og itemets felter,
-  // så afgørelsen kan træffes direkte i listen
-  const { data: klageData } = await service
-    .from("klager")
-    .select(
-      "id, begrundelse, oprettet_at, items(titel, brand, size, condition, category, color, label_text, defects_text, item_photos(role, original_url, cleaned_url), generations(kind, status, output_url, created_at))",
-    )
-    .eq("status", "aaben")
-    .order("oprettet_at", { ascending: true });
+  const klageData = klageSvar.data;
 
   const signer = async (sti: string | null): Promise<string | null> => {
     if (!sti) return null;
@@ -533,6 +552,10 @@ export default async function Admin({
           ))}
         </div>
       )}
+
+      {/* Billedmodel (23/8): hvilken model brugerne kører på — uden deploy */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.billedmodel.titel}</h2>
+      <BilledModelValg modeller={billedModeller} valg={modelValg} />
 
       {/* Tildel kreditter (22/8): support, kompensation, kampagner */}
       <h2 className="mt-8 text-titel font-medium">{da.admin.tildel.titel}</h2>
