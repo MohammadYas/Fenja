@@ -125,6 +125,12 @@ ikke leverandøren.
     telefonen er tydeligt en iPhone. **ÅBENT SPØRGSMÅL til ejeren:** på ét af
     billederne er coveret gennemsigtigt, så Apple-logoet ses — det er
     realistisk, men forbudslisten siger "NO logo, NO emblem" på coveret.
+- **EJER-BESLUTNING 23/8 (aften): SIDEN BLIVER PÅ GEMINI, til ejeren har
+  besluttet sig.** Verificeret: standardvalget er gemini-flash/gemini-pro,
+  `indstillinger`-tabellen er tom (ingen overstyring), katalog-generatorens
+  default er gemini-3-pro-image-preview. `scripts/model-tvekamp.ts` er
+  SLETTET på ejer-ordre — modeltest kører fremover gennem
+  `scripts/generer-katalog.ts` med --model (marketing) og Gate 1 (produkt).
 - **LÆRING (gentag den ikke):** et testscript skal kalde den prompt-bygger,
   pipelinen bruger — ikke en simplere nabo. Den første dom var uretfærdig mod
   alle tre modeller, og den kostede 2,70 kr. og en runde hos ejeren.

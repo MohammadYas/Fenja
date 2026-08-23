@@ -49,6 +49,6 @@ next-env.d.ts
 # Netlify edge-bundling lagger denne under deploy
 deno.lock
 
-# Lokale testkørsler (model-tvekamp + Gate 1) — billeder og ark, aldrig i git
-tvekamp-ud/
+# Lokale testkørsler (Gate 1 + modeltest) — billeder og ark, aldrig i git
 gate1-rapport.html
+modeltest-ud/
