@@ -133,6 +133,8 @@ export class SupabasePipelineDb implements PipelineDb {
         fidelity_score: slut.fidelityScore ?? null,
         prompt_version: slut.promptVersion ?? null,
         provider_job_id: slut.providerJobId ?? null,
+        // Fejlteksten vises i admin — afkort hér, så ingen kalder skal huske det
+        fejl: slut.fejl ? slut.fejl.slice(0, 500) : null,
       })
       .eq("id", genereringsId);
     if (error) throw new Error(`Kunne ikke afslutte generering: ${error.message}`);

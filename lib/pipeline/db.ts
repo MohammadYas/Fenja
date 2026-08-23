@@ -31,6 +31,8 @@ export type GenereringsSlut = {
   fidelityScore?: number;
   promptVersion?: string;
   providerJobId?: string;
+  /** Ved failed: årsagen, vist i admin (ejer-ordre 23/8). Afkortes ved skrivning */
+  fejl?: string;
 };
 
 export interface PipelineDb {

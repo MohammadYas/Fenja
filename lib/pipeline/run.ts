@@ -82,7 +82,11 @@ async function rensTrin(
     await deps.db.afslutGenerering(genId, { status: "succeeded", costDkk: cost });
     return gemte;
   } catch (fejl) {
-    await deps.db.afslutGenerering(genId, { status: "failed", costDkk: 0 });
+    await deps.db.afslutGenerering(genId, {
+      status: "failed",
+      costDkk: 0,
+      fejl: `baggrundsrens: ${kortFejl(fejl)}`,
+    });
     throw fejl;
   }
 }
@@ -102,6 +106,11 @@ async function referenceTilProvider(
   }
   const buffer = await deps.storage.hentBillede(stiEllerUrl);
   return `data:image/jpeg;base64,${buffer.toString("base64")}`;
+}
+
+/** Fejl som kort tekst til generations.fejl — aldrig hele stack-tracen */
+function kortFejl(fejl: unknown): string {
+  return (fejl instanceof Error ? fejl.message : String(fejl)).slice(0, 500);
 }
 
 function sov(ms: number): Promise<void> {
@@ -155,6 +164,7 @@ async function visualiseringsTrin(
       status: "failed",
       costDkk: 0,
       promptVersion,
+      fejl: kortFejl(fejl),
     }).catch(() => {});
     return null;
   }
@@ -164,6 +174,7 @@ async function visualiseringsTrin(
       status: "failed",
       costDkk: udfald.costDkk,
       promptVersion,
+      fejl: udfald.fejlTekst ?? "intet billede leveret",
     }).catch(() => {});
     return null;
   }
@@ -194,6 +205,7 @@ async function visualiseringsTrin(
       status: "failed",
       costDkk: udfald.costDkk,
       promptVersion,
+      fejl: `lagring/eksport: ${kortFejl(fejl)}`,
     }).catch(() => {});
     return null;
   }
@@ -247,7 +259,11 @@ async function tekstTrin(
     });
     return { ...tekst, costDkk: tekst.costDkk + labelCost };
   } catch (fejl) {
-    await deps.db.afslutGenerering(genId, { status: "failed", costDkk: 0 });
+    await deps.db.afslutGenerering(genId, {
+      status: "failed",
+      costDkk: 0,
+      fejl: `annoncetekst: ${kortFejl(fejl)}`,
+    });
     throw fejl;
   }
 }
