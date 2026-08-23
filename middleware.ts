@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { erBeskyttetSti, sikkerVidereSti } from "@/lib/auth/ruter";
+import { sessionErFrisk } from "@/lib/auth/session-cookie";
 import {
   MIDDLEWARE_TIDSGRAENSE_MS,
   fetchMedTidsgraense,
@@ -40,6 +41,22 @@ export async function middleware(request: NextRequest) {
       til.pathname = "/log-ind";
       til.search = "";
       til.searchParams.set("videre", request.nextUrl.pathname);
+      return NextResponse.redirect(til);
+    }
+    return respons;
+  }
+
+  // Hastighed (ejer 23/8 aften: "den loader så langsomt"): en indlogget
+  // bruger betalte en auth-rundtur på HVERT klik — og på en dårlig dag hos
+  // Netlify→Supabase blev hvert klik til sekunders venten på tidsgrænsen.
+  // Middlewarens opgave er kun at FORNY sessionen før udløb: er der læseligt
+  // lang tid til udløb i cookien, er der intet at forny, og netkaldet
+  // springes over. Autorisationen ligger stadig 100 % hos siderne selv.
+  if (sessionErFrisk(request.cookies.getAll())) {
+    if (request.nextUrl.pathname === "/log-ind") {
+      const til = request.nextUrl.clone();
+      til.pathname = sikkerVidereSti(request.nextUrl.searchParams.get("videre"));
+      til.search = "";
       return NextResponse.redirect(til);
     }
     return respons;

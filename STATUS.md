@@ -176,6 +176,16 @@ ikke leverandøren.
     `tests/unit/tidsgraense.test.ts` tester bl.a. at et fetch der ALDRIG
     svarer, afbrydes hurtigt. 469 tests grønne.
   - /admin-parallelliseringen fra tidligere i aften hører til samme sag.
+- **OPFØLGNING på samme sag ("den loader så langsomt"): auth-rundturen på
+  hvert klik er fjernet.** Efter timeout-fixet loadede sitet igen, men
+  langsomt for indloggede: HVERT klik betalte stadig en getUser-rundtur i
+  middleware, og på en dårlig Netlify→Supabase-dag = op til 5 s pr. klik.
+  Nu læses sessionens udløbstid direkte af auth-cookien
+  (`lib/auth/session-cookie.ts`, håndterer base64- og bid-delte cookies):
+  er der >2 min. til udløb, er der intet at forny, og netkaldet SPRINGES
+  OVER. Cookien bruges ALDRIG til autorisation (ingen signatur-tjek) — kun
+  til "skal vi forny nu?"; siderne verificerer selv brugeren. Låst med 9
+  tests i `tests/unit/session-cookie.test.ts` (478 grønne i alt).
 - **EJER-BESLUTNING 23/8 (aften, bekræftet): Gemini forbliver modellen —
   valgmulighederne står åbne i /admin-kataloget.** Standard er
   gemini-flash/gemini-pro; fal-modellerne kan vælges når ejeren vil.
