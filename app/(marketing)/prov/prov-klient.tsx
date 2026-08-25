@@ -229,11 +229,13 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
 
       {tilstand.fase === "start" || tilstand.fase === "sender" ? (
         <div className="flex flex-col gap-3">
+          {/* BEVIDST ingen capture-attribut (ejer-rapport 25/8): capture
+              tvinger kameraet direkte op på Android og skjuler galleriet —
+              uden den viser systemvælgeren både "Tag foto" og "Vælg billede" */}
           <input
             ref={filInput}
             type="file"
             accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-            capture="environment"
             hidden
             onChange={(e) => {
               const fil = e.target.files?.[0];

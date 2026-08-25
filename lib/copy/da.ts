@@ -1339,7 +1339,7 @@ export const da = {
     rubrik: "Se hvad dit tøj er værd — gratis",
     lead: "Tag ét billede af dit tøj. Selja laver et produktbillede, skriver annoncen og foreslår en pris. Ingen konto, intet kort.",
     uploadKnap: "Tag et billede af dit tøj",
-    uploadHjaelp: "Ét foto er nok — læg tøjet frem, så det hele kan ses.",
+    uploadHjaelp: "Tag et nyt foto eller vælg et fra kamerarullen. Ét foto er nok, bare hele tøjet kan ses.",
     // Loading (forventningen sættes ærligt — genereringen tager op til et par minutter)
     laverBillede: "Selja arbejder på dit tøj …",
     laverBilledeDetalje: (sekunder: number) =>
