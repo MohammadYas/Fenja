@@ -1328,8 +1328,11 @@ export const da = {
     beskrivelseSkjult: "Resten af annoncen er klar — opret en gratis konto for at se det hele.",
     soegeordFlere: (antal: number) => `+ ${antal} søgeord mere`,
     vandmaerkeNote: "Billedet her har selja.dk-vandmærke og nedsat opløsning.",
-    // Låste stilarter (ejer-krav 25/8): ren visuel upsell — kan ALDRIG generere
+    // Låste stilarter (ejer-krav 25/8): ren visuel upsell — kan ALDRIG generere.
+    // Spejlet vises i begge køn (ejer-ordre 25/8), bøjle/nærbillede er uden person
     laasteStilarter: "Samme foto kan også blive til",
+    stilSpejlDame: "Spejl · dame",
+    stilSpejlHerre: "Spejl · herre",
     laasLabel: "Lås op med en konto",
     ctaRubrik: "Få det hele med en gratis konto",
     // Knappen siger hvad den gør (HANDOFF §2.2.4) — fordelene står i linjen over

@@ -107,6 +107,36 @@ export function eksempelBillede(typeId: VisningsTypeId, kategori: string): strin
   return `/eksempler/katalog/${prefix}-${typeId === "gulv" ? "gulv" : typeId === "stativ" ? "stativ" : "detalje"}.webp`;
 }
 
+// Spejl-eksempler i BEGGE køn (ejer-ordre 25/8: trialens låste stilarter skal
+// vise både dame- og herre-eksempler). Kønnet pr. fil er verificeret ved
+// selvsyn 25/8 — bemærk at p15 (det gamle overdel-eksempel) faktisk er en
+// mand. Kategorier uden eksempel i et køn falder tilbage til det generiske
+// spejlbillede i samme køn — aldrig til det modsatte.
+const SPEJL_DAME: Record<string, string> = {
+  kjole: "/eksempler/katalog/p4-sovevaerelse-kjole.webp",
+  bukser: "/eksempler/katalog/p5-walkin-jeans.webp",
+  jakke: "/eksempler/katalog/p2-entre-cardigan.webp",
+  overdel: "/eksempler/katalog/p9-stue-strik.webp",
+  taske: "/eksempler/katalog/p7-entre-taske.webp",
+  generisk: "/eksempler/katalog/p9-stue-strik.webp",
+};
+
+const SPEJL_HERRE: Record<string, string> = {
+  bukser: "/eksempler/katalog/p19-efter-jeans-mand.webp",
+  jakke: "/eksempler/katalog/p8-opgang-frakke-mand.webp",
+  overdel: "/eksempler/katalog/p6-vaerelse-strik-mand.webp",
+  generisk: "/eksempler/katalog/p6-vaerelse-strik-mand.webp",
+};
+
+/** Dame- og herre-spejleksempel for en kategori (trialens låste stilarter) */
+export function spejlEksempelPar(kategori: string): { dame: string; herre: string } {
+  const skabelonId = vaelgSkabelon(kategori).id;
+  return {
+    dame: SPEJL_DAME[skabelonId] ?? SPEJL_DAME.generisk!,
+    herre: SPEJL_HERRE[skabelonId] ?? SPEJL_HERRE.generisk!,
+  };
+}
+
 /** Versions-tag i generations.prompt_version-formatet: "id@vN" (FR-15) */
 export function visningVersionsTag(visning: VisningsType): string {
   return `${visning.id}@v${visning.version}`;

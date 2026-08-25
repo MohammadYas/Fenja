@@ -15,7 +15,7 @@ import { psykologiskAndel } from "@/lib/fremdrift";
 import {
   VISNINGS_TYPER,
   eksempelBillede,
-  type VisningsType,
+  spejlEksempelPar,
 } from "@/lib/pipeline/visninger";
 
 declare global {
@@ -218,8 +218,6 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
     }
   }
 
-  const laasteStilarter = VISNINGS_TYPER.filter((v) => v.id !== trial.visningId);
-
   return (
     <div>
       <div ref={turnstileBoks} />
@@ -265,7 +263,7 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
       ) : null}
 
       {tilstand.fase === "resultat" ? (
-        <ResultatVisning resultat={tilstand.resultat} laasteStilarter={laasteStilarter} />
+        <ResultatVisning resultat={tilstand.resultat} />
       ) : null}
 
       {tilstand.fase === "blokeret" ? (
@@ -306,13 +304,18 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
   );
 }
 
-function ResultatVisning({
-  resultat,
-  laasteStilarter,
-}: {
-  resultat: Resultat;
-  laasteStilarter: readonly VisningsType[];
-}) {
+function ResultatVisning({ resultat }: { resultat: Resultat }) {
+  // Låste stilarter: spejlet i BEGGE køn (ejer-ordre 25/8) + bøjle og
+  // nærbillede — statiske katalogeksempler, intet endpoint at trigge
+  const kategori = resultat.kategori ?? "";
+  const spejlPar = spejlEksempelPar(kategori);
+  const laasteStilarter = [
+    { id: "spejl-dame", navn: da.prov.stilSpejlDame, billede: spejlPar.dame },
+    { id: "spejl-herre", navn: da.prov.stilSpejlHerre, billede: spejlPar.herre },
+    ...VISNINGS_TYPER.filter((v) => v.id !== trial.visningId && v.id !== "spejl").map(
+      (v) => ({ id: v.id, navn: v.navn, billede: eksempelBillede(v.id, kategori) }),
+    ),
+  ];
   // Pladsholder-linjer for de skjulte 40 % — selve teksten er ALDRIG sendt
   // til klienten, så sløringen her er ren grafik, ikke skjult indhold
   const skjulteLinjer = Math.max(2, Math.min(6, Math.ceil(resultat.beskrivelseSkjulteTegn / 45)));
@@ -380,7 +383,7 @@ function ResultatVisning({
           statiske katalogeksempler, og der findes intet endpoint at trigge */}
       <div className="mt-8">
         <p className="text-titel font-medium">{da.prov.laasteStilarter}</p>
-        <div className="mt-3 grid grid-cols-3 gap-3">
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {laasteStilarter.map((stil) => (
             <Link
               key={stil.id}
@@ -388,7 +391,7 @@ function ResultatVisning({
               className="group relative overflow-hidden rounded-bloed border border-kant"
             >
               <Image
-                src={eksempelBillede(stil.id, resultat.kategori ?? "")}
+                src={stil.billede}
                 alt={stil.navn}
                 width={300}
                 height={400}
