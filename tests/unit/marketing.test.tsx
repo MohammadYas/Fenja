@@ -30,7 +30,10 @@ describe("forsidens forventningsafstemning", () => {
   it("varsler om kreditter før signup uden at låse et kreditforhold", async () => {
     const html = renderToStaticMarkup(await Forside());
 
-    expect(html).toContain("Du skal bruge kreditter for at lave en annonce.");
+    // Omformuleret 25/8 (gratis prøven er hovedvejen), men varslet består:
+    // ingen skal signe op uden at vide, at annoncer koster kreditter
+    expect(html).toContain("Start med en gratis prøve uden konto.");
+    expect(html).toContain("bruger du kreditter");
     // Ejer-ordre 2026-08-16: abonnementet er standardvejen — uden binding
     expect(html).toContain("uden binding, opsig når som helst");
     expect(html).not.toMatch(/1 kredit\s*=\s*1 færdig annonce/i);

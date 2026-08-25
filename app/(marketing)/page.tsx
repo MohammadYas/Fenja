@@ -76,18 +76,18 @@ export default async function Forside() {
             <p className="mt-6 max-w-laesbar text-lead text-tekst/80">
               {vinted.hero.tekst}
             </p>
-            <Link href="/log-ind" className="knap-link mt-8">
+            {/* Ejer-ordre 25/8 aften: gratis prøven er hovedknappen — den
+                laveste tærskel (ingen konto) skal være den tydeligste vej */}
+            <Link href="/prov" className="knap-link mt-8">
               {vinted.hero.knap}
             </Link>
             {/* Friktionsdræber (konverterings-plan 20/8) */}
             <p className="mt-2 text-detalje text-tekst/60">
               {vinted.hero.friktion}
             </p>
-            {/* Gratis prøve uden konto (25/8): laveste tærskel — TikTok-
-                trafikken lander også direkte på /prov via bio-linket */}
             <p className="mt-4 text-detalje">
-              <Link href="/prov" className="soem-link text-primaer">
-                {vinted.hero.provLink}
+              <Link href="/log-ind" className="soem-link text-primaer">
+                {vinted.hero.loginLink}
               </Link>
             </p>
           </div>
@@ -173,7 +173,7 @@ export default async function Forside() {
           {/* Mellem-CTA (konverterings-plan 20/8) */}
           <p className="mt-6">
             <Link
-              href="/log-ind"
+              href="/prov"
               className="soem-link inline-flex min-h-touch items-center font-medium text-primaer"
             >
               {vinted.mellemCta} →
@@ -263,11 +263,16 @@ export default async function Forside() {
             <p className="mt-4 max-w-laesbar text-tekst/80">
               {vinted.cta.kreditNote}
             </p>
-            <Link href="/log-ind" className="knap-link mt-7">
+            <Link href="/prov" className="knap-link mt-7">
               {vinted.cta.knap}
             </Link>
             <p className="mt-2 text-detalje text-tekst/60">
               {vinted.hero.friktion}
+            </p>
+            <p className="mt-3 text-detalje">
+              <Link href="/log-ind" className="soem-link text-primaer">
+                {vinted.cta.loginLink}
+              </Link>
             </p>
           </Reveal>
         </div>

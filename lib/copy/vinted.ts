@@ -18,11 +18,11 @@ export const vinted = {
       // Ejer-ordre 22/8: "tag ET billede", ikke 2–4 — og det er ærligt:
       // wizarden kræver kun helhedsfotoet, resten er valgfrit
       "Tag ét billede af dit tøj, så renser Selja det, viser tøjet båret og skriver titel, beskrivelse og prisforslag — selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
-    knap: "Lav din første annonce",
-    friktion: "Uden binding · du betaler kun for leverede billeder · fejlede refunderes automatisk",
-    // Gratis prøve uden konto (25/8): sekundær vej under hoved-CTA'en —
-    // laveste tærskel for TikTok-trafikken
-    provLink: "Eller prøv gratis med ét billede, helt uden konto",
+    // Ejer-ordre 25/8 aften: gratis prøven er HOVEDKNAPPEN — den laveste
+    // tærskel skal være den tydeligste vej. Login er den sekundære linje.
+    knap: "Prøv gratis med ét billede",
+    friktion: "Ingen konto, intet kort · produktbillede, annonce og prisforslag med det samme",
+    loginLink: "Har du en konto? Log ind og lav din annonce",
   },
   // Drømme-regnestykket: ægte høst-medianer, tydeligt mærket regneeksempel
   skabRegner: {
@@ -34,7 +34,8 @@ export const vinted = {
       `Regneeksempel — ikke et løfte. Typisk midterpris ${median} kr. pr. stykke fra vores markedshøst ${dato}.`,
     knap: "Kom i gang nu",
   },
-  mellemCta: "Lav din første annonce",
+  // Peger på den gratis prøve (25/8) — samme lave tærskel som heroen
+  mellemCta: "Prøv det gratis med dit eget tøj",
   stickyCta: "Lav min annonce",
   // Ejer-ordre 2026-08-20: flere valgbare før/efter-eksempler. Hvert par
   // viser SAMME stykke tøj (FØR = dårligt aftenfoto, EFTER = spejlselfie i
@@ -180,7 +181,8 @@ export const vinted = {
   cta: {
     titel: "Det næste stykke tøj, du sælger, kan være klar om 2 minutter",
     kreditNote:
-      "Du skal bruge kreditter for at lave en annonce. Vælg et abonnement, når du er klar — uden binding, opsig når som helst.",
-    knap: "Opret dig og kom i gang",
+      "Start med en gratis prøve uden konto. Vil du lave flere annoncer, bruger du kreditter: uden binding, opsig når som helst.",
+    knap: "Prøv gratis med ét billede",
+    loginLink: "Eller log ind, hvis du allerede har en konto",
   },
 } as const;
