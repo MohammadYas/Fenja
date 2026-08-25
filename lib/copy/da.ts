@@ -1245,6 +1245,29 @@ export const da = {
       dagensTrialsTal: (completed: number, failed: number, blocked: number) =>
         `${completed} leveret · ${failed} fejlet · ${blocked} blokeret`,
       konvertering: "Trial → signup (i alt)",
+      // Tragten for det nye flow (25/8): forside → /prov → startet → leveret
+      // → claimet. Følger Trafik-sektionens periode- og kildefilter.
+      tragt: {
+        titel: "Trial-tragten",
+        forklaring:
+          "Følger perioden og kilden fra Trafik-filteret ovenfor. Besøgstal er unikke / visninger; procenten er trinnets andel af trinnet før. Blokeringer og starter følger kun perioden (ikke kilden).",
+        forside: "Forside-besøg",
+        provSide: "/prov-besøg",
+        startet: "Trials startet",
+        leveret: "Leveret",
+        signup: "Claimet til konto",
+        blokeret: "Blokeret undervejs",
+        blokeretTom: "Ingen blokeret i perioden.",
+        tom: "Ingen trial-aktivitet i perioden endnu.",
+        aarsager: {
+          lukket: "lukket i admin",
+          budget: "budgetloft",
+          time: "time-cap",
+          cookie: "cookie",
+          ip: "IP",
+          captcha: "captcha",
+        } as Record<string, string>,
+      },
       konverteringTal: (signups: number, completed: number) =>
         completed > 0
           ? `${signups} af ${completed} (${Math.round((signups / completed) * 100)} %)`

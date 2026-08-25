@@ -306,7 +306,7 @@ export default async function Admin({
     (await hentTrialIndstillinger()) ?? STANDARD_TRIAL_INDSTILLINGER;
   const trialTal = await (async () => {
     try {
-      const [dagens, blokeret, completedIAlt, signups] = await Promise.all([
+      const [dagens, blokeret, completedIAlt, signups, periodensEvents] = await Promise.all([
         service
           .from("trial_usage")
           .select("status, cost_estimat_dkk")
@@ -326,12 +326,28 @@ export default async function Admin({
           .from("trial_events")
           .select("id", { count: "exact", head: true })
           .eq("event", "trial_to_signup"),
+        // Tragten (25/8): periodens events følger Trafik-filterets ?dage=
+        service
+          .from("trial_events")
+          .select("event, aarsag")
+          .gte("created_at", periodeStart)
+          .limit(10_000),
       ]);
       if (dagens.error) return null;
       const raekker = (dagens.data ?? []) as {
         status: string;
         cost_estimat_dkk: number | null;
       }[];
+      const events = (periodensEvents.data ?? []) as {
+        event: string;
+        aarsag: string | null;
+      }[];
+      const blokeretAarsager = new Map<string, number>();
+      for (const e of events) {
+        if (e.event !== "trial_blocked") continue;
+        const navn = e.aarsag ?? "ukendt";
+        blokeretAarsager.set(navn, (blokeretAarsager.get(navn) ?? 0) + 1);
+      }
       return {
         forbrugDkk: raekker.reduce((sum, r) => sum + Number(r.cost_estimat_dkk ?? 0), 0),
         completed: raekker.filter((r) => r.status === "completed").length,
@@ -339,11 +355,25 @@ export default async function Admin({
         blokeret: blokeret.count ?? 0,
         completedIAlt: completedIAlt.count ?? 0,
         signups: signups.count ?? 0,
+        periode: {
+          startet: events.filter((e) => e.event === "trial_started").length,
+          leveret: events.filter((e) => e.event === "trial_completed").length,
+          signups: events.filter((e) => e.event === "trial_to_signup").length,
+          blokeretAarsager: [...blokeretAarsager.entries()].sort((a, b) => b[1] - a[1]),
+        },
       };
     } catch {
       return null;
     }
   })();
+
+  // Tragtens besøgs-trin genbruger trafiksektionens filtrerede rækker
+  const tragtForside = besoeg.filter((b) => b.sti === "/");
+  const tragtProv = besoeg.filter((b) => b.sti === "/prov");
+  const tragtPct = (del: number, helhed: number): string =>
+    helhed > 0 ? `${Math.round((del / helhed) * 100)} %` : "—";
+  const unikEllerVisninger = (raekker: BesoegRaekke[]): number =>
+    unikke(raekker) ?? raekker.length;
 
   const klageData = klageSvar.data;
 
@@ -662,6 +692,72 @@ export default async function Admin({
       ) : (
         <p className="mt-3 text-detalje text-tekst/70">{da.admin.trial.migrationMangler}</p>
       )}
+
+      {/* Tragten for det nye flow (25/8): forside → /prov → startet → leveret
+          → claimet — følger Trafik-filterets periode/kilde ovenfor */}
+      {trialTal ? (
+        <div className="mt-5 rounded-bloed border border-kant bg-flade p-4">
+          <p className="font-medium">{da.admin.trial.tragt.titel}</p>
+          <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+            {da.admin.trial.tragt.forklaring}
+          </p>
+          {besoeg.length === 0 && trialTal.periode.startet === 0 ? (
+            <p className="mt-3 text-detalje text-tekst/70">{da.admin.trial.tragt.tom}</p>
+          ) : (
+            <ul className="mt-3 flex max-w-md flex-col gap-1 font-mono text-detalje">
+              {(
+                [
+                  [
+                    da.admin.trial.tragt.forside,
+                    `${unikke(tragtForside) ?? "—"} / ${tragtForside.length}`,
+                    null,
+                  ],
+                  [
+                    da.admin.trial.tragt.provSide,
+                    `${unikke(tragtProv) ?? "—"} / ${tragtProv.length}`,
+                    tragtPct(unikEllerVisninger(tragtProv), unikEllerVisninger(tragtForside)),
+                  ],
+                  [
+                    da.admin.trial.tragt.startet,
+                    String(trialTal.periode.startet),
+                    tragtPct(trialTal.periode.startet, unikEllerVisninger(tragtProv)),
+                  ],
+                  [
+                    da.admin.trial.tragt.leveret,
+                    String(trialTal.periode.leveret),
+                    tragtPct(trialTal.periode.leveret, trialTal.periode.startet),
+                  ],
+                  [
+                    da.admin.trial.tragt.signup,
+                    String(trialTal.periode.signups),
+                    tragtPct(trialTal.periode.signups, trialTal.periode.leveret),
+                  ],
+                ] as const
+              ).map(([navn, vaerdi, pct]) => (
+                <li key={navn} className="flex justify-between gap-4">
+                  <span>{navn}</span>
+                  <span className="shrink-0">
+                    {vaerdi}
+                    {pct ? <span className="ml-2 text-tekst/60">{pct}</span> : null}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="mt-3 text-detalje text-tekst/70">
+            {da.admin.trial.tragt.blokeret}:{" "}
+            {trialTal.periode.blokeretAarsager.length === 0
+              ? da.admin.trial.tragt.blokeretTom
+              : trialTal.periode.blokeretAarsager
+                  .map(
+                    ([aarsag, antal]) =>
+                      `${da.admin.trial.tragt.aarsager[aarsag] ?? aarsag} ${antal}`,
+                  )
+                  .join(" · ")}
+          </p>
+        </div>
+      ) : null}
+
       <TrialIndstillinger
         startAktiv={trialIndstillinger.aktiv}
         startBudgetDkk={trialIndstillinger.dagligtBudgetDkk}
