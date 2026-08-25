@@ -157,10 +157,16 @@ describe("Turnstile server-side (ejer-krav 4: fail = afvis)", () => {
     expect(await verificerTurnstile(null, null)).toBe(false);
   });
 
-  it("afviser når hemmeligheden mangler (fejlkonfiguration åbner aldrig trialen)", async () => {
+  it("uden konfigureret nøgle springes captchaen over (release 25/8 kører uden Cloudflare)", async () => {
     vi.stubEnv("MOCK_PROVIDERS", "");
     vi.stubEnv("TURNSTILE_SECRET_KEY", "");
-    expect(await verificerTurnstile("et-token", null)).toBe(false);
+    expect(await verificerTurnstile(null, null)).toBe(true);
+  });
+
+  it("MED konfigureret nøgle håndhæves captchaen: manglende token afvises", async () => {
+    vi.stubEnv("MOCK_PROVIDERS", "");
+    vi.stubEnv("TURNSTILE_SECRET_KEY", "hemmelig");
+    expect(await verificerTurnstile(null, null)).toBe(false);
   });
 
   it("afviser når Cloudflare svarer success=false eller fejler", async () => {

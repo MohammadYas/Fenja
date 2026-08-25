@@ -62,11 +62,11 @@ insert into storage.buckets (id, name, public)
 values ('trial-photos', 'trial-photos', false)
 on conflict (id) do nothing;
 
--- Oprydning (pg_cron er allerede aktiveret 23/8 — kør planlægningen ÉN gang
--- manuelt i Supabase, ligesom 'ryd-rate-limit'):
---   SELECT cron.schedule('ryd-trial-fotos', '15 3 * * *',
---     $$DELETE FROM storage.objects
---       WHERE bucket_id = 'trial-photos' AND created_at < now() - interval '7 days'$$);
+-- Oprydning: FOTOS slettes efter 7 dage af det planlagte Trigger.dev-job
+-- `trial-oprydning` (trigger/trial-oprydning.ts) — Supabase BLOKERER direkte
+-- SQL-sletning i storage.objects (storage.protect_delete, fundet 25/8), så
+-- pg_cron kan kun rydde selve rækkerne. Række-jobbet er planlagt i prod 25/8
+-- (kør planlægningen ÉN gang manuelt, ligesom 'ryd-rate-limit'):
 --   SELECT cron.schedule('ryd-trial-usage', '20 3 * * *',
 --     $$DELETE FROM public.trial_usage
 --       WHERE created_at < now() - interval '90 days' AND claimed_by IS NULL$$);

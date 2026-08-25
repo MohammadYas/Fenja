@@ -239,7 +239,7 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
             }}
           />
           <Button
-            className="min-h-16 w-full text-lead"
+            className="w-full py-5 text-lead"
             travl={tilstand.fase === "sender"}
             onClick={() => filInput.current?.click()}
           >

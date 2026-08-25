@@ -35,8 +35,10 @@ export function delvisSoegeord(
   soegeord: string[],
   maksSynlige = 3,
 ): { synlige: string[]; skjulte: number } {
+  // Tomme ord filtreres — modellen kan levere huller, og de skal aldrig vises
+  const rene = soegeord.map((o) => o.trim()).filter(Boolean);
   return {
-    synlige: soegeord.slice(0, maksSynlige),
-    skjulte: Math.max(0, soegeord.length - maksSynlige),
+    synlige: rene.slice(0, maksSynlige),
+    skjulte: Math.max(0, rene.length - maksSynlige),
   };
 }
