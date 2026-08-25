@@ -83,6 +83,13 @@ export default async function Forside() {
             <p className="mt-2 text-detalje text-tekst/60">
               {vinted.hero.friktion}
             </p>
+            {/* Gratis prøve uden konto (25/8): laveste tærskel — TikTok-
+                trafikken lander også direkte på /prov via bio-linket */}
+            <p className="mt-4 text-detalje">
+              <Link href="/prov" className="soem-link text-primaer">
+                {vinted.hero.provLink}
+              </Link>
+            </p>
           </div>
           <div className="mt-12 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:mt-0">
             <Reveal>

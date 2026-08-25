@@ -1225,6 +1225,33 @@ export const da = {
       fejlGem:
         "Kunne ikke gemme valget. Er migration 20260823100000_indstillinger kørt i Supabase?",
     },
+    // Gratis trial-drift (ejer-ordre 25/8): toggle + budgetloft uden deploy
+    trial: {
+      titel: "Gratis trial",
+      forklaring:
+        "Prøven på /prov: ét gratis flat-lay-billede + annonce uden konto. Slår du den fra, afvises nye forsøg med det samme — uden deploy. Budgetloftet lukker automatisk for resten af døgnet, når dagens estimerede trial-forbrug rammer det.",
+      aktivLabel: "Gratis trial aktiv",
+      budgetLabel: "Dagligt budgetloft for trials (kr.)",
+      knap: "Gem",
+      gemmer: "Gemmer…",
+      ok: (aktiv: boolean, budget: number) =>
+        `Gemt. Trialen er ${aktiv ? "åben" : "LUKKET"}, budgetloft ${budget} kr. pr. døgn.`,
+      fejlUgyldig: "Ugyldige værdier — budgettet skal være 0–10.000 kr.",
+      fejlGem:
+        "Kunne ikke gemme. Er migration 20260823100000_indstillinger kørt i Supabase?",
+      // Dagens tal + konvertering (læses direkte af admin-siden)
+      dagensForbrug: "Dagens trial-forbrug",
+      dagensTrials: "Trials i dag",
+      dagensTrialsTal: (completed: number, failed: number, blocked: number) =>
+        `${completed} leveret · ${failed} fejlet · ${blocked} blokeret`,
+      konvertering: "Trial → signup (i alt)",
+      konverteringTal: (signups: number, completed: number) =>
+        completed > 0
+          ? `${signups} af ${completed} (${Math.round((signups / completed) * 100)} %)`
+          : "Ingen leverede trials endnu.",
+      migrationMangler:
+        "Trial-tallene kræver migration 20260825120000_trial — kør den i Supabase.",
+    },
     // Manuel kredittildeling (ejer-ordre 22/8)
     tildel: {
       titel: "Tildel kreditter",
@@ -1279,6 +1306,50 @@ export const da = {
     klageGenererede: "Genererede billeder (det der bedømmes)",
     klageIngenBilleder: "Ingen genererede billeder på annoncen.",
     klageBrugerFotos: "Brugerens egne fotos (reference)",
+  },
+  // Gratis prøve uden konto (ejer-ordre 25/8): /prov — mobil-først, ét foto,
+  // ingen formularer. Blokeringsbeskeder er venlige og peger altid på signup.
+  prov: {
+    titel: "Prøv Selja gratis",
+    metaBeskrivelse:
+      "Tag ét billede af dit tøj og se, hvad Selja laver af det — produktbillede, annoncetekst og prisforslag. Uden konto, uden betalingskort.",
+    rubrik: "Se hvad dit tøj er værd — gratis",
+    lead: "Tag ét billede af dit tøj. Selja laver et produktbillede, skriver annoncen og foreslår en pris. Ingen konto, intet kort.",
+    uploadKnap: "Tag et billede af dit tøj",
+    uploadHjaelp: "Ét foto er nok — læg tøjet frem, så det hele kan ses.",
+    // Loading (forventningen sættes ærligt — genereringen tager op til et par minutter)
+    laverBillede: "Selja arbejder på dit tøj …",
+    laverBilledeDetalje: (sekunder: number) =>
+      `Produktbillede, annonce og prisforslag er typisk klar på ${Math.round(sekunder / 60)}–${Math.ceil(sekunder / 60) + 1} minutter. Bliv på siden.`,
+    // Resultatet
+    resultatRubrik: "Din annonce er klar",
+    prisRubrik: "Prisforslag",
+    pris: (fra: number, til: number) => `${fra}–${til} kr.`,
+    beskrivelseSkjult: "Resten af annoncen er klar — opret en gratis konto for at se det hele.",
+    soegeordFlere: (antal: number) => `+ ${antal} søgeord mere`,
+    vandmaerkeNote: "Billedet her har selja.dk-vandmærke og nedsat opløsning.",
+    // Låste stilarter (ejer-krav 25/8): ren visuel upsell — kan ALDRIG generere
+    laasteStilarter: "Samme foto kan også blive til",
+    laasLabel: "Lås op med en konto",
+    ctaRubrik: "Få det hele med en gratis konto",
+    cta: "Opret gratis konto for at hente billedet uden vandmærke og se hele annoncen",
+    ctaNote: "Dit resultat ligger klar på kontoen, lige når du har oprettet dig.",
+    // Fejl og blokeringer — venlige, ærlige, altid med en vej videre
+    fejlIngenFil: "Vælg et billede først.",
+    fejlForStor: "Billedet er over 8 MB — tag det igen eller vælg et mindre.",
+    fejlUgyldigFil: "Filen ser ikke ud til at være et billede (jpg, png, webp eller HEIC).",
+    fejlKunneIkkeLaeses:
+      "Vi kunne ikke læse billedet. Gem det som JPEG (eller tag et screenshot af det), og prøv igen.",
+    fejlCaptcha: "Vi kunne ikke bekræfte, at du er et menneske. Genindlæs siden og prøv igen.",
+    fejlLukket: "Gratis prøver er lukket lige nu. Opret en gratis konto, så er du klar, når du vil i gang.",
+    fejlBudget: "Gratis prøver er brugt op for i dag — prøv igen i morgen, eller opret en gratis konto.",
+    fejlAlleredeBrugt:
+      "Du har allerede brugt din gratis prøve. Opret en gratis konto for at lave flere annoncer — dit resultat følger med.",
+    fejlGenerering:
+      "Noget gik galt undervejs, og der blev ikke lavet noget. Du kan prøve igen med et nyt billede.",
+    fejlFindesIkke: "Vi kunne ikke finde den prøve — den kan være udløbet.",
+    proevIgenKnap: "Prøv igen",
+    blokeretCta: "Opret gratis konto",
   },
   // Klage over genereret billede (ejer-ordre 2026-08-20): brugeren kan anmode
   // om sin kredit tilbage; ejeren afgør klagen i admin.

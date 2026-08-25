@@ -20,6 +20,9 @@ export const vinted = {
       "Tag ét billede af dit tøj, så renser Selja det, viser tøjet båret og skriver titel, beskrivelse og prisforslag — selve annoncen tager cirka 2 minutter, når du er logget ind og har kreditter.",
     knap: "Lav din første annonce",
     friktion: "Uden binding · du betaler kun for leverede billeder · fejlede refunderes automatisk",
+    // Gratis prøve uden konto (25/8): sekundær vej under hoved-CTA'en —
+    // laveste tærskel for TikTok-trafikken
+    provLink: "Eller prøv gratis med ét billede, helt uden konto",
   },
   // Drømme-regnestykket: ægte høst-medianer, tydeligt mærket regneeksempel
   skabRegner: {

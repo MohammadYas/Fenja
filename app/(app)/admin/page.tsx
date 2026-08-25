@@ -2,6 +2,10 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { hentModelValg } from "@/lib/admin/billedmodel-valg";
 import { CONTENT_PROMPTS } from "@/lib/admin/content-prompts";
+import {
+  STANDARD_TRIAL_INDSTILLINGER,
+  hentTrialIndstillinger,
+} from "@/lib/admin/trial-indstillinger";
 import { erAdmin } from "@/lib/auth/admin";
 import { billedModeller, misbrugsvaern } from "@/lib/config";
 import { da } from "@/lib/copy/da";
@@ -11,6 +15,7 @@ import { BilledModelValg } from "./billedmodel";
 import { ContentVaerktoejer } from "./content-vaerktoejer";
 import { ForsideBilleder } from "./forside-billeder";
 import { TildelKreditter } from "./tildel-kreditter";
+import { TrialIndstillinger } from "./trial-indstillinger";
 import { KlageListe, type KlageRaekke } from "./klage-liste";
 
 export const metadata = { title: `${da.admin.titel} · ${da.site.navn}` };
@@ -292,6 +297,51 @@ export default async function Admin({
     (r) => r.kind === "onmodel" && r.status === "succeeded",
   ).length;
   const kostPrKredit = leveredeBilleder > 0 ? totalCost / leveredeBilleder : null;
+
+  // Trial-tal (25/8): dagens forbrug/antal + konvertering trial → signup.
+  // Fejltolerant før trial-migrationen er kørt — null viser vejledningen.
+  const midnatUtc = new Date();
+  midnatUtc.setUTCHours(0, 0, 0, 0);
+  const trialIndstillinger =
+    (await hentTrialIndstillinger()) ?? STANDARD_TRIAL_INDSTILLINGER;
+  const trialTal = await (async () => {
+    try {
+      const [dagens, blokeret, completedIAlt, signups] = await Promise.all([
+        service
+          .from("trial_usage")
+          .select("status, cost_estimat_dkk")
+          .gte("created_at", midnatUtc.toISOString()),
+        service
+          .from("trial_events")
+          .select("id", { count: "exact", head: true })
+          .eq("event", "trial_blocked")
+          .gte("created_at", midnatUtc.toISOString()),
+        service
+          .from("trial_usage")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "completed"),
+        service
+          .from("trial_events")
+          .select("id", { count: "exact", head: true })
+          .eq("event", "trial_to_signup"),
+      ]);
+      if (dagens.error) return null;
+      const raekker = (dagens.data ?? []) as {
+        status: string;
+        cost_estimat_dkk: number | null;
+      }[];
+      return {
+        forbrugDkk: raekker.reduce((sum, r) => sum + Number(r.cost_estimat_dkk ?? 0), 0),
+        completed: raekker.filter((r) => r.status === "completed").length,
+        failed: raekker.filter((r) => r.status === "failed").length,
+        blokeret: blokeret.count ?? 0,
+        completedIAlt: completedIAlt.count ?? 0,
+        signups: signups.count ?? 0,
+      };
+    } catch {
+      return null;
+    }
+  })();
 
   const klageData = klageSvar.data;
 
@@ -576,6 +626,44 @@ export default async function Admin({
           ))}
         </div>
       )}
+
+      {/* Gratis trial (25/8): toggle + budgetloft + dagens tal og konvertering */}
+      <h2 className="mt-8 text-titel font-medium">{da.admin.trial.titel}</h2>
+      <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+        {da.admin.trial.forklaring}
+      </p>
+      {trialTal ? (
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <Card>
+            <p className="text-detalje text-tekst/70">{da.admin.trial.dagensForbrug}</p>
+            <p className="mt-1 font-mono text-titel">
+              {trialTal.forbrugDkk.toFixed(2)} / {trialIndstillinger.dagligtBudgetDkk} kr.
+            </p>
+          </Card>
+          <Card>
+            <p className="text-detalje text-tekst/70">{da.admin.trial.dagensTrials}</p>
+            <p className="mt-1 font-mono text-titel">
+              {da.admin.trial.dagensTrialsTal(
+                trialTal.completed,
+                trialTal.failed,
+                trialTal.blokeret,
+              )}
+            </p>
+          </Card>
+          <Card>
+            <p className="text-detalje text-tekst/70">{da.admin.trial.konvertering}</p>
+            <p className="mt-1 font-mono text-titel">
+              {da.admin.trial.konverteringTal(trialTal.signups, trialTal.completedIAlt)}
+            </p>
+          </Card>
+        </div>
+      ) : (
+        <p className="mt-3 text-detalje text-tekst/70">{da.admin.trial.migrationMangler}</p>
+      )}
+      <TrialIndstillinger
+        startAktiv={trialIndstillinger.aktiv}
+        startBudgetDkk={trialIndstillinger.dagligtBudgetDkk}
+      />
 
       {/* Billedmodel (23/8): hvilken model brugerne kører på — uden deploy */}
       <h2 className="mt-8 text-titel font-medium">{da.admin.billedmodel.titel}</h2>

@@ -5,6 +5,7 @@ import { bedstMuligt, sendVelkomst } from "@/lib/emails/notifikationer";
 import { SupabaseLedgerDb } from "@/lib/credits/supabase";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
+import { claimTrialVedLogin } from "@/lib/trial/claim";
 
 // Kaldes af login-siden efter en succesfuld adgangskode-login eller -oprettelse
 // (A-1 er nu traditionelt login, ikke magic link). Sætter alders-flaget (A-2),
@@ -31,6 +32,10 @@ export async function POST() {
   }
 
   await tilfoejSignupKreditter(new SupabaseLedgerDb(service), user.id);
+
+  // Gratis prøve (25/8): en trial-cookie claimer resultatet ind på kontoen —
+  // best-effort som resten af efterspillet, aldrig en blokering af login
+  await claimTrialVedLogin(service, user.id);
 
   await bedstMuligt(async () => {
     if (!user.email) return;

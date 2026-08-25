@@ -8,6 +8,7 @@ const BASE = site.baseUrl;
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: BASE, priority: 1 },
+    { url: `${BASE}/prov`, priority: 0.9 },
     { url: `${BASE}/priser`, priority: 0.9 },
     { url: `${BASE}/laer`, priority: 0.8 },
     { url: `${BASE}/log-ind`, priority: 0.3 },

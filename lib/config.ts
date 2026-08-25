@@ -244,6 +244,39 @@ export const preview = {
   dagligtBudgetDkk: 50,
 } as const;
 
+// Gratis prøve uden konto (ejer-ordre 2026-08-25). ALT her er server-side —
+// intet af det kan ændres via request-parametre. Undtagelsen fra 15/8-reglen
+// om "ingen gratis annoncer": én prøve pr. person bag captcha, IP-, cookie-
+// og fingerprint-værn samt et budgetloft, ejeren styrer i admin uden deploy.
+export const trial = {
+  // Billedstilen er hårdkodet til "liggende" (gulv/flat-lay) — de øvrige
+  // stilarter vises kun som låst upsell og kan ALDRIG trigges anonymt
+  visningId: "gulv",
+  // Billigste godkendte model der leverer (gemini-flash 0,28 kr.); mangler
+  // Gemini-nøglen falder vi tilbage til den billigste fal-model med nøgle
+  billedModelId: "gemini-flash",
+  billedModelReserveId: "flux-2-pro",
+  maksUploadBytes: 8_000_000,
+  // Nedskalering FØR provider-kaldet — halverer typisk billedomkostningen
+  maksInputKantPx: 1568,
+  // Anonyme får kun den vandmærkede udgave i reduceret opløsning
+  maksOutputKantPx: 1024,
+  // Én kørsel, ingen automatiske retries; hænger den, fejler den ærligt
+  timeoutMs: 60_000,
+  // Kun COMPLETED trials tæller — en fejlet prøve låser ikke IP'en, så den
+  // besøgende har ét ærligt forsøg mere
+  ipVinduesDage: 7,
+  // Spike-beskyttelse pr. time; det PRIMÆRE værn er budgetloftet i admin
+  maksPrTime: Number(process.env.TRIAL_HOURLY_CAP ?? 10),
+  // Default for admin-indstillingen "dagligt budgetloft for trials"
+  standardDagligtBudgetDkk: 200,
+  // Konservativt skøn pr. trial (analyse 0,02 + billede 0,28 + tekst 0,03)
+  // til budget-tællingen FØR kørslen; den faktiske sum logges efter
+  costEstimatDkk: 0.35,
+  cookieNavn: "selja_proev",
+  cookieDage: 30,
+} as const;
+
 export const pipeline = {
   troskabsTaerskel: 0.7, // K1 — kalibreres i S12 mod rigtige providers
   onModelForsoeg: 2, // 1 retry med strammere reference (C-3)
