@@ -79,13 +79,17 @@ export function normaliserVisningsvalg(raa: unknown): VisningsType[] {
 
 // Eksempelbilleder pr. (kategori-skabelon × visningstype) fra forsideserien —
 // alle er AI-genererede og viser STILEN, aldrig brugerens eget tøj.
+// Ejer-valg 25/8: cardigan-billedet (p2) er det bedste dameeksempel og er
+// standard for overdel/generisk — p15 er faktisk en mand (verificeret ved
+// selvsyn) og var et misvisende standardvalg for en overvejende kvindelig
+// målgruppe.
 const SPEJL_EKSEMPLER: Record<string, string> = {
   kjole: "/eksempler/katalog/p4-sovevaerelse-kjole.webp",
   bukser: "/eksempler/katalog/p5-walkin-jeans.webp",
   jakke: "/eksempler/katalog/p2-entre-cardigan.webp",
-  overdel: "/eksempler/katalog/p15-efter-spejl-strik.webp",
+  overdel: "/eksempler/katalog/p2-entre-cardigan.webp",
   taske: "/eksempler/katalog/p7-entre-taske.webp",
-  generisk: "/eksempler/katalog/p15-efter-spejl-strik.webp",
+  generisk: "/eksempler/katalog/p2-entre-cardigan.webp",
 };
 
 const PRODUKT_PREFIX: Record<string, string> = {
@@ -116,9 +120,10 @@ const SPEJL_DAME: Record<string, string> = {
   kjole: "/eksempler/katalog/p4-sovevaerelse-kjole.webp",
   bukser: "/eksempler/katalog/p5-walkin-jeans.webp",
   jakke: "/eksempler/katalog/p2-entre-cardigan.webp",
-  overdel: "/eksempler/katalog/p9-stue-strik.webp",
+  // Ejer-valg 25/8: cardigan-billedet er det bedste dameeksempel
+  overdel: "/eksempler/katalog/p2-entre-cardigan.webp",
   taske: "/eksempler/katalog/p7-entre-taske.webp",
-  generisk: "/eksempler/katalog/p9-stue-strik.webp",
+  generisk: "/eksempler/katalog/p2-entre-cardigan.webp",
 };
 
 const SPEJL_HERRE: Record<string, string> = {
