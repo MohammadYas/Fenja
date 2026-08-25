@@ -116,15 +116,9 @@ export function eksempelBillede(typeId: VisningsTypeId, kategori: string): strin
 // selvsyn 25/8 — bemærk at p15 (det gamle overdel-eksempel) faktisk er en
 // mand. Kategorier uden eksempel i et køn falder tilbage til det generiske
 // spejlbillede i samme køn — aldrig til det modsatte.
-const SPEJL_DAME: Record<string, string> = {
-  kjole: "/eksempler/katalog/p4-sovevaerelse-kjole.webp",
-  bukser: "/eksempler/katalog/p5-walkin-jeans.webp",
-  jakke: "/eksempler/katalog/p2-entre-cardigan.webp",
-  // Ejer-valg 25/8: cardigan-billedet er det bedste dameeksempel
-  overdel: "/eksempler/katalog/p2-entre-cardigan.webp",
-  taske: "/eksempler/katalog/p7-entre-taske.webp",
-  generisk: "/eksempler/katalog/p2-entre-cardigan.webp",
-};
+// Wizardens katalog ER dameeksemplerne (ejer-valg 25/8: cardigan-billedet
+// for overdel/generisk) — ét alias frem for to håndsynkroniserede kopier
+const SPEJL_DAME: Record<string, string> = SPEJL_EKSEMPLER;
 
 const SPEJL_HERRE: Record<string, string> = {
   bukser: "/eksempler/katalog/p19-efter-jeans-mand.webp",

@@ -1,6 +1,31 @@
 # Selja — samlet overblik
 
-**Opdateret:** 23. august 2026 · Erstatter BACKLOG/DESIGN/HANDOFF/MANGLER/PRODUCT/SELJA/SPEC/STATUS/TESTPLAN (findes i git-historikken).
+**Opdateret:** 25. august 2026 · Erstatter BACKLOG/DESIGN/HANDOFF/MANGLER/PRODUCT/SELJA/SPEC/STATUS/TESTPLAN (findes i git-historikken).
+
+## Gratis prøve uden konto (/prov) — LIVE 25/8
+
+Ét foto → flat-lay-produktbillede (selja.dk-vandmærke, maks 1024 px),
+annoncetekst med de sidste 40 % holdt tilbage server-side og fuldt
+prisforslag. Resultatet claimes ind som annonce ved signup (signeret cookie).
+Forsiden guider primært hertil; TikTok-bio peger på selja.dk/prov.
+
+**Værn** (alle server-side; ~0,35 kr./trial): admin-toggle + dagligt
+budgetloft i /admin → Gratis trial (default 200 kr., læses friskt pr.
+forsøg), TRIAL_HOURLY_CAP (10 ⇒ maks ~84 kr./døgn selv under angreb),
+1 completed trial pr. IP-hash pr. 7 dage (fejlede låser ikke), cookie +
+fingerprint. Captcha: uden Turnstile-nøgler springes den over (bevidst
+beslutning 25/8); sættes nøglerne, håndhæves den automatisk. Tragten måles
+i trial_events (started/completed/blocked/to_signup) og vises i admin.
+
+**Drift:** migration 20260825120000_trial er kørt i prod (tabeller, RLS,
+trial-photos-bucket). pg_cron 'ryd-trial-usage' rydder rækker efter 90
+dage; FOTOS slettes efter 7 dage af Trigger.dev-jobbet 'trial-oprydning'
+(Supabase blokerer SQL-sletning i storage.objects — fundet 25/8).
+
+**Udestår:** (1) `npx trigger.dev deploy` — indtil da kører genereringen på
+en in-process-fallback, der kan fryse på Netlify; (2) TRIAL_COOKIE_SECRET i
+Netlify (dev-fallback signerer indtil da — afgrænset risiko); (3) evt.
+Turnstile-nøgler (se .env.example).
 
 ## Status på rettelser
 

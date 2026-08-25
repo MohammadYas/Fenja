@@ -5,6 +5,7 @@ import { laesTrialFelter } from "@/lib/trial/form";
 import { delvisBeskrivelse, delvisSoegeord } from "@/lib/trial/resultat";
 import { verificerTurnstile } from "@/lib/trial/turnstile";
 import {
+  erTrialHaengende,
   tjekTrialVaern,
   trialTokenHash,
   type TrialVaernDb,
@@ -50,7 +51,7 @@ class FakeVaernDb implements TrialVaernDb {
   }
 }
 
-const KLIENT = { ipHash: "ip-a", fingerprintHash: "fp-a", cookieToken: null };
+const KLIENT = { ipHash: "ip-a", cookieToken: null };
 
 describe("trial-værn (alle checks server-side, ejer-krav 3+7)", () => {
   it("tillader en frisk besøgende når alt er åbent", async () => {
@@ -111,14 +112,21 @@ describe("trial-værn (alle checks server-side, ejer-krav 3+7)", () => {
     });
   });
 
-  it("fingerprint-match er sekundært signal og blokerer", async () => {
+  it("fingerprint blokerer ALDRIG alene (iOS: alle samme telefonmodel deler hash)", async () => {
+    // Kodereview 25/8: én gennemført trial fra en iPhone ville ellers spærre
+    // hele modellens kohorte i 7 dage — fingerprintet gemmes kun til analyse
     const db = new FakeVaernDb({
       completedRaekker: [{ kolonne: "fingerprint_hash", vaerdi: "fp-a" }],
     });
-    expect(await tjekTrialVaern(db, KLIENT)).toEqual({
-      tilladt: false,
-      aarsag: "fingerprint",
-    });
+    expect(await tjekTrialVaern(db, KLIENT)).toEqual({ tilladt: true });
+  });
+
+  it("høsteren: en kørsel ud over loftet + margin regnes som død", () => {
+    const nu = 1_000_000_000_000;
+    const frisk = new Date(nu - 30_000).toISOString();
+    const doed = new Date(nu - 5 * 60_000).toISOString();
+    expect(erTrialHaengende(frisk, nu)).toBe(false);
+    expect(erTrialHaengende(doed, nu)).toBe(true);
   });
 
   it("fejlsikret LUKKET: kan værnet ikke afgøres, afvises der (penge på spil)", async () => {

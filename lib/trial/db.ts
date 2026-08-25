@@ -6,6 +6,7 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { hentTrialIndstillinger } from "@/lib/admin/trial-indstillinger";
+import { trial } from "@/lib/config";
 import type { AnnonceTekst } from "@/lib/providers/text";
 import type { TrialBlokAarsag, TrialVaernDb } from "./vaern";
 
@@ -82,6 +83,10 @@ export async function opretTrialRaekke(
       ip_hash: raekke.ipHash,
       fingerprint_hash: raekke.fingerprintHash,
       status: "running",
+      // Kodereview 25/8: estimatet skrives fra START, så budgetloftet også
+      // tæller igangværende og fejlede kørsler — den faktiske sum overskriver
+      // ved completed. Konservativt: en fejlet trial beholder estimatet.
+      cost_estimat_dkk: trial.costEstimatDkk,
     })
     .select("id")
     .single();

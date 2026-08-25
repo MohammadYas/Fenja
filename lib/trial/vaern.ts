@@ -18,8 +18,7 @@ export type TrialBlokAarsag =
   | "budget"
   | "time"
   | "cookie"
-  | "ip"
-  | "fingerprint";
+  | "ip";
 
 export type TrialVaernSvar =
   | { tilladt: true }
@@ -52,9 +51,11 @@ export function trialIpHash(request: Request): string {
 
 /**
  * Sekundært signal (værn c): user-agent + accept-headers + klientens
- * skærmdata, hashet. Bevidst grovkornet — det skal fange "samme browser, ny
- * IP", ikke identificere nogen. Skærmdataene kommer fra klienten og er
- * upålidelige alene; derfor er fingerprintet aldrig det eneste værn.
+ * skærmdata, hashet. VIGTIGT (kodereview 25/8): på iOS er user-agenten
+ * frosset, så ALLE iPhones af samme model med dansk locale deler hash — én
+ * gennemført trial ville blokere hele kohorten i 7 dage. Derfor GEMMES
+ * fingerprintet kun (til misbrugsanalyse i admin/SQL) og blokerer ALDRIG
+ * alene; IP, cookie, time-cap og budgetloft bærer de hårde værn.
  */
 export function trialFingerprintHash(request: Request, skaerm: string): string {
   const dele = [
@@ -72,20 +73,29 @@ export function trialTokenHash(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
+/** Høsteren (kodereview 25/8): en trial der har kørt længere end loftet +
+ *  margin er reelt død (frosset Netlify-proces) og skal markeres failed, så
+ *  den hverken står i evigt "running" eller mangler i admin-tallene. */
+export const TRIAL_HAENGER_EFTER_MS = trial.timeoutMs + 120_000;
+
+export function erTrialHaengende(createdAtIso: string, nuMs: number = Date.now()): boolean {
+  return nuMs - new Date(createdAtIso).getTime() > TRIAL_HAENGER_EFTER_MS;
+}
+
 export function trialVindueStartIso(nuMs: number = Date.now()): string {
   return new Date(nuMs - trial.ipVinduesDage * 86_400_000).toISOString();
 }
 
 /**
- * Hele værnet i ét kald. Kun COMPLETED trials blokerer cookie/IP/fingerprint
+ * Hele værnet i ét kald. Kun COMPLETED trials blokerer cookie/IP
  * (ejer-beslutning: en fejlet prøve låser ikke — den besøgende har ét ærligt
- * forsøg mere; budgetloftet fanger misbrug af det).
+ * forsøg mere; budgetloftet fanger misbrug af det). Fingerprintet gemmes
+ * men blokerer ikke (se trialFingerprintHash).
  */
 export async function tjekTrialVaern(
   db: TrialVaernDb,
   klient: {
     ipHash: string;
-    fingerprintHash: string | null;
     /** Verificeret token fra den signerede cookie — null uden gyldig cookie */
     cookieToken: string | null;
   },
@@ -107,7 +117,7 @@ export async function tjekTrialVaern(
       return { tilladt: false, aarsag: "time" };
     }
 
-    // 3) Én pr. person: cookie → IP → fingerprint (kun completed blokerer)
+    // 3) Én pr. person: cookie → IP (kun completed blokerer)
     const siden = trialVindueStartIso(nuMs);
     if (
       klient.cookieToken &&
@@ -117,12 +127,6 @@ export async function tjekTrialVaern(
     }
     if (await db.harCompleted("ip_hash", klient.ipHash, siden)) {
       return { tilladt: false, aarsag: "ip" };
-    }
-    if (
-      klient.fingerprintHash &&
-      (await db.harCompleted("fingerprint_hash", klient.fingerprintHash, siden))
-    ) {
-      return { tilladt: false, aarsag: "fingerprint" };
     }
 
     return { tilladt: true };

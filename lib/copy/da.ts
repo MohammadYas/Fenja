@@ -1353,6 +1353,11 @@ export const da = {
     fejlGenerering:
       "Noget gik galt undervejs, og der blev ikke lavet noget. Du kan prøve igen med et nyt billede.",
     fejlFindesIkke: "Vi kunne ikke finde den prøve — den kan være udløbet.",
+    // Resultatet er færdigt, men hentningen glippede (net-bump) — det må
+    // aldrig ende i "prøv igen", som værnet ville blokere
+    fejlHentResultat:
+      "Dit resultat er klar, men vi kunne ikke hente det lige nu. Prøv at hente det igen om et øjeblik.",
+    hentIgenKnap: "Hent resultatet igen",
     proevIgenKnap: "Prøv igen",
     blokeretCta: "Opret gratis konto",
   },

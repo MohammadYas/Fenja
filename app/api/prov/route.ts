@@ -40,7 +40,7 @@ const TRIAL_FORVENTET_SEKUNDER = Math.round(trial.timeoutMs / 1000);
 export async function POST(request: NextRequest) {
   const service = opretServiceKlient();
   const blokeret = (
-    aarsag: "lukket" | "budget" | "time" | "cookie" | "ip" | "fingerprint" | "captcha",
+    aarsag: "lukket" | "budget" | "time" | "cookie" | "ip" | "captcha",
     besked: string,
     status: number,
   ) => {
@@ -91,10 +91,11 @@ export async function POST(request: NextRequest) {
   }
 
   // 5) Budget/time/cookie/IP/fingerprint — alle server-side (ejer-krav 3)
+  // Fingerprintet GEMMES på rækken (misbrugsanalyse) men blokerer ikke —
+  // på iOS deler alle telefoner af samme model hash (kodereview 25/8)
   const cookieToken = laesTrialToken(request.cookies.get(trial.cookieNavn)?.value);
   const svar = await tjekTrialVaern(new SupabaseTrialVaernDb(service), {
     ipHash,
-    fingerprintHash: felter.skaerm ? trialFingerprintHash(request, felter.skaerm) : null,
     cookieToken,
   });
   if (!svar.tilladt) {

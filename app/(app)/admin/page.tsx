@@ -316,10 +316,12 @@ export default async function Admin({
           .select("id", { count: "exact", head: true })
           .eq("event", "trial_blocked")
           .gte("created_at", midnatUtc.toISOString()),
+        // Kodereview 25/8: tælles completed fra trial_usage, driver 90-dages
+        // oprydningen konverteringen over 100 % — begge sider fra trial_events
         service
-          .from("trial_usage")
+          .from("trial_events")
           .select("id", { count: "exact", head: true })
-          .eq("status", "completed"),
+          .eq("event", "trial_completed"),
         service
           .from("trial_events")
           .select("id", { count: "exact", head: true })

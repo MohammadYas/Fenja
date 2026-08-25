@@ -61,6 +61,22 @@ export default async function Oversigt() {
     user = null;
   }
 
+  // Trial-claim (kodereview 25/8): signede man op, MENS trialen stadig
+  // kørte, sprang login-claimet den over — oversigten samler op, så
+  // resultatet lander på kontoen, så snart det er færdigt. Best-effort og
+  // idempotent (claimed_by sættes kun én gang); må aldrig vælte siden.
+  if (user) {
+    try {
+      // Dynamisk import: modulerne er server-only, og siden skal stadig
+      // kunne renderes i tests uden servermiljø
+      const { opretServiceKlient } = await import("@/lib/supabase/service");
+      const { claimTrialVedLogin } = await import("@/lib/trial/claim");
+      await claimTrialVedLogin(opretServiceKlient(), user.id);
+    } catch {
+      // demo/test-miljø uden service-nøgle — claim springes over
+    }
+  }
+
   // Hastighed (ejer 22/8: "langsomt fra menu til menu"): profil-tjek,
   // annonce-listen og kreditstatus er uafhængige opslag — de hentes
   // PARALLELT i stedet for i serie. Fejltolerancen pr. opslag er bevaret:

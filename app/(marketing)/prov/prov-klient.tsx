@@ -63,6 +63,9 @@ type Tilstand =
       kanProeveIgen: boolean;
       /** Kun en FEJLET GENERERING bruger den ene "prøv igen" — ikke valideringsfejl */
       taellerRetry: boolean;
+      /** Sat når resultatet FINDES men hentningen fejlede: "hent igen" i stedet
+       *  for et nyt forsøg (som værnet ville blokere — kodereview 25/8) */
+      hentToken?: string;
     };
 
 export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | null }) {
@@ -103,28 +106,30 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
     document.head.appendChild(script);
   }, [turnstileSiteKey]);
 
+  // Resultatet FINDES på serveren, når vi når hertil — et enkelt netværks-
+  // glitch må aldrig sende brugeren i "prøv igen" (som værnet ville blokere,
+  // fordi trialen ER completed). Derfor: 3 forsøg, og fejler alle, en
+  // "hent igen"-knap der genkalder hentningen — aldrig et nyt POST.
   const hentResultat = useCallback(async (token: string) => {
-    try {
-      const svar = await fetch(`/api/prov/resultat?token=${token}`);
-      const data = (await svar.json()) as Resultat & { fejl?: string };
-      if (!svar.ok) {
-        setTilstand({
-          fase: "fejlet",
-          besked: data.fejl ?? da.prov.fejlGenerering,
-          kanProeveIgen: !harProevetIgen.current,
-          taellerRetry: true,
-        });
-        return;
+    for (let forsoeg = 0; forsoeg < 3; forsoeg++) {
+      try {
+        const svar = await fetch(`/api/prov/resultat?token=${token}`);
+        if (svar.ok) {
+          setTilstand({ fase: "resultat", resultat: (await svar.json()) as Resultat });
+          return;
+        }
+      } catch {
+        // net-bump — næste forsøg
       }
-      setTilstand({ fase: "resultat", resultat: data });
-    } catch {
-      setTilstand({
-        fase: "fejlet",
-        besked: da.prov.fejlGenerering,
-        kanProeveIgen: !harProevetIgen.current,
-        taellerRetry: true,
-      });
+      await new Promise((r) => setTimeout(r, 3000));
     }
+    setTilstand({
+      fase: "fejlet",
+      besked: da.prov.fejlHentResultat,
+      kanProeveIgen: false,
+      taellerRetry: false,
+      hentToken: token,
+    });
   }, []);
 
   // Polling + fremdriftskurve mens genereringen kører
@@ -281,6 +286,14 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
             {tilstand.besked}
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
+            {tilstand.hentToken ? (
+              <Button
+                variant="sekundaer"
+                onClick={() => void hentResultat(tilstand.hentToken!)}
+              >
+                {da.prov.hentIgenKnap}
+              </Button>
+            ) : null}
             {tilstand.kanProeveIgen ? (
               <Button
                 variant="sekundaer"

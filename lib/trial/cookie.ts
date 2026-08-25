@@ -8,9 +8,20 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { trial } from "@/lib/config";
 
+let advaret = false;
+
 function hemmelighed(): string {
-  // Dev-fallback så flowet kan køre lokalt; i produktion SKAL env være sat
-  return process.env.TRIAL_COOKIE_SECRET ?? "selja-trial-dev-hemmelighed";
+  // Dev-fallback så flowet kan køre lokalt; i produktion SKAL env være sat.
+  // Kodereview 25/8: glemmes den, er signaturen forudsigelig (nøglen står i
+  // repoet) — cookie-værnet svækkes, men IP/budget/time-cap bærer stadig.
+  const sat = process.env.TRIAL_COOKIE_SECRET;
+  if (!sat && !advaret && process.env.NODE_ENV === "production") {
+    advaret = true;
+    console.warn(
+      "TRIAL_COOKIE_SECRET er ikke sat — trial-cookies signeres med dev-fallback (sæt env i Netlify)",
+    );
+  }
+  return sat ?? "selja-trial-dev-hemmelighed";
 }
 
 function signatur(token: string, secret: string): string {

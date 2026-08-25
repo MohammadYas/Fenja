@@ -53,7 +53,13 @@ function tilInlineData(dataUrl: string): { mimeType: string; data: string } {
 
 export async function analyserTrialFoto(fotoDataUrl: string): Promise<TrialAnalyse> {
   const noegle = process.env.GEMINI_API_KEY;
-  if (process.env.MOCK_PROVIDERS === "1" || !noegle) return MOCK_TRIAL_ANALYSE;
+  if (process.env.MOCK_PROVIDERS === "1") return MOCK_TRIAL_ANALYSE;
+  // Kodereview 25/8: manglende nøgle må ALDRIG stille falde til mock — så
+  // ville hver trial koste et ægte billede + tekst genereret ud fra en
+  // opdigtet "blå striktrøje". Fejl ærligt; trialen markeres failed.
+  if (!noegle) {
+    throw new Error("GEMINI_API_KEY mangler — trial-analysen kan ikke køre");
+  }
 
   const svar = await fetch(`${GEMINI_API}/models/${VISION_MODEL}:generateContent`, {
     method: "POST",
