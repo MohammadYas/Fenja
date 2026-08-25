@@ -8,6 +8,7 @@ import { SupabaseLedgerDb } from "@/lib/credits/supabase";
 import { bedstMuligt, sendVelkomst } from "@/lib/emails/notifikationer";
 import { hentEmailAfsender } from "@/lib/emails/send";
 import { opretServiceKlient } from "@/lib/supabase/service";
+import { claimTrialVedLogin } from "@/lib/trial/claim";
 
 export async function koerEfterBekraeftelse(args: {
   userId: string;
@@ -23,6 +24,10 @@ export async function koerEfterBekraeftelse(args: {
       .eq("id", args.userId);
   }
   await tilfoejSignupKreditter(new SupabaseLedgerDb(service), args.userId);
+
+  // Gratis prøve (25/8): trial-cookien claimer resultatet ind på kontoen —
+  // best-effort og idempotent (claimed_by sættes kun én gang)
+  await claimTrialVedLogin(service, args.userId);
 
   // S32: velkomstmail én gang pr. bruger (welcomed_at-guard). Best-effort —
   // en fejlet mail må aldrig blokere adgangen.
