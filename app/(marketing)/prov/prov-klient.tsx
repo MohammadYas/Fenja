@@ -407,6 +407,7 @@ function ResultatVisning({
       {/* CTA: resultatet claimes automatisk ved signup via trial-cookien */}
       <div className="mt-8 rounded-bloed border border-primaer bg-flade p-5">
         <p className="text-titel font-medium">{da.prov.ctaRubrik}</p>
+        <p className="mt-2 max-w-laesbar text-tekst/80">{da.prov.ctaFordele}</p>
         <Link href="/log-ind?videre=/oversigt" className="knap-link mt-4">
           {da.prov.cta}
         </Link>

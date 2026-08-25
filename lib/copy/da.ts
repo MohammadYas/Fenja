@@ -1332,7 +1332,9 @@ export const da = {
     laasteStilarter: "Samme foto kan også blive til",
     laasLabel: "Lås op med en konto",
     ctaRubrik: "Få det hele med en gratis konto",
-    cta: "Opret gratis konto for at hente billedet uden vandmærke og se hele annoncen",
+    // Knappen siger hvad den gør (HANDOFF §2.2.4) — fordelene står i linjen over
+    ctaFordele: "Billedet uden vandmærke, hele annonceteksten og alle søgeord. Klar til at sætte på Vinted.",
+    cta: "Opret gratis konto",
     ctaNote: "Dit resultat ligger klar på kontoen, lige når du har oprettet dig.",
     // Fejl og blokeringer — venlige, ærlige, altid med en vej videre
     fejlIngenFil: "Vælg et billede først.",
