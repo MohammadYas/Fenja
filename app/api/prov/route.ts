@@ -136,10 +136,11 @@ export async function POST(request: NextRequest) {
   }
   await service.from("trial_usage").update({ original_sti: originalSti }).eq("id", trialId);
 
-  // Prod-hændelse 26/8: kan kørslen ikke startes (Trigger.dev-jobbet mangler/
-  // afviser), skal den besøgende have en ØJEBLIKKELIG, ærlig fejl — aldrig
-  // minutters falsk fremdrift mod en række, intet job nogensinde samler op
-  if (!(await startTrial(trialId, originalSti))) {
+  // Prod-hændelse 26/8: kan kørslen ikke startes (ingen motor tog den),
+  // skal den besøgende have en ØJEBLIKKELIG, ærlig fejl — aldrig minutters
+  // falsk fremdrift mod en række, intet job nogensinde samler op
+  const motor = await startTrial(trialId, originalSti);
+  if (!motor) {
     await service
       .from("trial_usage")
       // Estimatet nulstilles: intet provider-kald er sket, og døde forsøg må
@@ -158,6 +159,9 @@ export async function POST(request: NextRequest) {
   const respons = NextResponse.json({
     token,
     forventetSekunder: TRIAL_FORVENTET_SEKUNDER,
+    // Fejlsøgnings-markør (26/8): hvilken motor tog kørslen — ufarlig at
+    // vise, og uvurderlig når produktionen skal aflæses udefra
+    motor,
   });
   const { name, ...opsaetning } = trialCookieOpsaetning();
   respons.cookies.set(name, signerTrialToken(token), opsaetning);

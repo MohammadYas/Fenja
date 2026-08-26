@@ -2,24 +2,26 @@ import "server-only";
 
 // Start af trial-kørslen. Rækkefølgen (26/8, efter prod-hændelsen):
 //
-//   1) Trigger.dev — vejen når jobbet "trial-pipeline" er deployet. VIGTIGT:
-//      Trigger.dev AFVISER IKKE et udeployet task-id, men parkerer kørslen i
-//      PENDING_VERSION for evigt, så handoff'et ligner en succes. Derfor
-//      aflæses kørslens status én gang efter trigger; venter den på et
-//      deploy, annulleres den (den må ikke vågne uger senere), og vi går
-//      videre til reserven.
-//   2) Netlify-baggrundsfunktionen (reserven) — kører kørslen på Netlify
-//      selv med 15 minutters loft og sitets egne nøgler. KUN et øjeblikkeligt
-//      202 tæller: på en konto uden background functions kører funktionen
-//      synkront, og så må den ikke regnes som startet — den strandede
-//      invokation aborterer selv på kø-dommen, fordi rækken allerede står
-//      failed, og koster derfor intet.
+//   1) Netlify-baggrundsfunktionen — FØRSTEVALGET i produktion: kører
+//      kørslen på Netlify selv med 15 minutters loft og sitets egne nøgler,
+//      kræver intet Trigger.dev-deploy, og 202-kvitteringen er utvetydig.
+//      KUN et øjeblikkeligt 202 tæller: på en konto uden background
+//      functions kører funktionen synkront, og så må den ikke regnes som
+//      startet — den strandede invokation aborterer selv på kø-dommen,
+//      fordi rækken allerede står failed, og koster derfor intet.
+//   2) Trigger.dev — når jobbet "trial-pipeline" er deployet. VIGTIGT:
+//      Trigger.dev AFVISER IKKE et udeployet task-id, men parkerer kørslen
+//      i PENDING_VERSION for evigt, så handoff'et ligner en succes — og
+//      lige efter trigger kan status stå QUEUED, før den flyttes til
+//      PENDING_VERSION. Derfor aflæses status to gange med en pause;
+//      venter kørslen på et deploy, annulleres den.
 //   3) I processen — KUN hvor processen overlever svaret (next dev / mock):
-//      på Netlify fryses funktionen når svaret er sendt, og kørslen ville dø
-//      stille, mens den besøgende venter forgæves (det VAR prod-hændelsen).
+//      på Netlify fryses funktionen når svaret er sendt, og kørslen ville
+//      dø stille, mens den besøgende venter forgæves (prod-hændelsen).
 //
 // Kan ingen af vejene bruges, svares ærligt false — kalderen markerer rækken
-// failed, og den besøgende får en øjeblikkelig, ærlig fejl.
+// failed, og den besøgende får en øjeblikkelig, ærlig fejl. Motoren, der tog
+// kørslen, følger med i /api/prov-svaret som fejlsøgnings-markør.
 
 import { createHmac } from "node:crypto";
 import { opretServiceKlient } from "@/lib/supabase/service";
@@ -66,54 +68,81 @@ async function startViaNetlifyBaggrund(
   }
 }
 
-/**
- * Start kørslen for en oprettet trial. `true` = kørslen ER reelt i gang
- * (Trigger.dev, Netlify-baggrund eller en overlevende lokal proces).
- * `false` = intet blev startet — kalderen skal markere rækken failed og
- * svare ærligt nu, aldrig lade den besøgende vente på et job, der ikke
- * findes.
- */
-export async function startTrial(trialId: string, originalSti: string): Promise<boolean> {
-  if (process.env.TRIGGER_SECRET_KEY) {
-    try {
-      const { tasks, runs } = await import("@trigger.dev/sdk");
-      const handle = await tasks.trigger("trial-pipeline", { trialId, originalSti });
-      let venterPaaDeploy = false;
+/** Hvilken motor tog kørslen — false = ingen (kalderen fejler ærligt).
+ *  Værdien følger med i /api/prov-svaret som fejlsøgnings-markør. */
+export type TrialMotor = "netlify" | "trigger" | "proces";
+
+async function startViaTriggerDev(trialId: string, originalSti: string): Promise<boolean> {
+  try {
+    const { tasks, runs } = await import("@trigger.dev/sdk");
+    const handle = await tasks.trigger("trial-pipeline", { trialId, originalSti });
+    // Trigger.dev afviser ikke et udeployet task-id — kørslen parkeres i
+    // PENDING_VERSION og venter for evigt. Status aflæses to gange med en
+    // kort pause: lige efter trigger kan den nå at stå QUEUED, FØR den
+    // flyttes til PENDING_VERSION (racet bag prod-hændelsen 26/8, del 3).
+    for (const ventMs of [0, 1500]) {
+      if (ventMs > 0) await new Promise((r) => setTimeout(r, ventMs));
       try {
         const koersel = await runs.retrieve(handle.id);
         const status = koersel.status as string;
-        venterPaaDeploy = status === "PENDING_VERSION" || status === "WAITING_FOR_DEPLOY";
+        if (status === "PENDING_VERSION" || status === "WAITING_FOR_DEPLOY") {
+          console.error(
+            `Trial ${trialId}: kørslen venter på et deploy af "trial-pipeline" (${status}) — annulleres`,
+          );
+          try {
+            await runs.cancel(handle.id);
+          } catch {
+            // best effort — kø-dommen i koerOgGemTrial fanger den alligevel
+          }
+          return false;
+        }
       } catch {
         // Kan status ikke aflæses, antages kørslen i gang — jobbet selv
         // efterlader aldrig en række uden slut-status
       }
-      if (!venterPaaDeploy) return true;
-      console.error(
-        `Trial ${trialId}: kørslen venter på et deploy af "trial-pipeline" (PENDING_VERSION) — annulleres; reserven tager over`,
-      );
-      try {
-        await runs.cancel(handle.id);
-      } catch {
-        // best effort — kø-dommen i koerOgGemTrial fanger den alligevel
-      }
-    } catch (fejl) {
-      console.error(
-        `Trigger.dev afviste trial-jobbet (er "trial-pipeline" deployet med npx trigger.dev deploy?):`,
-        fejl,
-      );
     }
+    return true;
+  } catch (fejl) {
+    console.error(
+      `Trigger.dev afviste trial-jobbet (er "trial-pipeline" deployet med npx trigger.dev deploy?):`,
+      fejl,
+    );
+    return false;
+  }
+}
+
+/**
+ * Start kørslen for en oprettet trial. Returnerer motoren, der reelt tog
+ * kørslen, eller `false` — så skal kalderen markere rækken failed og svare
+ * ærligt nu, aldrig lade den besøgende vente på et job, der ikke findes.
+ *
+ * I PRODUKTION er Netlify-baggrundsfunktionen førstevalget: den kræver
+ * intet Trigger.dev-deploy, og dens 202-kvittering er utvetydig — hvor
+ * Trigger.dev kan tage imod en kørsel, der aldrig starter. Trigger.dev er
+ * anden vej (og tager over, hvis Netlify-kaldet fejler).
+ */
+export async function startTrial(
+  trialId: string,
+  originalSti: string,
+): Promise<TrialMotor | false> {
+  const kanKoereLokalt = processenOverleverKoerslen();
+
+  if (!kanKoereLokalt && (await startViaNetlifyBaggrund(trialId, originalSti))) {
+    return "netlify";
   }
 
-  if (await startViaNetlifyBaggrund(trialId, originalSti)) return true;
+  if (process.env.TRIGGER_SECRET_KEY && (await startViaTriggerDev(trialId, originalSti))) {
+    return "trigger";
+  }
 
-  if (!processenOverleverKoerslen()) {
+  if (!kanKoereLokalt) {
     console.error(
-      `Trial ${trialId}: hverken Trigger.dev eller Netlify-baggrund kunne starte kørslen — afvises ærligt`,
+      `Trial ${trialId}: hverken Netlify-baggrund eller Trigger.dev kunne starte kørslen — afvises ærligt`,
     );
     return false;
   }
   void koerOgGemTrial(opretServiceKlient(), trialId, originalSti).catch(() => {
     // Allerede logget og markeret failed i koerOgGemTrial
   });
-  return true;
+  return "proces";
 }

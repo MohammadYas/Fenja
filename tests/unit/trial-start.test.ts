@@ -42,7 +42,7 @@ afterEach(() => {
 describe("startTrial svarer ærligt om kørslen reelt er i gang", () => {
   it("afleverer til Trigger.dev når nøglen findes — ingen lokal kørsel", async () => {
     vi.stubEnv("TRIGGER_SECRET_KEY", "nøgle");
-    expect(await startTrial("trial-1", "trial-1/original.jpg")).toBe(true);
+    expect(await startTrial("trial-1", "trial-1/original.jpg")).toBe("trigger");
     expect(triggerMock).toHaveBeenCalledWith("trial-pipeline", {
       trialId: "trial-1",
       originalSti: "trial-1/original.jpg",
@@ -68,14 +68,14 @@ describe("startTrial svarer ærligt om kørslen reelt er i gang", () => {
   it("lokal udvikling uden nøgle kører i processen (den overlever)", async () => {
     // Vitest kører med NODE_ENV=test — netop en langtidslevende proces
     vi.stubEnv("TRIGGER_SECRET_KEY", "");
-    expect(await startTrial("trial-4", "trial-4/original.jpg")).toBe(true);
+    expect(await startTrial("trial-4", "trial-4/original.jpg")).toBe("proces");
     expect(koerMock).toHaveBeenCalledWith({}, "trial-4", "trial-4/original.jpg");
   });
 
   it("fejlet handoff i udvikling falder tilbage til processen — udviklingsflowet knækker ikke", async () => {
     vi.stubEnv("TRIGGER_SECRET_KEY", "nøgle");
     triggerMock.mockRejectedValue(new Error("net nede"));
-    expect(await startTrial("trial-5", "trial-5/original.jpg")).toBe(true);
+    expect(await startTrial("trial-5", "trial-5/original.jpg")).toBe("proces");
     expect(koerMock).toHaveBeenCalled();
   });
 
@@ -94,7 +94,7 @@ describe("startTrial svarer ærligt om kørslen reelt er i gang", () => {
   it("PENDING_VERSION i udvikling: fjernkørslen annulleres og processen tager over", async () => {
     vi.stubEnv("TRIGGER_SECRET_KEY", "nøgle");
     retrieveMock.mockResolvedValue({ id: "run-1", status: "PENDING_VERSION" });
-    expect(await startTrial("trial-7", "trial-7/original.jpg")).toBe(true);
+    expect(await startTrial("trial-7", "trial-7/original.jpg")).toBe("proces");
     expect(cancelMock).toHaveBeenCalledWith("run-1");
     expect(koerMock).toHaveBeenCalled();
   });
@@ -103,7 +103,7 @@ describe("startTrial svarer ærligt om kørslen reelt er i gang", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("TRIGGER_SECRET_KEY", "nøgle");
     retrieveMock.mockRejectedValue(new Error("api nede"));
-    expect(await startTrial("trial-8", "trial-8/original.jpg")).toBe(true);
+    expect(await startTrial("trial-8", "trial-8/original.jpg")).toBe("trigger");
     expect(cancelMock).not.toHaveBeenCalled();
     expect(koerMock).not.toHaveBeenCalled();
   });
@@ -121,7 +121,7 @@ describe("Netlify-baggrundsfunktionen er reserven, når Trigger.dev ikke kan (26
     medNetlifyMiljoe();
     const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 202 }));
     vi.stubGlobal("fetch", fetchMock);
-    expect(await startTrial("trial-9", "trial-9/original.jpg")).toBe(true);
+    expect(await startTrial("trial-9", "trial-9/original.jpg")).toBe("netlify");
     const [url, opts] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe("https://selja.dk/.netlify/functions/trial-koersel-background");
     expect((opts.headers as Record<string, string>)["x-selja-signatur"]).toMatch(/^[0-9a-f]{64}$/);
@@ -141,12 +141,21 @@ describe("Netlify-baggrundsfunktionen er reserven, når Trigger.dev ikke kan (26
     expect(await startTrial("trial-11", "trial-11/original.jpg")).toBe(false);
   });
 
-  it("PENDING_VERSION hos Trigger.dev falder videre til Netlify-reserven", async () => {
+  it("i produktion prøves Netlify-reserven FØRST — Trigger.dev røres slet ikke", async () => {
+    // Trigger.dev kan tage imod kørsler, der aldrig starter (PENDING_VERSION
+    // og racet lige efter trigger) — Netlify-kvitteringen er utvetydig
     medNetlifyMiljoe();
     vi.stubEnv("TRIGGER_SECRET_KEY", "nøgle");
-    retrieveMock.mockResolvedValue({ id: "run-1", status: "PENDING_VERSION" });
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 202 })));
-    expect(await startTrial("trial-12", "trial-12/original.jpg")).toBe(true);
-    expect(cancelMock).toHaveBeenCalledWith("run-1");
+    expect(await startTrial("trial-12", "trial-12/original.jpg")).toBe("netlify");
+    expect(triggerMock).not.toHaveBeenCalled();
+  });
+
+  it("fejler Netlify-kaldet i produktion, tager Trigger.dev over", async () => {
+    medNetlifyMiljoe();
+    vi.stubEnv("TRIGGER_SECRET_KEY", "nøgle");
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("net nede")));
+    expect(await startTrial("trial-13", "trial-13/original.jpg")).toBe("trigger");
+    expect(triggerMock).toHaveBeenCalled();
   });
 });
