@@ -32,9 +32,31 @@ function processenOverleverKoerslen(): boolean {
 export async function startTrial(trialId: string, originalSti: string): Promise<boolean> {
   if (process.env.TRIGGER_SECRET_KEY) {
     try {
-      const { tasks } = await import("@trigger.dev/sdk");
-      await tasks.trigger("trial-pipeline", { trialId, originalSti });
-      return true;
+      const { tasks, runs } = await import("@trigger.dev/sdk");
+      const handle = await tasks.trigger("trial-pipeline", { trialId, originalSti });
+      // Prod-hændelse 26/8, del 2: Trigger.dev AFVISER IKKE et task-id, der
+      // aldrig er deployet — kørslen lander i PENDING_VERSION og venter for
+      // evigt på et deploy. Aflæs status én gang: venter den på en version,
+      // annulleres den (må ikke vågne uger senere) og vi svarer ærligt nej.
+      let venterPaaDeploy = false;
+      try {
+        const koersel = await runs.retrieve(handle.id);
+        const status = koersel.status as string;
+        venterPaaDeploy = status === "PENDING_VERSION" || status === "WAITING_FOR_DEPLOY";
+      } catch {
+        // Kan status ikke aflæses, antages kørslen i gang — jobbet selv
+        // efterlader aldrig en række uden slut-status
+      }
+      if (!venterPaaDeploy) return true;
+      console.error(
+        `Trial ${trialId}: kørslen venter på et deploy af "trial-pipeline" (PENDING_VERSION) — annulleres; kør npx trigger.dev deploy`,
+      );
+      try {
+        await runs.cancel(handle.id);
+      } catch {
+        // best effort — kø-dommen i koerOgGemTrial fanger den alligevel
+      }
+      if (!processenOverleverKoerslen()) return false;
     } catch (fejl) {
       console.error(
         `Trigger.dev afviste trial-jobbet (er "trial-pipeline" deployet med npx trigger.dev deploy?):`,

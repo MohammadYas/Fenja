@@ -29,10 +29,12 @@ cloud.trigger.dev, gem den som GitHub-secret TRIGGER_ACCESS_TOKEN, og kør
 Actions-workflowet "Trigger.dev deploy"; det kører derefter automatisk på
 hvert push til main) — trial-jobbet "trial-pipeline" er IKKE deployet,
 og derfor kunne INGEN prøver gennemføres, da linket blev delt bredt 26/8:
-verificeret mod prod — kørslen startede aldrig (in-process-fallbacken fryses
-af Netlify), rækken stod i "running", og hver besøgende så 3-4 minutters
-falsk fremdrift og derefter en fejl. Koden fejler nu ærligt og ØJEBLIKKELIGT
-i produktion, når jobbet ikke kan startes (ingen minutters ventetid), men
+verificeret mod prod — kørslen startede aldrig: Trigger.dev AFVISER IKKE et
+udeployet task-id, men parkerer kørslen i PENDING_VERSION for evigt, så
+handoff'et lignede en succes. Rækken stod i "running", og hver besøgende så
+minutters falsk fremdrift og derefter en fejl. Koden aflæser nu kørslens
+status efter handoff: venter den på et deploy, annulleres den, rækken
+markeres failed, og den besøgende får en ØJEBLIKKELIG ærlig fejl — men
 prøven VIRKER først, når jobbet er deployet. (2) TRIAL_COOKIE_SECRET i
 Netlify (dev-fallback signerer indtil da — afgrænset risiko); (3) evt.
 Turnstile-nøgler (se .env.example).
