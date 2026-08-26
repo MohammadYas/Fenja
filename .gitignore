@@ -46,6 +46,10 @@ next-env.d.ts
 # Local Netlify folder
 .netlify
 
+# Genereres af "npm run byg:funktioner" under Netlify-buildet — kilden bor i
+# netlify/funktioner-src/
+/netlify/functions/
+
 # Netlify edge-bundling lagger denne under deploy
 deno.lock
 

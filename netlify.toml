@@ -1,10 +1,19 @@
-# Netlify kører kun UI + lette routes; langvarige jobs ligger i Trigger.dev (HANDOFF §3).
+# Netlify kører UI + lette routes; langvarige jobs ligger i Trigger.dev (HANDOFF §3).
+# UNDTAGELSE (26/8): trial-genereringen har en Netlify-BAGGRUNDSFUNKTION som
+# reserve (15 min-loft), så prøven virker selv uden et deployet Trigger.dev-job
+# — se netlify/funktioner-src/trial-koersel-background.ts.
 [build]
-  command = "npm run build"
+  command = "npm run build && npm run byg:funktioner"
   publish = ".next"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# sharp er en native dependency og kan ikke inlines i funktions-bundtet —
+# Netlify pakker modulet med fra node_modules i stedet
+[functions."trial-koersel-background"]
+  node_bundler = "esbuild"
+  external_node_modules = ["sharp"]
 
 # Sikkerheds-headers (audit 21/8): clickjacking-, MIME-sniffing- og
 # referrer-værn + HSTS. CSP er bevidst udeladt — Next inliner scripts, og en

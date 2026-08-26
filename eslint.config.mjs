@@ -15,6 +15,8 @@ const config = [
       "coverage/**",
       "next-env.d.ts",
       ".verify/**",
+      // Genereret af "npm run byg:funktioner" (gitignoreret bundt)
+      "netlify/functions/**",
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),

@@ -33,9 +33,14 @@ verificeret mod prod — kørslen startede aldrig: Trigger.dev AFVISER IKKE et
 udeployet task-id, men parkerer kørslen i PENDING_VERSION for evigt, så
 handoff'et lignede en succes. Rækken stod i "running", og hver besøgende så
 minutters falsk fremdrift og derefter en fejl. Koden aflæser nu kørslens
-status efter handoff: venter den på et deploy, annulleres den, rækken
-markeres failed, og den besøgende får en ØJEBLIKKELIG ærlig fejl — men
-prøven VIRKER først, når jobbet er deployet. (2) TRIAL_COOKIE_SECRET i
+status efter handoff: venter den på et deploy, annulleres den, og
+Netlify-RESERVEN tager over: baggrundsfunktionen trial-koersel-background
+(netlify/funktioner-src/, bundtes af "byg:funktioner" i buildet) kører
+genereringen på Netlify selv med 15 min-loft og sitets egne nøgler —
+prøven kan altså VIRKE uden Trigger.dev-deployet, HVIS kontoen
+understøtter background functions (kun et øjeblikkeligt 202 regnes som
+startet; ellers markeres rækken failed og den besøgende får en
+ØJEBLIKKELIG ærlig fejl). Trigger.dev-deployet er stadig den primære vej. (2) TRIAL_COOKIE_SECRET i
 Netlify (dev-fallback signerer indtil da — afgrænset risiko); (3) evt.
 Turnstile-nøgler (se .env.example).
 

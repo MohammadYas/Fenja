@@ -27,9 +27,17 @@ beforeEach(() => {
   retrieveMock.mockReset().mockResolvedValue({ id: "run-1", status: "QUEUED" });
   cancelMock.mockReset().mockResolvedValue(undefined);
   vi.stubEnv("MOCK_PROVIDERS", "");
+  // Netlify-reserven er slået fra som udgangspunkt — testene for den stubber
+  // URL + nøgle eksplicit
+  vi.stubEnv("URL", "");
+  vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
+  vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "");
 });
 
-afterEach(() => vi.unstubAllEnvs());
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
+});
 
 describe("startTrial svarer ærligt om kørslen reelt er i gang", () => {
   it("afleverer til Trigger.dev når nøglen findes — ingen lokal kørsel", async () => {
@@ -98,5 +106,47 @@ describe("startTrial svarer ærligt om kørslen reelt er i gang", () => {
     expect(await startTrial("trial-8", "trial-8/original.jpg")).toBe(true);
     expect(cancelMock).not.toHaveBeenCalled();
     expect(koerMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("Netlify-baggrundsfunktionen er reserven, når Trigger.dev ikke kan (26/8)", () => {
+  function medNetlifyMiljoe() {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("TRIGGER_SECRET_KEY", "");
+    vi.stubEnv("URL", "https://selja.dk");
+    vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "service-nøgle");
+  }
+
+  it("øjeblikkeligt 202 = ægte baggrundskørsel — trialen ER startet", async () => {
+    medNetlifyMiljoe();
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 202 }));
+    vi.stubGlobal("fetch", fetchMock);
+    expect(await startTrial("trial-9", "trial-9/original.jpg")).toBe(true);
+    const [url, opts] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe("https://selja.dk/.netlify/functions/trial-koersel-background");
+    expect((opts.headers as Record<string, string>)["x-selja-signatur"]).toMatch(/^[0-9a-f]{64}$/);
+    expect(koerMock).not.toHaveBeenCalled();
+  });
+
+  it("alt andet end 202 (fx synkron kørsel på en konto uden baggrund) = IKKE startet", async () => {
+    medNetlifyMiljoe();
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 200 })));
+    expect(await startTrial("trial-10", "trial-10/original.jpg")).toBe(false);
+    expect(koerMock).not.toHaveBeenCalled();
+  });
+
+  it("netværksfejl mod funktionen = IKKE startet — ærlig fejl frem for zombie-række", async () => {
+    medNetlifyMiljoe();
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("net nede")));
+    expect(await startTrial("trial-11", "trial-11/original.jpg")).toBe(false);
+  });
+
+  it("PENDING_VERSION hos Trigger.dev falder videre til Netlify-reserven", async () => {
+    medNetlifyMiljoe();
+    vi.stubEnv("TRIGGER_SECRET_KEY", "nøgle");
+    retrieveMock.mockResolvedValue({ id: "run-1", status: "PENDING_VERSION" });
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(null, { status: 202 })));
+    expect(await startTrial("trial-12", "trial-12/original.jpg")).toBe(true);
+    expect(cancelMock).toHaveBeenCalledWith("run-1");
   });
 });

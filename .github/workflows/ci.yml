@@ -19,6 +19,9 @@ jobs:
       - run: npm run typecheck
       # CI kører uden rigtige nøgler — alle tests bruger mock-providers (NFR-5)
       - run: npm test
+      # Netlify-baggrundsfunktionen skal kunne bundtes — ellers fejler
+      # Netlify-buildet først ved deploy (26/8)
+      - run: npm run byg:funktioner
 
   # Kvalitetsgaten fra HANDOFF §8: Lighthouse mobil ≥ 90 på alle
   # marketing-sider — bygget og målt keyless, tærskler i lighthouserc.json

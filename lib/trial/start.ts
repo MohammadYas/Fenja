@@ -1,19 +1,27 @@
 import "server-only";
 
-// Start af trial-kørslen — samme mønster som lib/pipeline/start.ts: med
-// Trigger.dev-nøgle kører jobbet dér (Netlify-functions må ikke bære et
-// 60-sekunders provider-kald); uden nøgle køres i processen (lokal udvikling).
-// Fejl fanges i koerOgGemTrial, som altid efterlader rækken i en slut-status.
+// Start af trial-kørslen. Rækkefølgen (26/8, efter prod-hændelsen):
 //
-// PROD-HÆNDELSE 26/8: den tidligere "kør i processen"-fallback i produktion
-// var en fælde. Netlify fryser funktionen i samme øjeblik svaret er sendt, så
-// kørslen døde stille, rækken stod i "running", og HVER besøgende så minutters
-// falsk fremdrift efterfulgt af en fejl (verificeret mod prod: rækken flippede
-// aldrig selv — kun status-rutens høster afgjorde den efter 3 minutter).
-// Derfor: kan kørslen ikke afleveres til Trigger.dev, og overlever processen
-// ikke (produktion på Netlify), svarer vi ærligt NEJ med det samme — kalderen
-// markerer trialen failed, og den besøgende får en øjeblikkelig, ærlig fejl.
+//   1) Trigger.dev — vejen når jobbet "trial-pipeline" er deployet. VIGTIGT:
+//      Trigger.dev AFVISER IKKE et udeployet task-id, men parkerer kørslen i
+//      PENDING_VERSION for evigt, så handoff'et ligner en succes. Derfor
+//      aflæses kørslens status én gang efter trigger; venter den på et
+//      deploy, annulleres den (den må ikke vågne uger senere), og vi går
+//      videre til reserven.
+//   2) Netlify-baggrundsfunktionen (reserven) — kører kørslen på Netlify
+//      selv med 15 minutters loft og sitets egne nøgler. KUN et øjeblikkeligt
+//      202 tæller: på en konto uden background functions kører funktionen
+//      synkront, og så må den ikke regnes som startet — den strandede
+//      invokation aborterer selv på kø-dommen, fordi rækken allerede står
+//      failed, og koster derfor intet.
+//   3) I processen — KUN hvor processen overlever svaret (next dev / mock):
+//      på Netlify fryses funktionen når svaret er sendt, og kørslen ville dø
+//      stille, mens den besøgende venter forgæves (det VAR prod-hændelsen).
+//
+// Kan ingen af vejene bruges, svares ærligt false — kalderen markerer rækken
+// failed, og den besøgende får en øjeblikkelig, ærlig fejl.
 
+import { createHmac } from "node:crypto";
 import { opretServiceKlient } from "@/lib/supabase/service";
 import { koerOgGemTrial } from "./koersel";
 
@@ -23,21 +31,53 @@ function processenOverleverKoerslen(): boolean {
   return process.env.NODE_ENV !== "production" || process.env.MOCK_PROVIDERS === "1";
 }
 
+/** Reserven: start kørslen i Netlify-baggrundsfunktionen. Kaldet signeres
+ *  med HMAC over kroppen (nøglen er SUPABASE_SERVICE_ROLE_KEY, som begge
+ *  sider har), så ingen udefra kan starte kørsler. */
+async function startViaNetlifyBaggrund(
+  trialId: string,
+  originalSti: string,
+): Promise<boolean> {
+  const base = process.env.URL ?? process.env.NEXT_PUBLIC_SITE_URL;
+  const noegle = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!base || !noegle) return false;
+  const krop = JSON.stringify({ trialId, originalSti });
+  const signatur = createHmac("sha256", noegle).update(krop).digest("hex");
+  try {
+    const svar = await fetch(
+      `${base.replace(/\/+$/, "")}/.netlify/functions/trial-koersel-background`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-selja-signatur": signatur },
+        body: krop,
+        // Ægte baggrund svarer 202 på et øjeblik — alt langsommere er en
+        // synkron kørsel, vi ikke må vente på (og ikke må regne som startet)
+        signal: AbortSignal.timeout(2500),
+      },
+    );
+    if (svar.status === 202) return true;
+    console.error(
+      `Netlify-baggrundsfunktionen svarede ${svar.status} for trial ${trialId} — regnes ikke som startet`,
+    );
+    return false;
+  } catch (fejl) {
+    console.error(`Netlify-baggrundsfunktionen kunne ikke kaldes for trial ${trialId}:`, fejl);
+    return false;
+  }
+}
+
 /**
  * Start kørslen for en oprettet trial. `true` = kørslen ER reelt i gang
- * (Trigger.dev eller en overlevende lokal proces). `false` = intet blev
- * startet — kalderen skal markere rækken failed og svare ærligt nu, aldrig
- * lade den besøgende vente på et job, der ikke findes.
+ * (Trigger.dev, Netlify-baggrund eller en overlevende lokal proces).
+ * `false` = intet blev startet — kalderen skal markere rækken failed og
+ * svare ærligt nu, aldrig lade den besøgende vente på et job, der ikke
+ * findes.
  */
 export async function startTrial(trialId: string, originalSti: string): Promise<boolean> {
   if (process.env.TRIGGER_SECRET_KEY) {
     try {
       const { tasks, runs } = await import("@trigger.dev/sdk");
       const handle = await tasks.trigger("trial-pipeline", { trialId, originalSti });
-      // Prod-hændelse 26/8, del 2: Trigger.dev AFVISER IKKE et task-id, der
-      // aldrig er deployet — kørslen lander i PENDING_VERSION og venter for
-      // evigt på et deploy. Aflæs status én gang: venter den på en version,
-      // annulleres den (må ikke vågne uger senere) og vi svarer ærligt nej.
       let venterPaaDeploy = false;
       try {
         const koersel = await runs.retrieve(handle.id);
@@ -49,24 +89,26 @@ export async function startTrial(trialId: string, originalSti: string): Promise<
       }
       if (!venterPaaDeploy) return true;
       console.error(
-        `Trial ${trialId}: kørslen venter på et deploy af "trial-pipeline" (PENDING_VERSION) — annulleres; kør npx trigger.dev deploy`,
+        `Trial ${trialId}: kørslen venter på et deploy af "trial-pipeline" (PENDING_VERSION) — annulleres; reserven tager over`,
       );
       try {
         await runs.cancel(handle.id);
       } catch {
         // best effort — kø-dommen i koerOgGemTrial fanger den alligevel
       }
-      if (!processenOverleverKoerslen()) return false;
     } catch (fejl) {
       console.error(
         `Trigger.dev afviste trial-jobbet (er "trial-pipeline" deployet med npx trigger.dev deploy?):`,
         fejl,
       );
-      if (!processenOverleverKoerslen()) return false;
     }
-  } else if (!processenOverleverKoerslen()) {
+  }
+
+  if (await startViaNetlifyBaggrund(trialId, originalSti)) return true;
+
+  if (!processenOverleverKoerslen()) {
     console.error(
-      "TRIGGER_SECRET_KEY mangler, og in-process-kørsel dør på Netlify — trialen afvises ærligt",
+      `Trial ${trialId}: hverken Trigger.dev eller Netlify-baggrund kunne starte kørslen — afvises ærligt`,
     );
     return false;
   }
