@@ -11,7 +11,8 @@ Forsiden guider primært hertil; TikTok-bio peger på selja.dk/prov.
 
 **Værn** (alle server-side; ~0,35 kr./trial): admin-toggle + dagligt
 budgetloft i /admin → Gratis trial (default 200 kr., læses friskt pr.
-forsøg), TRIAL_HOURLY_CAP (10 ⇒ maks ~84 kr./døgn selv under angreb),
+forsøg), TRIAL_HOURLY_CAP (default 30 fra 26/8 — budgetloftet lukker
+stadig døgnet ved 200 kr.),
 1 completed trial pr. IP-hash pr. 7 dage (fejlede låser ikke), cookie +
 fingerprint. Captcha: uden Turnstile-nøgler springes den over (bevidst
 beslutning 25/8); sættes nøglerne, håndhæves den automatisk. Tragten måles
@@ -22,10 +23,25 @@ trial-photos-bucket). pg_cron 'ryd-trial-usage' rydder rækker efter 90
 dage; FOTOS slettes efter 7 dage af Trigger.dev-jobbet 'trial-oprydning'
 (Supabase blokerer SQL-sletning i storage.objects — fundet 25/8).
 
-**Udestår:** (1) `npx trigger.dev deploy` — indtil da kører genereringen på
-en in-process-fallback, der kan fryse på Netlify; (2) TRIAL_COOKIE_SECRET i
+**Udestår — AKUT (prod-hændelse 26/8):** (1) `npx trigger.dev deploy` (fra
+en maskine med .env.local) — trial-jobbet "trial-pipeline" er IKKE deployet,
+og derfor kunne INGEN prøver gennemføres, da linket blev delt bredt 26/8:
+verificeret mod prod — kørslen startede aldrig (in-process-fallbacken fryses
+af Netlify), rækken stod i "running", og hver besøgende så 3-4 minutters
+falsk fremdrift og derefter en fejl. Koden fejler nu ærligt og ØJEBLIKKELIGT
+i produktion, når jobbet ikke kan startes (ingen minutters ventetid), men
+prøven VIRKER først, når jobbet er deployet. (2) TRIAL_COOKIE_SECRET i
 Netlify (dev-fallback signerer indtil da — afgrænset risiko); (3) evt.
 Turnstile-nøgler (se .env.example).
+
+**Robusthed under delt link (26/8):** timecap-default hævet 10 → 30/time
+(TRIAL_HOURLY_CAP styrer stadig; budgetloftet er fortsat det primære værn).
+Kørsler der ikke er STARTET inden 3 min (kø) opgives uden provider-kald og
+uden at æde budgettet; klienten venter serverens fulde tidsbudget (4,5 min)
+og laver et sidste status-tjek, før den viser en fejl; høsteren fyrer først
+EFTER klientens deadline og kan ikke længere være det, der afgør en ventende
+besøgendes skæbne. En sent fuldført kørsel kan ikke overskrive en allerede
+høstet række (ingen urimelig 7-dages IP-lås for et resultat, ingen så).
 
 ## Status på rettelser
 

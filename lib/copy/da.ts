@@ -1375,6 +1375,10 @@ export const da = {
       "Du har allerede brugt din gratis prøve. Opret en gratis konto for at lave flere annoncer — dit resultat følger med.",
     fejlGenerering:
       "Noget gik galt undervejs, og der blev ikke lavet noget. Du kan prøve igen med et nyt billede.",
+    // Kørslen kunne slet ikke startes (jobbet utilgængeligt) — øjeblikkelig,
+    // ærlig besked i stedet for minutters falsk fremdrift (prod-hændelse 26/8)
+    fejlKunneIkkeStarte:
+      "Vi kunne ikke starte genereringen lige nu. Vent et øjeblik, og prøv så igen.",
     fejlFindesIkke: "Vi kunne ikke finde den prøve — den kan være udløbet.",
     // Resultatet er færdigt, men hentningen glippede (net-bump) — det må
     // aldrig ende i "prøv igen", som værnet ville blokere

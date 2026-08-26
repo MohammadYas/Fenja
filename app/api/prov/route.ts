@@ -136,7 +136,22 @@ export async function POST(request: NextRequest) {
   }
   await service.from("trial_usage").update({ original_sti: originalSti }).eq("id", trialId);
 
-  await startTrial(trialId, originalSti);
+  // Prod-hændelse 26/8: kan kørslen ikke startes (Trigger.dev-jobbet mangler/
+  // afviser), skal den besøgende have en ØJEBLIKKELIG, ærlig fejl — aldrig
+  // minutters falsk fremdrift mod en række, intet job nogensinde samler op
+  if (!(await startTrial(trialId, originalSti))) {
+    await service
+      .from("trial_usage")
+      // Estimatet nulstilles: intet provider-kald er sket, og døde forsøg må
+      // ikke æde dagens trial-budget for de næste besøgende
+      .update({
+        status: "failed",
+        fejl: "kørslen kunne ikke startes (Trigger.dev-jobbet utilgængeligt)",
+        cost_estimat_dkk: 0,
+      })
+      .eq("id", trialId);
+    return NextResponse.json({ fejl: da.prov.fejlKunneIkkeStarte }, { status: 503 });
+  }
 
   // Cookien sættes allerede nu: den bærer claim-tokenet, og værnet blokerer
   // først, når trialen står COMPLETED — en fejlet prøve låser ikke browseren

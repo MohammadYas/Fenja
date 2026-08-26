@@ -11,6 +11,7 @@ import { analyserTrialFoto } from "./analyse";
 import { vandmaerkOgFormindsk } from "./billede";
 import { TRIAL_BUCKET, logTrialEvent } from "./db";
 import { hentTrialImageProvider, koerTrialGenerering } from "./pipeline";
+import { boerTrialKoere } from "./vaern";
 
 async function hentBytes(klient: SupabaseClient, url: string): Promise<Buffer> {
   // Gemini leverer data-URLs, fal http-URLs, egne stier bor i trial-bucketen
@@ -61,6 +62,35 @@ export async function koerOgGemTrial(
   originalSti: string,
 ): Promise<void> {
   try {
+    // Kø-dommen (prod-hændelse 26/8): under spidsbelastning kan jobbet ligge
+    // i kø hos Trigger.dev — starter det først efter kø-deadlinen, er den
+    // besøgende væk, og der bruges IKKE ét provider-kald på det
+    const { data: startTjek, error: startTjekFejl } = await klient
+      .from("trial_usage")
+      .select("status, created_at")
+      .eq("id", trialId)
+      .maybeSingle();
+    // Kan dommen ikke afgøres (net-bump på opslaget), kører vi — dommen er
+    // en besparelse, aldrig en grund til at droppe en levedygtig kørsel
+    const dom = startTjekFejl
+      ? "koer"
+      : boerTrialKoere((startTjek as { status: string; created_at: string } | null) ?? null);
+    if (dom === "spring-over") return;
+    if (dom === "opgivet") {
+      await klient
+        .from("trial_usage")
+        // Estimatet nulstilles: intet blev kørt, og døde forsøg må ikke æde
+        // dagens trial-budget for de næste besøgende
+        .update({
+          status: "failed",
+          fejl: "stod for længe i kø — kørslen blev aldrig startet",
+          cost_estimat_dkk: 0,
+        })
+        .eq("id", trialId)
+        .eq("status", "running");
+      return;
+    }
+
     const original = await hentBytes(klient, originalSti);
     const fotoDataUrl = `data:image/jpeg;base64,${original.toString("base64")}`;
 
@@ -93,7 +123,11 @@ export async function koerOgGemTrial(
         vandmaerket_sti: vandmaerketSti,
         cost_estimat_dkk: leverance.costDkk,
       })
-      .eq("id", trialId);
+      .eq("id", trialId)
+      // Kun en stadig-ventende række må fuldføres: har høsteren allerede
+      // markeret den failed (den besøgende SÅ en fejl), ville et sent
+      // completed låse IP'en i 7 dage for et resultat, ingen har set
+      .eq("status", "running");
     if (error) throw new Error(`Kunne ikke gemme trial-resultatet: ${error.message}`);
 
     await logTrialEvent(klient, "trial_completed", { trialId });

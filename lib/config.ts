@@ -244,6 +244,12 @@ export const preview = {
   dagligtBudgetDkk: 50,
 } as const;
 
+// Trialens tidsbudget hænger sammen: kørslen må bruge TIMEOUT, må senest
+// STARTE ved kø-deadlinen, og klienten venter summen + margin — så kan et
+// resultat, der når at starte, altid nå frem, før klienten giver op.
+const TRIAL_TIMEOUT_MS = 60_000;
+const TRIAL_KOE_DEADLINE_MS = 180_000;
+
 // Gratis prøve uden konto (ejer-ordre 2026-08-25). ALT her er server-side —
 // intet af det kan ændres via request-parametre. Undtagelsen fra 15/8-reglen
 // om "ingen gratis annoncer": én prøve pr. person bag captcha, IP-, cookie-
@@ -262,12 +268,23 @@ export const trial = {
   // Anonyme får kun den vandmærkede udgave i reduceret opløsning
   maksOutputKantPx: 1024,
   // Én kørsel, ingen automatiske retries; hænger den, fejler den ærligt
-  timeoutMs: 60_000,
+  timeoutMs: TRIAL_TIMEOUT_MS,
+  // Kø-deadline: er kørslen ikke STARTET inden for dette vindue (målt fra
+  // rækkens oprettelse), opgives den uden provider-kald — den besøgende er
+  // væk, og et sent COMPLETED ville både koste penge for et resultat ingen
+  // ser og låse IP'en urimeligt i 7 dage (prod-hændelse 26/8)
+  koeDeadlineMs: TRIAL_KOE_DEADLINE_MS,
+  // Klientens samlede ventetid: kø-deadline + kørselsloft + margin — en
+  // kørsel der når at starte, kan altså ALTID nå frem inden klienten giver
+  // op. Sidste status-tjek sker FØR der vises en fejl (prov-klient.tsx).
+  klientVenteMs: TRIAL_KOE_DEADLINE_MS + TRIAL_TIMEOUT_MS + 30_000,
   // Kun COMPLETED trials tæller — en fejlet prøve låser ikke IP'en, så den
   // besøgende har ét ærligt forsøg mere
   ipVinduesDage: 7,
-  // Spike-beskyttelse pr. time; det PRIMÆRE værn er budgetloftet i admin
-  maksPrTime: Number(process.env.TRIAL_HOURLY_CAP ?? 10),
+  // Spike-beskyttelse pr. time; det PRIMÆRE værn er budgetloftet i admin.
+  // 30 (26/8, før 10): linket deles aktivt til mange på én gang, og en bølge
+  // af ægte besøgende må ikke afvises — budgetloftet begrænser stadig døgnet
+  maksPrTime: Number(process.env.TRIAL_HOURLY_CAP ?? 30),
   // Default for admin-indstillingen "dagligt budgetloft for trials"
   standardDagligtBudgetDkk: 200,
   // Konservativt skøn pr. trial (analyse 0,02 + billede 0,28 + tekst 0,03)

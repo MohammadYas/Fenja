@@ -5,6 +5,8 @@ import { laesTrialFelter } from "@/lib/trial/form";
 import { delvisBeskrivelse, delvisSoegeord } from "@/lib/trial/resultat";
 import { verificerTurnstile } from "@/lib/trial/turnstile";
 import {
+  TRIAL_HAENGER_EFTER_MS,
+  boerTrialKoere,
   erTrialHaengende,
   tjekTrialVaern,
   trialTokenHash,
@@ -121,12 +123,39 @@ describe("trial-værn (alle checks server-side, ejer-krav 3+7)", () => {
     expect(await tjekTrialVaern(db, KLIENT)).toEqual({ tilladt: true });
   });
 
-  it("høsteren: en kørsel ud over loftet + margin regnes som død", () => {
+  it("høsteren: en kørsel ud over klientens ventetid + margin regnes som død", () => {
     const nu = 1_000_000_000_000;
     const frisk = new Date(nu - 30_000).toISOString();
-    const doed = new Date(nu - 5 * 60_000).toISOString();
+    const doed = new Date(nu - 8 * 60_000).toISOString();
     expect(erTrialHaengende(frisk, nu)).toBe(false);
     expect(erTrialHaengende(doed, nu)).toBe(true);
+  });
+
+  it("høsteren fyrer ALDRIG før klienten selv har givet op (prod-hændelse 26/8)", () => {
+    // Det gamle 3-minutters vindue lå FØR klientens loft, så det var høsteren
+    // der viste alle besøgende fejlen. Bogføring må aldrig afgøre ventende.
+    expect(TRIAL_HAENGER_EFTER_MS).toBeGreaterThan(trial.klientVenteMs);
+    // En kørsel der starter PÅ kø-deadlinen kan stadig nå frem inden klienten
+    // giver op — ellers venter folk på et resultat, de aldrig får vist
+    expect(trial.klientVenteMs).toBeGreaterThan(trial.koeDeadlineMs + trial.timeoutMs);
+  });
+
+  it("kø-dommen: frisk running-række kører; efter kø-deadlinen opgives den", () => {
+    const nu = 1_000_000_000_000;
+    const frisk = { status: "running", created_at: new Date(nu - 30_000).toISOString() };
+    const forSent = {
+      status: "running",
+      created_at: new Date(nu - trial.koeDeadlineMs - 1_000).toISOString(),
+    };
+    expect(boerTrialKoere(frisk, nu)).toBe("koer");
+    expect(boerTrialKoere(forSent, nu)).toBe("opgivet");
+  });
+
+  it("kø-dommen: allerede afgjorte (høstede) og manglende rækker røres ikke", () => {
+    const nu = 1_000_000_000_000;
+    const hoestet = { status: "failed", created_at: new Date(nu - 10_000).toISOString() };
+    expect(boerTrialKoere(hoestet, nu)).toBe("spring-over");
+    expect(boerTrialKoere(null, nu)).toBe("spring-over");
   });
 
   it("fejlsikret LUKKET: kan værnet ikke afgøres, afvises der (penge på spil)", async () => {

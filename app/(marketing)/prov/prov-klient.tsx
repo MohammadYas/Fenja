@@ -36,8 +36,11 @@ declare global {
 }
 
 const TURNSTILE_SCRIPT = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-// Opgiv pollingen efter 4 minutter uden svar — jobbet er reelt dødt
-const MAKS_VENTETID_MS = 4 * 60_000;
+// Opgiv pollingen først EFTER serverens fulde tidsbudget (kø-deadline +
+// kørselsloft + margin, lib/config.ts): en kørsel der når at starte, kan
+// altid nå frem — og fejlen afgøres af serverens status, aldrig af et
+// klient-ur der fyrer, mens resultatet er sekunder væk
+const MAKS_VENTETID_MS = trial.klientVenteMs;
 
 type Resultat = {
   billedeUrl: string | null;
@@ -141,30 +144,26 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
     }, 1000);
     const poll = setInterval(() => {
       void (async () => {
-        if (Date.now() - startetMs > MAKS_VENTETID_MS) {
+        // Status hentes FØR deadline-tjekket: sidste tick kan stadig levere
+        // et færdigt resultat i stedet for at fejle på målstregen
+        let status: string | null = null;
+        try {
+          const svar = await fetch(`/api/prov/status?token=${token}`);
+          if (svar.ok) status = ((await svar.json()) as { status: string }).status;
+        } catch {
+          // stille — netværksbump tæller ikke som svar
+        }
+        if (status === "completed") {
+          await hentResultat(token);
+          return;
+        }
+        if (status === "failed" || Date.now() - startetMs > MAKS_VENTETID_MS) {
           setTilstand({
             fase: "fejlet",
             besked: da.prov.fejlGenerering,
             kanProeveIgen: !harProevetIgen.current,
             taellerRetry: true,
           });
-          return;
-        }
-        try {
-          const svar = await fetch(`/api/prov/status?token=${token}`);
-          if (!svar.ok) return; // midlertidigt netværksbump — pollen fortsætter
-          const data = (await svar.json()) as { status: string };
-          if (data.status === "completed") await hentResultat(token);
-          if (data.status === "failed") {
-            setTilstand({
-              fase: "fejlet",
-              besked: da.prov.fejlGenerering,
-              kanProeveIgen: !harProevetIgen.current,
-              taellerRetry: true,
-            });
-          }
-        } catch {
-          // stille — næste poll prøver igen
         }
       })();
     }, 4000);

@@ -74,12 +74,35 @@ export function trialTokenHash(token: string): string {
 }
 
 /** Høsteren (kodereview 25/8): en trial der har kørt længere end loftet +
- *  margin er reelt død (frosset Netlify-proces) og skal markeres failed, så
- *  den hverken står i evigt "running" eller mangler i admin-tallene. */
-export const TRIAL_HAENGER_EFTER_MS = trial.timeoutMs + 120_000;
+ *  margin er reelt død (død proces eller crashet job) og skal markeres failed,
+ *  så den hverken står i evigt "running" eller mangler i admin-tallene.
+ *  Vinduet ligger EFTER klientens samlede ventetid (prod-hændelse 26/8: det
+ *  gamle 3-minutters vindue fyrede FØR klientens 4-minutters loft, så det var
+ *  høsteren — ikke kørslen — der viste de besøgende fejlen): høsten er ren
+ *  bogføring og må aldrig være det, der afgør en ventende besøgendes skæbne. */
+export const TRIAL_HAENGER_EFTER_MS = trial.klientVenteMs + 90_000;
 
 export function erTrialHaengende(createdAtIso: string, nuMs: number = Date.now()): boolean {
   return nuMs - new Date(createdAtIso).getTime() > TRIAL_HAENGER_EFTER_MS;
+}
+
+export type TrialKoereDom = "koer" | "spring-over" | "opgivet";
+
+/**
+ * Skal en kørsel, der er nået frem til en worker (Trigger.dev eller lokal
+ * proces), overhovedet køre? "spring-over": rækken er allerede afgjort
+ * (høstet/afsluttet) — rør den ikke. "opgivet": kørslen nåede ikke at starte
+ * inden kø-deadlinen (kø under spidsbelastning) — den besøgende er væk, så
+ * ingen provider-kald: et sent COMPLETED ville koste penge for et resultat,
+ * ingen ser, og urimeligt låse IP'en i 7 dage.
+ */
+export function boerTrialKoere(
+  raekke: { status: string; created_at: string } | null,
+  nuMs: number = Date.now(),
+): TrialKoereDom {
+  if (!raekke || raekke.status !== "running") return "spring-over";
+  if (nuMs - new Date(raekke.created_at).getTime() > trial.koeDeadlineMs) return "opgivet";
+  return "koer";
 }
 
 export function trialVindueStartIso(nuMs: number = Date.now()): string {
