@@ -1,0 +1,73 @@
+name: Trigger.dev deploy
+
+# Lukker det kendte hul mellem git-push og `npx trigger.dev deploy` (prod-
+# hændelsen 26/8: trial-jobbet var aldrig deployet, så ingen prøver kunne
+# gennemføres): hvert push til main deployer jobbene i trigger/ — og deployet
+# kan startes manuelt fra Actions-fanen, hvilket også virker fra en telefon.
+#
+# Kræver repo-secret TRIGGER_ACCESS_TOKEN (personlig access token fra
+# cloud.trigger.dev → Account → Access Tokens). Mangler den, springes
+# deployet pænt over med en tydelig besked — workflowet fejler aldrig af den
+# grund alene.
+#
+# Env-nøglerne til selve jobbet (Gemini/Supabase m.fl.) synces af
+# trigger.config.ts fra deploy-miljøet: er de sat som GitHub-secrets, følger
+# de med; ellers beholder Trigger.dev-dashboardet sine eksisterende værdier
+# (tomme værdier springes over i syncEnvVars).
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: trigger-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tjek adgang
+        id: adgang
+        env:
+          TRIGGER_ACCESS_TOKEN: ${{ secrets.TRIGGER_ACCESS_TOKEN }}
+        run: |
+          if [ -n "$TRIGGER_ACCESS_TOKEN" ]; then
+            echo "klar=ja" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Repo-secret TRIGGER_ACCESS_TOKEN mangler — Trigger.dev-deployet springes over. Opret en access token på cloud.trigger.dev og tilføj den under Settings → Secrets and variables → Actions."
+            echo "klar=nej" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.adgang.outputs.klar == 'ja'
+        uses: actions/checkout@v4
+
+      - if: steps.adgang.outputs.klar == 'ja'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - if: steps.adgang.outputs.klar == 'ja'
+        run: npm ci
+
+      - if: steps.adgang.outputs.klar == 'ja'
+        name: Deploy jobs til Trigger.dev
+        env:
+          TRIGGER_ACCESS_TOKEN: ${{ secrets.TRIGGER_ACCESS_TOKEN }}
+          # Valgfri sync til jobbets miljø — tomme værdier springes over
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_VISION_MODEL: ${{ secrets.GEMINI_VISION_MODEL }}
+          FAL_KEY: ${{ secrets.FAL_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          DEEPSEEK_TEKST_MODEL: ${{ secrets.DEEPSEEK_TEKST_MODEL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          DAILY_BUDGET_CAP_DKK: ${{ secrets.DAILY_BUDGET_CAP_DKK }}
+        # CLI-versionen følger @trigger.dev/sdk i package.json
+        run: npx trigger.dev@4.5.12 deploy

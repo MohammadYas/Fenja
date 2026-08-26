@@ -24,7 +24,10 @@ dage; FOTOS slettes efter 7 dage af Trigger.dev-jobbet 'trial-oprydning'
 (Supabase blokerer SQL-sletning i storage.objects — fundet 25/8).
 
 **Udestår — AKUT (prod-hændelse 26/8):** (1) `npx trigger.dev deploy` (fra
-en maskine med .env.local) — trial-jobbet "trial-pipeline" er IKKE deployet,
+en maskine med .env.local — ELLER fra telefonen: opret en access token på
+cloud.trigger.dev, gem den som GitHub-secret TRIGGER_ACCESS_TOKEN, og kør
+Actions-workflowet "Trigger.dev deploy"; det kører derefter automatisk på
+hvert push til main) — trial-jobbet "trial-pipeline" er IKKE deployet,
 og derfor kunne INGEN prøver gennemføres, da linket blev delt bredt 26/8:
 verificeret mod prod — kørslen startede aldrig (in-process-fallbacken fryses
 af Netlify), rækken stod i "running", og hver besøgende så 3-4 minutters
