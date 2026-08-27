@@ -8,7 +8,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { hentTrialIndstillinger } from "@/lib/admin/trial-indstillinger";
 import { trial } from "@/lib/config";
 import type { AnnonceTekst } from "@/lib/providers/text";
-import type { TrialBlokAarsag, TrialVaernDb } from "./vaern";
+import { TRIAL_HAENGER_EFTER_MS, type TrialBlokAarsag, type TrialVaernDb } from "./vaern";
 
 export const TRIAL_BUCKET = "trial-photos";
 
@@ -111,7 +111,7 @@ export async function hentTrialViaTokenHash(
 /** Event-log til konverteringsmåling — best-effort, må aldrig vælte flowet */
 export async function logTrialEvent(
   klient: SupabaseClient,
-  event: "trial_started" | "trial_completed" | "trial_blocked" | "trial_to_signup",
+  event: "trial_started" | "trial_completed" | "trial_blocked" | "trial_cta_klik" | "trial_to_signup",
   opts: { aarsag?: TrialBlokAarsag | "captcha"; trialId?: string } = {},
 ): Promise<void> {
   try {
@@ -122,5 +122,40 @@ export async function logTrialEvent(
     });
   } catch {
     // stille — tracking må aldrig vælte noget
+  }
+}
+
+/**
+ * Høster ALLE hængende trials — ikke kun den, en besøgende tilfældigvis
+ * poller på.
+ *
+ * Baggrund (dataanalyse 27/8): høsten lå kun i GET /api/prov/status, så en
+ * række blev først afgjort, hvis den besøgende blev på siden og pollede
+ * videre. Lukkede de fanen — hvilket de gjorde, da kørslerne hang under
+ * prod-hændelsen 26/8 — stod rækken i "running" for evigt. 8 af 13 trials
+ * fra 26/8 stod stadig som "running" dagen efter, så admin-tragten talte
+ * dem som igangværende kørsler, der aldrig kom.
+ *
+ * Sweepet er ét indekseret UPDATE, er idempotent (kun status='running'
+ * røres) og er best-effort: kan det ikke køre, må det aldrig vælte hverken
+ * en ny prøve eller admin-siden.
+ *
+ * Bemærk: omkostningen bliver stående på rækken med vilje — estimatet
+ * skrives fra start, netop for at budgetloftet også tæller kørsler, der
+ * aldrig blev færdige (se opretTrialRaekke).
+ */
+export async function hoestHaengendeTrials(klient: SupabaseClient): Promise<number> {
+  const skaeringIso = new Date(Date.now() - TRIAL_HAENGER_EFTER_MS).toISOString();
+  try {
+    const { data, error } = await klient
+      .from("trial_usage")
+      .update({ status: "failed", fejl: "kørslen svarede aldrig (høstet af sweepet)" })
+      .eq("status", "running")
+      .lt("created_at", skaeringIso)
+      .select("id");
+    if (error) return 0;
+    return (data ?? []).length;
+  } catch {
+    return 0;
   }
 }

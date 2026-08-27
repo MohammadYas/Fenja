@@ -13,8 +13,12 @@ Forsiden guider primært hertil; TikTok-bio peger på selja.dk/prov.
 budgetloft i /admin → Gratis trial (default 200 kr., læses friskt pr.
 forsøg), TRIAL_HOURLY_CAP (default 30 fra 26/8 — budgetloftet lukker
 stadig døgnet ved 200 kr.),
-1 completed trial pr. IP-hash pr. 7 dage (fejlede låser ikke), cookie +
-fingerprint. Captcha: uden Turnstile-nøgler springes den over (bevidst
+1 completed trial pr. COOKIE pr. 7 dage (fejlede låser ikke).
+**IP'en blokerer IKKE længere (ejer-ordre 27/8):** dansk mobiltrafik deler IP
+gennem operatørens CGNAT, og /prov-trafikken kommer fra TikTok, altså fra
+telefoner — ét gennemført forsøg spærrede vildt fremmede på samme mastenet i
+7 dage. ip_hash og fingerprint gemmes fortsat til misbrugsanalyse, men
+blokerer ingen. De hårde værn er budgetloftet og time-cappen. Captcha: uden Turnstile-nøgler springes den over (bevidst
 beslutning 25/8); sættes nøglerne, håndhæves den automatisk. Tragten måles
 i trial_events (started/completed/blocked/to_signup) og vises i admin.
 
@@ -60,26 +64,105 @@ høstet række (ingen urimelig 7-dages IP-lås for et resultat, ingen så).
 | Rate limiting på genereringer (DB-trigger) | ✅ Live i prod 23/8 |
 | 6 ydelsesindekser | ✅ Live i prod 23/8 |
 | Natlig oprydning af rate_limit (pg_cron) | ✅ Live i prod 23/8 |
-| Fejllogning i generations.fejl | ❌ Mangler (app-kode) |
-| Generisk-fallback ved ukendt kategori | ❌ Mangler (app-kode) |
-| Aktiveringsmail til nye brugere | ❌ Mangler |
+| Fejllogning i generations.fejl | ✅ Implementeret (verificeret 27/8) |
+| Generisk-fallback ved ukendt kategori | ✅ Implementeret (verificeret 27/8) |
+| Aktiveringsmail til nye brugere | ✅ Implementeret og leverer (ejer 27/8) |
+| Høst af hængende trials uden poller | ✅ Rettet 27/8 |
+| Måling af trial-CTA (tragtens sidste trin) | ✅ Tilføjet 27/8 |
+| utm_content synlig i admin | ✅ Tilføjet 27/8 |
+| Aktiverings-nudge (planlagt Netlify-funktion) | ✅ Bygget 27/8 — kræver migration + RESEND_API_KEY |
+| Trigger.dev deployet | ❌ Blokeret: TRIGGER_ACCESS_TOKEN mangler |
+| Migration 20260827120000 kørt i prod | ✅ Kørt og verificeret 27/8 |
+| IP-blokering på gratis prøve fjernet | ✅ Fjernet 27/8 (CGNAT ramte fremmede) |
 | SEO-pakke implementeret | ❌ Se docs/seo-pakke-selja.md |
 
 ## Hvad Selja er
 
 Gensalgsværktøj til tøj: upload et billede, få rensede produktfotos (cleanup), stylede billeder i hjemmemiljø (onmodel: spejl/gulv/stativ/detalje) og færdig annonce med titel, beskrivelse, søgeord og prisinterval (text). Credits via Stripe (abonnement + pakker).
 
-## Status i tal (23/8)
+## Status i tal (27/8)
 
-9 registrerede brugere, heraf **1 ægte** (carolinefenge22@gmail.com, aldrig aktiveret — 0 items). 12 items (alle active, 0 solgt). 60 genereringer, 11 fejlede (alle onmodel). API-forbrug 47,35 kr, heraf **17,46 kr brændt på fejl**. 12 unikke besøgende 23/8, Google organisk leverede den ægte bruger. 61 % mobil.
+**Brugere:** 10 registrerede, heraf **2 ægte** — carolinefenge22@gmail.com
+(23/8) og agurkmolgaard@gmail.com (24/8). De øvrige 8 er ejerens egne konti
+(inkl. selja-logintest@example.com, kekee@gmail.com og nrikke26@gmail.com).
+**Begge ægte brugere har 0 items og 0 genereringer.** Aktiveringsproblemet
+fra 23/8 er altså ikke et enkelttilfælde — det er 2 ud af 2.
+
+**Produktion:** 14 items (alle active, **0 solgt**), alle skabt på to af
+ejerens konti. 66 genereringer: 55 lykkedes, 11 fejlede (alle onmodel, alle
+20.–22/8 — ingen fejl siden kategori-værnet). Samlet API-forbrug **49,91 kr**,
+heraf **17,46 kr brændt på fejl**. Ingen genereringer siden 26/8.
+
+**Gratis prøve (26/8, eneste aktive døgn):** 13 startede fra **7 unikke IP'er**
+→ 2 fuldført, 3 fejlet, **8 hang i "running"**. **0 claimet til en konto.**
+4,51 kr. Tidslinjen er entydig: de 11 forsøg mellem 17:28 og 19:22 fejlede
+eller hang alle, mens begge forsøg efter 19:26 lykkedes — **Netlify-reserven
+virkede, da den kom i luften.** Én besøgende prøvede 5 gange i træk
+(19:05–19:22) uden at få noget.
+
+**Omsætning: 0 kr fra ægte brugere.** Alle posteringer i credit_ledger med et
+Stripe-ref tilhører ejerens egne konti; den ene ægte bruger med kreditter fik
+dem tildelt manuelt i admin.
+
+**Trafik:** 327 sidevisninger i alt. /prov har 12 visninger fra 9 unikke —
+færre end de 13 trials fra 7 IP'er, så besøgstællingen undertæller. Kilder:
+297 direkte (TikTok-bio efterlader ingen referrer), 6 Google, 21 fra
+Stripe-checkout. Ingen UTM-tagging overhovedet.
+
+## Verificeret 27/8: Trigger.dev-deployet er ALDRIG kørt
+
+Actions-workflowet "Trigger.dev deploy" har kørt fem gange og er grønt hver
+gang — **uden nogensinde at have deployet noget.** Repo-secret'et
+`TRIGGER_ACCESS_TOKEN` er aldrig blevet sat, så "Tjek adgang" sætter
+`klar=nej`, og alle efterfølgende trin (checkout, npm ci, deploy) springes
+over. Kørslen tager 8 sekunder og ender med et grønt flueben.
+
+Det er nøjagtig samme fejlklasse som PENDING_VERSION: **et grønt signal, der
+ikke betyder noget.** Workflowet er derfor rettet, så et MANUELT start nu
+fejler højt, når nøglen mangler (et push springer stadig pænt over).
+
+**Det eneste, der mangler, er nøglen:** opret en access token på
+cloud.trigger.dev → Account → Access Tokens, og læg den ind under
+Settings → Secrets and variables → Actions som `TRIGGER_ACCESS_TOKEN`.
+Derefter deployer hvert push til main automatisk. Ingen af de 5 jobs i
+`trigger/` kører før det er gjort.
+
+Derfor ligger aktiverings-nudgen som en **planlagt Netlify-funktion** og ikke
+som en Trigger.dev-schedule: Netlify kører med sitets egne nøgler og virker
+fra første deploy.
+
+## Nyt 27/8 — hvad der skal køres i prod
+
+1. ~~**Migration `20260827120000_maaling_og_nudge.sql`**~~ — KØRT i prod
+   27/8 og verificeret: constrainten accepterer `trial_cta_klik`, kolonnen
+   `profiles.aktivering_nudget_at` findes, og det delvise indeks er oprettet.
+2. **`AKTIVERING_NUDGE=ja` i Netlify** — nudgen er SLUKKET som standard.
+   Den er det eneste, der sender uopfordret post til rigtige mennesker, og
+   første kørsel ville ramme alle eksisterende konti uden items på én gang.
+   Tjek tallet i /admin under "Venter på aktiverings-nudge", før du tænder.
+3. **`TRIGGER_ACCESS_TOKEN` som GitHub-secret** — se ovenfor. Deployet kan
+   IKKE overskrive jobbets env i Trigger.dev-dashboardet: `syncEnvVars` i
+   trigger.config.ts filtrerer tomme værdier fra, og GitHub-secret'ene er
+   ikke sat, så der skubbes en tom liste op.
 
 ## Kritiske problemer
 
-**P0 — Aktivering:** Eneste ægte bruger gennemførte onboarding og lavede intet. Ingen aktiveringsmail, intet der trækker mod første upload.
+**P0 — Aktivering (uændret, nu 2 ud af 2):** Begge ægte brugere gennemførte
+onboarding og lavede intet. Velkomstmailen ER implementeret og leverer —
+ejeren bekræfter 27/8, at mails fra Selja modtages i praksis. Problemet er
+altså IKKE en manglende mail: brugerne får velkomsten med link til /nyt-item
+og handler alligevel ikke på den. Det er indholdet og opfølgningen, der skal
+ændres, ikke leveringen.
+
+*(Rettelse 27/8: en tidligere udgave af dette dokument satte spørgsmålstegn ved
+om RESEND_API_KEY overhovedet var sat. Det var forkert — nøglen virker.)*
 
 **P0 — 31 % fejlrate på onmodel:** `generisk@v2` fejler 4/5 (80 %), `overdel@v2` 6/22 (27 %), `bukser@v3` 0/6. Fallback til generisk ved ukendt kategori er en reproducerbar bug — stop jobbet og bed brugeren vælge kategori i stedet.
 
-**P0 — Ingen fejllogning:** `generations.fejl` er NULL for alle 11 fejl. Gem exception (message, code, provider_status) ved failed status — ellers er al fejlsøgning gætværk.
+**LØST — fejllogning:** `generations.fejl` skrives nu ved failed status
+(`afslutGenerering`, dækket af tests/unit/generering-fejl.test.ts). De 11
+NULL-rækker er alle fra 20.–22/8 og ligger FØR den kode — de forbliver tomme,
+men nye fejl logges. Rækken i statustabellen ovenfor var forældet.
 
 **P1 — Inkonsistent cost-logning:** Fejl logger snart 1,94 kr, snart 0,00. Log altid faktisk faktureret beløb.
 

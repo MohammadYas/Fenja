@@ -37,6 +37,26 @@ export const emails = {
       "Annoncer betales med kreditter: 1 kredit = 1 færdig annonce. Du køber kun det, du bruger; kreditter gælder 12 måneder fra køb.",
     knap: "Lav min første annonce",
   },
+  // Aktiverings-nudge (dataanalyse 27/8): begge ægte brugere tilmeldte sig og
+  // lagde aldrig noget op. ÉT venligt skub, aldrig to — stemplet på
+  // profiles.aktivering_nudget_at. Tonen er hjælpsom, ikke sælgende: den
+  // fjerner den mest sandsynlige bremse (at man tror det kræver mere end det
+  // gør) i stedet for at presse på for et køb.
+  aktivering: {
+    emne: "Ét billede er nok til at komme i gang",
+    forhaandsvisning: "Du mangler kun at tage det første foto.",
+    overskrift: "Skal vi tage den første sammen?",
+    brod:
+      "Du oprettede en konto hos Selja, men er ikke kommet i gang endnu. Det tager kortere tid, end de fleste tror — du behøver kun ét billede for at se, hvad et stykke tøj er værd.",
+    trin: [
+      "Find ét stykke tøj, du alligevel ikke bruger.",
+      "Tag ét billede med telefonen, hvor hele tøjet kan ses.",
+      "Selja renser billedet, skriver annoncen og foreslår en pris.",
+    ],
+    hjaelpNote:
+      "Sidder du fast, eller manglede der noget? Svar på denne mail — den går direkte til os, og vi læser hver eneste.",
+    knap: "Kom i gang",
+  },
   annonceKlar: {
     emne: (titel: string) => `Din annonce er klar: ${titel}`,
     forhaandsvisning: "Rensede fotos, visualisering og tekst ligger klar til Vinted.",

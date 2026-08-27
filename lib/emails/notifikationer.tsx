@@ -4,6 +4,7 @@
 // funktion. Rene og testbare: alt går gennem en injiceret EmailAfsender, så
 // tests og CI kører mod MockEmailAfsender uden nøgle (NFR-5).
 
+import { AktiveringsMail } from "@/emails/aktivering";
 import { AnnonceKlarMail } from "@/emails/annonce-klar";
 import { KreditRefunderetMail } from "@/emails/kredit-refunderet";
 import { KvitteringMail } from "@/emails/kvittering";
@@ -37,6 +38,18 @@ export async function sendVelkomst(
     til: args.til,
     emne,
     html: await renderMailHtml(emne, <VelkomstMail startUrl={args.startUrl} />),
+  });
+}
+
+export async function sendAktiveringsNudge(
+  afsender: EmailAfsender,
+  args: { til: string; startUrl: string },
+): Promise<EmailKvittering> {
+  const emne = kopi.aktivering.emne;
+  return afsender.send({
+    til: args.til,
+    emne,
+    html: await renderMailHtml(emne, <AktiveringsMail startUrl={args.startUrl} />),
   });
 }
 

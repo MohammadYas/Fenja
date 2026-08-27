@@ -1193,6 +1193,7 @@ export const da = {
       topSider: "Mest viste sider",
       topKilder: "Kilder (unikke / visninger)",
       topKampagner: "UTM-kampagner",
+      topIndhold: "Top indhold (utm_content)",
     },
     // Forside-billeder (21/8 nat): upload uden deploy
     forsideBilleder: {
@@ -1226,6 +1227,11 @@ export const da = {
         "Kunne ikke gemme valget. Er migration 20260823100000_indstillinger kørt i Supabase?",
     },
     // Gratis trial-drift (ejer-ordre 25/8): toggle + budgetloft uden deploy
+    aktivering: {
+      titel: "Venter på aktiverings-nudge",
+      forklaring:
+        "Brugere der tilmeldte sig for mere end et døgn siden, aldrig har lagt et item op, og endnu ikke har fået nudgen. Den planlagte Netlify-funktion aktivering-nudge tømmer listen hver morgen — står tallet stille og stiger, kører planen ikke.",
+    },
     trial: {
       titel: "Gratis trial",
       forklaring:
@@ -1255,6 +1261,7 @@ export const da = {
         provSide: "/prov-besøg",
         startet: "Trials startet",
         leveret: "Leveret",
+        ctaKlik: "Trykkede \u201cOpret konto\u201d",
         signup: "Claimet til konto",
         blokeret: "Blokeret undervejs",
         blokeretTom: "Ingen blokeret i perioden.",
