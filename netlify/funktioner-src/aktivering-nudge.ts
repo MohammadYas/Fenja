@@ -19,6 +19,19 @@ import { hentEmailAfsender } from "@/lib/emails/send";
 import { opretServiceKlient } from "@/lib/supabase/service";
 
 const aktiveringNudge = async (): Promise<Response> => {
+  // SLUKKET SOM STANDARD (ejer-krav 27/8). Det her er det eneste, der sender
+  // uopfordret post til rigtige mennesker, og første kørsel ville ramme ALLE
+  // eksisterende konti uden items på én gang. Den skal derfor tændes bevidst:
+  // sæt AKTIVERING_NUDGE=ja i Netlify, når listen i /admin ser rigtig ud.
+  // Uden variablen kører planen, logger og sender ingenting.
+  if (process.env.AKTIVERING_NUDGE !== "ja") {
+    console.log("aktivering-nudge: slukket (sæt AKTIVERING_NUDGE=ja for at sende)");
+    return Response.json(
+      { sendt: 0, sprunget: 0, fejlet: 0, note: "slukket — sæt AKTIVERING_NUDGE=ja" },
+      { status: 200 },
+    );
+  }
+
   // Uden Resend-nøgle mockes afsendelsen lydløst. Så ville stemplet blive
   // sat for brugere, der ALDRIG fik en mail — og de kan aldrig nudges igen.
   // Derfor: hellere ingenting end et stempel uden en mail bag.

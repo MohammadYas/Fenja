@@ -62,7 +62,7 @@ høstet række (ingen urimelig 7-dages IP-lås for et resultat, ingen så).
 | Natlig oprydning af rate_limit (pg_cron) | ✅ Live i prod 23/8 |
 | Fejllogning i generations.fejl | ✅ Implementeret (verificeret 27/8) |
 | Generisk-fallback ved ukendt kategori | ✅ Implementeret (verificeret 27/8) |
-| Aktiveringsmail til nye brugere | ✅ Kode findes — LEVERANCE UBEKRÆFTET |
+| Aktiveringsmail til nye brugere | ✅ Implementeret og leverer (ejer 27/8) |
 | Høst af hængende trials uden poller | ✅ Rettet 27/8 |
 | Måling af trial-CTA (tragtens sidste trin) | ✅ Tilføjet 27/8 |
 | utm_content synlig i admin | ✅ Tilføjet 27/8 |
@@ -131,19 +131,26 @@ fra første deploy.
    `trial_events`-constrainten med `trial_cta_klik` og tilføjer
    `profiles.aktivering_nudget_at`. Uden den fejler klik-målingen stille
    (eventet afvises af constrainten), og nudgen kan ikke stemple.
-2. **`RESEND_API_KEY` i Netlify** — nudgen springer sig selv over uden den
-   (bevidst: et stempel uden en mail bag ville låse brugeren ude af nudgen
-   for altid).
-3. **`TRIGGER_ACCESS_TOKEN` som GitHub-secret** — se ovenfor.
+2. **`AKTIVERING_NUDGE=ja` i Netlify** — nudgen er SLUKKET som standard.
+   Den er det eneste, der sender uopfordret post til rigtige mennesker, og
+   første kørsel ville ramme alle eksisterende konti uden items på én gang.
+   Tjek tallet i /admin under "Venter på aktiverings-nudge", før du tænder.
+3. **`TRIGGER_ACCESS_TOKEN` som GitHub-secret** — se ovenfor. Deployet kan
+   IKKE overskrive jobbets env i Trigger.dev-dashboardet: `syncEnvVars` i
+   trigger.config.ts filtrerer tomme værdier fra, og GitHub-secret'ene er
+   ikke sat, så der skubbes en tom liste op.
 
 ## Kritiske problemer
 
 **P0 — Aktivering (uændret, nu 2 ud af 2):** Begge ægte brugere gennemførte
-onboarding og lavede intet. Velkomstmailen ER implementeret (`sendVelkomst` i
-lib/auth/efter-bekraeftelse.ts, med startUrl mod /nyt-item), men uden
-RESEND_API_KEY mockes afsendelsen lydløst — og `welcomed_at` sættes ALLIGEVEL,
-så databasen ikke kan skelne "sendt" fra "mocket". **Tjek at RESEND_API_KEY er
-sat i Netlify, før der konkluderes noget om aktivering.**
+onboarding og lavede intet. Velkomstmailen ER implementeret og leverer —
+ejeren bekræfter 27/8, at mails fra Selja modtages i praksis. Problemet er
+altså IKKE en manglende mail: brugerne får velkomsten med link til /nyt-item
+og handler alligevel ikke på den. Det er indholdet og opfølgningen, der skal
+ændres, ikke leveringen.
+
+*(Rettelse 27/8: en tidligere udgave af dette dokument satte spørgsmålstegn ved
+om RESEND_API_KEY overhovedet var sat. Det var forkert — nøglen virker.)*
 
 **P0 — 31 % fejlrate på onmodel:** `generisk@v2` fejler 4/5 (80 %), `overdel@v2` 6/22 (27 %), `bukser@v3` 0/6. Fallback til generisk ved ukendt kategori er en reproducerbar bug — stop jobbet og bed brugeren vælge kategori i stedet.
 
