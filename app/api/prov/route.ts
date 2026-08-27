@@ -13,6 +13,7 @@ import {
 import {
   SupabaseTrialVaernDb,
   TRIAL_BUCKET,
+  hoestHaengendeTrials,
   logTrialEvent,
   opretTrialRaekke,
 } from "@/lib/trial/db";
@@ -108,7 +109,13 @@ export async function POST(request: NextRequest) {
     return blokeret(svar.aarsag, besked, svar.aarsag === "lukket" ? 403 : 429);
   }
 
-  // 6) Alt er godkendt: opret rækken, gem det forberedte foto og start kørslen
+  // 6) Alt er godkendt. Høst først de rækker, en tidligere besøgende
+  // efterlod i "running" ved at lukke fanen — høsten i status-ruten kræver
+  // en poller, og uden én stod rækkerne der for evigt (dataanalyse 27/8).
+  // Best-effort: en fejlet høst må aldrig koste den besøgende sin prøve.
+  await hoestHaengendeTrials(service);
+
+  // Opret rækken, gem det forberedte foto og start kørslen
   const token = crypto.randomUUID();
   let trialId: string;
   try {

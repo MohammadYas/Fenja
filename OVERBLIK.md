@@ -60,26 +60,60 @@ høstet række (ingen urimelig 7-dages IP-lås for et resultat, ingen så).
 | Rate limiting på genereringer (DB-trigger) | ✅ Live i prod 23/8 |
 | 6 ydelsesindekser | ✅ Live i prod 23/8 |
 | Natlig oprydning af rate_limit (pg_cron) | ✅ Live i prod 23/8 |
-| Fejllogning i generations.fejl | ❌ Mangler (app-kode) |
-| Generisk-fallback ved ukendt kategori | ❌ Mangler (app-kode) |
-| Aktiveringsmail til nye brugere | ❌ Mangler |
+| Fejllogning i generations.fejl | ✅ Implementeret (verificeret 27/8) |
+| Generisk-fallback ved ukendt kategori | ✅ Implementeret (verificeret 27/8) |
+| Aktiveringsmail til nye brugere | ✅ Kode findes — LEVERANCE UBEKRÆFTET |
+| Høst af hængende trials uden poller | ✅ Rettet 27/8 |
 | SEO-pakke implementeret | ❌ Se docs/seo-pakke-selja.md |
 
 ## Hvad Selja er
 
 Gensalgsværktøj til tøj: upload et billede, få rensede produktfotos (cleanup), stylede billeder i hjemmemiljø (onmodel: spejl/gulv/stativ/detalje) og færdig annonce med titel, beskrivelse, søgeord og prisinterval (text). Credits via Stripe (abonnement + pakker).
 
-## Status i tal (23/8)
+## Status i tal (27/8)
 
-9 registrerede brugere, heraf **1 ægte** (carolinefenge22@gmail.com, aldrig aktiveret — 0 items). 12 items (alle active, 0 solgt). 60 genereringer, 11 fejlede (alle onmodel). API-forbrug 47,35 kr, heraf **17,46 kr brændt på fejl**. 12 unikke besøgende 23/8, Google organisk leverede den ægte bruger. 61 % mobil.
+**Brugere:** 10 registrerede, heraf **2 ægte** — carolinefenge22@gmail.com
+(23/8) og agurkmolgaard@gmail.com (24/8). De øvrige 8 er ejerens egne konti
+(inkl. selja-logintest@example.com, kekee@gmail.com og nrikke26@gmail.com).
+**Begge ægte brugere har 0 items og 0 genereringer.** Aktiveringsproblemet
+fra 23/8 er altså ikke et enkelttilfælde — det er 2 ud af 2.
+
+**Produktion:** 14 items (alle active, **0 solgt**), alle skabt på to af
+ejerens konti. 66 genereringer: 55 lykkedes, 11 fejlede (alle onmodel, alle
+20.–22/8 — ingen fejl siden kategori-værnet). Samlet API-forbrug **49,91 kr**,
+heraf **17,46 kr brændt på fejl**. Ingen genereringer siden 26/8.
+
+**Gratis prøve (26/8, eneste aktive døgn):** 13 startede fra **7 unikke IP'er**
+→ 2 fuldført, 3 fejlet, **8 hang i "running"**. **0 claimet til en konto.**
+4,51 kr. Tidslinjen er entydig: de 11 forsøg mellem 17:28 og 19:22 fejlede
+eller hang alle, mens begge forsøg efter 19:26 lykkedes — **Netlify-reserven
+virkede, da den kom i luften.** Én besøgende prøvede 5 gange i træk
+(19:05–19:22) uden at få noget.
+
+**Omsætning: 0 kr fra ægte brugere.** Alle posteringer i credit_ledger med et
+Stripe-ref tilhører ejerens egne konti; den ene ægte bruger med kreditter fik
+dem tildelt manuelt i admin.
+
+**Trafik:** 327 sidevisninger i alt. /prov har 12 visninger fra 9 unikke —
+færre end de 13 trials fra 7 IP'er, så besøgstællingen undertæller. Kilder:
+297 direkte (TikTok-bio efterlader ingen referrer), 6 Google, 21 fra
+Stripe-checkout. Ingen UTM-tagging overhovedet.
 
 ## Kritiske problemer
 
-**P0 — Aktivering:** Eneste ægte bruger gennemførte onboarding og lavede intet. Ingen aktiveringsmail, intet der trækker mod første upload.
+**P0 — Aktivering (uændret, nu 2 ud af 2):** Begge ægte brugere gennemførte
+onboarding og lavede intet. Velkomstmailen ER implementeret (`sendVelkomst` i
+lib/auth/efter-bekraeftelse.ts, med startUrl mod /nyt-item), men uden
+RESEND_API_KEY mockes afsendelsen lydløst — og `welcomed_at` sættes ALLIGEVEL,
+så databasen ikke kan skelne "sendt" fra "mocket". **Tjek at RESEND_API_KEY er
+sat i Netlify, før der konkluderes noget om aktivering.**
 
 **P0 — 31 % fejlrate på onmodel:** `generisk@v2` fejler 4/5 (80 %), `overdel@v2` 6/22 (27 %), `bukser@v3` 0/6. Fallback til generisk ved ukendt kategori er en reproducerbar bug — stop jobbet og bed brugeren vælge kategori i stedet.
 
-**P0 — Ingen fejllogning:** `generations.fejl` er NULL for alle 11 fejl. Gem exception (message, code, provider_status) ved failed status — ellers er al fejlsøgning gætværk.
+**LØST — fejllogning:** `generations.fejl` skrives nu ved failed status
+(`afslutGenerering`, dækket af tests/unit/generering-fejl.test.ts). De 11
+NULL-rækker er alle fra 20.–22/8 og ligger FØR den kode — de forbliver tomme,
+men nye fejl logges. Rækken i statustabellen ovenfor var forældet.
 
 **P1 — Inkonsistent cost-logning:** Fejl logger snart 1,94 kr, snart 0,00. Log altid faktisk faktureret beløb.
 

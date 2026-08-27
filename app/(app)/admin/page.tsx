@@ -11,6 +11,7 @@ import { billedModeller, misbrugsvaern } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
+import { hoestHaengendeTrials } from "@/lib/trial/db";
 import { BilledModelValg } from "./billedmodel";
 import { ContentVaerktoejer } from "./content-vaerktoejer";
 import { ForsideBilleder } from "./forside-billeder";
@@ -306,6 +307,10 @@ export default async function Admin({
     (await hentTrialIndstillinger()) ?? STANDARD_TRIAL_INDSTILLINGER;
   const trialTal = await (async () => {
     try {
+      // Høst hængende rækker før tallene læses: uden en poller stod de i
+      // "running" for evigt og talte med som igangværende kørsler, der
+      // aldrig kom (dataanalyse 27/8). Best-effort — vælter aldrig siden.
+      await hoestHaengendeTrials(service);
       const [dagens, blokeret, completedIAlt, signups, periodensEvents] = await Promise.all([
         service
           .from("trial_usage")
