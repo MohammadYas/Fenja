@@ -1,7 +1,17 @@
 // Misbrugsværnene for den gratis prøve — ALLE checks er server-side og kører
 // FØR noget koster penge. Rækkefølgen er billigst-først: admin-toggle og
 // budgetloft (databasen er sandheden, aldrig env/build — ejeren lukker trialen
-// uden deploy), derefter time-cap, cookie, IP og fingerprint.
+// uden deploy), derefter time-cap og cookie.
+//
+// IP'EN BLOKERER IKKE (ejer-ordre 27/8). Dansk mobiltrafik deler IP gennem
+// operatørens CGNAT, og trafikken til /prov kommer fra TikTok — altså næsten
+// udelukkende fra telefoner. Én gennemført prøve ville derfor spærre vildt
+// fremmede på samme mastenet i 7 dage, uden at de nogensinde fik at vide
+// hvorfor. Det er samme fælde som fingerprintet allerede var i (se
+// trialFingerprintHash): et signal der rammer kohorter, ikke personer.
+// ip_hash GEMMES fortsat på rækken til misbrugsanalyse — den blokerer bare
+// ingen. De hårde værn er nu budgetloftet og time-cappen, som begge har et
+// tal ejeren selv styrer i /admin.
 //
 // Fejlsikret LUKKET — modsat rate_limit-tælleren: her står API-budgettet
 // direkte på spil, og en prøve er aldrig kritisk for en betalende bruger.
@@ -17,8 +27,7 @@ export type TrialBlokAarsag =
   | "lukket"
   | "budget"
   | "time"
-  | "cookie"
-  | "ip";
+  | "cookie";
 
 export type TrialVaernSvar =
   | { tilladt: true }
@@ -40,7 +49,11 @@ export type TrialVaernDb = {
   ): Promise<boolean>;
 };
 
-/** Hashet klient-IP — samme headers som resten af appen (Netlify først) */
+/**
+ * Hashet klient-IP — samme headers som resten af appen (Netlify først).
+ * GEMMES til misbrugsanalyse (hvor mange forsøg kom fra samme net?), men
+ * BLOKERER aldrig: se filens hoved om CGNAT.
+ */
 export function trialIpHash(request: Request): string {
   const raa =
     request.headers.get("x-nf-client-connection-ip") ??
@@ -140,16 +153,14 @@ export async function tjekTrialVaern(
       return { tilladt: false, aarsag: "time" };
     }
 
-    // 3) Én pr. person: cookie → IP (kun completed blokerer)
+    // 3) Én pr. browser: cookien er det ENESTE person-værn der blokerer.
+    // IP'en blokerer IKKE (ejer-ordre 27/8) — se filens hoved.
     const siden = trialVindueStartIso(nuMs);
     if (
       klient.cookieToken &&
       (await db.harCompleted("token_hash", trialTokenHash(klient.cookieToken), siden))
     ) {
       return { tilladt: false, aarsag: "cookie" };
-    }
-    if (await db.harCompleted("ip_hash", klient.ipHash, siden)) {
-      return { tilladt: false, aarsag: "ip" };
     }
 
     return { tilladt: true };

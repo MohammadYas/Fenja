@@ -41,7 +41,7 @@ const TRIAL_FORVENTET_SEKUNDER = Math.round(trial.timeoutMs / 1000);
 export async function POST(request: NextRequest) {
   const service = opretServiceKlient();
   const blokeret = (
-    aarsag: "lukket" | "budget" | "time" | "cookie" | "ip" | "captcha",
+    aarsag: "lukket" | "budget" | "time" | "cookie" | "captcha",
     besked: string,
     status: number,
   ) => {

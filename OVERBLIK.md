@@ -13,8 +13,12 @@ Forsiden guider primært hertil; TikTok-bio peger på selja.dk/prov.
 budgetloft i /admin → Gratis trial (default 200 kr., læses friskt pr.
 forsøg), TRIAL_HOURLY_CAP (default 30 fra 26/8 — budgetloftet lukker
 stadig døgnet ved 200 kr.),
-1 completed trial pr. IP-hash pr. 7 dage (fejlede låser ikke), cookie +
-fingerprint. Captcha: uden Turnstile-nøgler springes den over (bevidst
+1 completed trial pr. COOKIE pr. 7 dage (fejlede låser ikke).
+**IP'en blokerer IKKE længere (ejer-ordre 27/8):** dansk mobiltrafik deler IP
+gennem operatørens CGNAT, og /prov-trafikken kommer fra TikTok, altså fra
+telefoner — ét gennemført forsøg spærrede vildt fremmede på samme mastenet i
+7 dage. ip_hash og fingerprint gemmes fortsat til misbrugsanalyse, men
+blokerer ingen. De hårde værn er budgetloftet og time-cappen. Captcha: uden Turnstile-nøgler springes den over (bevidst
 beslutning 25/8); sættes nøglerne, håndhæves den automatisk. Tragten måles
 i trial_events (started/completed/blocked/to_signup) og vises i admin.
 
@@ -68,6 +72,8 @@ høstet række (ingen urimelig 7-dages IP-lås for et resultat, ingen så).
 | utm_content synlig i admin | ✅ Tilføjet 27/8 |
 | Aktiverings-nudge (planlagt Netlify-funktion) | ✅ Bygget 27/8 — kræver migration + RESEND_API_KEY |
 | Trigger.dev deployet | ❌ Blokeret: TRIGGER_ACCESS_TOKEN mangler |
+| Migration 20260827120000 kørt i prod | ✅ Kørt og verificeret 27/8 |
+| IP-blokering på gratis prøve fjernet | ✅ Fjernet 27/8 (CGNAT ramte fremmede) |
 | SEO-pakke implementeret | ❌ Se docs/seo-pakke-selja.md |
 
 ## Hvad Selja er
@@ -127,10 +133,9 @@ fra første deploy.
 
 ## Nyt 27/8 — hvad der skal køres i prod
 
-1. **Migration `20260827120000_maaling_og_nudge.sql`** — udvider
-   `trial_events`-constrainten med `trial_cta_klik` og tilføjer
-   `profiles.aktivering_nudget_at`. Uden den fejler klik-målingen stille
-   (eventet afvises af constrainten), og nudgen kan ikke stemple.
+1. ~~**Migration `20260827120000_maaling_og_nudge.sql`**~~ — KØRT i prod
+   27/8 og verificeret: constrainten accepterer `trial_cta_klik`, kolonnen
+   `profiles.aktivering_nudget_at` findes, og det delvise indeks er oprettet.
 2. **`AKTIVERING_NUDGE=ja` i Netlify** — nudgen er SLUKKET som standard.
    Den er det eneste, der sender uopfordret post til rigtige mennesker, og
    første kørsel ville ramme alle eksisterende konti uden items på én gang.

@@ -89,14 +89,23 @@ describe("trial-værn (alle checks server-side, ejer-krav 3+7)", () => {
     expect(await tjekTrialVaern(db, KLIENT)).toEqual({ tilladt: false, aarsag: "time" });
   });
 
-  it("samme IP med en COMPLETED trial inden for 7 dage afvises", async () => {
+  it("IP'EN BLOKERER ALDRIG — heller ikke med en completed trial på samme IP", async () => {
+    // Ejer-ordre 27/8: dansk mobiltrafik deler IP gennem operatørens CGNAT, og
+    // /prov-trafikken kommer fra TikTok. Et IP-værn spærrer derfor vildt
+    // fremmede på samme mastenet i 7 dage. Samme fælde som fingerprintet.
     const db = new FakeVaernDb({
       completedRaekker: [{ kolonne: "ip_hash", vaerdi: "ip-a" }],
     });
-    expect(await tjekTrialVaern(db, KLIENT)).toEqual({ tilladt: false, aarsag: "ip" });
+    expect(await tjekTrialVaern(db, KLIENT)).toEqual({ tilladt: true });
   });
 
-  it("en FEJLET trial låser ikke IP'en (kun completed tæller)", async () => {
+  it("slår slet ikke op på ip_hash — værnet må ikke koste et unødigt kald", async () => {
+    const db = new FakeVaernDb({ completedRaekker: [] });
+    await tjekTrialVaern(db, KLIENT);
+    expect(db.kald.some((k) => k.includes("ip_hash"))).toBe(false);
+  });
+
+  it("en FEJLET trial låser ikke noget (kun completed tæller for cookien)", async () => {
     // Fake'ens harCompleted svarer kun på completed-rækker — en fejlet kørsel
     // findes slet ikke i listen, præcis som i den rigtige forespørgsel
     const db = new FakeVaernDb({ completedRaekker: [] });

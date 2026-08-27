@@ -278,8 +278,10 @@ export const trial = {
   // kørsel der når at starte, kan altså ALTID nå frem inden klienten giver
   // op. Sidste status-tjek sker FØR der vises en fejl (prov-klient.tsx).
   klientVenteMs: TRIAL_KOE_DEADLINE_MS + TRIAL_TIMEOUT_MS + 30_000,
-  // Kun COMPLETED trials tæller — en fejlet prøve låser ikke IP'en, så den
-  // besøgende har ét ærligt forsøg mere
+  // Vinduet for cookie-værnet. Kun COMPLETED trials tæller — en fejlet prøve
+  // låser ikke, så den besøgende har ét ærligt forsøg mere.
+  // Navnet er historisk: IP'en blokerer IKKE længere (ejer-ordre 27/8,
+  // CGNAT ramte fremmede på samme mastenet) — se lib/trial/vaern.ts.
   ipVinduesDage: 7,
   // Spike-beskyttelse pr. time; det PRIMÆRE værn er budgetloftet i admin.
   // 30 (26/8, før 10): linket deles aktivt til mange på én gang, og en bølge
