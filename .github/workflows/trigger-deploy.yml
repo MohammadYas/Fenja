@@ -6,9 +6,16 @@ name: Trigger.dev deploy
 # kan startes manuelt fra Actions-fanen, hvilket også virker fra en telefon.
 #
 # Kræver repo-secret TRIGGER_ACCESS_TOKEN (personlig access token fra
-# cloud.trigger.dev → Account → Access Tokens). Mangler den, springes
-# deployet pænt over med en tydelig besked — workflowet fejler aldrig af den
-# grund alene.
+# cloud.trigger.dev → Account → Access Tokens).
+#
+# Mangler den:
+#  - ved PUSH springes deployet pænt over, så et almindeligt push aldrig
+#    fejler på noget, der ikke er push'ets skyld;
+#  - ved MANUELT START fejler workflowet HØJT. Et menneske har netop bedt om
+#    et deploy, og et grønt flueben på en kørsel der intet gjorde, er præcis
+#    den tavse succes der forårsagede prod-hændelsen 26/8 (kørslen blev
+#    parkeret i PENDING_VERSION og lignede en succes). Verificeret 27/8: alle
+#    fem kørsler indtil da var grønne UDEN at have deployet noget.
 #
 # Env-nøglerne til selve jobbet (Gemini/Supabase m.fl.) synces af
 # trigger.config.ts fra deploy-miljøet: er de sat som GitHub-secrets, følger
@@ -35,6 +42,9 @@ jobs:
         run: |
           if [ -n "$TRIGGER_ACCESS_TOKEN" ]; then
             echo "klar=ja" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "::error::Repo-secret TRIGGER_ACCESS_TOKEN mangler — der blev IKKE deployet noget. Opret en access token på cloud.trigger.dev (Account → Access Tokens) og tilføj den under Settings → Secrets and variables → Actions. Kørslen fejler med vilje: et grønt flueben på et deploy, der ikke skete, er værre end ingen kørsel."
+            exit 1
           else
             echo "::notice::Repo-secret TRIGGER_ACCESS_TOKEN mangler — Trigger.dev-deployet springes over. Opret en access token på cloud.trigger.dev og tilføj den under Settings → Secrets and variables → Actions."
             echo "klar=nej" >> "$GITHUB_OUTPUT"

@@ -11,6 +11,8 @@ import { billedModeller, misbrugsvaern } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 import { opretServiceKlient } from "@/lib/supabase/service";
+import { NUDGE_EFTER_MS } from "@/lib/aktivering/nudge";
+import { antalAfventerNudge } from "@/lib/aktivering/supabase";
 import { hoestHaengendeTrials } from "@/lib/trial/db";
 import { BilledModelValg } from "./billedmodel";
 import { ContentVaerktoejer } from "./content-vaerktoejer";
@@ -84,6 +86,7 @@ export default async function Admin({
     utm_source: string | null;
     utm_medium: string | null;
     utm_campaign: string | null;
+    utm_content: string | null;
     enhed: string;
     created_at: string;
     besoegende?: string | null;
@@ -92,7 +95,7 @@ export default async function Admin({
   // Besøgende-kolonnen kommer med migration 20260822180000 — er den ikke kørt
   // endnu, henter vi de gamle felter, og unik-tallet vises som ukendt.
   const besoegSelect =
-    "sti, referrer_host, utm_source, utm_medium, utm_campaign, enhed, created_at";
+    "sti, referrer_host, utm_source, utm_medium, utm_campaign, utm_content, enhed, created_at";
   const besoegQuery = (felter: string) =>
     service
       .from("besoeg")
@@ -211,6 +214,12 @@ export default async function Admin({
       b.utm_source ? [b.utm_source, b.utm_medium, b.utm_campaign].filter(Boolean).join(" / ") : null,
     ),
   ).map(([n, a]) => [n, String(a)] as [string, string]);
+  // utm_content pr. opslag (27/8): kampagnen siger "TikTok virker", men det er
+  // FØRST her man kan se HVILKEN video der virker. Kolonnen har altid ligget i
+  // besoeg — den blev bare aldrig hentet eller vist.
+  const topIndhold = talOp(besoeg.map((b) => b.utm_content)).map(
+    ([n, a]) => [n, String(a)] as [string, string],
+  );
   const mobilAndel =
     besoeg.length > 0
       ? Math.round((besoeg.filter((b) => b.enhed === "mobil").length / besoeg.length) * 100)
@@ -363,6 +372,10 @@ export default async function Admin({
         periode: {
           startet: events.filter((e) => e.event === "trial_started").length,
           leveret: events.filter((e) => e.event === "trial_completed").length,
+          // Trinnet mellem "resultatet blev vist" og "kontoen blev oprettet"
+          // (27/8): uden det kan "ville ikke" ikke skelnes fra "ville, men
+          // faldt fra" — og de to har hver sin rettelse.
+          ctaKlik: events.filter((e) => e.event === "trial_cta_klik").length,
           signups: events.filter((e) => e.event === "trial_to_signup").length,
           blokeretAarsager: [...blokeretAarsager.entries()].sort((a, b) => b[1] - a[1]),
         },
@@ -371,6 +384,14 @@ export default async function Admin({
       return null;
     }
   })();
+
+  // Aktiverings-nudge (27/8): en planlagt Netlify-funktion sender ét skub til
+  // brugere uden items. Tallet her gør planen AFLÆSELIG — står det stille højt,
+  // kører planen ikke, og det er præcis den tavse fejl der ramte trial-jobbet.
+  const afventerNudge = await antalAfventerNudge(
+    service,
+    new Date(Date.now() - NUDGE_EFTER_MS).toISOString(),
+  );
 
   // Tragtens besøgs-trin genbruger trafiksektionens filtrerede rækker
   const tragtForside = besoeg.filter((b) => b.sti === "/");
@@ -643,6 +664,7 @@ export default async function Admin({
               [da.admin.trafik.topKilder, kildeRaekker],
               [da.admin.trafik.topSider, topSider],
               [da.admin.trafik.topKampagner, topKampagner],
+              [da.admin.trafik.topIndhold, topIndhold],
             ] as const
           ).map(([titel, raekker]) => (
             <div key={titel}>
@@ -733,6 +755,11 @@ export default async function Admin({
                     tragtPct(trialTal.periode.leveret, trialTal.periode.startet),
                   ],
                   [
+                    da.admin.trial.tragt.ctaKlik,
+                    String(trialTal.periode.ctaKlik),
+                    tragtPct(trialTal.periode.ctaKlik, trialTal.periode.leveret),
+                  ],
+                  [
                     da.admin.trial.tragt.signup,
                     String(trialTal.periode.signups),
                     tragtPct(trialTal.periode.signups, trialTal.periode.leveret),
@@ -762,6 +789,16 @@ export default async function Admin({
           </p>
         </div>
       ) : null}
+
+      <div className="mt-4 rounded-bloed border border-kant bg-flade p-4">
+        <p className="font-medium">{da.admin.aktivering.titel}</p>
+        <p className="mt-1 max-w-laesbar text-detalje text-tekst/70">
+          {da.admin.aktivering.forklaring}
+        </p>
+        <p className="mt-2 font-mono text-titel font-bold">
+          {afventerNudge ?? "\u2014"}
+        </p>
+      </div>
 
       <TrialIndstillinger
         startAktiv={trialIndstillinger.aktiv}

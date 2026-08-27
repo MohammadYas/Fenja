@@ -64,6 +64,10 @@ høstet række (ingen urimelig 7-dages IP-lås for et resultat, ingen så).
 | Generisk-fallback ved ukendt kategori | ✅ Implementeret (verificeret 27/8) |
 | Aktiveringsmail til nye brugere | ✅ Kode findes — LEVERANCE UBEKRÆFTET |
 | Høst af hængende trials uden poller | ✅ Rettet 27/8 |
+| Måling af trial-CTA (tragtens sidste trin) | ✅ Tilføjet 27/8 |
+| utm_content synlig i admin | ✅ Tilføjet 27/8 |
+| Aktiverings-nudge (planlagt Netlify-funktion) | ✅ Bygget 27/8 — kræver migration + RESEND_API_KEY |
+| Trigger.dev deployet | ❌ Blokeret: TRIGGER_ACCESS_TOKEN mangler |
 | SEO-pakke implementeret | ❌ Se docs/seo-pakke-selja.md |
 
 ## Hvad Selja er
@@ -98,6 +102,39 @@ dem tildelt manuelt i admin.
 færre end de 13 trials fra 7 IP'er, så besøgstællingen undertæller. Kilder:
 297 direkte (TikTok-bio efterlader ingen referrer), 6 Google, 21 fra
 Stripe-checkout. Ingen UTM-tagging overhovedet.
+
+## Verificeret 27/8: Trigger.dev-deployet er ALDRIG kørt
+
+Actions-workflowet "Trigger.dev deploy" har kørt fem gange og er grønt hver
+gang — **uden nogensinde at have deployet noget.** Repo-secret'et
+`TRIGGER_ACCESS_TOKEN` er aldrig blevet sat, så "Tjek adgang" sætter
+`klar=nej`, og alle efterfølgende trin (checkout, npm ci, deploy) springes
+over. Kørslen tager 8 sekunder og ender med et grønt flueben.
+
+Det er nøjagtig samme fejlklasse som PENDING_VERSION: **et grønt signal, der
+ikke betyder noget.** Workflowet er derfor rettet, så et MANUELT start nu
+fejler højt, når nøglen mangler (et push springer stadig pænt over).
+
+**Det eneste, der mangler, er nøglen:** opret en access token på
+cloud.trigger.dev → Account → Access Tokens, og læg den ind under
+Settings → Secrets and variables → Actions som `TRIGGER_ACCESS_TOKEN`.
+Derefter deployer hvert push til main automatisk. Ingen af de 5 jobs i
+`trigger/` kører før det er gjort.
+
+Derfor ligger aktiverings-nudgen som en **planlagt Netlify-funktion** og ikke
+som en Trigger.dev-schedule: Netlify kører med sitets egne nøgler og virker
+fra første deploy.
+
+## Nyt 27/8 — hvad der skal køres i prod
+
+1. **Migration `20260827120000_maaling_og_nudge.sql`** — udvider
+   `trial_events`-constrainten med `trial_cta_klik` og tilføjer
+   `profiles.aktivering_nudget_at`. Uden den fejler klik-målingen stille
+   (eventet afvises af constrainten), og nudgen kan ikke stemple.
+2. **`RESEND_API_KEY` i Netlify** — nudgen springer sig selv over uden den
+   (bevidst: et stempel uden en mail bag ville låse brugeren ude af nudgen
+   for altid).
+3. **`TRIGGER_ACCESS_TOKEN` som GitHub-secret** — se ovenfor.
 
 ## Kritiske problemer
 

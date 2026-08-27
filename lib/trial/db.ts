@@ -111,7 +111,7 @@ export async function hentTrialViaTokenHash(
 /** Event-log til konverteringsmåling — best-effort, må aldrig vælte flowet */
 export async function logTrialEvent(
   klient: SupabaseClient,
-  event: "trial_started" | "trial_completed" | "trial_blocked" | "trial_to_signup",
+  event: "trial_started" | "trial_completed" | "trial_blocked" | "trial_cta_klik" | "trial_to_signup",
   opts: { aarsag?: TrialBlokAarsag | "captcha"; trialId?: string } = {},
 ): Promise<void> {
   try {

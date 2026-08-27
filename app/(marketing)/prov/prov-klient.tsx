@@ -58,7 +58,7 @@ type Tilstand =
   | { fase: "start" }
   | { fase: "sender" }
   | { fase: "venter"; token: string; startetMs: number; forventetSekunder: number }
-  | { fase: "resultat"; resultat: Resultat }
+  | { fase: "resultat"; resultat: Resultat; token: string }
   | { fase: "blokeret"; besked: string }
   | {
       fase: "fejlet";
@@ -118,7 +118,7 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
       try {
         const svar = await fetch(`/api/prov/resultat?token=${token}`);
         if (svar.ok) {
-          setTilstand({ fase: "resultat", resultat: (await svar.json()) as Resultat });
+          setTilstand({ fase: "resultat", resultat: (await svar.json()) as Resultat, token });
           return;
         }
       } catch {
@@ -269,7 +269,7 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
       ) : null}
 
       {tilstand.fase === "resultat" ? (
-        <ResultatVisning resultat={tilstand.resultat} />
+        <ResultatVisning resultat={tilstand.resultat} token={tilstand.token} />
       ) : null}
 
       {tilstand.fase === "blokeret" ? (
@@ -318,7 +318,29 @@ export function ProvKlient({ turnstileSiteKey }: { turnstileSiteKey: string | nu
   );
 }
 
-function ResultatVisning({ resultat }: { resultat: Resultat }) {
+/**
+ * Tragtens manglende trin (dataanalyse 27/8): uden et event mellem "resultatet
+ * blev vist" og "kontoen blev oprettet" kan "ville ikke" ikke skelnes fra
+ * "ville, men faldt fra". sendBeacon overlever navigationen til /log-ind, så
+ * klikket måles uden at forsinke det.
+ */
+function maalCtaKlik(token: string) {
+  try {
+    const krop = JSON.stringify({ token });
+    if (!navigator.sendBeacon?.("/api/prov/klik", new Blob([krop], { type: "application/json" }))) {
+      void fetch("/api/prov/klik", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: krop,
+        keepalive: true,
+      }).catch(() => undefined);
+    }
+  } catch {
+    // stille — målingen må aldrig stå i vejen for klikket
+  }
+}
+
+function ResultatVisning({ resultat, token }: { resultat: Resultat; token: string }) {
   // Låste stilarter: spejlet i BEGGE køn (ejer-ordre 25/8) + bøjle og
   // nærbillede — statiske katalogeksempler, intet endpoint at trigge
   const kategori = resultat.kategori ?? "";
@@ -425,7 +447,11 @@ function ResultatVisning({ resultat }: { resultat: Resultat }) {
       <div className="mt-8 rounded-bloed border border-primaer bg-flade p-5">
         <p className="text-titel font-medium">{da.prov.ctaRubrik}</p>
         <p className="mt-2 max-w-laesbar text-tekst/80">{da.prov.ctaFordele}</p>
-        <Link href="/log-ind?videre=/oversigt" className="knap-link mt-4">
+        <Link
+          href="/log-ind?videre=/oversigt"
+          className="knap-link mt-4"
+          onClick={() => maalCtaKlik(token)}
+        >
           {da.prov.cta}
         </Link>
         <p className="mt-3 text-detalje text-tekst/70">{da.prov.ctaNote}</p>
