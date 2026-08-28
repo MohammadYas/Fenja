@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { AppNav } from "@/components/app-nav";
+import { ForbindelseFejl } from "@/components/forbindelse-fejl";
 import { SpringLink } from "@/components/spring-link";
 import { Badge } from "@/components/ui/badge";
+import { hentBrugerTilstand } from "@/lib/auth/bruger";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
 
@@ -11,15 +13,21 @@ export default async function AppLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const supabase = await opretServerKlient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/log-ind");
+  // To slags "ingen bruger" — samme skelnen som i middleware (ejer-rapport:
+  // "kan ikke logge ind"). Et rigtigt nej sender til log ind; et kald der
+  // FEJLEDE (timeout hos Netlify→Supabase) må ikke gøre det: brugeren er
+  // stadig logget ind, og sendte vi ham på login-væggen, sendte login-siden
+  // ham tilbage hertil — ringen, ingen kunne komme ud af.
+  const { bruger, fejlede } = await hentBrugerTilstand(supabase);
+  if (!bruger) {
+    if (fejlede) return <ForbindelseFejl />;
+    redirect("/log-ind?besked=session-udloebet");
+  }
 
   const { data: saldoRaekke } = await supabase
     .from("credit_balances")
     .select("balance")
-    .eq("user_id", user.id)
+    .eq("user_id", bruger.id)
     .maybeSingle();
   const saldo = (saldoRaekke?.balance as number | undefined) ?? 0;
 

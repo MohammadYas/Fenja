@@ -81,6 +81,10 @@ export const da = {
     // login-væg — er kontoen allerede bekræftet, virker login med det samme.
     linkUdloebet:
       "Linket fra mailen er udløbet eller allerede brugt. Log ind herunder: er din konto allerede bekræftet, virker det med det samme, og ellers sender vi dig en frisk mail.",
+    // Sessionen blev afvist af serveren (udløbet, eller logget ud et andet
+    // sted). Cookien er ryddet, så log ind virker med det samme herunder.
+    sessionUdloebet:
+      "Du blev logget ud, fordi din session udløb. Log ind herunder, så er du tilbage, hvor du slap.",
     fejlLogin: "Forkert e-mail eller adgangskode. Prøv igen.",
     fejlSignup:
       "Kontoen kunne ikke oprettes. Måske findes e-mailen allerede — prøv at logge ind i stedet.",
@@ -701,6 +705,12 @@ export const da = {
     fejlTekst:
       "Det er ikke dig — det er os. Prøv igen; hjælper det ikke, så vent et øjeblik og prøv en gang til.",
     fejlKnap: "Prøv igen",
+    // Serveren kunne ikke nå Supabase (timeout/netværk). Brugeren er IKKE
+    // logget ud, og må derfor ikke sendes ud på login-væggen — det så ud
+    // som om man var smidt ud, og login sendte én lige tilbage igen.
+    forbindelseTitel: "Vi kan ikke nå serveren lige nu",
+    forbindelseTekst:
+      "Du er stadig logget ind — det var forbindelsen til vores server, der ikke svarede. Prøv igen om et øjeblik.",
   },
   priserSide: {
     titel: "Priser",

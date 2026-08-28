@@ -25,9 +25,12 @@ function LogIndIndhold() {
   const router = useRouter();
   const params = useSearchParams();
   const videre = params.get("videre") ?? "/oversigt";
-  // Sat af auth-ruterne ved udløbet/brugt mail-link (ejer 22/8): forklar
-  // ærligt i stedet for en tom login-væg
-  const linkUdloebet = params.get("besked") === "link-udloebet";
+  // Sat af auth-ruterne ved udløbet/brugt mail-link (ejer 22/8) og af
+  // middleware ved en afvist session: forklar ærligt i stedet for en tom
+  // login-væg
+  const besked = params.get("besked");
+  const linkUdloebet = besked === "link-udloebet";
+  const sessionUdloebet = besked === "session-udloebet";
 
   const [fane, setFane] = useState<Fane>("login");
   const [email, setEmail] = useState("");
@@ -331,14 +334,15 @@ function LogIndIndhold() {
     <main className="mx-auto max-w-md px-4 py-16">
       <h1 className="font-display text-display">{da.logInd.titel}</h1>
 
-      {/* Udløbet/brugt mail-link (fx mail-scannerens forhåndsklik): ærlig
-          forklaring — er kontoen allerede bekræftet, virker login straks */}
-      {linkUdloebet ? (
+      {/* Udløbet/brugt mail-link (fx mail-scannerens forhåndsklik) eller en
+          session serveren har afvist: ærlig forklaring — er kontoen allerede
+          bekræftet, virker login straks */}
+      {linkUdloebet || sessionUdloebet ? (
         <p
           role="status"
           className="mt-4 max-w-laesbar rounded-bloed border border-kant bg-flade p-3 text-detalje text-tekst/80"
         >
-          {da.logInd.linkUdloebet}
+          {linkUdloebet ? da.logInd.linkUdloebet : da.logInd.sessionUdloebet}
         </p>
       ) : null}
 

@@ -1,6 +1,9 @@
+import { redirect } from "next/navigation";
 import { FeedbackForm } from "@/components/feedback-form";
+import { ForbindelseFejl } from "@/components/forbindelse-fejl";
 import { KontaktForm } from "@/components/kontakt-form";
 import { Card } from "@/components/ui/card";
+import { hentBrugerTilstand } from "@/lib/auth/bruger";
 import { hjemRotation } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
@@ -14,29 +17,36 @@ export const metadata = { title: `${da.konto.titel} · ${da.site.navn}` };
 // Konto-side (A-3): e-mail, saldo, købshistorik, slet konto.
 export default async function Konto() {
   const supabase = await opretServerKlient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Samme opslag og samme beslutning som app-skallen: siden og layoutet
+  // renderes SAMTIDIG, så en side, der omdirigerede på egen hånd, kunne
+  // vinde over skallens ærlige "vi kan ikke nå serveren" — og en bruger,
+  // der bare havde et hik på linjen, ville lande på login-væggen igen.
+  // (Uden værnet kunne et null her desuden kaste en 500 undervejs.)
+  const { bruger: user, fejlede } = await hentBrugerTilstand(supabase);
+  if (!user) {
+    if (fejlede) return <ForbindelseFejl />;
+    redirect("/log-ind?besked=session-udloebet");
+  }
 
   const [{ data: saldoRaekke }, { data: koeb }, { data: profil }] =
     await Promise.all([
       supabase
         .from("credit_balances")
         .select("balance")
-        .eq("user_id", user!.id)
+        .eq("user_id", user.id)
         .maybeSingle(),
       // Både engangskøb og abonnementskvoter — abonnement er standardvejen
       // (ejer-ordre 2026-08-16), og en abonnent skal kunne se sin historik
       supabase
         .from("credit_ledger")
         .select("delta, ts, reason")
-        .eq("user_id", user!.id)
+        .eq("user_id", user.id)
         .in("reason", ["purchase", "subscription"])
         .order("ts", { ascending: false }),
       supabase
         .from("profiles")
         .select("home_anchor, koen, haar_farve, hjem_rotationer")
-        .eq("id", user!.id)
+        .eq("id", user.id)
         .maybeSingle(),
     ]);
 
@@ -60,7 +70,7 @@ export default async function Konto() {
             <dt className="font-mono text-detalje uppercase tracking-wide text-tekst/70">
               {da.konto.emailLabel}
             </dt>
-            <dd className="break-words">{user!.email}</dd>
+            <dd className="break-words">{user.email}</dd>
           </div>
           <div>
             <dt className="font-mono text-detalje uppercase tracking-wide text-tekst/70">

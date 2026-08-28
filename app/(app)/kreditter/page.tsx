@@ -1,4 +1,7 @@
+import { redirect } from "next/navigation";
+import { ForbindelseFejl } from "@/components/forbindelse-fejl";
 import { Card } from "@/components/ui/card";
+import { hentBrugerTilstand } from "@/lib/auth/bruger";
 import { kreditter } from "@/lib/config";
 import { da } from "@/lib/copy/da";
 import { opretServerKlient } from "@/lib/supabase/server";
@@ -25,9 +28,12 @@ export default async function Kreditter({
 }) {
   const { status } = await searchParams;
   const supabase = await opretServerKlient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Samme beslutning som app-skallen — se kommentaren på Konto
+  const { bruger: user, fejlede } = await hentBrugerTilstand(supabase);
+  if (!user) {
+    if (fejlede) return <ForbindelseFejl />;
+    redirect("/log-ind?besked=session-udloebet");
+  }
 
   // Hastighed (ejer 22/8): saldo, udløb og abonnementsstatus er uafhængige
   // opslag — de hentes parallelt i stedet for i serie. Ejer-ordre 2026-08-20:
@@ -37,11 +43,11 @@ export default async function Kreditter({
     supabase
       .from("credit_balances")
       .select("balance")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .maybeSingle(),
     // Tidligste udløb — vises kun når der faktisk er noget, der udløber. I
     // demo-tilstand (uden rigtig Supabase) svarer rpc'en tomt, og linjen udelades.
-    supabase.rpc("beregn_kredit_status", { p_user_id: user!.id }),
+    supabase.rpc("beregn_kredit_status", { p_user_id: user.id }),
     user?.email ? harAktivtAbonnement(user.email) : Promise.resolve(false),
   ]);
   const saldo = (saldoSvar?.data?.balance as number | undefined) ?? 0;

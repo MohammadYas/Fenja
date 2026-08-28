@@ -75,6 +75,32 @@ høstet række (ingen urimelig 7-dages IP-lås for et resultat, ingen så).
 | Migration 20260827120000 kørt i prod | ✅ Kørt og verificeret 27/8 |
 | IP-blokering på gratis prøve fjernet | ✅ Fjernet 27/8 (CGNAT ramte fremmede) |
 | SEO-pakke implementeret | ❌ Se docs/seo-pakke-selja.md |
+| Login-ringen: log ind-siden kunne ikke nås | ✅ Rettet 28/8 |
+
+## Login-ringen — rettet 28/8 (ejer: "kan ikke logge ind")
+
+To fejl i samme familie lukkede vejen ind:
+
+1. **Ringen.** Middleware sendte siden 23/8 en bruger fra `/log-ind` direkte
+   ind i appen, hvis auth-cookien SÅ frisk ud — uden at spørge Supabase.
+   Var sessionen død (tilbagekaldt, konto slettet, projekt skiftet), svarede
+   app-siden "log ind", og middleware svarede "du er jo logget ind": browseren
+   gav op med for mange omdirigeringer, og login-formularen kunne bogstaveligt
+   talt ikke nås. Nu kræver vejen VÆK fra log ind et rigtigt svar fra Supabase
+   (én rundtur på en sjældent besøgt side; hastigheden inde i appen er
+   urørt), og en cookie, Supabase afviser, SLETTES på log ind-siden, så
+   næste forsøg starter rent.
+2. **Fail-open'en, der aldrig fyrede.** Middleware skelnede "Supabase siger
+   nej" fra "kaldet fejlede" med et try/catch — men supabase-js KASTER ikke
+   ved timeout og netværksfejl, den returnerer fejlen i `error`. Hvert hik på
+   Netlify→Supabase blev derfor læst som "ingen bruger" og smed indloggede
+   brugere ud. Skelnen sker nu på selve fejlen (`lib/auth/bruger.ts`), og
+   app-skallen bruger den samme: et ubesvaret kald giver en ærlig
+   "vi kan ikke nå serveren"-side med prøv igen — ikke en login-væg.
+
+Låst med 22 tests, heraf 8 der kører selve middlewaren igennem ringen.
+Ejerens egen browser kan bære en død cookie fra før rettelsen: den ryddes nu
+automatisk ved første besøg på /log-ind.
 
 ## Hvad Selja er
 

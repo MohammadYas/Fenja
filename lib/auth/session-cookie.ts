@@ -19,6 +19,17 @@ type Cookie = { name: string; value: string };
 
 const AUTH_COOKIE = /^sb-.+-auth-token(\.\d+)?$/;
 
+/**
+ * Navnene på de auth-token-cookies browseren sender med. Bruges til at
+ * SLETTE en død session-cookie: en cookie, Supabase har afvist, må ikke
+ * blive liggende og sende brugeren i ring mellem app og log ind-side.
+ * Kun selve token-cookien rammes — fx PKCE'ens `…-auth-token-code-verifier`
+ * skal overleve, ellers knækker Google-login midt i callback'et.
+ */
+export function authCookieNavne(cookies: readonly Cookie[]): string[] {
+  return cookies.filter((c) => AUTH_COOKIE.test(c.name)).map((c) => c.name);
+}
+
 /** Sekunder til sessionens udløb, eller null når det ikke kan afgøres */
 export function sekunderTilSessionUdloeb(
   cookies: readonly Cookie[],

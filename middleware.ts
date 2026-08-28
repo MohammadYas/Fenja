@@ -1,7 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { erBeskyttetSti, sikkerVidereSti } from "@/lib/auth/ruter";
-import { sessionErFrisk } from "@/lib/auth/session-cookie";
+import { hentBrugerTilstand } from "@/lib/auth/bruger";
+import {
+  erBeskyttetSti,
+  erLogIndSti,
+  maaBrugeCookieGenvej,
+  sikkerVidereSti,
+} from "@/lib/auth/ruter";
+import { authCookieNavne, sessionErFrisk } from "@/lib/auth/session-cookie";
 import {
   MIDDLEWARE_TIDSGRAENSE_MS,
   fetchMedTidsgraense,
@@ -52,13 +58,19 @@ export async function middleware(request: NextRequest) {
   // Middlewarens opgave er kun at FORNY sessionen før udløb: er der læseligt
   // lang tid til udløb i cookien, er der intet at forny, og netkaldet
   // springes over. Autorisationen ligger stadig 100 % hos siderne selv.
-  if (sessionErFrisk(request.cookies.getAll())) {
-    if (request.nextUrl.pathname === "/log-ind") {
-      const til = request.nextUrl.clone();
-      til.pathname = sikkerVidereSti(request.nextUrl.searchParams.get("videre"));
-      til.search = "";
-      return NextResponse.redirect(til);
-    }
+  //
+  // MEN aldrig på log ind-siden (ejer-rapport: "kan ikke logge ind"): cookien
+  // er ubekræftet, og sendte vi brugeren videre på den alene, kunne en DØD
+  // cookie (session tilbagekaldt, projekt skiftet, konto slettet) lukke
+  // login-siden helt: appen sagde "log ind", cookien sagde "du er logget
+  // ind", og browseren gav op med for mange omdirigeringer. Vejen VÆK fra
+  // login kræver derfor et rigtigt svar fra Supabase — det koster én
+  // rundtur på en side, man besøger sjældent, og aldrig noget inde i appen.
+  const paaLogInd = erLogIndSti(request.nextUrl.pathname);
+  if (
+    maaBrugeCookieGenvej(request.nextUrl.pathname) &&
+    sessionErFrisk(request.cookies.getAll())
+  ) {
     return respons;
   }
 
@@ -90,32 +102,52 @@ export async function middleware(request: NextRequest) {
   // session → redirect til log-ind) og et kald der FEJLEDE (timeout, netværk
   // → fail-open, siden afgør selv). De må ikke behandles ens: fejlede kald
   // ville ellers logge alle ud, hver gang Supabase hikker.
-  let user: { id: string } | null = null;
-  let authFejlede = false;
-  try {
-    ({
-      data: { user },
-    } = await supabase.auth.getUser());
-  } catch {
-    authFejlede = true;
-  }
+  //
+  // RETTET (ejer-rapport: "kan ikke logge ind"): skelnen lå før i et
+  // try/catch — men supabase-js KASTER ikke ved timeout og netværksfejl, den
+  // returnerer fejlen i `error`. Fail-open'en udløste derfor i praksis
+  // aldrig: hvert eneste hik hos Netlify→Supabase blev læst som "ingen
+  // bruger" og smed en indlogget bruger ud på login-væggen. Fejlen aflæses
+  // nu, hvor den faktisk står (hentBrugerTilstand).
+  const { bruger: user, fejlede: authFejlede } =
+    await hentBrugerTilstand(supabase);
 
-  if (kraeverLoginSti && !user && !authFejlede) {
+  // Supabase har svaret et rigtigt nej: sessionen er væk eller ugyldig.
+  const doedSession = !user && !authFejlede;
+
+  if (kraeverLoginSti && doedSession) {
     const til = request.nextUrl.clone();
     til.pathname = "/log-ind";
     til.search = "";
     til.searchParams.set("videre", request.nextUrl.pathname);
+    // Ærligt hvorfor (ejer 22/8: ingen tomme login-vægge) — han HAVDE en
+    // session, den er bare udløbet
+    til.searchParams.set("besked", "session-udloebet");
     return NextResponse.redirect(til);
   }
 
   // Auto-login (ejer-ordre 2026-08-20): sessionen fornyes ovenfor og overlever
   // både genstart og lukket browser, så en bruger der allerede ER logget ind
   // skal aldrig se login-formularen igen — han sendes direkte videre.
-  if (user && request.nextUrl.pathname === "/log-ind") {
+  if (user && paaLogInd) {
     const til = request.nextUrl.clone();
     til.pathname = sikkerVidereSti(request.nextUrl.searchParams.get("videre"));
     til.search = "";
     return NextResponse.redirect(til);
+  }
+
+  // Nødudgangen: står vi PÅ log ind-siden med en cookie, Supabase lige har
+  // afvist, er cookien død — og en død cookie er præcis det, der før kunne
+  // sende brugeren i ring. Den slettes her, ét sted, efter et rigtigt svar:
+  // næste request går den cookieløse hurtige vej, og formularen virker.
+  // Kun selve token-cookien rammes — PKCE'ens code-verifier skal overleve et
+  // igangværende Google-login. Slettes bevidst IKKE på app-siderne: et tabt
+  // kapløb mellem to samtidige fornyelser ville ellers smide en bruger ud,
+  // som en anden fane netop har forsynet med en frisk session.
+  if (paaLogInd && doedSession) {
+    for (const navn of authCookieNavne(request.cookies.getAll())) {
+      respons.cookies.delete(navn);
+    }
   }
 
   return respons;
