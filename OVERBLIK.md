@@ -64,19 +64,20 @@ høstet række (ingen urimelig 7-dages IP-lås for et resultat, ingen så).
 | Rate limiting på genereringer (DB-trigger) | ✅ Live i prod 23/8 |
 | 6 ydelsesindekser | ✅ Live i prod 23/8 |
 | Natlig oprydning af rate_limit (pg_cron) | ✅ Live i prod 23/8 |
-| Fejllogning i generations.fejl | ✅ Implementeret (verificeret 27/8) |
+| Fejllogning i generations.fejl | ⚠️ Kode findes, men kørte ALDRIG i prod før 30/8 (se nedenfor) |
 | Generisk-fallback ved ukendt kategori | ✅ Implementeret (verificeret 27/8) |
 | Aktiveringsmail til nye brugere | ✅ Implementeret og leverer (ejer 27/8) |
 | Høst af hængende trials uden poller | ✅ Rettet 27/8 |
 | Måling af trial-CTA (tragtens sidste trin) | ✅ Tilføjet 27/8 |
 | utm_content synlig i admin | ✅ Tilføjet 27/8 |
 | Aktiverings-nudge (planlagt Netlify-funktion) | ✅ Bygget 27/8 — kræver migration + RESEND_API_KEY |
-| Trigger.dev deployet | ❌ Blokeret: TRIGGER_ACCESS_TOKEN mangler |
+| Trigger.dev deployet | ❌ Blokeret: TRIGGER_ACCESS_TOKEN mangler — ikke længere kritisk, se 30/8 |
 | Migration 20260827120000 kørt i prod | ✅ Kørt og verificeret 27/8 |
 | IP-blokering på gratis prøve fjernet | ✅ Fjernet 27/8 (CGNAT ramte fremmede) |
 | SEO-pakke implementeret | ❌ Se docs/seo-pakke-selja.md |
 | Gemini Pro på stabilt endpoint (preview udfaset) | ✅ Rettet 30/8 |
 | Backup til Gemini Flash ved 429/5xx på levering | ✅ Tilføjet 30/8 |
+| Item-pipelinen flyttet til Netlify-baggrundsfunktion | ✅ Rettet 30/8 — prod kørte kode fra 22/8 |
 
 ## Hvad Selja er
 
@@ -147,6 +148,40 @@ fra første deploy.
    trigger.config.ts filtrerer tomme værdier fra, og GitHub-secret'ene er
    ikke sat, så der skubbes en tom liste op.
 
+## Verificeret 30/8: produktionen kørte otte dage gammel kode
+
+Ejeren meldte "den genererer ingen billeder". Bevisrækken:
+
+1. I `generations` fejlede **hver eneste `onmodel`** (cost 0), mens hver
+   `cleanup` lykkedes (0,28 kr.). Samme Gemini-nøgle, samme kode — kun
+   modellen er forskellig: rens kører på Flash, levering på Pro.
+2. Direkte probe mod Googles API med produktionsnøglen:
+   `gemini-3-pro-image` **og** `gemini-3-pro-image-preview` svarer
+   **HTTP 503 UNAVAILABLE — "This model is currently experiencing high
+   demand"**. `gemini-3.1-flash-image` svarer 200 med et billede.
+3. Trigger.dev-API'et viser, at alle dagens `item-pipeline`-kørsler kørte
+   på version **20260822.1** — bundtet fra commit `b35dd4d` (22/8 18:48).
+
+**Rodårsag: Netlify-deploys rører ikke Trigger.dev.** Item-pipelinen kørte
+på Trigger.dev, og det bundt er kun blevet deployet én gang, i august.
+Konsekvenserne var usynlige, fordi Netlify-deployet var grønt hver gang:
+
+- Fejlloggen fra 27/8 var aldrig i drift — `generations.fejl` er **NULL i
+  hver eneste række, altid**. Statustabellens "✅ Implementeret" var forkert.
+- Admin-panelets billedmodel-valg (23/8) har **aldrig** haft effekt i
+  produktion. Det deployede bundt hardkoder `gemini-3-pro-image-preview`.
+- Generisk-fallback-fixet og Flash-reserven (30/8) lå ubrugte i main.
+
+**Rettet 30/8:** item-pipelinen og regenereringen kører nu på en Netlify-
+baggrundsfunktion (`netlify/funktioner-src/item-koersel-background.ts`) —
+samme mønster som trialen fik 26/8. Logikken er flyttet til
+`lib/pipeline/koersel.ts`, som begge motorer deler. Trigger.dev er reserve,
+og en kørsel der lander i PENDING_VERSION annulleres i stedet for at hænge.
+Kan ingen motor tage kørslen, markeres annoncen `failed` med det samme.
+
+**Betyder også:** hver fremtidig rettelse i pipelinen går live med et
+almindeligt push. `TRIGGER_ACCESS_TOKEN` er ikke længere en blocker for
+billedgenerering — kun for de øvrige jobs i `trigger/`.
 ## Kritiske problemer
 
 **P0 — Aktivering (uændret, nu 2 ud af 2):** Begge ægte brugere gennemførte

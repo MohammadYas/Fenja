@@ -11,6 +11,7 @@ import {
   type RegenDel,
 } from "@/lib/pipeline/run";
 import { PRESETS } from "@/lib/pipeline/presets";
+import { kanKoereInline, startRegen } from "@/lib/pipeline/start";
 import {
   SupabasePipelineDb,
   SupabasePipelineStorage,
@@ -70,17 +71,16 @@ export async function POST(
 
   const requestId = randomUUID();
 
-  // Med Trigger.dev-nøgle køres jobbet dér (G-3); uden nøgle køres inline —
-  // mock-providers er hurtige, og svaret venter på resultatet.
-  if (process.env.TRIGGER_SECRET_KEY) {
-    const { tasks } = await import("@trigger.dev/sdk");
-    await tasks.trigger("item-regen", {
-      itemId,
-      del: krop.del,
-      requestId,
-      presetId: krop.presetId,
-    });
-    return NextResponse.json({ startet: true, requestId }, { status: 202 });
+  // Kørslen skal ske et sted, der overlever svaret: Netlify-baggrunden først,
+  // Trigger.dev som reserve (lib/pipeline/start.ts). Kan ingen af dem tage
+  // den, svares ærligt fejl — aldrig et 202 på en kørsel der ikke findes.
+  // Kun lokalt/mock køres inline, hvor svaret kan bære resultatet.
+  if (!kanKoereInline()) {
+    const motor = await startRegen(itemId, krop.del, requestId, krop.presetId);
+    if (!motor) {
+      return NextResponse.json({ fejl: da.regenerer.fejlAlmen }, { status: 503 });
+    }
+    return NextResponse.json({ startet: true, requestId, motor }, { status: 202 });
   }
 
   try {

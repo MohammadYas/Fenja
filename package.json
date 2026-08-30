@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "byg:funktioner": "esbuild netlify/funktioner-src/trial-koersel-background.ts netlify/funktioner-src/aktivering-nudge.ts --bundle --platform=node --format=esm --target=node20 --external:sharp --alias:server-only=./lib/sikkerhed/server-only-shim.ts --out-extension:.js=.mjs --outdir=netlify/functions",
+    "byg:funktioner": "esbuild netlify/funktioner-src/trial-koersel-background.ts netlify/funktioner-src/item-koersel-background.ts netlify/funktioner-src/aktivering-nudge.ts --bundle --platform=node --format=esm --target=node20 --external:sharp --alias:server-only=./lib/sikkerhed/server-only-shim.ts --out-extension:.js=.mjs --outdir=netlify/functions",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

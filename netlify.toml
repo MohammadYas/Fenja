@@ -15,6 +15,13 @@
   node_bundler = "esbuild"
   external_node_modules = ["sharp"]
 
+# Item-pipelinen (30/8): samme baggrundsfunktion-mønster som trialen. Findes,
+# fordi Trigger.dev-bundtet kun opdateres af "npx trigger.dev deploy" — og det
+# deploy er aldrig kørt, så produktionen kørte otte dage gammel kode.
+[functions."item-koersel-background"]
+  node_bundler = "esbuild"
+  external_node_modules = ["sharp"]
+
 # Aktiverings-nudge (27/8): ét skub til brugere der tilmeldte sig og aldrig
 # lagde noget op. Planen ligger HER og ikke i Trigger.dev, fordi intet
 # Trigger.dev-job er deployet — et udeployet job parkeres i PENDING_VERSION

@@ -1,23 +1,16 @@
-// Trigger.dev-jobdefinition (G-3): langvarige pipeline-kørsler ligger her,
-// aldrig i Netlify-routes (HANDOFF §3). Selve logikken bor i lib/pipeline/run.ts
-// og er testet mod mocks; jobbet kobler kun rigtige afhængigheder på.
+// Trigger.dev-jobdefinition (G-3). Selve logikken bor i lib/pipeline/koersel.ts
+// og deles med Netlify-baggrundsfunktionen, så de to motorer ALDRIG kan drive
+// fra hinanden — jobbet her kobler kun Trigger.dev's retry på.
+//
+// NB (30/8): Trigger.dev-bundtet opdateres kun af `npx trigger.dev deploy`,
+// og det deploy er aldrig kørt. Produktionen kører derfor Netlify-
+// baggrundsfunktionen som førstevalg (lib/pipeline/start.ts); dette job er
+// reserven og bliver først aktuelt, når TRIGGER_ACCESS_TOKEN er sat og
+// deployet har kørt.
 
 import { task } from "@trigger.dev/sdk";
-import { site } from "@/lib/config";
-import { SupabaseLedgerDb } from "@/lib/credits/supabase";
-import {
-  bedstMuligt,
-  sendAnnonceKlar,
-  sendKreditRefunderet,
-} from "@/lib/emails/notifikationer";
-import { hentEmailAfsender } from "@/lib/emails/send";
-import { koerItemPipeline, koerRegenerering, type RegenDel } from "@/lib/pipeline/run";
-import {
-  SupabasePipelineDb,
-  SupabasePipelineStorage,
-} from "@/lib/pipeline/supabase-db";
-import { hentImageProvider, hentTextProvider } from "@/lib/providers";
-import { opretServiceKlient } from "@/lib/supabase/service";
+import { koerOgLeverItem, koerOgLeverRegen } from "@/lib/pipeline/koersel";
+import type { RegenDel } from "@/lib/pipeline/run";
 
 export type ItemPipelinePayload = {
   itemId: string;
@@ -31,44 +24,11 @@ export const itemPipeline = task({
   // Genkørsel af fejlede jobs er sikker: ledger og storage-stier er idempotente (E-4)
   retry: { maxAttempts: 2 },
   run: async (payload: ItemPipelinePayload) => {
-    const klient = opretServiceKlient();
-    const resultat = await koerItemPipeline(
-      {
-        db: new SupabasePipelineDb(klient),
-        storage: new SupabasePipelineStorage(klient),
-        image: await hentImageProvider(),
-        text: await hentTextProvider(),
-        ledger: new SupabaseLedgerDb(klient),
-      },
+    const resultat = await koerOgLeverItem(
       payload.itemId,
       payload.presetId,
       payload.visninger,
     );
-
-    // S32: leverancemail — "annonce klar" ved fuld leverance, "kredit sat
-    // tilbage" ved delvis (B-6). Best-effort: en fejlet mail må aldrig vælte
-    // jobbet eller udløse en genkørsel (og dermed dobbeltmail).
-    await bedstMuligt(async () => {
-      const { data } = await klient
-        .from("items")
-        .select("profiles(email)")
-        .eq("id", payload.itemId)
-        .single();
-      const profil = Array.isArray(data?.profiles) ? data.profiles[0] : data?.profiles;
-      const til = (profil as { email?: string } | null | undefined)?.email;
-      if (!til) return;
-      // Teksten kan være fejlet (bulletproof: billeder leveres alligevel) —
-      // mailen falder tilbage til en neutral titel
-      const itemTitel = resultat.tekst?.titel ?? "Din annonce";
-      const itemUrl = `${site.baseUrl}/items/${payload.itemId}`;
-      const afsender = hentEmailAfsender();
-      if (resultat.refunderet) {
-        await sendKreditRefunderet(afsender, { til, itemTitel, itemUrl });
-      } else {
-        await sendAnnonceKlar(afsender, { til, itemTitel, itemUrl });
-      }
-    });
-
     return {
       itemId: payload.itemId,
       leveret: true,
@@ -91,18 +51,11 @@ export const itemRegen = task({
   id: "item-regen",
   retry: { maxAttempts: 2 },
   run: async (payload: RegenPayload) => {
-    const klient = opretServiceKlient();
-    const resultat = await koerRegenerering(
-      {
-        db: new SupabasePipelineDb(klient),
-        storage: new SupabasePipelineStorage(klient),
-        image: await hentImageProvider(),
-        text: await hentTextProvider(),
-        ledger: new SupabaseLedgerDb(klient),
-      },
+    const resultat = await koerOgLeverRegen(
       payload.itemId,
       payload.del,
-      { requestId: payload.requestId, presetId: payload.presetId },
+      payload.requestId,
+      payload.presetId,
     );
     return {
       itemId: payload.itemId,
