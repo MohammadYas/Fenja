@@ -179,6 +179,17 @@ samme mønster som trialen fik 26/8. Logikken er flyttet til
 og en kørsel der lander i PENDING_VERSION annulleres i stedet for at hænge.
 Kan ingen motor tage kørslen, markeres annoncen `failed` med det samme.
 
+**Verificeret live 30/8 18:47 UTC** på item `3b6456c3` (Ralph Lauren
+striktrøje): baggrundsfunktionen kvitterede 202 på 217 ms, begge `onmodel`
+kørsler blev `succeeded` med billeder i storage, teksten og prisspændet blev
+skrevet, og `leveret_at` opdateret. Prisen pr. billede var 0,30 kr. i stedet
+for Pro-taksten — altså gik Flash-reserven ind, præcis som den skal, mens
+Pro stadig svarer 503.
+
+**Fælde at kende:** en Netlify-funktion med `-background` i navnet svarer
+202 FØR handleren kører. Signaturtjekket kan derfor ikke ses udefra — et
+usigneret kald får også 202 (og laver intet). Porten er dækket af
+`tests/unit/item-baggrund.test.ts`, ikke af statuskoden.
 **Betyder også:** hver fremtidig rettelse i pipelinen går live med et
 almindeligt push. `TRIGGER_ACCESS_TOKEN` er ikke længere en blocker for
 billedgenerering — kun for de øvrige jobs i `trigger/`.
