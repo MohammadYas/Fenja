@@ -75,6 +75,8 @@ høstet række (ingen urimelig 7-dages IP-lås for et resultat, ingen så).
 | Migration 20260827120000 kørt i prod | ✅ Kørt og verificeret 27/8 |
 | IP-blokering på gratis prøve fjernet | ✅ Fjernet 27/8 (CGNAT ramte fremmede) |
 | SEO-pakke implementeret | ❌ Se docs/seo-pakke-selja.md |
+| Gemini Pro på stabilt endpoint (preview udfaset) | ✅ Rettet 30/8 |
+| Backup til Gemini Flash ved 429/5xx på levering | ✅ Tilføjet 30/8 |
 
 ## Hvad Selja er
 

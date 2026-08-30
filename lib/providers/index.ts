@@ -12,6 +12,7 @@ import { hentValgtModel } from "@/lib/admin/billedmodel-valg";
 import {
   billedModelEllerStandard,
   billedModeller,
+  hentBilledModel,
   type BilledFormaal,
   type BilledModel,
 } from "@/lib/config";
@@ -85,14 +86,67 @@ class FormaalsDeltImageProvider implements ImageProvider {
   }
 }
 
+function erMidlertidigBilledfejl(fejl: unknown): boolean {
+  const tekst = fejl instanceof Error ? fejl.message : String(fejl);
+  return (
+    /HTTP\s+(?:408|429|5\d\d)\b/i.test(tekst) ||
+    /RESOURCE_EXHAUSTED|UNAVAILABLE|high demand|rate.?limit|quota|overloaded|timed?.?out/i.test(
+      tekst,
+    )
+  );
+}
+
+function billedfejlTekst(fejl: unknown): string {
+  return fejl instanceof Error ? fejl.message : String(fejl);
+}
+
+class BackupImageProvider implements ImageProvider {
+  constructor(
+    private primaer: ImageProvider,
+    private backup: ImageProvider,
+  ) {}
+
+  rensBaggrund(input: BaggrundsrensInput): Promise<BaggrundsrensResultat> {
+    return this.primaer.rensBaggrund(input);
+  }
+
+  async genererOnModel(input: OnModelInput): Promise<OnModelResultat> {
+    try {
+      return await this.primaer.genererOnModel(input);
+    } catch (fejl) {
+      if (!erMidlertidigBilledfejl(fejl)) throw fejl;
+      console.warn("Primær billedmodel fejlede — prøver Gemini-backup", fejl);
+      try {
+        return await this.backup.genererOnModel(input);
+      } catch (backupFejl) {
+        throw new Error(
+          `Billedgenerering fejlede hos begge Gemini-modeller. Primær: ${billedfejlTekst(fejl)} · Backup: ${billedfejlTekst(backupFejl)}`,
+        );
+      }
+    }
+  }
+}
+
 export async function hentImageProvider(
   formaal?: BilledFormaal,
 ): Promise<ImageProvider> {
   if (erMockTilstand()) return new MockImageProvider();
   if (formaal) return opretImageProvider(await brugbarModel(formaal));
+  const previewModel = await brugbarModel("preview");
+  const finalModel = await brugbarModel("final");
+  const rensProvider = await opretImageProvider(previewModel);
+  const finalProvider = await opretImageProvider(finalModel);
+  // Kun Gemini→Gemini: fal-modellerne har ingen SynthID, så et skift dertil
+  // ville ændre billedets mærkning bag om ejeren.
+  const backupModel =
+    finalModel.provider === "gemini" ? hentBilledModel("gemini-flash") : null;
+  const onmodelProvider =
+    backupModel && backupModel.id !== finalModel.id && harNoegle(backupModel)
+      ? new BackupImageProvider(finalProvider, await opretImageProvider(backupModel))
+      : finalProvider;
   return new FormaalsDeltImageProvider(
-    await opretImageProvider(await brugbarModel("preview")),
-    await opretImageProvider(await brugbarModel("final")),
+    rensProvider,
+    onmodelProvider,
   );
 }
 

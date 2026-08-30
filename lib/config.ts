@@ -152,10 +152,12 @@ export const billedModeller: readonly BilledModel[] = [
     id: "gemini-pro",
     navn: "Nano Banana Pro (Gemini 3 Pro Image)",
     provider: "gemini",
-    model: "gemini-3-pro-image-preview",
+    // Preview-endpointet blev udfaset 25/6-2026. Den stabile model er den
+    // direkte Pro-erstatning og bevarer samme kvalitetsklasse.
+    model: "gemini-3-pro-image",
     costDkk: 0.95,
     vandmaerke: "SynthID i pixels — kan ikke slås fra",
-    note: "Den dyre og stærkeste på tekst og detaljer. Var standard indtil 23/8.",
+    note: "Den stærkeste Gemini-model til præcise produktbilleder. Standard til levering.",
   },
   {
     id: "flux-2-pro",

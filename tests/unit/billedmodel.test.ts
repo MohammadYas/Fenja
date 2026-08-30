@@ -22,6 +22,12 @@ describe("billedmodel-kataloget", () => {
     }
   });
 
+  it("standardleveringen bruger Googles stabile Pro-endpoint", () => {
+    expect(hentBilledModel(standardBilledModel.final)?.model).toBe(
+      "gemini-3-pro-image",
+    );
+  });
+
   it("fal-modeller er edit-endpoints, Gemini-modeller er modelnavne", () => {
     for (const model of billedModeller) {
       if (model.provider === "fal") {
